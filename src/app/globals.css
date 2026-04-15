@@ -1,26 +1,127 @@
-@import "tailwindcss";
+/* @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: ; 
+  --foreground: ;
+
+  --color-primary: ;     
+  --color-primary-dark: ; 
+  --color-secondary: ;     
+  --color-accent: ;      
+
+  --color-success: ;       
+  --color-warning: ;    
+  --color-danger: ;      
+
+  --radius-main: ;        
+  --font-main: ;       
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-error: var(--color-danger);
+
+  --radius-lg: var(--radius-main);
+  --font-sans: var(--font-main), ui-sans-serif, system-ui;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: ; 
+    --foreground: ;
+
+
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+ */
+
+
+ /* temp*/
+
+ 
+@import "tailwindcss";
+
+:root {
+  /* Default Theme Colors - Temporary Values */
+  --background: #ffffff;
+  --foreground: #0f172a;
+
+  /* CareHub Primary Colors */
+  --color-primary: #2563eb;       /* Blue 600 */
+  --color-primary-dark: #1e40af;  /* Blue 800 */
+  --color-secondary: #64748b;    /* Slate 500 */
+  
+  /* Status Colors */
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+
+  /* Standard Border Radius */
+  --radius-main: 0.75rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-dark);
+  --color-secondary: var(--color-secondary);
+  
+  --color-success: var(--color-success);
+  --color-danger: var(--color-danger);
+  --color-warning: var(--color-warning);
+
+  --radius-lg: var(--radius-main);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #020617;
+    --foreground: #f1f5f9;
+  }
+}
+
+/* Base Styles */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar for a Pro look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

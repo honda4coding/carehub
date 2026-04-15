@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## 🌟 Overview
+**CareHub** is a high-performance, scalable medical ecosystem designed to bridge the gap between healthcare providers and patients. Built with a focus on speed, security, and a "Clean Architecture" approach, it offers a seamless experience for managing medical reports, appointments, and patient history.
 
-First, run the development server:
+## ✨ Key Features
+- 🛡️ **Enterprise-Grade Auth:** Secure login system with Formik & Yup validation.
+- ⚡ **Turbo Performance:** Optimized with Next.js App Router and Turbopack.
+- 🎨 **Modern UI:** Clean, medical-themed interface using Tailwind CSS v4.
+- 📱 **Fully Responsive:** Seamless experience across Mobile, Tablet, and Desktop.
+- 📁 **Modular Structure:** Easy to scale and maintain for large teams.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🛠️ Technical Stack
+| Category | Technology |
+| :--- | :--- |
+| **Framework** | Next.js 16 (App Router) |
+| **Styling** | Tailwind CSS v4 |
+| **Logic** | TypeScript / React Context API |
+| **Validation** | Yup + Formik |
+| **Icons** | Lucide React |
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📂 Architecture
+```text
+src/
+├── app/            # Next.js App Router (Pages & APIs)
+├── components/     # Atomic Design (UI, Layout, Features)
+├── hooks/          # Custom Reusable Logic
+├── services/       # API Integration & Fetch Wrappers
+├── types/          # Centralized TypeScript Interfaces
+└── utils/          # Helper Functions & Validations
+````
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Getting Started
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Clone & Enter**
 
-## Learn More
+    ```bash
+    git clone [your-repo-url]
+    cd carehub
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Setup Environment**
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+    ```bash
+    cp .env.example .env.local
+    ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+3.  **Ignite the Project**
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+    ```bash
+    npm install
+    npm run dev
+    ```
