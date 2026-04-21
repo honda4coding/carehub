@@ -29,11 +29,11 @@ const Hero = () => {
           </p>
 
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link href='/' className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 bg-[hsl(var(--color-primary))] text-white font-semibold shadow-lg shadow-[hsl(var(--color-primary)/0.25)] hover:bg-[hsl(var(--color-primary-strong))] transition">
+            <Link href='register' className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 bg-[hsl(var(--color-primary))] text-white font-semibold shadow-lg shadow-[hsl(var(--color-primary)/0.25)] hover:bg-[hsl(var(--color-primary-strong))] transition">
               Register as Patient
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href='/' className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-text))] font-semibold hover:bg-[hsl(var(--color-secondary))] transition">
+            <Link href='register' className="inline-flex items-center gap-2 rounded-xl px-6 py-3.5 bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-text))] font-semibold hover:bg-[hsl(var(--color-secondary))] transition">
               Join as Doctor
               <Stethoscope className="h-4 w-4" />
             </Link>
