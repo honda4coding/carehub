@@ -1,127 +1,63 @@
-/* @import "tailwindcss";
-
-:root {
-  --background: ; 
-  --foreground: ;
-
-  --color-primary: ;     
-  --color-primary-dark: ; 
-  --color-secondary: ;     
-  --color-accent: ;      
-
-  --color-success: ;       
-  --color-warning: ;    
-  --color-danger: ;      
-
-  --radius-main: ;        
-  --font-main: ;       
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-dark);
-  --color-secondary: var(--color-secondary);
-  --color-accent: var(--color-accent);
-  
-  --color-success: var(--color-success);
-  --color-warning: var(--color-warning);
-  --color-error: var(--color-danger);
-
-  --radius-lg: var(--radius-main);
-  --font-sans: var(--font-main), ui-sans-serif, system-ui;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: ; 
-    --foreground: ;
-
-
-  }
-}
-
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
- */
-
-
- /* temp*/
-
- 
+/* src/app/globals.css */
 @import "tailwindcss";
 
 :root {
-  /* Default Theme Colors - Temporary Values */
-  --background: #ffffff;
-  --foreground: #0f172a;
-
-  /* CareHub Primary Colors */
-  --color-primary: #2563eb;       /* Blue 600 */
-  --color-primary-dark: #1e40af;  /* Blue 800 */
-  --color-secondary: #64748b;    /* Slate 500 */
-  
-  /* Status Colors */
-  --color-success: #22c55e;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
-
-  /* Standard Border Radius */
-  --radius-main: 0.75rem;
+  --color-primary: #46BFE5;
+  --color-secondary: #F472B6;
+  --color-bg-white: #FFFFFF;
+  --color-bg-surface: #F8FAFC;
+  --color-text-dark: #083344;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  
-  --color-primary: var(--color-primary);
-  --color-primary-hover: var(--color-primary-dark);
-  --color-secondary: var(--color-secondary);
-  
-  --color-success: var(--color-success);
-  --color-danger: var(--color-danger);
-  --color-warning: var(--color-warning);
 
-  --radius-lg: var(--radius-main);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #020617;
-    --foreground: #f1f5f9;
+@layer utilities {
+  .bg-primary {
+    background-color: var(--color-primary);
   }
-}
-
-/* Base Styles */
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: ui-sans-serif, system-ui, -apple-system, sans-serif;
-  min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Custom Scrollbar for a Pro look */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
+  
+  .text-primary {
+    color: var(--color-primary);
+  }
+  
+  .text-secondary {
+    color: var(--color-secondary);
+  }
+  
+  .text-text-dark {
+    color: var(--color-text-dark);
+  }
+  
+  .bg-gradient-bg {
+    background-image: linear-gradient(135deg, #FFFFFF 0%, #E0F2FE 50%, #FDF2F8 100%);
+  }
+  
+  .bg-gradient-brand {
+    background-image: linear-gradient(to right, #0891B2, var(--color-secondary));
+  }
+  
+  .bg-gradient-doctor {
+    background-image: linear-gradient(to right, #0891B2, var(--color-primary));
+  }
+  
+  .bg-gradient-patient {
+    background-image: linear-gradient(to right, var(--color-secondary), var(--color-primary));
+  }
+  
+  .text-gradient {
+    background-image: linear-gradient(to right, #0891B2, var(--color-secondary));
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .border-primary {
+    border-color: var(--color-primary);
+  }
+  
+  .focus\:ring-primary:focus {
+    --tw-ring-color: var(--color-primary);
+  }
 }
