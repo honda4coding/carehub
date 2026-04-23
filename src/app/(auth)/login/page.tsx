@@ -1,19 +1,19 @@
-import { LoginForm } from "@/components/login/LoginForm";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export default function LoginPage() {
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-6"
+<div
+      className="min-h-screen flex items-start justify-center p-6 pt-28" 
       style={{
         background: `
-          radial-gradient(circle at top right, hsl(330 80% 95%) 0%, transparent 40%),
-          radial-gradient(circle at bottom left, hsl(195 75% 92%) 0%, transparent 40%),
+          radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
+          radial-gradient(circle at bottom left, hsl(var(--color-primary) / 0.15) 0%, transparent 40%),
           hsl(var(--color-bg))
         `,
       }}
     >
       {/* ===== HEADER ===== */}
-      <header className="fixed top-0 w-full z-50 bg-white/40 backdrop-blur-md">
+      {/* <header className="fixed top-0 w-full z-50 bg-white/40 backdrop-blur-md">
         <div className="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto w-full">
           <div className="flex items-center gap-3">
             <svg
@@ -43,16 +43,15 @@ export default function LoginPage() {
             </h1>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* ===== MAIN ===== */}
       <main className="w-full max-w-2xl  pt-20">
-
         <LoginForm />
       </main>
 
       {/* ===== FOOTER ===== */}
-      <footer className="fixed bottom-0 w-full py-6">
+      {/* <footer className="fixed bottom-0 w-full py-6">
         <div className="flex flex-col md:flex-row justify-between items-center px-10 max-w-7xl mx-auto opacity-50">
           <span className="text-[10px] uppercase tracking-widest text-slate-400">
             © 2024 CareHub. All rights reserved.
@@ -72,7 +71,7 @@ export default function LoginPage() {
             </a>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
