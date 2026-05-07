@@ -10,7 +10,6 @@ function RegisterContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const roleFromUrl = searchParams.get("role");
-
   const [selectedRole, setSelectedRole] = useState<"doctor" | "patient">("doctor");
 
   useEffect(() => {
@@ -25,12 +24,12 @@ function RegisterContent() {
   };
 
   return (
-    <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8 self-start">
+    <div className="max-w-2xl w-full bg-white rounded-[2.5rem] shadow-xl p-8 md:p-12 self-start border border-white/40 backdrop-blur-3xl">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-text-dark">
+        <h1 className="text-3xl font-bold text-[hsl(var(--color-text))]">
           Create New Account
         </h1>
-        <p className="text-gray-500 mt-2">
+        <p className="text-[hsl(var(--color-text-muted))] mt-2">
           Register as {selectedRole === "doctor" ? "Medical Professional" : "Patient"}
         </p>
       </div>
@@ -45,12 +44,13 @@ function RegisterContent() {
         )}
       </div>
 
-      <div className="text-center mt-6 pt-6 border-t border-gray-100">
-        <p className="text-gray-600">
+      <div className="text-center mt-10 pt-8 border-t border-slate-200/50">
+        <p className="text-[hsl(var(--color-text-muted))]">
           Already have an account?{" "}
           <a
             href="/login"
-            className="text-gradient font-bold hover:opacity-80 transition underline-offset-4 hover:underline"
+            className="font-bold hover:underline underline-offset-4 transition-all"
+            style={{ color: "hsl(var(--color-primary-strong))" }}
           >
             Sign in
           </a>
@@ -59,6 +59,7 @@ function RegisterContent() {
     </div>
   );
 }
+
 
 export default function RegisterPage() {
   return (

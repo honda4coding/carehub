@@ -1,4 +1,5 @@
 'use client';
+import { LuUser, LuHeart } from "react-icons/lu";
 
 interface RoleSelectorProps {
   selectedRole: 'doctor' | 'patient';
@@ -7,29 +8,50 @@ interface RoleSelectorProps {
 
 export default function RoleSelector({ selectedRole, onRoleChange }: RoleSelectorProps) {
   return (
-    <div className="flex gap-4 mb-8">
-      <button
-        type="button"
-        onClick={() => onRoleChange('doctor')}
-        className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-          selectedRole === 'doctor'
-            ? 'bg-gradient-doctor text-white shadow-lg'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`}
+    <div className="mb-10">
+      <label className="block text-center text-xs font-bold tracking-widest uppercase text-[hsl(var(--color-text-muted))] mb-6">
+        Identify Your Role
+      </label>
+      <div
+        className="flex p-1.5 rounded-full w-full max-w-sm mx-auto"
+        style={{ backgroundColor: "hsl(var(--color-bg-soft))" }}
       >
-        👨‍⚕️ Doctor
-      </button>
-      <button
-        type="button"
-        onClick={() => onRoleChange('patient')}
-        className={`flex-1 py-3 px-4 rounded-lg text-center font-medium transition-all ${
-          selectedRole === 'patient'
-            ? 'bg-gradient-patient text-white shadow-lg'
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`}
-      >
-        👤 Patient
-      </button>
+        <button
+          type="button"
+          onClick={() => onRoleChange('doctor')}
+          className="flex-1 py-3 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300"
+          style={
+            selectedRole === "doctor"
+              ? {
+                  background: "white",
+                  color: "hsl(var(--color-primary-strong))",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
+                }
+              : { color: "hsl(var(--color-text-muted))" }
+          }
+        >
+          <LuHeart className="w-4 h-4" />
+          Doctor
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onRoleChange('patient')}
+          className="flex-1 py-3 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300"
+          style={
+            selectedRole === "patient"
+              ? {
+                  background: "white",
+                  color: "hsl(var(--color-primary-strong))",
+                  boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
+                }
+              : { color: "hsl(var(--color-text-muted))" }
+          }
+        >
+          <LuUser className="w-4 h-4" />
+          Patient
+        </button>
+      </div>
     </div>
   );
 }
