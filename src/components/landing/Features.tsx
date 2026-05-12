@@ -1,22 +1,22 @@
-import { ShieldPlus, ClipboardList, BadgeCheck } from "lucide-react";
+import { LuShieldPlus, LuClipboardList, LuBadgeCheck } from "react-icons/lu";
 import FeatureCard from "../ui/FeatureCard";
 
 const Features = () => {
   const items = [
     {
-      icon: <ShieldPlus className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
+      icon: <LuShieldPlus className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
       title: "Secure Records",
       description:
         "End-to-end encrypted medical histories accessible only by you and your authorized healthcare providers.",
     },
     {
-      icon: <ClipboardList className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
+      icon: <LuClipboardList className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
       title: "Instant Prescriptions",
       description:
         "Digital prescriptions routed directly to your preferred pharmacy with automated refill tracking.",
     },
     {
-      icon: <BadgeCheck className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
+      icon: <LuBadgeCheck className="h-6 w-6 text-[hsl(var(--color-primary))]" />,
       title: "Verified Professionals",
       description:
         "Connect with a curated network of board-certified specialists available for telehealth or in-person visits.",

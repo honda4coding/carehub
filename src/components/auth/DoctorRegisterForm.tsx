@@ -6,6 +6,7 @@ import { DoctorFormValues } from '@/types/doctor';
 import { useState } from 'react';
 import { MdPerson, MdEmail, MdPhone, MdLock, MdMedicalServices, MdBadge, MdLocationOn } from 'react-icons/md';
 import { FaIdCard, FaFileUpload } from 'react-icons/fa';
+import { ImSpinner2 } from 'react-icons/im';
 
 const specialties = [
   { value: "general_practice", label: "General Practice" },
@@ -35,12 +36,18 @@ export default function DoctorRegisterForm() {
       address: '',
     },
     validationSchema: doctorRegisterSchema,
+    /**
+     * MEMBER 6 (Logic Engineer) - TASK: Doctor Registration
+     * ----------------------------------------------------
+     * 1. Connect this form to the Doctor Signup API.
+     * 2. Handle file uploads and data submission to the backend.
+     * 3. On success, show a confirmation message for pending approval.
+     */
     onSubmit: async (values) => {
       setLoading(true);
-      console.log('Doctor Data:', values);
+      // TODO: Implement API call with FormData here
       setTimeout(() => {
         setLoading(false);
-        alert('Doctor registered successfully!');
       }, 1000);
     },
   });
@@ -229,10 +236,7 @@ export default function DoctorRegisterForm() {
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-            </svg>
+            <ImSpinner2 className="animate-spin h-5 w-5 text-white" />
             Processing...
           </span>
         ) : (

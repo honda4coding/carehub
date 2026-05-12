@@ -1,40 +1,66 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import * as Yup from "yup";
+import { useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { HiOutlineMail, HiOutlineLockClosed, HiOutlineEye, HiOutlineEyeOff, HiShieldCheck } from "react-icons/hi";
+import { HiOutlineArrowRight } from "react-icons/hi2";
+import { ImSpinner2 } from "react-icons/im";
+import RoleSelector from "./RoleSelector";
+import { loginSchema, loginInitialValues, type LoginValues } from "../schemas/loginSchema";
 
-// ========== Validation Schema ==========
-const loginSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
 
-const initialValues = {
-  email: "",
-  password: "",
-};
 
-type LoginValues = typeof initialValues;
+
+
 
 // ========== Component ==========
 export const LoginForm = () => {
-  const [role, setRole] = useState<"patient" | "doctor">("patient");
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const roleFromUrl = searchParams.get("role");
+  const { login } = useAuth(); // Get login function from AuthContext
+
+  const [role, setRole] = useState<"patient" | "doctor">(roleFromUrl === "patient" ? "patient" : "doctor");
   const [showPassword, setShowPassword] = useState(false);
 
+  useEffect(() => {
+    if (roleFromUrl === "patient" || roleFromUrl === "doctor") {
+      setRole(roleFromUrl as "doctor" | "patient");
+    }
+  }, [roleFromUrl]);
+
+  const handleRoleChange = (newRole: "doctor" | "patient") => {
+    setRole(newRole);
+    router.push(`/login?role=${newRole}`, { scroll: false });
+  };
+
+  /**
+   * MEMBER 5 (Logic Engineer) - TASK: Login Integration
+   * ---------------------------------------------------
+   * 1. Connect this form to your backend Login API.
+   * 2. Handle the authentication response and update the global Auth state.
+   * 3. Implement error handling for invalid credentials.
+   */
   const handleSubmit = async (
     values: LoginValues,
     { setSubmitting }: FormikHelpers<LoginValues>
   ) => {
     try {
-      console.log("Login:", values, "Role:", role);
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // MEMBER 5 (Logic Engineer) - SIMULATED LOGIN
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Call the login function which sets cookies and redirects
+      login("simulated_auth_token", role, {
+        id: "mock_id_123",
+        email: values.email,
+        name: role.charAt(0).toUpperCase() + role.slice(1) + " Test User",
+      });
     } catch (error) {
-      console.error(error);
+      console.error("Login Error:", error);
     } finally {
       setSubmitting(false);
     }
@@ -43,85 +69,14 @@ export const LoginForm = () => {
   return (
     <div className="w-full">
       <div
-        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40"
+        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40 shadow-xl"
         style={{
           backdropFilter: "blur(24px)",
           background: "rgba(255, 255, 255, 0.7)",
         }}
       >
         {/* ---- Role Selector ---- */}
-        <div className="mb-10">
-          <label className="block text-center text-xs font-bold tracking-widest uppercase text-[hsl(var(--color-text-muted))] mb-6">
-            Identify Your Role
-          </label>
-          <div
-            className="flex p-1.5 rounded-full w-full max-w-sm mx-auto"
-            style={{ backgroundColor: "hsl(var(--color-bg-soft))" }}
-          >
-                {/* Doctor Button */}
-                <button
-                  type="button"
-                  onClick={() => setRole("doctor")}
-                  className="flex-1 py-3 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300"
-                  style={
-                    role === "doctor"
-                      ? {
-                          background: "white",
-                          color: "hsl(var(--color-primary-strong))",
-                          boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-                        }
-                      : { color: "hsl(var(--color-text-muted))" }
-                  }
-                >
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                    />
-                  </svg>
-                  Doctor
-                </button>
-                
-            {/* Patient Button */}
-            <button
-              type="button"
-              onClick={() => setRole("patient")}
-              className="flex-1 py-3 px-6 rounded-full font-bold text-sm flex items-center justify-center gap-2 transition-all duration-300"
-              style={
-                role === "patient"
-                  ? {
-                      background: "white",
-                      color: "hsl(var(--color-primary-strong))",
-                      boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-                    }
-                  : { color: "hsl(var(--color-text-muted))" }
-              }
-            >
-              <svg
-                className="w-4 h-4"
-                fill={role === "patient" ? "currentColor" : "none"}
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              Patient
-            </button>
-
-          </div>
-        </div>
+        <RoleSelector selectedRole={role} onRoleChange={handleRoleChange} />
 
         {/* ---- Form Header ---- */}
         <div className="text-center mb-8">
@@ -142,9 +97,10 @@ export const LoginForm = () => {
 
         {/* ---- Formik Form ---- */}
         <Formik
-          initialValues={initialValues}
+          initialValues={loginInitialValues}
           validationSchema={loginSchema}
           onSubmit={handleSubmit}
+          enableReinitialize={true}
         >
           {({ errors, touched, isSubmitting }) => (
             <Form className="space-y-5">
@@ -157,29 +113,17 @@ export const LoginForm = () => {
                    Email
                 </label>
                 <div className="relative">
-                  <svg
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
+                  <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="email"
                     type="email"
                     placeholder="name@example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
                     style={{
                       backgroundColor:
                         errors.email && touched.email
                           ? "#fff5f5"
-                          : "hsl(var(--color-bg-soft))",
+                          : "white",
                       border:
                         errors.email && touched.email
                           ? "1.5px solid #fc8181"
@@ -204,29 +148,17 @@ export const LoginForm = () => {
                   Password
                 </label>
                 <div className="relative">
-                  <svg
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                    />
-                  </svg>
+                  <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
-                    className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
+                    className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
                     style={{
                       backgroundColor:
                         errors.password && touched.password
                           ? "#fff5f5"
-                          : "hsl(var(--color-bg-soft))",
+                          : "white",
                       border:
                         errors.password && touched.password
                           ? "1.5px solid #fc8181"
@@ -238,41 +170,11 @@ export const LoginForm = () => {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors"
-                    style={{}}
                   >
                     {showPassword ? (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
+                      <HiOutlineEyeOff className="w-5 h-5" />
                     ) : (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="1.8"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
+                      <HiOutlineEye className="w-5 h-5" />
                     )}
                   </button>
                 </div>
@@ -322,43 +224,13 @@ export const LoginForm = () => {
                 >
                   {isSubmitting ? (
                     <>
-                      <svg
-                        className="w-5 h-5 animate-spin"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8z"
-                        />
-                      </svg>
+                      <ImSpinner2 className="w-5 h-5 animate-spin" />
                       Verifying...
                     </>
                   ) : (
                     <>
                       Enter Sanctuary
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth="2.5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13 7l5 5m0 0l-5 5m5-5H6"
-                        />
-                      </svg>
+                      <HiOutlineArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -368,36 +240,26 @@ export const LoginForm = () => {
         </Formik>
 
         {/* Footer */}
-        <div className="mt-10 pt-8 border-t border-slate-200/50 text-center">
+        <div className="mt-10 pt-8 border-t border-slate-200/50 text-center space-y-4">
           <p className="text-sm" style={{ color: "hsl(var(--color-text-muted))" }}>
             New to Carehub?{" "}
-            <a
-              href="#"
+            <Link
+              href="/register"
               className="font-bold hover:underline underline-offset-4 transition-all"
               style={{ color: "hsl(var(--color-primary-strong))" }}
             >
               Request Enrollment
-            </a>
+            </Link>
           </p>
         </div>
       </div>
 
       {/* Security Tag */}
       <div className="mt-6 flex items-center justify-center gap-2 opacity-60">
-        <svg
+        <HiShieldCheck
           className="w-4 h-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth="2"
           style={{ color: "hsl(var(--color-text-muted))" }}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-          />
-        </svg>
+        />
         <span
           className="text-[10px] uppercase font-bold tracking-[0.2em]"
           style={{ color: "hsl(var(--color-text-muted))" }}
@@ -408,3 +270,4 @@ export const LoginForm = () => {
     </div>
   );
 };
+
