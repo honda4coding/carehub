@@ -6,6 +6,7 @@ import { PatientFormValues } from '@/types/patient';
 import { useState } from 'react';
 import { MdPerson, MdEmail, MdPhone, MdLock, MdCake, MdWc, MdBloodtype, MdLocationOn } from 'react-icons/md';
 import { ImSpinner2 } from 'react-icons/im';
+import axios from "axios";
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
@@ -32,15 +33,44 @@ export default function PatientRegisterForm() {
      * 2. Send patient data and handle the backend response.
      * 3. On success, log the user in and redirect to their dashboard.
      */
+  //   onSubmit: async (values) => {
+  //     setLoading(true);
+  //     // TODO: Implement API call here
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 1000);
+  //   },
+  // });
     onSubmit: async (values) => {
       setLoading(true);
-      // TODO: Implement API call here
-      setTimeout(() => {
-        setLoading(false);
-      }, 1000);
+
+      try {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/users/signup`,
+          {
+            ...values,
+            role: "patient"
+          }
+        );
+
+        alert("signup success");
+
+      } catch (error: any) {
+        console.log(error.response?.data);
+        alert(
+          error.response?.data?.message ||
+          "something went wrong"
+        );
+
+      } finally {
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
+      }
     },
   });
-
+  
+  
   const inputClasses = "w-full pl-10 pr-4 py-2 border border-[hsl(var(--color-text-muted)/0.3)] rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-secondary))] focus:border-[hsl(var(--color-secondary))] transition-all outline-none bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] placeholder-[hsl(var(--color-text-muted)/0.6)]";
   const labelClasses = "block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5 ml-1";
   const iconClasses = "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]";

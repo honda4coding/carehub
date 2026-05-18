@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { MdPerson, MdEmail, MdPhone, MdLock, MdMedicalServices, MdBadge, MdLocationOn } from 'react-icons/md';
 import { FaIdCard, FaFileUpload } from 'react-icons/fa';
 import { ImSpinner2 } from 'react-icons/im';
-
+import axios from "axios";
 const specialties = [
   { value: "general_practice", label: "General Practice" },
   { value: "pediatrics", label: "Pediatrics" },
@@ -43,15 +43,63 @@ export default function DoctorRegisterForm() {
      * 2. Handle file uploads and data submission to the backend.
      * 3. On success, show a confirmation message for pending approval.
      */
-    onSubmit: async (values) => {
-      setLoading(true);
-      // TODO: Implement API call with FormData here
+  //   onSubmit: async (values) => {
+  //     setLoading(true);
+  //     // TODO: Implement API call with FormData here
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 1000);
+  //   },
+  // });
+
+  onSubmit: async (values) => {
+    setLoading(true);
+
+    try {
+      const formData = new FormData();
+
+      formData.append("fullName", values.fullName);
+      formData.append("email", values.email);
+      formData.append("phoneNumber", values.phoneNumber);
+      formData.append("password", values.password);
+      formData.append("confirmPassword", values.confirmPassword);
+      formData.append("specialty", values.specialty);
+      formData.append("syndicateId", values.syndicateId.toString());
+      formData.append("role", "doctor");
+
+      if (values.address) {
+        formData.append("address", values.address);
+      }
+
+      if (values.licenseImage) {
+        formData.append("licenseImage", values.licenseImage);
+      }
+
+      if (values.nationalId) {
+        formData.append("nationalId", values.nationalId);
+      }
+
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/signup`,
+        formData
+      );
+
+      alert("signup success");
+
+    } catch (error: any) {
+      console.log(error.response?.data);
+      alert(
+        error.response?.data?.message ||
+        "something went wrong"
+      );
+
+    } finally {
       setTimeout(() => {
         setLoading(false);
       }, 1000);
-    },
-  });
-
+    }
+  },
+});
   const inputClasses = "w-full pl-10 pr-4 py-2 border border-[hsl(var(--color-text-muted)/0.3)] rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] transition-all outline-none bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] placeholder-[hsl(var(--color-text-muted)/0.6)]";
   const labelClasses = "block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5 ml-1";
   const iconClasses = "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]";
