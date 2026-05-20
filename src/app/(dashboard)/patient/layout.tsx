@@ -1,8 +1,5 @@
-export default function PatientLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="min-h-screen bg-slate-50">
-      <nav className="bg-blue-800 text-white p-4">Patient Dashboard Header</nav>
-      <main className="p-8">{children}</main>
-    </div>
-  );
+import DashboardShell from "@/components/global/DashboardShell";
+
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  return <DashboardShell role="patient">{children}</DashboardShell>;
 }
