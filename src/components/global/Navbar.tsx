@@ -129,14 +129,47 @@ export default function Navbar() {
         <div className="md:hidden bg-[hsl(var(--color-bg-surface))] border-t border-[hsl(var(--color-text-muted)/0.1)] animate-in slide-in-from-top duration-300">
           <div className="px-4 pt-2 pb-6 space-y-2">
             {links.map((link, index) => (
-              <Link key={index} href={link.href} className="block px-4 py-3 rounded-xl font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-primary))] transition-all">
+              <Link
+                key={index}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className="block px-4 py-3 rounded-xl font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-primary))] transition-all"
+              >
                 {link.label}
               </Link>
             ))}
+            {!isLoading && !isAuthenticated && (
+              <div className="pt-4 border-t border-[hsl(var(--color-text-muted)/0.1)] space-y-3">
+                <Link
+                  href="/login?role=doctor"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center text-xs font-bold py-2.5 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
+                >
+                  Doctor Login
+                </Link>
+                <Link
+                  href="/login?role=patient"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center text-xs font-bold py-2.5 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
+                >
+                  Patient Login
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setIsOpen(false)}
+                  className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl shadow-sm hover:opacity-90 active:scale-95 transition-all"
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
             {isAuthenticated && (
               <button 
-                onClick={logout}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-red-50 text-red-600 py-3 rounded-xl font-bold"
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="w-full mt-4 flex items-center justify-center gap-2 bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-colors"
               >
                 <FaSignOutAlt /> Sign Out
               </button>
