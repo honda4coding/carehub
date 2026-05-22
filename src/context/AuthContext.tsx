@@ -47,8 +47,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(null);
     setUser(null);
 
-    Cookies.remove(AUTH_COOKIE_NAME);
-    Cookies.remove(ROLE_COOKIE_NAME);
+    Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
+    Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
     localStorage.removeItem(USER_STORAGE_KEY);
 
     router.push('/login');

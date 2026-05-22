@@ -38,7 +38,7 @@ export function middleware(request: NextRequest) {
 // Middleware path configuration
 export const config = {
   matcher: [
-    
+    '/admin/:path*',
     '/doctor/:path*',
     '/patient/:path*',
     '/login',
