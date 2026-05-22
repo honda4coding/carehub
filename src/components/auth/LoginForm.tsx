@@ -12,10 +12,6 @@ import RoleSelector from "./RoleSelector";
 import { loginSchema, loginInitialValues, type LoginValues } from "../schemas/loginSchema";
 
 
-
-
-
-
 // ========== Component ==========
 export const LoginForm = () => {
   const searchParams = useSearchParams();
@@ -45,26 +41,48 @@ export const LoginForm = () => {
    * 3. Implement error handling for invalid credentials.
    */
   const handleSubmit = async (
-    values: LoginValues,
-    { setSubmitting }: FormikHelpers<LoginValues>
+   values: LoginValues,
+  { setSubmitting, setStatus }: FormikHelpers<LoginValues>
   ) => {
     try {
       // MEMBER 5 (Logic Engineer) - SIMULATED LOGIN
       // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
       // Call the login function which sets cookies and redirects
-      login("simulated_auth_token", role, {
-        id: "mock_id_123",
+
+      const response = await fetch("http://localhost:3002/users/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         email: values.email,
-        name: role.charAt(0).toUpperCase() + role.slice(1) + " Test User",
-      });
-    } catch (error) {
-      console.error("Login Error:", error);
-    } finally {
-      setSubmitting(false);
+        password: values.password,
+    
+      }),
+    });
+
+     const data = await response.json();
+
+ // 2️⃣ Handle error response from server
+    if (!response.ok) {
+      setStatus(data.message || "Invalid credentials. Please try again.");
+      return;
     }
-  };
+
+    // 3️⃣ Update global Auth state (sets cookies + redirects)
+    login(data.data.access_token, role, {
+      id: data.data.id,
+      email: values.email,
+      name: values.email,
+    });
+
+  } catch (error) {
+    // Network error or server down
+    setStatus("Something went wrong. Please check your connection.");
+    console.error("Login Error:", error);
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   return (
     <div className="w-full">
@@ -102,8 +120,15 @@ export const LoginForm = () => {
           onSubmit={handleSubmit}
           enableReinitialize={true}
         >
-          {({ errors, touched, isSubmitting }) => (
+          {({ errors, touched, isSubmitting,status }) => (
             <Form className="space-y-5">
+
+          {status && (
+              <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center">
+                {status}
+              </div>
+            )}
+
               {/* Email Field */}
               <div className="space-y-1.5">
                 <label
