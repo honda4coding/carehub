@@ -1,103 +1,103 @@
-/* src/app/globals.css */
-@import "tailwindcss";
+  /* src/app/globals.css */
+  @import "tailwindcss";
 
 
-  /* --color-primary: #46BFE5;
-  --color-secondary: #F472B6;
-  --color-bg-white: #FFFFFF;
-  --color-bg-surface: #F8FAFC;
-  --color-text-dark: #083344; */
+    /* --color-primary: #46BFE5;
+    --color-secondary: #F472B6;
+    --color-bg-white: #FFFFFF;
+    --color-bg-surface: #F8FAFC;
+    --color-text-dark: #083344; */
 
-  @layer base {
-  :root {
+    @layer base {
+    :root {
 
-    /* Backgrounds */
-  --color-bg: 210 40% 98%; /* light app background */
-  --color-bg-surface: 0 0% 100%; /* cards / sections */
+      /* Backgrounds */
+    --color-bg: 210 40% 98%; /* light app background */
+    --color-bg-surface: 0 0% 100%; /* cards / sections */
 
-  /* Text */
-  --color-text: 222 47% 11%; /* main text */
-  --color-text-muted: 215 16% 47%; /* secondary text */
+    /* Text */
+    --color-text: 222 47% 11%; /* main text */
+    --color-text-muted: 215 16% 47%; /* secondary text */
 
-  /* Primary (from #46BFE5 → cyan/teal system) */
-  --color-primary: 195 75% 58%; /* main */
-  --color-primary-strong: 195 75% 45%; /* hover / active */
+    /* Primary (from #46BFE5 → cyan/teal system) */
+    --color-primary: 195 75% 58%; /* main */
+    --color-primary-strong: 195 75% 45%; /* hover / active */
 
-  /* Secondary (from #F472B6 → pink system) */
-  --color-secondary: 330 80% 70%; /* soft pink */
-  --color-secondary-strong: 330 75% 60%; /* stronger pink */
+    /* Secondary (from #F472B6 → pink system) */
+    --color-secondary: 330 80% 70%; /* soft pink */
+    --color-secondary-strong: 330 75% 60%; /* stronger pink */
 
-  /* Background variants */
-  --color-bg-white: 0 0% 100%; /* pure white */
-  --color-bg-soft: 210 40% 96%; /* subtle gray background */
+    /* Background variants */
+    --color-bg-white: 0 0% 100%; /* pure white */
+    --color-bg-soft: 210 40% 96%; /* subtle gray background */
 
-  /* Badges / highlights */
-  --color-badge-bg: 195 70% 94%; /* light primary tint */
-  --color-badge-text: 195 75% 30%; /* dark primary text */
+    /* Badges / highlights */
+    --color-badge-bg: 195 70% 94%; /* light primary tint */
+    --color-badge-text: 195 75% 30%; /* dark primary text */
 
-  /* Status colors (dashboard) */
-  --color-success: 142 60% 35%;
-  --color-success-bg: 142 60% 94%;
-  --color-warning: 38 90% 35%;
-  --color-warning-bg: 38 90% 93%;
-  --color-danger: 0 70% 45%;
-  --color-danger-bg: 0 70% 95%;
+    /* Status colors (dashboard) */
+    --color-success: 142 60% 35%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 35%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 70% 45%;
+    --color-danger-bg: 0 70% 95%;
 
-  /* Borders */
-  --color-border: 215 16% 47% / 0.12;
-  --color-border-soft: 215 16% 47% / 0.07;
+    /* Borders */
+    --color-border: 215 16% 47% / 0.12;
+    --color-border-soft: 215 16% 47% / 0.07;
+    }
+
+    body {
+      background-color: hsl(var(--color-bg));
+      color: hsl(var(--color-text));
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
   }
 
-  body {
-    background-color: hsl(var(--color-bg));
-    color: hsl(var(--color-text));
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  }
-}
 
+  @layer utilities {
+    .bg-primary {
+      background-color: hsl(var(--color-primary));
+    }
+    
+    .bg-secondary {
+      background-color: hsl(var(--color-secondary));
+    }
+    
+    .text-primary {
+      color: hsl(var(--color-primary));
+    }
+    
+    .text-secondary {
+      color: hsl(var(--color-secondary));
+    }
 
-@layer utilities {
-  .bg-primary {
-    background-color: hsl(var(--color-primary));
-  }
-  
-  .bg-secondary {
-    background-color: hsl(var(--color-secondary));
-  }
-  
-  .text-primary {
-    color: hsl(var(--color-primary));
-  }
-  
-  .text-secondary {
-    color: hsl(var(--color-secondary));
-  }
+    .bg-gradient-brand {
+      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+    }
+    
+    .bg-gradient-doctor {
+      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-primary)));
+    }
+    
+    .bg-gradient-patient {
+      background-image: linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)));
+    }
+    
+    .text-gradient {
+      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+      background-clip: text;
+      -webkit-background-clip: text; 
+      color: transparent;
+    }
 
-  .bg-gradient-brand {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+    
+    .border-primary {
+      border-color: var(--color-primary);
+    }
+    
+    .focus\:ring-primary:focus {
+      --tw-ring-color: var(--color-primary);
+    }
   }
-  
-  .bg-gradient-doctor {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-primary)));
-  }
-  
-  .bg-gradient-patient {
-    background-image: linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)));
-  }
-  
-  .text-gradient {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
-    background-clip: text;
-    -webkit-background-clip: text; 
-    color: transparent;
-  }
-
-  
-  .border-primary {
-    border-color: var(--color-primary);
-  }
-  
-  .focus\:ring-primary:focus {
-    --tw-ring-color: var(--color-primary);
-  }
-}
