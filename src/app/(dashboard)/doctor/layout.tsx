@@ -1,5 +1,9 @@
 import DashboardShell from "@/components/global/DashboardShell";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return <DashboardShell role="doctor">{children}</DashboardShell>;
 }
