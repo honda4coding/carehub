@@ -100,6 +100,21 @@ const ENCOUNTERS: Encounter[] = [
 ];
 
 export default function PatientDashboard() {
+  /**
+   * TODO: BAKRI (Task 2: [Patient] Live Core Metrics & Timeline)
+   * 
+   * 1. Trigger an Axios GET request to retrieve the patient profile:
+   *    - Endpoint: GET /patient/profile (or /users/profile)
+   *    - Fetch variables: bloodType, chronicDiseases, allergies, fullName, age, gender, address, phoneNumber.
+   *    - Bind to `profile` state.
+   * 2. Replace hardcoded ENCOUNTERS array with dynamic API requests:
+   *    - Fetch Encounters from: GET /medical-history/:patientId
+   *    - Fetch Prescriptions from: GET /prescrption/patient/:patientId
+   *    - Chronologically merge them into a single sorted timeline representation.
+   * 3. Handle asynchronous states:
+   *    - Render loading spinners / pulse skeletons while fetching.
+   *    - Handle Axios error responses gracefully with toast alerts.
+   */
   const [profile, setProfile] = useState<HealthHubProfile>(INITIAL_PROFILE);
   const [searchTerm, setSearchTerm] = useState("");
 
