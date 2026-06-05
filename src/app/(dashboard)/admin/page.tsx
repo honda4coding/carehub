@@ -56,6 +56,22 @@ const statusConfig: Record<ApprovalStatus, { style: string; label: string; icon:
 };
 
 export default function AdminDashboard() {
+  /**
+   * TODO: NERMEN (Task 6: [Admin] Registration Approvals & RBAC + License Pop-up Viewer)
+   * 
+   * 1. Registration approvals grid:
+   *    - Replace `INITIAL_REQUESTS` mock arrays with a dynamic Axios GET fetch:
+   *      - Route: GET /admin/doctors/pending
+   *    - Wire "Approve" and "Reject" buttons to trigger PATCH requests:
+   *      - Route: PATCH /admin/doctors/:id/approve
+   *      - Route: PATCH /admin/doctors/:id/reject
+   * 2. UI submission feedback:
+   *    - Disable action buttons during active request processing to prevent double-submissions.
+   * 3. [New Feature] License Document Pop-up Viewer Modal:
+   *    - Create a generic reusable modal component `<LicenseViewerModal isOpen={...} onClose={...} fileUrl={...} />`.
+   *    - When clicking "View" / "View License" on a row, pass the doctor's syndicate license image/pdf secure_url to open the modal.
+   *    - Display the license inside the viewport (using `<img>` or iframe for PDFs) for inspection.
+   */
   const [requests, setRequests] = useState<DoctorRequest[]>(INITIAL_REQUESTS);
   const [filter, setFilter] = useState("");
 

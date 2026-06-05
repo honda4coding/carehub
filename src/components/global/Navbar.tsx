@@ -4,10 +4,15 @@ import { useState } from "react";
 import { FaBriefcaseMedical, FaSignOutAlt } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useAuth } from "@/context/AuthContext";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { user, role, isAuthenticated, logout, isLoading } = useAuth();
+
+  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient");
+  if (isDashboard) return null;
 
   const navLinkClasses = "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-all duration-300";
 

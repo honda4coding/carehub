@@ -169,6 +169,21 @@ const statusConfig: Record<
 };
 
 export default function DoctorDashboard() {
+  /**
+   * TODO: MOHANAD (Task 5: [Doctor] Patient Discovery Lookup, OTP Handshake & Consultation Workspace)
+   * 
+   * 1. Patient Lookup Search:
+   *    - Replace client-side filtering on `appointments` / patients with an Axios API query search.
+   *    - Search bar triggers: GET /users/search-patients?query=searchTerm
+   * 2. Permission Check / Handshake Status Handling:
+   *    - Check if doctor has an active consent for the searched patient.
+   *    - If permission is Active: Display a green button/link to proceed to the consultation workspace `/doctor/encounter/[patientId]`.
+   *    - If permission is Expired/None: Block details view and display a "Request Profile Access" button.
+   * 3. OTP Permission Modal Overlay:
+   *    - Clicking "Request Profile Access" calls POST /consent/request to send a 6-digit OTP to the patient's phone/email.
+   *    - Open an overlay modal window that lets the doctor input the 6-digit OTP provided by the patient.
+   *    - Submitting OTP calls POST /consent/verify. On success, unlock and navigate to `/doctor/encounter/[patientId]`.
+   */
   const [appointments] =
     useState<Appointment[]>(INITIAL_APPOINTMENTS);
 
