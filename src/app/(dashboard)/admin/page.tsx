@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoIosHelpCircleOutline } from "react-icons/io";
 import {
   LuUsers, LuStethoscope, LuCalendarDays, LuClock,
   LuBell, LuSearch,
   LuCheck, LuX, LuEye, LuTriangleAlert, LuUserPlus, LuUserX,
 } from "react-icons/lu";
+import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
+import { useAuth } from "@/context/AuthContext";
 
 type ApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -19,6 +21,7 @@ interface DoctorRequest {
   status: ApprovalStatus;
   initials: string;
   avatarStyle: string;
+  licenseUrl?: string;
 }
 
 const STATS = [
@@ -41,13 +44,7 @@ const ACTIVITY = [
   { icon: <LuUserX />,         style: "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]",        text: "Doctor account deactivated — Dr. Mona S.",  time: "Yesterday · Pediatrics" },
 ];
 
-const INITIAL_REQUESTS: DoctorRequest[] = [
-  { id: 1, name: "Mohaned Ahmed",     email: "mohaned.ahmed@email.com", specialty: "Cardiology",  submitted: "May 12, 2026", status: "pending",  initials: "SA", avatarStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" },
-  { id: 2, name: "Hassan", email: "m.hassan@email.com",   specialty: "Neurology",   submitted: "May 11, 2026", status: "pending",  initials: "MH", avatarStyle: "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]" },
-  { id: 3, name: "Dalia",   email: "dalia.f@email.com",    specialty: "Dermatology", submitted: "May 10, 2026", status: "approved", initials: "LF", avatarStyle: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" },
-  { id: 4, name: "Nermeen",  email: "nermeen@email.com",   specialty: "Pediatrics",  submitted: "May 9, 2026",  status: "rejected", initials: "KR", avatarStyle: "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]" },
-  { id: 5, name: "Taha",    email: "taha.d@email.com",     specialty: "Orthopedics", submitted: "May 8, 2026",  status: "pending",  initials: "ND", avatarStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]" },
-];
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const statusConfig: Record<ApprovalStatus, { style: string; label: string; icon: React.ReactNode }> = {
   pending:  { style: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",  label: "Pending",  icon: <LuClock className="text-[10px]" /> },
@@ -72,12 +69,59 @@ export default function AdminDashboard() {
    *    - When clicking "View" / "View License" on a row, pass the doctor's syndicate license image/pdf secure_url to open the modal.
    *    - Display the license inside the viewport (using `<img>` or iframe for PDFs) for inspection.
    */
-  const [requests, setRequests] = useState<DoctorRequest[]>(INITIAL_REQUESTS);
+  
+  const [requests, setRequests] = useState<DoctorRequest[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [actionLoadingId, setActionLoadingId] = useState<number | null>(null);
   const [filter, setFilter] = useState("");
+  const { token } = useAuth();
+  
+useEffect(() => {
+  const fetchPending = async () => {
+    try {
+      const res = await fetch(`${BASE_URL}/admin/doctors/pending`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const json = await res.json();
+      setRequests(json.data || []);
+    } catch (err) {
+      console.error("Failed to fetch pending doctors", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const updateStatus = (id: number, status: ApprovalStatus) =>
-    setRequests((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
+  if (token) fetchPending(); 
+}, [token]); 
 
+const [licenseModal, setLicenseModal] = useState<{ open: boolean; url: string | null }>({
+  open: false,
+  url: null,
+});
+
+const handleAction = async (id: number, action: "approve" | "reject") => {
+  setActionLoadingId(id);
+  try {
+    const res = await fetch(`${BASE_URL}/admin/doctors/${id}/${action}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${token}`,  // ← السطر الوحيد الجديد
+      },
+    });
+    if (!res.ok) throw new Error("Request failed");
+    setRequests((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, status: action === "approve" ? "approved" : "rejected" } : r
+      )
+    );
+  } catch (err) {
+    console.error(`Failed to ${action} doctor`, err);
+  } finally {
+    setActionLoadingId(null);
+  }
+};
   const filtered = requests.filter(
     (r) =>
       r.name.toLowerCase().includes(filter.toLowerCase()) ||
@@ -85,6 +129,7 @@ export default function AdminDashboard() {
   );
 
   return (
+    <>
     <div className="flex flex-col flex-1 min-h-screen">
 
       {/* ── Topbar ── */}
@@ -260,22 +305,27 @@ export default function AdminDashboard() {
                         <div className="flex items-center gap-1.5 justify-end">
                           {req.status === "pending" ? (
                             <>
-                              <button
-                                onClick={() => updateStatus(req.id, "approved")}
-                                className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => updateStatus(req.id, "rejected")}
-                                className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all whitespace-nowrap"
-                              >
-                                Reject
-                              </button>
+                                <button
+                                  onClick={() => handleAction(req.id, "approve")}
+                                  disabled={actionLoadingId === req.id}
+                                  className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {actionLoadingId === req.id ? "..." : "Approve"}
+                                </button>
+                                <button
+                                  onClick={() => handleAction(req.id, "reject")}
+                                  disabled={actionLoadingId === req.id}
+                                  className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  {actionLoadingId === req.id ? "..." : "Reject"}
+                                </button>
                             </>
                           ) : (
-                            <button className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all flex items-center gap-1">
-                              <LuEye className="text-[11px]" /> View
+                            <button
+                              onClick={() => setLicenseModal({ open: true, url: req.licenseUrl ?? null })}
+                              className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all flex items-center gap-1"
+                            >
+                              <LuEye className="text-[11px]" /> View License
                             </button>
                           )}
                         </div>
@@ -289,5 +339,12 @@ export default function AdminDashboard() {
         </div>
       </main>
     </div>
+
+    <LicenseViewerModal
+      isOpen={licenseModal.open}
+      onClose={() => setLicenseModal({ open: false, url: null })}
+      fileUrl={licenseModal.url}
+    />
+    </>
   );
 }

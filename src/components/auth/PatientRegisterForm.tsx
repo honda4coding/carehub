@@ -4,11 +4,22 @@ import { useFormik } from 'formik';
 import { patientRegisterSchema } from '@/components/schemas/patientRegisterSchema';
 import { PatientFormValues } from '@/types/patient';
 import { useState } from 'react';
-import { MdPerson, MdEmail, MdPhone, MdLock, MdCake, MdWc, MdBloodtype, MdLocationOn } from 'react-icons/md';
+import { MdPerson, MdEmail, MdPhone, MdLock, MdCake, MdBloodtype, MdLocationOn } from 'react-icons/md';
 import { ImSpinner2 } from 'react-icons/im';
-import axios from "axios";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
+async function parseErrorMessage(res: Response): Promise<string> {
+  const raw = await res.text();
+  try {
+    const json = JSON.parse(raw);
+    return json.message || "Something went wrong";
+  } catch {
+    return raw || "Something went wrong";
+  }
+}
 
 export default function PatientRegisterForm() {
   const [loading, setLoading] = useState(false);
@@ -26,51 +37,30 @@ export default function PatientRegisterForm() {
       address: '',
     },
     validationSchema: patientRegisterSchema,
-    /**
-     * MEMBER 6 (Logic Engineer) - TASK: Patient Registration
-     * ----------------------------------------------------
-     * 1. Connect this form to the Patient Signup API.
-     * 2. Send patient data and handle the backend response.
-     * 3. On success, log the user in and redirect to their dashboard.
-     */
-  //   onSubmit: async (values) => {
-  //     setLoading(true);
-  //     // TODO: Implement API call here
-  //     setTimeout(() => {
-  //       setLoading(false);
-  //     }, 1000);
-  //   },
-  // });
     onSubmit: async (values) => {
       setLoading(true);
-
       try {
-        await axios.post(
-          `${process.env.NEXT_PUBLIC_API_URL}/users/signup`,
-          {
-            ...values,
-            role: "patient"
-          }
-        );
+        const res = await fetch(`${BASE_URL}/users/signup`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...values, role: "patient" }),
+        });
 
-        alert("signup success");
+        if (!res.ok) {
+          const message = await parseErrorMessage(res);
+          throw new Error(message);
+        }
 
-      } catch (error: any) {
-        console.log(error.response?.data);
-        alert(
-          error.response?.data?.message ||
-          "something went wrong"
-        );
+        alert("Registration successful!");
 
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "Something went wrong");
       } finally {
-        setTimeout(() => {
-          setLoading(false);
-        }, 1000);
+        setLoading(false);
       }
     },
   });
-  
-  
+
   const inputClasses = "w-full pl-10 pr-4 py-2 border border-[hsl(var(--color-text-muted)/0.3)] rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-secondary))] focus:border-[hsl(var(--color-secondary))] transition-all outline-none bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] placeholder-[hsl(var(--color-text-muted)/0.6)]";
   const labelClasses = "block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5 ml-1";
   const iconClasses = "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]";
@@ -79,17 +69,10 @@ export default function PatientRegisterForm() {
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Full Name */}
       <div>
-        <label className={labelClasses}>
-          Full Name <span className="text-red-500">*</span>
-        </label>
+        <label className={labelClasses}>Full Name <span className="text-red-500">*</span></label>
         <div className="relative">
           <MdPerson className={iconClasses} />
-          <input
-            type="text"
-            {...formik.getFieldProps('fullName')}
-            className={inputClasses}
-            placeholder="Enter full name"
-          />
+          <input type="text" {...formik.getFieldProps('fullName')} className={inputClasses} placeholder="Enter full name" />
         </div>
         {formik.touched.fullName && formik.errors.fullName && (
           <p className="text-red-500 text-xs mt-1 ml-1">{formik.errors.fullName}</p>
@@ -98,24 +81,17 @@ export default function PatientRegisterForm() {
 
       {/* Email */}
       <div>
-        <label className={labelClasses}>
-          Email <span className="text-red-500">*</span>
-        </label>
+        <label className={labelClasses}>Email <span className="text-red-500">*</span></label>
         <div className="relative">
           <MdEmail className={iconClasses} />
-          <input
-            type="email"
-            {...formik.getFieldProps('email')}
-            className={inputClasses}
-            placeholder="patient@example.com"
-          />
+          <input type="email" {...formik.getFieldProps('email')} className={inputClasses} placeholder="patient@example.com" />
         </div>
         {formik.touched.email && formik.errors.email && (
           <p className="text-red-500 text-xs mt-1 ml-1">{formik.errors.email}</p>
         )}
       </div>
 
-      {/* Phone & Age - Grid for space efficiency */}
+      {/* Phone & Age */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label className={labelClasses}>Phone <span className="text-red-500">*</span></label>
@@ -141,21 +117,11 @@ export default function PatientRegisterForm() {
           <label className={labelClasses}>Gender <span className="text-red-500">*</span></label>
           <div className="flex gap-6 py-2">
             <label className="flex items-center gap-2 cursor-pointer group">
-              <input
-                type="radio"
-                {...formik.getFieldProps('gender')}
-                value="male"
-                className="w-4 h-4 accent-[hsl(var(--color-secondary))] cursor-pointer"
-              />
+              <input type="radio" {...formik.getFieldProps('gender')} value="male" className="w-4 h-4 accent-[hsl(var(--color-secondary))] cursor-pointer" />
               <span className="text-sm font-medium text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-secondary))] transition-colors">Male</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer group">
-              <input
-                type="radio"
-                {...formik.getFieldProps('gender')}
-                value="female"
-                className="w-4 h-4 accent-[hsl(var(--color-secondary))] cursor-pointer"
-              />
+              <input type="radio" {...formik.getFieldProps('gender')} value="female" className="w-4 h-4 accent-[hsl(var(--color-secondary))] cursor-pointer" />
               <span className="text-sm font-medium text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-secondary))] transition-colors">Female</span>
             </label>
           </div>
@@ -197,12 +163,7 @@ export default function PatientRegisterForm() {
         <label className={labelClasses}>Address (Optional)</label>
         <div className="relative">
           <MdLocationOn className="absolute left-3 top-3 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-          <textarea
-            {...formik.getFieldProps('address')}
-            rows={2}
-            className={`${inputClasses} py-3`}
-            placeholder="Enter your city and street"
-          />
+          <textarea {...formik.getFieldProps('address')} rows={2} className={`${inputClasses} py-3`} placeholder="Enter your city and street" />
         </div>
       </div>
 
