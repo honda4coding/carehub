@@ -17,6 +17,7 @@ interface Doctor {
   status: ApprovalStatus;
   specialty?: string;
   licenseUrl?: string;
+  nationalIdUrl?: string;
   createdAt: string;
 }
 
@@ -199,7 +200,7 @@ export default function ApprovalsPage() {
               <table className="w-full min-w-[620px]">
                 <thead>
                   <tr className="border-b border-[hsl(var(--color-border))]">
-                    {["Doctor", "Specialty", "Submitted", "Status", "License", "Actions"].map((h, i) => (
+                    {["Doctor", "Specialty", "Submitted", "Status", "License", "National ID", "Actions"].map((h, i) => (
                       <th
                         key={h}
                         className="pb-2.5 text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase tracking-[.07em] text-left"
@@ -252,6 +253,20 @@ export default function ApprovalsPage() {
                           {doc.licenseUrl ? (
                             <button
                               onClick={() => setLicenseModal({ open: true, url: doc.licenseUrl ?? null })}
+                              className="text-[10px] font-bold px-2 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all flex items-center gap-1 mx-auto"
+                            >
+                              <LuEye className="text-[11px]" /> View
+                            </button>
+                          ) : (
+                            <span className="text-[10px] text-[hsl(var(--color-text-muted))]">—</span>
+                          )}
+                        </td>
+
+                        {/* National ID */}
+                        <td className="py-3 text-center">
+                          {doc.nationalIdUrl ? (
+                            <button
+                              onClick={() => setLicenseModal({ open: true, url: doc.nationalIdUrl ?? null })}
                               className="text-[10px] font-bold px-2 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all flex items-center gap-1 mx-auto"
                             >
                               <LuEye className="text-[11px]" /> View

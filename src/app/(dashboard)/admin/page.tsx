@@ -25,12 +25,7 @@ interface DoctorRequest {
   licenseUrl?: string;
 }
 
-const STATS = [
-  { label: "Total Patients",   value: "2,847", trend: "+12% this month", up: true,  icon: <LuUsers />,        iconStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" },
-  { label: "Active Doctors",   value: "134",   trend: "+4 this month",   up: true,  icon: <LuStethoscope />,  iconStyle: "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]" },
-  { label: "Appointments",     value: "491",   trend: "+8% this week",   up: true,  icon: <LuCalendarDays />, iconStyle: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" },
-  { label: "Pending Requests", value: "5",     trend: "Needs review",    up: false, icon: <LuClock />,        iconStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]" },
-];
+
 
 const CHART_MONTHS = [
   { month: "Jan", pct: 55 }, { month: "Feb", pct: 68 },
@@ -70,6 +65,15 @@ export default function AdminDashboard() {
   const router = useRouter();
 
 
+  const pendingCount = requests.length;
+
+    const STATS = [
+  { label: "Total Patients",   value: "2,847", trend: "+12% this month", up: true,  icon: <LuUsers />,        iconStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" },
+  { label: "Active Doctors",   value: "134",   trend: "+4 this month",   up: true,  icon: <LuStethoscope />,  iconStyle: "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]" },
+  { label: "Appointments",     value: "491",   trend: "+8% this week",   up: true,  icon: <LuCalendarDays />, iconStyle: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" },
+  { label: "Pending Requests", value: `${pendingCount}`, trend: "Needs review",    up: false, icon: <LuClock />,        iconStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]" },
+];
+
   useEffect(() => {
     const fetchPending = async () => {
       try {
@@ -97,6 +101,8 @@ export default function AdminDashboard() {
       (r.fullName ?? "").toLowerCase().includes(filter.toLowerCase()) ||
       (r.specialty ?? "").toLowerCase().includes(filter.toLowerCase())
   );
+
+
 
   return (
     <>
