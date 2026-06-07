@@ -12,7 +12,7 @@ import RoleSelector from "./RoleSelector";
 import { loginSchema, loginInitialValues, type LoginValues } from "../schemas/loginSchema";
 import * as Yup from "yup";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 // ========== Forgot Password Modal ==========
 const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
