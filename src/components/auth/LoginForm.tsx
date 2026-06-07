@@ -12,13 +12,6 @@ import RoleSelector from "./RoleSelector";
 import { loginSchema, loginInitialValues, type LoginValues } from "../schemas/loginSchema";
 import * as Yup from "yup";
 
-// ========== Forgot Password Modal ==========
-const ForgotPasswordModal = ({ onClose }: { onClose: () => void }) => {
-  const [step, setStep] = useState<1 | 2>(1);
-  const [email, setEmail] = useState("");
-  const [modalError, setModalError] = useState("");
-  const [modalSuccess, setModalSuccess] = useState("");
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
 // ========== Forgot Password Modal ==========
