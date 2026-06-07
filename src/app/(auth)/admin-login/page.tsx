@@ -7,19 +7,43 @@ import { ImSpinner2 } from "react-icons/im";
 import { useAuth } from "@/context/AuthContext";
 import { adminLoginSchema } from "@/components/schemas/adminLoginSchema";
 
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 export default function AdminLoginPage() {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (values: any) => {
-    setLoading(true);
-    // Simulate authentication process
-    setTimeout(() => {
-      const mockAdmin = { id: "admin-1", email: values.email, name: "System Admin" };
-      login("admin_secure_token", "admin", mockAdmin);
-      setLoading(false);
-    }, 1500);
-  };
+ const handleSubmit = async (values: { email: string; password: string }) => {
+  setLoading(true);
+  try {
+    const res = await fetch(`${BASE_URL}/users/signin`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Invalid credentials");
+      return;
+    }
+
+    login(data.data.access_token, "admin", {
+      id: data.data.id,
+      email: values.email,
+      name: "System Admin",
+    });
+
+  } catch {
+    alert("Something went wrong. Please check your connection.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const inputClasses = "w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] outline-none transition-all";
 
