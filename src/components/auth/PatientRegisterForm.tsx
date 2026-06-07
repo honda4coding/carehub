@@ -40,10 +40,14 @@ export default function PatientRegisterForm() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
+        const payload: any = { ...values, role: "patient" };
+        if (!payload.address) delete payload.address;
+        if (!payload.bloodType) delete payload.bloodType;
+
         const res = await fetch(`${BASE_URL}/users/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...values, role: "patient" }),
+          body: JSON.stringify(payload),
         });
 
         if (!res.ok) {
