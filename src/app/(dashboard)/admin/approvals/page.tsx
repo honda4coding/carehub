@@ -21,7 +21,7 @@ interface Doctor {
   createdAt: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const statusConfig: Record<ApprovalStatus, { style: string; label: string; icon: React.ReactNode }> = {
   pending:  { style: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",  label: "Pending",  icon: <LuClock className="text-[10px]" /> },
