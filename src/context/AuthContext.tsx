@@ -35,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRole(newRole);
     setUser(newUser);
 
-    Cookies.set(AUTH_COOKIE_NAME, newToken, { expires: 7, secure: true, sameSite: 'strict' });
-    Cookies.set(ROLE_COOKIE_NAME, newRole, { expires: 7, secure: true, sameSite: 'strict' });
+    Cookies.set(AUTH_COOKIE_NAME, newToken, { expires: 7, secure: true, sameSite: 'strict', path: '/' });
+    Cookies.set(ROLE_COOKIE_NAME, newRole, { expires: 7, secure: true, sameSite: 'strict', path: '/' });
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
 
     router.push(`/${newRole}`);

@@ -69,11 +69,11 @@ export default function ApprovalsPage() {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/admin/doctors`, {
+        const res = await fetch(`${BASE_URL}/admin/users?role=doctor&limit=100`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const json = await res.json();
-        setDoctors(json.data || []);
+        setDoctors(json.data?.users || []);
       } catch (err) {
         console.error("Failed to fetch doctors", err);
       } finally {
