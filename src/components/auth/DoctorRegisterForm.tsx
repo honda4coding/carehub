@@ -8,7 +8,7 @@ import { MdPerson, MdEmail, MdPhone, MdLock, MdMedicalServices, MdBadge, MdLocat
 import { FaIdCard, FaFileUpload } from 'react-icons/fa';
 import { ImSpinner2 } from 'react-icons/im';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const specialties = [
   { value: "general_practice", label: "General Practice" },

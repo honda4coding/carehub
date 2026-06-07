@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { MdPerson, MdEmail, MdPhone, MdLock, MdCake, MdBloodtype, MdLocationOn } from 'react-icons/md';
 import { ImSpinner2 } from 'react-icons/im';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
