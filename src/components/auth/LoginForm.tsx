@@ -384,7 +384,7 @@ export const LoginForm = () => {
                     Stay Signed In
                   </span>
                 </label>
-                {/* ✅ دي دلوقتي بتفتح الـ Modal */}
+                {/* This opens the modal now */}
                 <button type="button" onClick={() => setShowForgotModal(true)}
                   className="text-xs font-bold transition-colors"
                   style={{ color: "hsl(var(--color-primary-strong))" }}>

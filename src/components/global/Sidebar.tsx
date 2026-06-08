@@ -72,13 +72,13 @@ const doctorNav: NavSection[] = [
   {
     title: "Main",
     items: [
-      { label: "Dashboard", href: "/doctor", icon: <LuLayoutDashboard /> },
+      { label: "Workspace", href: "/doctor", icon: <LuLayoutDashboard /> },
       {
-        label: "Appointments",
-        href: "/doctor/appointments",
-        icon: <LuCalendarDays />,
+        label: "Clinic Settings",
+        href: "/doctor/clinic-settings",
+        icon: <LuSettings />,
       },
-      { label: "Patients", href: "/doctor/patients", icon: <LuUsers /> },
+      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
     ],
   },
   {
@@ -242,7 +242,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] min-h-screen">
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
         <SidebarContent role={role} />
       </aside>
 
