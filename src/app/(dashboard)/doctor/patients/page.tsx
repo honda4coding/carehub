@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   LuUsers, LuSearch, LuCalendar, LuFilter, 
-  LuHistory, LuPhone, LuMail, LuActivity, LuChevronRight
+  LuHistory, LuPhone, LuMail, LuActivity, LuChevronRight, LuPlus, LuStethoscope, LuUserPlus, LuX
 } from "react-icons/lu";
 
 // Dummy Data

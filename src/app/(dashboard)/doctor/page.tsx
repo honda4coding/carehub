@@ -189,7 +189,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
           avatarStyle: s.isOfflinePatient 
             ? "bg-[hsl(var(--color-primary)/0.1)] text-primary"
             : "bg-[hsl(var(--color-success-bg))] text-success",
-          validUntil: s.validUntil
+          validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
         };
       });
       setSessions(mappedSessions);
@@ -262,13 +262,11 @@ const [sessions, setSessions] = useState<Session[]>([]);
       });
 
 
-      const newSessionData = response.data.data.session;
-      const tempOtp = response.data.data.temp_otp;
-
-
+      const responseData = response.data.data;
+      const newSessionData = responseData.session || responseData;
+      const tempOtp = responseData.temp_otp || response.data.temp_otp || "Not Provided";
 
       alert(`Test OTP for ${patient.fullName} is: ${tempOtp}`);
-
 
      const newActiveSession: Session = {
         id: newSessionData._id,
@@ -299,11 +297,10 @@ const [sessions, setSessions] = useState<Session[]>([]);
     } catch (err: any) {
       console.error("Error requesting session:", err);
       const msg = err.response?.data?.message;
-      if (msg === "Access already granted for this patient") {
+      if (msg === "Session already exists for this patient" || msg === "Access already granted") {
         alert("This patient is already in your active queue!");
-        fetchCurrentQueue(); // Refresh to ensure they appear
       } else {
-        alert(msg || "Failed to request access");
+        alert("Failed to request access: " + (msg || err.message));
       }
     }
   };
