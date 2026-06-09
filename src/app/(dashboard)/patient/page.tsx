@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { HealthHubProfile, TimelineEntry } from "@/types/patient";
+import { useAuth } from "@/context/AuthContext";
 
 import Toast from "@/components/patients/Toast";
 import PatientHeader from "@/components/patients/PatientHeader";
@@ -35,6 +36,7 @@ function formatDate(dateStr: string) {
 }
 
 export default function PatientDashboard() {
+  const { user } = useAuth();
   const [profile, setProfile] = useState<HealthHubProfile | null>(null);
   const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
   const [profileLoading, setProfileLoading] = useState(true);
@@ -44,19 +46,23 @@ export default function PatientDashboard() {
 
   const showToast = useCallback((msg: string) => setToastMsg(msg), []);
 
+  // Fetch profile + timeline
   useEffect(() => {
+    if (!user) return;
+
+    const patientId = (user as any)._id ?? user.id;
+
     async function fetchAll() {
       try {
-        // 1. Fetch user profile
+        // 1. Fetch full profile from backend
         const { data } = await axios.get(`${BASE_URL}/users/profile`, {
           headers: authHeaders(),
         });
 
         const p = data.data ?? data;
-        const patientId = p._id; // user _id هو نفسه اللي بيتبعت في الـ params
 
         setProfile({
-          fullName: p.fullName ?? p.userName ?? "Unknown",
+          fullName: p.fullName ?? p.userName ?? user!.name ?? "Unknown",
           nationalIdStatus: p.confirmed ? "Verified" : "Pending",
           bloodType: p.bloodType ?? "—",
           chronicDiseases: p.chronicDiseases ?? [],
@@ -66,15 +72,25 @@ export default function PatientDashboard() {
           address: p.address ?? "—",
           phoneNumber: p.phone ?? p.phoneNumber ?? "—",
         });
-
+      } catch {
+        // fallback: بنبني الـ profile من الـ AuthContext لو الـ API فشل
+        setProfile({
+          fullName: user!.name ?? "Unknown",
+          nationalIdStatus: "Pending",
+          bloodType: "—",
+          chronicDiseases: [],
+          allergies: [],
+          age: 0,
+          gender: "Male",
+          address: "—",
+          phoneNumber: "—",
+        });
+      } finally {
         setProfileLoading(false);
+      }
 
-        if (!patientId) {
-          showToast("Could not determine patient ID");
-          return;
-        }
-
-        // 2. Fetch timeline
+      // 2. Fetch timeline
+      try {
         const headers = authHeaders();
         const [medRes, presRes] = await Promise.allSettled([
           axios.get(`${BASE_URL}/medical-history/${patientId}`, { headers }),
@@ -138,15 +154,14 @@ export default function PatientDashboard() {
           entries.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime()),
         );
       } catch (err: any) {
-        showToast(err?.response?.data?.message ?? "Failed to load data");
-        setProfileLoading(false);
+        showToast(err?.response?.data?.message ?? "Failed to load timeline");
       } finally {
         setTimelineLoading(false);
       }
     }
 
     fetchAll();
-  }, [showToast]);
+  }, [user, showToast]);
 
   const filteredTimeline = timeline.filter(
     (e) =>
@@ -162,7 +177,7 @@ export default function PatientDashboard() {
       )}
 
       <PatientHeader
-        fullName={profile?.fullName ?? "..."}
+        fullName={profile?.fullName ?? user?.name ?? "..."}
         searchTerm={searchTerm}
         onSearch={setSearchTerm}
       />
