@@ -8,7 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { adminLoginSchema } from "@/components/schemas/adminLoginSchema";
 
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 export default function AdminLoginPage() {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
