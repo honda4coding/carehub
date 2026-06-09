@@ -21,7 +21,7 @@ interface Doctor {
   createdAt: string;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 const statusConfig: Record<ApprovalStatus, { style: string; label: string; icon: React.ReactNode }> = {
   pending:  { style: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",  label: "Pending",  icon: <LuClock className="text-[10px]" /> },
@@ -69,11 +69,11 @@ export default function ApprovalsPage() {
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/admin/doctors`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const json = await res.json();
-        setDoctors(json.data || []);
+          const res = await fetch(`${BASE_URL}/admin/doctors`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const json = await res.json();
+          setDoctors(json.data || []);
       } catch (err) {
         console.error("Failed to fetch doctors", err);
       } finally {
@@ -133,6 +133,25 @@ export default function ApprovalsPage() {
       (d.fullName ?? "").toLowerCase().includes(filter.toLowerCase()) ||
       (d.specialty ?? "").toLowerCase().includes(filter.toLowerCase())
     );
+
+//////علشان في دكتور اتوافق عليه او اترفض بالغلط وعايز ارجعه تاني  
+    const handleResetToPending = async (id: string) => {
+    setActionLoadingId(id);
+    try {
+        const res = await fetch(`${BASE_URL}/admin/doctors/${id}/pending`, {
+            method: "PATCH",
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Failed");
+        setDoctors((prev) =>
+            prev.map((d) => d._id === id ? { ...d, status: "pending" } : d)
+        );
+    } catch (err) {
+        console.error("Failed to reset", err);
+    } finally {
+        setActionLoadingId(null);
+    }
+};
 
   return (
     <>
@@ -280,24 +299,30 @@ export default function ApprovalsPage() {
                         <td className="py-3">
                           <div className="flex items-center gap-1.5 justify-center">
                             {doc.status === "pending" ? (
-                              <>
-                                <button
-                                  onClick={() => handleApprove(doc._id)}
-                                  disabled={actionLoadingId === doc._id}
-                                  className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                  {actionLoadingId === doc._id ? "..." : "Approve"}
-                                </button>
-                                <button
-                                  onClick={() => setRejectModal({ open: true, doctorId: doc._id })}
-                                  disabled={actionLoadingId === doc._id}
-                                  className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
-                                >
-                                  Reject
-                                </button>
-                              </>
+                                <>
+                                    <button
+                                        onClick={() => handleApprove(doc._id)}
+                                        disabled={actionLoadingId === doc._id}
+                                        className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        {actionLoadingId === doc._id ? "..." : "Approve"}
+                                    </button>
+                                    <button
+                                        onClick={() => setRejectModal({ open: true, doctorId: doc._id })}
+                                        disabled={actionLoadingId === doc._id}
+                                        className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                    >
+                                        Reject
+                                    </button>
+                                </>
                             ) : (
-                              <span className="text-[10px] text-[hsl(var(--color-text-muted))]">—</span>
+                                <button
+                                    onClick={() => handleResetToPending(doc._id)}
+                                    disabled={actionLoadingId === doc._id}
+                                    className="text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-warning-bg))] hover:text-[hsl(var(--color-warning))] transition-all whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {actionLoadingId === doc._id ? "..." : "Reset"}
+                                </button>
                             )}
                           </div>
                         </td>
