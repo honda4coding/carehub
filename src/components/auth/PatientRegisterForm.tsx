@@ -1,6 +1,7 @@
 'use client';
 
 import { useFormik } from 'formik';
+import { useRouter } from 'next/navigation';
 import { patientRegisterSchema } from '@/components/schemas/patientRegisterSchema';
 import { PatientFormValues } from '@/types/patient';
 import { useState } from 'react';
@@ -23,7 +24,7 @@ async function parseErrorMessage(res: Response): Promise<string> {
 
 export default function PatientRegisterForm() {
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
   const formik = useFormik<PatientFormValues>({
     initialValues: {
       fullName: '',
@@ -55,7 +56,7 @@ export default function PatientRegisterForm() {
           throw new Error(message);
         }
 
-        alert("Registration successful!");
+        router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=confirm`);
 
       } catch (error) {
         alert(error instanceof Error ? error.message : "Something went wrong");
