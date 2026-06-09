@@ -41,7 +41,7 @@ const adminNav: NavSection[] = [
         icon: <LuStethoscope />,
         badge: 3,
       },
-      { label: "Patients", href: "/admin/patients", icon: <LuUsers /> },
+      { label: "Users", href: "/admin/users", icon: <LuUsers /> },
       {
         label: "Appointments",
         href: "/admin/appointments",
