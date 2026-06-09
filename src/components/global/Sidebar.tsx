@@ -72,13 +72,13 @@ const doctorNav: NavSection[] = [
   {
     title: "Main",
     items: [
-      { label: "Dashboard", href: "/doctor", icon: <LuLayoutDashboard /> },
+      { label: "Workspace", href: "/doctor", icon: <LuLayoutDashboard /> },
       {
-        label: "Appointments",
-        href: "/doctor/appointments",
-        icon: <LuCalendarDays />,
+        label: "Clinic Settings",
+        href: "/doctor/clinic-settings",
+        icon: <LuSettings />,
       },
-      { label: "Patients", href: "/doctor/patients", icon: <LuUsers /> },
+      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
     ],
   },
   {
