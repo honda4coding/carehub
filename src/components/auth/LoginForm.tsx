@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import {
   HiOutlineMail,
@@ -14,7 +13,6 @@ import {
 } from "react-icons/hi";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
-import RoleSelector from "./RoleSelector";
 import {
   loginSchema,
   loginInitialValues,
@@ -24,26 +22,8 @@ import {
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export const LoginForm = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const roleFromUrl = searchParams.get("role");
   const { login } = useAuth();
-
-  const [role, setRole] = useState<"patient" | "doctor">(
-    roleFromUrl === "patient" ? "patient" : "doctor",
-  );
   const [showPassword, setShowPassword] = useState(false);
-
-  useEffect(() => {
-    if (roleFromUrl === "patient" || roleFromUrl === "doctor") {
-      setRole(roleFromUrl as "doctor" | "patient");
-    }
-  }, [roleFromUrl]);
-
-  const handleRoleChange = (newRole: "doctor" | "patient") => {
-    setRole(newRole);
-    router.push(`/login?role=${newRole}`, { scroll: false });
-  };
 
   const handleSubmit = async (
     values: LoginValues,
@@ -66,10 +46,17 @@ export const LoginForm = () => {
         return;
       }
 
-      login(data.data.access_token, role, {
+      const actualRole = data.data.role?.toLowerCase();
+
+      if (!actualRole) {
+        setStatus("Unable to determine account role. Please contact support.");
+        return;
+      }
+
+      login(data.data.access_token, actualRole, {
         id: data.data.id,
         email: values.email,
-        name: values.email,
+        name: data.data.name || values.email,
       });
     } catch (error) {
       setStatus("Something went wrong. Please check your connection.");
@@ -88,8 +75,6 @@ export const LoginForm = () => {
           background: "rgba(255, 255, 255, 0.7)",
         }}
       >
-        <RoleSelector selectedRole={role} onRoleChange={handleRoleChange} />
-
         <div className="text-center mb-8">
           <h2
             className="text-2xl font-bold"
@@ -101,8 +86,7 @@ export const LoginForm = () => {
             className="text-sm mt-1"
             style={{ color: "hsl(var(--color-text-muted))" }}
           >
-            Access your {role === "doctor" ? "clinical" : "personal"} sanctuary
-            portal
+            Sign in to your account
           </p>
         </div>
 
@@ -110,7 +94,6 @@ export const LoginForm = () => {
           initialValues={loginInitialValues}
           validationSchema={loginSchema}
           onSubmit={handleSubmit}
-          enableReinitialize={true}
         >
           {({ errors, touched, isSubmitting, status }) => (
             <Form className="space-y-5">
@@ -120,7 +103,7 @@ export const LoginForm = () => {
                 </div>
               )}
 
-              {/* Email Field */}
+              {/* Email */}
               <div className="space-y-1.5">
                 <label
                   className="block text-xs font-bold pl-4 tracking-wide uppercase"
@@ -153,7 +136,7 @@ export const LoginForm = () => {
                 />
               </div>
 
-              {/* Password Field */}
+              {/* Password */}
               <div className="space-y-1.5">
                 <label
                   className="block text-xs font-bold pl-4 tracking-wide uppercase"
@@ -201,7 +184,7 @@ export const LoginForm = () => {
 
               {/* Remember + Forgot */}
               <div className="flex items-center justify-between px-2 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer group">
+                <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     className="w-5 h-5 rounded-md border-slate-300"
@@ -232,7 +215,7 @@ export const LoginForm = () => {
                 </div>
               </div>
 
-              {/* Submit Button */}
+              {/* Submit */}
               <div className="pt-4">
                 <button
                   type="submit"
@@ -240,9 +223,7 @@ export const LoginForm = () => {
                   className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     backgroundImage:
-                      role === "doctor"
-                        ? "linear-gradient(to right, #0891B2, hsl(var(--color-primary)))"
-                        : "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))",
+                      "linear-gradient(to right, #0891B2, hsl(var(--color-primary)))",
                   }}
                 >
                   {isSubmitting ? (
@@ -262,7 +243,6 @@ export const LoginForm = () => {
           )}
         </Formik>
 
-        
         {/* Footer */}
         <div className="mt-10 pt-8 border-t border-slate-200/50 text-center space-y-4">
           <p
@@ -279,21 +259,19 @@ export const LoginForm = () => {
             </Link>
           </p>
 
-          {role === "doctor" && (
-            <p
-              className="text-sm"
-              style={{ color: "hsl(var(--color-text-muted))" }}
+          <p
+            className="text-sm"
+            style={{ color: "hsl(var(--color-text-muted))" }}
+          >
+            Received an OTP from admin?{" "}
+            <Link
+              href="/verify-otp?type=confirm"
+              className="font-bold hover:underline underline-offset-4 transition-all"
+              style={{ color: "hsl(var(--color-primary-strong))" }}
             >
-              Received an OTP from admin?{" "}
-              <Link
-                href="/verify-otp?type=confirm"
-                className="font-bold hover:underline underline-offset-4 transition-all"
-                style={{ color: "hsl(var(--color-primary-strong))" }}
-              >
-                Verify here
-              </Link>
-            </p>
-          )}
+              Verify here
+            </Link>
+          </p>
         </div>
       </div>
 

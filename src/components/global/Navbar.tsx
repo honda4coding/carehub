@@ -86,12 +86,8 @@ export default function Navbar() {
               // Guest Navigation
               <>
                 <div className="hidden sm:flex items-center gap-2 border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
-                  <Link href="/login?role=doctor" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-xs transition-colors">
-                    Doctor Login
-                  </Link>
-                  <span className="text-[hsl(var(--color-text-muted)/0.3)] text-xs">|</span>
-                  <Link href="/login?role=patient" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-xs transition-colors">
-                    Patient Login
+                  <Link href="/login" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-xs transition-colors">
+                    Sign In
                   </Link>
                 </div>
                 <Link
@@ -184,4 +180,4 @@ export default function Navbar() {
       )}
     </nav>
   );
-}
+}
