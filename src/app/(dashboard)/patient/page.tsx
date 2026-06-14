@@ -102,27 +102,26 @@ export default function PatientDashboard() {
         const entries: TimelineEntry[] = [];
 
         if (medRes.status === "fulfilled") {
-          (medRes.value.data?.data ?? medRes.value.data ?? []).forEach(
-            (r: any) => {
-              entries.push({
-                id: `med-${r._id}`,
-                rawDate: new Date(r.createdAt ?? r.date ?? Date.now()),
-                date: formatDate(r.createdAt ?? r.date),
-                doctorName:
-                  r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
-                specialty:
-                  r.specialty ?? r.doctorId?.specialization ?? "General",
-                chiefComplaint: r.chiefComplaint ?? r.complaint ?? "—",
-                diagnosis: r.diagnosis ?? "—",
-                clinicalNotes: r.clinicalNotes ?? r.notes ?? "—",
-                prescriptions: (r.prescriptions ?? []).map((p: any) => ({
-                  medication: p.medication ?? p.name ?? "—",
-                  dosage: p.dosage ?? "—",
-                  frequency: p.frequency ?? "—",
-                })),
-              });
-            },
-          );
+          const r = medRes.value.data?.data;
+          if (r && typeof r === "object" && r._id) {
+            entries.push({
+              id: `med-${r._id}`,
+              rawDate: new Date(r.createdAt ?? r.date ?? Date.now()),
+              date: formatDate(r.createdAt ?? r.date),
+              doctorName:
+                r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
+              specialty:
+                r.specialty ?? r.doctorId?.specialization ?? "General",
+              chiefComplaint: r.chiefComplaint ?? r.complaint ?? "—",
+              diagnosis: r.diagnosis ?? "—",
+              clinicalNotes: r.clinicalNotes ?? r.notes ?? "—",
+              prescriptions: (r.prescriptions ?? []).map((p: any) => ({
+                medication: p.medication ?? p.name ?? "—",
+                dosage: p.dosage ?? "—",
+                frequency: p.frequency ?? "—",
+              })),
+            });
+          }
         } else showToast("Could not load medical history");
 
         if (presRes.status === "fulfilled") {
