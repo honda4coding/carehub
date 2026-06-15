@@ -83,7 +83,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const [searchError, setSearchError] = useState("");
 
   const { token, user } = useAuth();
-  const [dashboardStats, setDashboardStats] = useState({ totalConsultations: 0 });
+  const [dashboardStats, setDashboardStats] = useState({ totalConsultations: 0, totalPatients: 0, totalPrescriptions: 0 });
 
   const fetchCurrentQueue = async () => {
     if (!token) return;
@@ -113,12 +113,21 @@ const [sessions, setSessions] = useState<Session[]>([]);
       });
       setSessions(mappedSessions);
 
-      // Fetch Lifetime stats
+      // Fetch Today's stats
       try {
-        const statsRes = await axios.get(`${baseUrl}/doctor/dashboard`, {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const statsRes = await axios.get(`${baseUrl}/doctor/dashboard?startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setDashboardStats({ totalConsultations: statsRes.data.data.totalMedicalHistories || 0 });
+        setDashboardStats({ 
+          totalConsultations: statsRes.data.data.totalMedicalHistories || 0,
+          totalPatients: statsRes.data.data.totalPatients || 0,
+          totalPrescriptions: statsRes.data.data.totalPrescriptions || 0
+        });
       } catch (e) {
         console.error("Failed to fetch dashboard stats", e);
       }
@@ -359,7 +368,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
           setWalkInModalOpen={setWalkInModalOpen}
         />
 
-        <DoctorStats dashboardStats={dashboardStats} sessions={sessions} />
+        <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
 
         <CurrentQueue 
           statusFilter={statusFilter}
