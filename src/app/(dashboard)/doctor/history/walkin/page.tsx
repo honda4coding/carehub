@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { 
   LuArrowLeft, LuHistory, LuCalendar, LuStethoscope, LuFileText, LuChevronDown, LuChevronUp, LuSearch, LuArrowDownUp
 } from "react-icons/lu";
+import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
   const [expanded, setExpanded] = useState(false);
@@ -57,137 +58,8 @@ function HistoryCard({ item, index }: { item: any; index: number }) {
 
         {/* Expanded Details */}
         {expanded && (
-          <div className="animate-in fade-in slide-in-from-top-2 duration-200">
-            
-            {/* Vitals & Health Info */}
-            {(item.height || item.weight || item.bloodType || (item.allergies && item.allergies.length > 0) || (item.chronic && item.chronic.length > 0)) && (
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-[12px] font-bold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] p-4 rounded-xl border border-[hsl(var(--color-border))]">
-                  <div className="flex flex-col gap-2">
-                    {item.height && <span>Height: <span className="text-[hsl(var(--color-text))]">{item.height}</span></span>}
-                    {item.weight && <span>Weight: <span className="text-[hsl(var(--color-text))]">{item.weight}</span></span>}
-                    {item.bloodType && <span>Blood Type: <span className="text-red-500">{item.bloodType}</span></span>}
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    {item.allergies && item.allergies.length > 0 && (
-                      <span>Allergies: <span className="text-orange-500 whitespace-normal">{item.allergies.join(", ")}</span></span>
-                    )}
-                    {item.chronic && item.chronic.length > 0 && (
-                      <span>Chronic Diseases: <span className="text-orange-500 whitespace-normal">{item.chronic.join(", ")}</span></span>
-                    )}
-                  </div>
-               </div>
-            )}
-
-            {/* Surgeries */}
-            {item.surgeries && item.surgeries.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuStethoscope className="text-primary" /> Past Surgeries
-                </h4>
-                <div className="space-y-2">
-                  {item.surgeries.map((s: any, i: number) => (
-                    <div key={i} className="bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border))] flex flex-col gap-1 text-[13px]">
-                      <div className="flex justify-between items-center">
-                        <span className="font-bold text-[hsl(var(--color-text))]">{s.operationName}</span>
-                        {s.date && <span className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{s.date}</span>}
-                      </div>
-                      {s.surgeonName && <span className="text-[hsl(var(--color-text-muted))]">Surgeon: {s.surgeonName}</span>}
-                      {s.report && <span className="text-[hsl(var(--color-text-muted))] mt-1 text-[12px]">{s.report}</span>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Diagnosis */}
-            {item.diagnosis && (
-              <div className="mb-4">
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuStethoscope className="text-primary" /> Full Diagnosis
-                </h4>
-                <p className="text-[15px] font-bold text-[hsl(var(--color-text))] leading-relaxed whitespace-pre-wrap">
-                  {item.diagnosis}
-                </p>
-              </div>
-            )}
-
-            {/* Notes */}
-            {item.notes && (
-              <div className="mb-4">
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuFileText className="text-primary" /> Doctor Notes
-                </h4>
-                <div className="bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border))]">
-                  <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] leading-relaxed whitespace-pre-wrap">
-                    {item.notes}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Detailed Prescriptions (Medications) */}
-            {item.prescriptions && item.prescriptions.length > 0 && (
-              <div className="mb-4">
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuFileText className="text-primary" /> Prescribed Medications
-                </h4>
-                <div className="space-y-3">
-                  {item.prescriptions.map((rx: any, idx: number) => (
-                    <div key={rx._id || idx} className="bg-primary/5 p-4 rounded-xl border border-primary/20 flex flex-col gap-2">
-                      {rx.medications && rx.medications.map((med: any, mIdx: number) => (
-                         <div key={med._id || mIdx} className="flex flex-col border-b border-primary/10 last:border-0 pb-2 last:pb-0">
-                           <span className="text-[14px] font-bold text-primary">{med.medicineName}</span>
-                           <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
-                             {med.dosage} - {med.frequency} for {med.duration}
-                           </span>
-                           {med.instructions && (
-                             <span className="text-[11px] mt-1 text-[hsl(var(--color-text-muted))] italic">"{med.instructions}"</span>
-                           )}
-                         </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Quick Prescription Text */}
-            {item.prescriptionText && (
-              <div className="mb-4">
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuFileText className="text-primary" /> Prescription Text
-                </h4>
-                <div className="bg-primary/5 p-3 rounded-xl border border-primary/20">
-                  <p className="text-[13px] font-bold text-primary leading-relaxed whitespace-pre-wrap">
-                    {item.prescriptionText}
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* Documents / Files */}
-            {item.documents && item.documents.length > 0 && (
-              <div>
-                <h4 className="text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1.5">
-                  <LuFileText className="text-primary" /> Documents & Results
-                </h4>
-                <div className="grid grid-cols-2 gap-3">
-                  {item.documents.map((doc: any, idx: number) => (
-                    <a 
-                      key={doc._id || idx} 
-                      href={doc.secure_url} 
-                      target="_blank" 
-                      rel="noreferrer"
-                      className="bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border))] flex flex-col hover:border-primary transition-colors"
-                    >
-                      <span className="text-[12px] font-bold text-[hsl(var(--color-text))] truncate">{doc.title}</span>
-                      <span className="text-[10px] font-black uppercase text-primary mt-1">{doc.type}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
-
+          <div className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border))] pt-4" onClick={(e) => e.stopPropagation()}>
+            <MedicalHistoryCard record={item} hideHeader={true} />
           </div>
         )}
 

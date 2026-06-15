@@ -1,5 +1,6 @@
-import { LuHistory, LuPlus, LuStethoscope, LuClock, LuFileText, LuPill, LuImage } from "react-icons/lu";
+import { LuHistory, LuPlus, LuStethoscope, LuFileText } from "react-icons/lu";
 import { RefObject } from "react";
+import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 
 interface HistoryTimelineProps {
   setIsAssessmentMode: (mode: boolean) => void;
@@ -105,54 +106,8 @@ export default function HistoryTimeline({
                   <LuFileText />
                 </div>
                 {/* Timeline Card */}
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] hover:border-primary/30 transition-colors shadow-sm">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuClock /> {new Date(record.createdAt).toLocaleDateString()}</span>
-                    <span className="text-[10px] font-bold bg-[hsl(var(--color-primary)/0.1)] text-primary px-2 py-1 rounded-md">Dr. {record.doctorId?.fullName || 'Unknown'}</span>
-                  </div>
-                  
-                  <h4 className="text-sm font-black text-[hsl(var(--color-text))] mb-2">Diagnosis: {record.diagnosis || "General Visit"}</h4>
-                  
-                  {record.notes && (
-                    <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mb-4 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-                      <span className="font-bold text-[hsl(var(--color-text))] block mb-1">Symptoms:</span>
-                      {record.notes}
-                    </p>
-                  )}
-
-                  {/* Render Prescriptions inline */}
-                  {record.prescriptions && record.prescriptions.length > 0 && (
-                    <div className="mt-4 border-t border-[hsl(var(--color-border-soft))] pt-3">
-                      <h5 className="text-[11px] font-bold text-[hsl(var(--color-text))] flex items-center gap-1 mb-2"><LuPill className="text-[hsl(var(--color-secondary-strong))]" /> Medications Prescribed</h5>
-                      <div className="space-y-2">
-                        {record.prescriptions.map((rx: any) => 
-                          rx.medications?.map((med: any, mIdx: number) => (
-                            <div key={mIdx} className="bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
-                              <h6 className="text-[11px] font-bold text-[hsl(var(--color-text))]">{med.medicineName}</h6>
-                              <p className="text-[10px] text-[hsl(var(--color-text-muted))]">{med.dosage} • {med.frequency} • {med.duration}</p>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {record.prescriptionText && (
-                    <div className="mt-3 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-                      <p className="text-[10px] font-bold text-[hsl(var(--color-text))] mb-1">Rx Notes:</p>
-                      <p className="text-[11px] text-[hsl(var(--color-text-muted))]">{record.prescriptionText}</p>
-                    </div>
-                  )}
-                  
-                  {record.documents && record.documents.length > 0 && (
-                    <div className="mt-3">
-                      {record.documents.filter((d:any) => d.type === "prescription").map((doc: any, dIdx: number) => (
-                        <a key={dIdx} href={doc.secure_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline bg-[hsl(var(--color-primary)/0.05)] px-3 py-1.5 rounded-lg border border-[hsl(var(--color-primary)/0.1)]">
-                          <LuImage /> View Scanned Rx
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)]">
+                  <MedicalHistoryCard record={record} />
                 </div>
               </div>
             ))}

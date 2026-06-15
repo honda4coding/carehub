@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { LuPill, LuSearch, LuCalendar, LuFileText, LuUser, LuEye } from "react-icons/lu";
 
-export default function PrescriptionsPage() {
+function PrescriptionsContent() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -162,5 +162,13 @@ export default function PrescriptionsPage() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function PrescriptionsPage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center font-bold text-primary">Loading prescriptions...</div>}>
+      <PrescriptionsContent />
+    </Suspense>
   );
 }
