@@ -10,6 +10,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
       up: true,
       icon: <LuUsers />,
       iconStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]",
+      link: "/doctor/patients?filter=today"
     },
     {
       label: "Total Prescriptions",
