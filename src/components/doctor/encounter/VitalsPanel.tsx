@@ -42,6 +42,25 @@ export default function VitalsPanel({
 }: VitalsPanelProps) {
   const [isEditBloodTypeOpen, setIsEditBloodTypeOpen] = useState(false);
 
+  // Calculate BMI
+  let bmi = "--";
+  let bmiStatus = "";
+  let bmiColor = "text-[hsl(var(--color-text-muted))]";
+
+  if (patientData?.height && patientData?.weight && patientData.height !== "-" && patientData.weight !== "-") {
+    const h = parseFloat(patientData.height) / 100; // in meters
+    const w = parseFloat(patientData.weight);
+    if (h > 0 && w > 0) {
+      const bmiVal = w / (h * h);
+      bmi = bmiVal.toFixed(1);
+      
+      if (bmiVal < 18.5) { bmiStatus = "Underweight"; bmiColor = "text-blue-500"; }
+      else if (bmiVal < 25) { bmiStatus = "Normal"; bmiColor = "text-green-500"; }
+      else if (bmiVal < 30) { bmiStatus = "Overweight"; bmiColor = "text-yellow-500"; }
+      else { bmiStatus = "Obese"; bmiColor = "text-red-500"; }
+    }
+  }
+
   return (
     <div className="space-y-4">
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm relative group">
@@ -58,14 +77,29 @@ export default function VitalsPanel({
           {/* Section 1: Base Semi-Static Info */}
           <div>
             <h4 className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Base Info</h4>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuRuler/> Height</span>
-                <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.height} cm</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))]">
+                  {loading || !patientData?.height || patientData.height === "-" ? "--" : patientData.height} <span className="text-[9px] font-semibold text-[hsl(var(--color-text-muted))]">cm</span>
+                </span>
               </div>
               <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuWeight/> Weight</span>
-                <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.weight} kg</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))]">
+                  {loading || !patientData?.weight || patientData.weight === "-" ? "--" : patientData.weight} <span className="text-[9px] font-semibold text-[hsl(var(--color-text-muted))]">kg</span>
+                </span>
+              </div>
+              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm relative group/bmi">
+                <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1">
+                  <LuActivity className={bmiColor}/> BMI
+                </span>
+                <span className={`text-sm font-black text-[hsl(var(--color-text))] ${bmi !== "--" && "mb-1"}`}>{bmi}</span>
+                {bmiStatus && (
+                  <span className={`absolute -bottom-2 text-[8px] font-bold px-2 py-0.5 rounded-full bg-[hsl(var(--color-bg-surface))] ${bmiColor} shadow-sm border border-[hsl(var(--color-border-soft))]`}>
+                    {bmiStatus}
+                  </span>
+                )}
               </div>
               <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm group/blood relative overflow-hidden">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuDroplet className="text-red-500"/> Blood</span>

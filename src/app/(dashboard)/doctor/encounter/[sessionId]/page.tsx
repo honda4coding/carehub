@@ -396,12 +396,16 @@ export default function PatientDashboardPage() {
     window.print();
   };
 
-  const lastVisitVitals = fullMedicalHistory && fullMedicalHistory.length > 0 ? {
-    date: fullMedicalHistory[0].createdAt,
-    bloodPressure: fullMedicalHistory[0].bloodPressure,
-    sugarLevel: fullMedicalHistory[0].sugarLevel,
-    pulse: fullMedicalHistory[0].pulse,
-    temperature: fullMedicalHistory[0].temperature,
+  const lastVisitWithVitals = fullMedicalHistory?.find(record => 
+    record.bloodPressure || record.sugarLevel || record.pulse || record.temperature
+  );
+
+  const lastVisitVitals = lastVisitWithVitals ? {
+    date: lastVisitWithVitals.createdAt,
+    bloodPressure: lastVisitWithVitals.bloodPressure,
+    sugarLevel: lastVisitWithVitals.sugarLevel,
+    pulse: lastVisitWithVitals.pulse,
+    temperature: lastVisitWithVitals.temperature,
   } : undefined;
 
   return (
