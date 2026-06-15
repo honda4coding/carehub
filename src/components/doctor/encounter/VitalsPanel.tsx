@@ -43,8 +43,8 @@ export default function VitalsPanel({
   const [isEditBloodTypeOpen, setIsEditBloodTypeOpen] = useState(false);
 
   return (
-    <>
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm relative group mb-4">
+    <div className="space-y-4">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm relative group">
         <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-4 uppercase tracking-wider">
           <LuActivity className="text-primary" /> Patient Vitals
         </h3>
@@ -58,14 +58,25 @@ export default function VitalsPanel({
           {/* Section 1: Base Semi-Static Info */}
           <div>
             <h4 className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Base Info</h4>
-            <div className="space-y-2">
-              <div className="flex justify-between items-center bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
-                <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuRuler/> Height</span>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
+                <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuRuler/> Height</span>
                 <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.height} cm</span>
               </div>
-              <div className="flex justify-between items-center bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
-                <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuWeight/> Weight</span>
+              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
+                <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuWeight/> Weight</span>
                 <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.weight} kg</span>
+              </div>
+              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm group/blood relative overflow-hidden">
+                <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuDroplet className="text-red-500"/> Blood</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.bloodType || "Unknown"}</span>
+                <button 
+                  onClick={() => setIsEditBloodTypeOpen(true)} 
+                  className="absolute inset-0 flex items-center justify-center bg-black/60 text-white opacity-0 group-hover/blood:opacity-100 transition-opacity"
+                  title="Edit Blood Type"
+                >
+                  <LuPen className="text-sm" />
+                </button>
               </div>
             </div>
           </div>
@@ -76,71 +87,55 @@ export default function VitalsPanel({
               <h4 className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">
                 Last Visit ({new Date(lastVisitVitals.date).toLocaleDateString()})
               </h4>
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                   <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuHeart className="text-rose-500" /> B.P.</span>
-                  <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.bloodPressure || "--"} mmHg</span>
+                  <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.bloodPressure || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">mmHg</span></span>
                 </div>
-                <div className="bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
+                <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                   <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuTestTube className="text-blue-500" /> Sugar</span>
-                  <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.sugarLevel || "--"} mg/dL</span>
+                  <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.sugarLevel || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">mg/dL</span></span>
                 </div>
-                <div className="bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
+                <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                   <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuActivity className="text-orange-500" /> Pulse</span>
-                  <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.pulse || "--"} bpm</span>
+                  <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.pulse || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">bpm</span></span>
                 </div>
-                <div className="bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
+                <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm">
                   <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuThermometer className="text-yellow-500" /> Temp</span>
-                  <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.temperature || "--"} °C</span>
+                  <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{lastVisitVitals.temperature || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">°C</span></span>
                 </div>
               </div>
             </div>
           )}
 
           {/* Section 3: Today's Readings */}
-          <div className="p-3 bg-primary/5 border border-primary/20 rounded-xl relative">
+          <div className="p-4 bg-[hsl(var(--color-primary)/0.03)] border border-[hsl(var(--color-primary)/0.15)] rounded-2xl relative">
             <button 
               onClick={() => setIsEditVitalsOpen(true)} 
-              className="no-print absolute top-2 right-2 text-[10px] font-bold text-primary hover:underline"
+              className="no-print absolute top-3 right-3 text-[10px] font-bold text-primary bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary)/0.2)] px-3 py-1.5 rounded-md transition-colors"
             >
               Update
             </button>
-            <h4 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2">Today's Readings</h4>
-            <div className="grid grid-cols-2 gap-2">
-              <div className="bg-white dark:bg-black/20 px-3 py-2 rounded-lg border border-primary/10">
+            <h4 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-3">Today's Readings</h4>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm hover:border-primary/30 transition-colors">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuHeart className="text-rose-500" /> B.P.</span>
-                <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{editBloodPressure || "--"} mmHg</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{editBloodPressure || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">mmHg</span></span>
               </div>
-              <div className="bg-white dark:bg-black/20 px-3 py-2 rounded-lg border border-primary/10">
+              <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm hover:border-primary/30 transition-colors">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuTestTube className="text-blue-500" /> Sugar</span>
-                <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{editSugarLevel || "--"} mg/dL</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{editSugarLevel || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">mg/dL</span></span>
               </div>
-              <div className="bg-white dark:bg-black/20 px-3 py-2 rounded-lg border border-primary/10">
+              <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm hover:border-primary/30 transition-colors">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuActivity className="text-orange-500" /> Pulse</span>
-                <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{editPulse || "--"} bpm</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{editPulse || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">bpm</span></span>
               </div>
-              <div className="bg-white dark:bg-black/20 px-3 py-2 rounded-lg border border-primary/10">
+              <div className="bg-[hsl(var(--color-bg-surface))] px-4 py-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm hover:border-primary/30 transition-colors">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuThermometer className="text-yellow-500" /> Temp</span>
-                <span className="text-xs font-black text-[hsl(var(--color-text))] block mt-1">{editTemperature || "--"} °C</span>
+                <span className="text-sm font-black text-[hsl(var(--color-text))] block mt-1">{editTemperature || "--"} <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">°C</span></span>
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Separate Card for Blood Type */}
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm relative group">
-        <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-4 uppercase tracking-wider">
-          <LuDroplet className="text-red-500" /> Blood Type
-        </h3>
-        <button 
-          onClick={() => setIsEditBloodTypeOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary"
-        >
-          <LuPen />
-        </button>
-        <div className="flex justify-center items-center py-2">
-          <span className="text-3xl font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.bloodType || "Unknown"}</span>
         </div>
       </div>
 
@@ -308,6 +303,6 @@ export default function VitalsPanel({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

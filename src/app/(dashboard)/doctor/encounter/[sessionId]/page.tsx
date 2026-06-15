@@ -23,7 +23,7 @@ export default function PatientDashboardPage() {
   const { token } = useAuth();
 
   // Tab Navigation
-  const [activeTab, setActiveTab] = useState<"profile" | "history" | "assessment" | "prescription">("assessment");
+  const [activeTab, setActiveTab] = useState<"profile" | "history" | "assessment" | "prescription">("profile");
   const [filterText, setFilterText] = useState("");
 
   // Patient & Session Data
@@ -64,6 +64,11 @@ export default function PatientDashboardPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Attachments Upload
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentsMetadata, setAttachmentsMetadata] = useState<{ type: string; title: string }[]>([]);
+  const attachmentsInputRef = useRef<HTMLInputElement>(null);
+
   // Edit Vitals Modal
   const [isEditVitalsOpen, setIsEditVitalsOpen] = useState(false);
   const [isEditAlertsOpen, setIsEditAlertsOpen] = useState(false);
@@ -100,12 +105,12 @@ export default function PatientDashboardPage() {
             : {
                 name: currentSession.patientId?.fullName,
                 age: "--",
-                bloodType: currentSession.patientId?.bloodType || "-",
-                height: currentSession.patientId?.height || "-",
-                weight: currentSession.patientId?.weight || "-",
-                allergies: currentSession.patientId?.allergies || [],
-                chronic: currentSession.patientId?.chronic || [],
-                surgeries: currentSession.patientId?.surgeries || []
+                bloodType: currentSession.patientProfile?.bloodType || "-",
+                height: currentSession.patientProfile?.height || "-",
+                weight: currentSession.patientProfile?.weight || "-",
+                allergies: currentSession.patientProfile?.allergies || [],
+                chronic: currentSession.patientProfile?.chronic || [],
+                surgeries: currentSession.patientProfile?.surgeries || []
               };
           setPatientData(pData);
           setEditHeight(pData.height === "-" ? "" : pData.height);
@@ -336,17 +341,38 @@ export default function PatientDashboardPage() {
       formData.append("pulse", editPulse);
       formData.append("temperature", editTemperature);
 
-      const medsToSave = prescriptions.map(p => ({
+      let medsToSave = prescriptions.map(p => ({
         medicineName: p.medicineName,
         dosage: p.dosage,
         frequency: p.frequency,
         duration: p.duration,
         instructions: p.instructions
       }));
-      formData.append("medications", JSON.stringify(medsToSave));
+
+      // Auto-add any un-added prescription input if the doctor forgot to click "Add"
+      if (drugName && dosage && frequency && duration) {
+        medsToSave.push({
+          medicineName: drugName,
+          dosage,
+          frequency,
+          duration,
+          instructions
+        });
+      }
+
+      if (medsToSave.length > 0) {
+        formData.append("medications", JSON.stringify(medsToSave));
+      }
 
       if (prescriptionFile) {
         formData.append("prescriptionImage", prescriptionFile);
+      }
+
+      if (attachments && attachments.length > 0) {
+        attachments.forEach(file => {
+          formData.append("attachments", file);
+        });
+        formData.append("attachmentsMetadata", JSON.stringify(attachmentsMetadata));
       }
 
       await axios.patch(`${baseUrl}/doctor/session/${sessionId}/end`, formData, {
@@ -404,10 +430,10 @@ export default function PatientDashboardPage() {
       />
 
       {/* Main Workspace */}
-      <main className="print-area flex-1 p-4 md:p-6 max-w-5xl mx-auto w-full flex flex-col">
+      <main className="print-area flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col">
         
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 mb-6 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-x-auto custom-scrollbar no-print">
+        <div className="flex items-center gap-2 mb-6 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-x-auto custom-scrollbar no-print w-fit mx-auto">
           {[
             { id: "profile", label: "Profile & Vitals", icon: LuUser },
             { id: "history", label: "Medical History", icon: LuHistory },
@@ -487,13 +513,13 @@ export default function PatientDashboardPage() {
           {/* TAB 2: Medical History */}
           {activeTab === "history" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-4">
+              <div className="lg:col-span-3">
                 <MedicationTracker 
                   activeMeds={activeMeds}
                   pastMeds={pastMeds}
                 />
               </div>
-              <div className="lg:col-span-8">
+              <div className="lg:col-span-9">
                 <HistoryTimeline 
                   setIsAssessmentMode={() => setActiveTab("assessment")}
                   startDate={startDate}
@@ -551,6 +577,11 @@ export default function PatientDashboardPage() {
                 handleFileChange={handleFileChange}
                 previewUrl={previewUrl}
                 removeFile={removeFile}
+                attachments={attachments}
+                setAttachments={setAttachments}
+                attachmentsMetadata={attachmentsMetadata}
+                setAttachmentsMetadata={setAttachmentsMetadata}
+                attachmentsInputRef={attachmentsInputRef}
               />
             </div>
           )}
