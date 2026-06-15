@@ -56,7 +56,7 @@ export const LoginForm = () => {
       login(data.data.access_token, actualRole, {
         id: data.data.id,
         email: values.email,
-        name: data.data.name || values.email,
+        name: data.data.fullName || data.data.name || values.email,
       });
     } catch (error) {
       setStatus("Something went wrong. Please check your connection.");
