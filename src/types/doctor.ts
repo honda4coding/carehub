@@ -11,3 +11,24 @@ export interface DoctorFormValues {
   licenseImage: File | null;
   address: string;
 }
+
+export type DoctorApprovalStatus = "pending" | "approved" | "rejected";
+
+export interface PendingDoctorRequest  {
+  id: string;
+  _id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  status: DoctorApprovalStatus;
+  address?: string;
+  createdAt: string;
+  specialty?: string;
+  licenseUrl?: string;
+}
+
+export interface GetPendingDoctorsResponse {
+  message?: string,
+  data: PendingDoctorRequest[];
+}
+
