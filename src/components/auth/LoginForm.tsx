@@ -5,11 +5,8 @@ import Link from "next/link";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useAuth } from "@/context/AuthContext";
 import {
-  HiOutlineMail,
-  HiOutlineLockClosed,
-  HiOutlineEye,
-  HiOutlineEyeOff,
-  HiShieldCheck,
+  HiOutlineMail, HiOutlineLockClosed, HiOutlineEye,
+  HiOutlineEyeOff, HiShieldCheck,
 } from "react-icons/hi";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
@@ -30,13 +27,11 @@ export const LoginForm = () => {
     { setSubmitting, setStatus }: FormikHelpers<LoginValues>,
   ) => {
     try {
+      // 1. signin
       const response = await fetch(`${BASE_URL}/users/signin`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          password: values.password,
-        }),
+        body: JSON.stringify({ email: values.email, password: values.password }),
       });
 
       const data = await response.json();
@@ -58,6 +53,7 @@ export const LoginForm = () => {
         email: values.email,
         name: data.data.name || values.email,
       });
+
     } catch (error) {
       setStatus("Something went wrong. Please check your connection.");
       console.error("Login Error:", error);
@@ -70,16 +66,10 @@ export const LoginForm = () => {
     <div className="w-full">
       <div
         className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40 shadow-xl"
-        style={{
-          backdropFilter: "blur(24px)",
-          background: "rgba(255, 255, 255, 0.7)",
-        }}
+        style={{ backdropFilter: "blur(24px)", background: "rgba(255, 255, 255, 0.7)" }}
       >
         <div className="text-center mb-8">
-          <h2
-            className="text-2xl font-bold"
-            style={{ color: "hsl(var(--color-text))" }}
-          >
+          <h2 className="text-2xl font-bold" style={{ color: "hsl(var(--color-text))" }}>
             Welcome Back
           </h2>
           <p
@@ -105,81 +95,45 @@ export const LoginForm = () => {
 
               {/* Email */}
               <div className="space-y-1.5">
-                <label
-                  className="block text-xs font-bold pl-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}
-                >
+                <label className="block text-xs font-bold pl-4 tracking-wide uppercase" style={{ color: "hsl(var(--color-text-muted))" }}>
                   Email
                 </label>
                 <div className="relative">
                   <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
-                    name="email"
-                    type="email"
-                    placeholder="name@example.com"
+                    name="email" type="email" placeholder="name@example.com"
                     className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
                     style={{
-                      backgroundColor:
-                        errors.email && touched.email ? "#fff5f5" : "white",
-                      border:
-                        errors.email && touched.email
-                          ? "1.5px solid #fc8181"
-                          : "1.5px solid transparent",
+                      backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
+                      border: errors.email && touched.email ? "1.5px solid #fc8181" : "1.5px solid transparent",
                       color: "hsl(var(--color-text))",
                     }}
                   />
                 </div>
-                <ErrorMessage
-                  name="email"
-                  component="p"
-                  className="text-red-500 text-xs pl-4 font-medium"
-                />
+                <ErrorMessage name="email" component="p" className="text-red-500 text-xs pl-4 font-medium" />
               </div>
 
               {/* Password */}
               <div className="space-y-1.5">
-                <label
-                  className="block text-xs font-bold pl-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}
-                >
+                <label className="block text-xs font-bold pl-4 tracking-wide uppercase" style={{ color: "hsl(var(--color-text-muted))" }}>
                   Password
                 </label>
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="••••••••"
+                    name="password" type={showPassword ? "text" : "password"} placeholder="••••••••"
                     className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
                     style={{
-                      backgroundColor:
-                        errors.password && touched.password
-                          ? "#fff5f5"
-                          : "white",
-                      border:
-                        errors.password && touched.password
-                          ? "1.5px solid #fc8181"
-                          : "1.5px solid transparent",
+                      backgroundColor: errors.password && touched.password ? "#fff5f5" : "white",
+                      border: errors.password && touched.password ? "1.5px solid #fc8181" : "1.5px solid transparent",
                       color: "hsl(var(--color-text))",
                     }}
                   />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors"
-                  >
-                    {showPassword ? (
-                      <HiOutlineEyeOff className="w-5 h-5" />
-                    ) : (
-                      <HiOutlineEye className="w-5 h-5" />
-                    )}
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors">
+                    {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
                   </button>
                 </div>
-                <ErrorMessage
-                  name="password"
-                  component="p"
-                  className="text-red-500 text-xs pl-4 font-medium"
-                />
+                <ErrorMessage name="password" component="p" className="text-red-500 text-xs pl-4 font-medium" />
               </div>
 
               {/* Remember + Forgot */}
@@ -198,28 +152,15 @@ export const LoginForm = () => {
                   </span>
                 </label>
                 <div className="flex items-center gap-4">
-                  <Link
-                    href="/forgot-password"
-                    className="text-xs font-bold transition-colors"
-                    style={{ color: "hsl(var(--color-primary-strong))" }}
-                  >
-                    Forgot Access?
-                  </Link>
-                  <Link
-                    href="/reset-password"
-                    className="text-xs font-bold transition-colors"
-                    style={{ color: "hsl(var(--color-primary-strong))" }}
-                  >
-                    Reset Password
-                  </Link>
+                  <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
+                  <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Reset Password</Link>
                 </div>
               </div>
 
               {/* Submit */}
               <div className="pt-4">
                 <button
-                  type="submit"
-                  disabled={isSubmitting}
+                  type="submit" disabled={isSubmitting}
                   className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     backgroundImage:
@@ -227,15 +168,9 @@ export const LoginForm = () => {
                   }}
                 >
                   {isSubmitting ? (
-                    <>
-                      <ImSpinner2 className="w-5 h-5 animate-spin" />{" "}
-                      Verifying...
-                    </>
+                    <><ImSpinner2 className="w-5 h-5 animate-spin" /> Verifying...</>
                   ) : (
-                    <>
-                      Enter Sanctuary{" "}
-                      <HiOutlineArrowRight className="w-5 h-5" />
-                    </>
+                    <>Enter Sanctuary <HiOutlineArrowRight className="w-5 h-5" /></>
                   )}
                 </button>
               </div>
@@ -245,16 +180,9 @@ export const LoginForm = () => {
 
         {/* Footer */}
         <div className="mt-10 pt-8 border-t border-slate-200/50 text-center space-y-4">
-          <p
-            className="text-sm"
-            style={{ color: "hsl(var(--color-text-muted))" }}
-          >
+          <p className="text-sm" style={{ color: "hsl(var(--color-text-muted))" }}>
             New to Carehub?{" "}
-            <Link
-              href="/register"
-              className="font-bold hover:underline underline-offset-4 transition-all"
-              style={{ color: "hsl(var(--color-primary-strong))" }}
-            >
+            <Link href="/register" className="font-bold hover:underline underline-offset-4 transition-all" style={{ color: "hsl(var(--color-primary-strong))" }}>
               Request Enrollment
             </Link>
           </p>
@@ -277,14 +205,8 @@ export const LoginForm = () => {
 
       {/* Security Tag */}
       <div className="mt-6 flex items-center justify-center gap-2 opacity-60">
-        <HiShieldCheck
-          className="w-4 h-4"
-          style={{ color: "hsl(var(--color-text-muted))" }}
-        />
-        <span
-          className="text-[10px] uppercase font-bold tracking-[0.2em]"
-          style={{ color: "hsl(var(--color-text-muted))" }}
-        >
+        <HiShieldCheck className="w-4 h-4" style={{ color: "hsl(var(--color-text-muted))" }} />
+        <span className="text-[10px] uppercase font-bold tracking-[0.2em]" style={{ color: "hsl(var(--color-text-muted))" }}>
           HIPAA COMPLIANT ENVIRONMENT
         </span>
       </div>

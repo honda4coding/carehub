@@ -21,6 +21,9 @@ export interface HealthHubProfile {
   gender: "Male" | "Female";
   address: string;
   phoneNumber: string;
+  height?: number;
+weight?: number;
+surgeries?: string[];
 }
 
 export interface Prescription {

@@ -1,5 +1,5 @@
 "use client";
-import { LuActivity, LuShieldAlert, LuUser } from "react-icons/lu";
+import { LuActivity, LuShieldAlert, LuUser, LuRuler, LuWeight, LuScissors } from "react-icons/lu";
 import { HealthHubProfile } from "@/types/patient";
 
 interface Props {
@@ -13,7 +13,9 @@ export default function HealthHub({ profile }: Props) {
         <LuUser className="text-[14px]" /> Centralized Health Hub
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      {/* Row 1 — 4 cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+
         {/* Bio */}
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between">
           <div>
@@ -43,7 +45,7 @@ export default function HealthHub({ profile }: Props) {
             <span className="text-[11px] text-red-500">❤️</span>
           </div>
           <div className="my-2">
-            <p className="text-[36px] font-black text-[hsl(var(--color-text))] leading-none">{profile.bloodType}</p>
+            <p className="text-[36px] font-black text-[hsl(var(--color-text))] leading-none">{profile.bloodType || "—"}</p>
             <p className="text-[10px] font-bold text-[hsl(var(--color-success))] mt-1.5">● Compatible Donor</p>
           </div>
           <p className="text-[10px] text-[hsl(var(--color-text-muted))] leading-tight">
@@ -58,7 +60,7 @@ export default function HealthHub({ profile }: Props) {
             <LuActivity className="text-[14px] text-[hsl(var(--color-primary))]" />
           </div>
           <div className="my-2 flex flex-col gap-1.5">
-            {profile.chronicDiseases.length === 0 ? (
+            {(profile.chronicDiseases ?? []).length === 0 ? (
               <span className="text-[11px] text-[hsl(var(--color-text-muted))]">None recorded</span>
             ) : profile.chronicDiseases.map((d) => (
               <span key={d} className="inline-flex items-center gap-1.5 text-[11px] font-black px-2.5 py-1 rounded-lg bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]">
@@ -78,7 +80,7 @@ export default function HealthHub({ profile }: Props) {
             <LuShieldAlert className="text-[14px] text-[hsl(var(--color-danger))]" />
           </div>
           <div className="my-2 flex flex-wrap gap-1.5">
-            {profile.allergies.length === 0 ? (
+            {(profile.allergies ?? []).length === 0 ? (
               <span className="text-[11px] text-[hsl(var(--color-text-muted))]">None recorded</span>
             ) : profile.allergies.map((a) => (
               <span key={a} className="inline-flex items-center gap-1.5 text-[11px] font-black px-2.5 py-1 rounded-lg bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]">
@@ -89,6 +91,55 @@ export default function HealthHub({ profile }: Props) {
           <p className="text-[10px] text-[hsl(var(--color-text-muted))] leading-tight">
             Alerts medical personnel prior to clinical prescription generation to prevent reactions.
           </p>
+        </div>
+      </div>
+
+      {/* Row 2 — Height, Weight, Surgeries */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+        {/* Height */}
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary-bg,var(--color-bg-soft)))] flex items-center justify-center shrink-0">
+            <LuRuler className="text-[18px] text-[hsl(var(--color-primary))]" />
+          </div>
+          <div>
+            <p className="text-[10px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Height</p>
+            <p className="text-[20px] font-black text-[hsl(var(--color-text))] leading-tight">
+              {profile.height ? `${profile.height} cm` : "—"}
+            </p>
+          </div>
+        </div>
+
+        {/* Weight */}
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
+          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-bg-soft))] flex items-center justify-center shrink-0">
+            <LuWeight className="text-[18px] text-[hsl(var(--color-primary))]" />
+          </div>
+          <div>
+            <p className="text-[10px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Weight</p>
+            <p className="text-[20px] font-black text-[hsl(var(--color-text))] leading-tight">
+              {profile.weight ? `${profile.weight} kg` : "—"}
+            </p>
+          </div>
+        </div>
+
+        {/* Surgeries */}
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-bg-soft))] flex items-center justify-center shrink-0">
+              <LuScissors className="text-[18px] text-[hsl(var(--color-text-muted))]" />
+            </div>
+            <p className="text-[10px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Past Surgeries</p>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            {(profile.surgeries ?? []).length === 0 ? (
+              <span className="text-[11px] text-[hsl(var(--color-text-muted))]">None recorded</span>
+            ) : profile.surgeries!.map((s, i) => (
+              <span key={i} className="text-[11px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-soft))] px-2.5 py-1 rounded-lg">
+                🔹 {s}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
     </section>
