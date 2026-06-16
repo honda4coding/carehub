@@ -21,6 +21,7 @@ export interface DoctorProfile {
 
 export interface UpdateDoctorProfilePayload {
   fullName?: string;
+  phoneNumber?: string;
   address?: string;
   specialization?: string;
   experience?: number;

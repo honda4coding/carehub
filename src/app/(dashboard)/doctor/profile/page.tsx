@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
 import ProfessionalInfoForm from "@/components/doctor/profile/ProfessionalInfoForm";
-import LicenseUploadSection from "@/components/doctor/profile/LicenseUploadSection";
+
 import {
   getDoctorProfile,
   DoctorProfile,
@@ -13,7 +13,7 @@ import {
 
 export default function DoctorProfilePage() {
   const [profile, setProfile] = useState<DoctorProfile | null>(null);
-  const [status,  setStatus]  = useState<string>("");
+  
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState("");
 
@@ -23,7 +23,6 @@ export default function DoctorProfilePage() {
       setError("");
       const data = await getDoctorProfile();
       setProfile(data);
-      setStatus(data.status ?? "");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Failed to load profile.");
     } finally {
@@ -79,11 +78,6 @@ export default function DoctorProfilePage() {
             <ProfessionalInfoForm
               profile={profile}
               onSaveSuccess={handleProfileSaved}
-            />
-            <LicenseUploadSection
-              profile={profile}
-              onUploadSuccess={() => { fetchProfile(); setStatus("pending"); }}
-              isPending={status === "pending"}
             />
           </div>
         )}

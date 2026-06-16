@@ -4,33 +4,50 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { ImSpinner2 } from "react-icons/im";
 import { HiOutlineArrowRight } from "react-icons/hi2";
-import { LuUser, LuMail, LuPhone, LuBuilding2, LuBriefcase, LuFileText, LuCheck, LuStethoscope } from "react-icons/lu";
+import {
+  LuUser,
+  LuMail,
+  LuPhone,
+  LuBuilding2,
+  LuBriefcase,
+  LuFileText,
+  LuCheck,
+  LuStethoscope,
+} from "react-icons/lu";
 import { useState } from "react";
-import { DoctorProfile, UpdateDoctorProfilePayload, updateDoctorProfile } from "@/services/doctorService";
+import {
+  DoctorProfile,
+  UpdateDoctorProfilePayload,
+  updateDoctorProfile,
+} from "@/services/doctorService";
 
 // نفس الـ list الموجودة في صفحة الـ signup
 const SPECIALTIES = [
-  { value: "general_practice",  label: "General Practice" },
-  { value: "pediatrics",        label: "Pediatrics" },
-  { value: "cardiology",        label: "Cardiology" },
-  { value: "dermatology",       label: "Dermatology" },
-  { value: "orthopedics",       label: "Orthopedics" },
+  { value: "general_practice", label: "General Practice" },
+  { value: "pediatrics", label: "Pediatrics" },
+  { value: "cardiology", label: "Cardiology" },
+  { value: "dermatology", label: "Dermatology" },
+  { value: "orthopedics", label: "Orthopedics" },
   { value: "internal_medicine", label: "Internal Medicine" },
-  { value: "neurology",         label: "Neurology" },
-  { value: "psychiatry",        label: "Psychiatry" },
+  { value: "neurology", label: "Neurology" },
+  { value: "psychiatry", label: "Psychiatry" },
 ];
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 const schema = Yup.object({
-  fullName:       Yup.string().min(3, "Min 3 characters").required("Full name is required"),
+  fullName: Yup.string()
+    .min(3, "Min 3 characters")
+    .required("Full name is required"),
   specialization: Yup.string().required("Specialization is required"),
-  experience:     Yup.number().min(0).max(60).required("Experience is required"),
-  address:        Yup.string().optional(),
-  bio:            Yup.string().min(20, "Min 20 characters").optional(),
+  experience: Yup.number().min(0).max(60).required("Experience is required"),
+  address: Yup.string().optional(),
+  phoneNumber: Yup.string().min(10, "Min 10 digits").optional(),
+  bio: Yup.string().min(20, "Min 20 characters").optional(),
 });
 
 type FormValues = {
   fullName: string;
+  phoneNumber: string;
   specialization: string;
   experience: number | "";
   address: string;
@@ -38,7 +55,15 @@ type FormValues = {
 };
 
 // ─── Reusable read-only field ─────────────────────────────────────────────────
-function ReadOnlyField({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
+function ReadOnlyField({
+  label,
+  value,
+  icon,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+}) {
   return (
     <div className="space-y-1.5">
       <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
@@ -54,10 +79,19 @@ function ReadOnlyField({ label, value, icon }: { label: string; value: string; i
 
 // ─── Reusable editable field ──────────────────────────────────────────────────
 function EditField({
-  name, label, icon, placeholder, type = "text", errors, touched,
+  name,
+  label,
+  icon,
+  placeholder,
+  type = "text",
+  errors,
+  touched,
 }: {
-  name: string; label: string; icon: React.ReactNode;
-  placeholder: string; type?: string;
+  name: string;
+  label: string;
+  icon: React.ReactNode;
+  placeholder: string;
+  type?: string;
   errors: Record<string, string | undefined>;
   touched: Record<string, boolean | undefined>;
 }) {
@@ -79,11 +113,17 @@ function EditField({
         className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
         style={{
           backgroundColor: hasError ? "#fff5f5" : "white",
-          border: hasError ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
+          border: hasError
+            ? "1.5px solid #fc8181"
+            : "1px solid hsl(var(--color-border))",
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
+      <ErrorMessage
+        name={name}
+        component="p"
+        className="text-red-500 text-xs pl-1 font-medium"
+      />
     </div>
   );
 }
@@ -94,37 +134,45 @@ interface Props {
   onSaveSuccess: (updated: UpdateDoctorProfilePayload) => void;
 }
 
-export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) {
-  const [serverError,   setServerError]   = useState("");
+export default function ProfessionalInfoForm({
+  profile,
+  onSaveSuccess,
+}: Props) {
+  const [serverError, setServerError] = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
   const initialValues: FormValues = {
-    fullName:       profile?.fullName       ?? "",
+    fullName: profile?.fullName ?? "",
+    phoneNumber: profile?.phoneNumber ?? "",
     specialization: profile?.specialization ?? "",
-    experience:     profile?.experience     ?? "",
-    address:        profile?.address        ?? "",
-    bio:            profile?.bio            ?? "",
+    experience: profile?.experience ?? "",
+    address: profile?.address ?? "",
+    bio: profile?.bio ?? "",
   };
 
   const handleSubmit = async (
     values: FormValues,
-    { setSubmitting }: FormikHelpers<FormValues>
+    { setSubmitting }: FormikHelpers<FormValues>,
   ) => {
     try {
       setServerError("");
       setServerSuccess("");
       const payload: UpdateDoctorProfilePayload = {
-        fullName:       values.fullName,
+        fullName: values.fullName,
+        phoneNumber: values.phoneNumber || undefined,
         specialization: values.specialization,
-        experience:     values.experience === "" ? undefined : Number(values.experience),
-        address:        values.address   || undefined,
-        bio:            values.bio       || undefined,
+        experience:
+          values.experience === "" ? undefined : Number(values.experience),
+        address: values.address || undefined,
+        bio: values.bio || undefined,
       };
       await updateDoctorProfile(payload);
       setServerSuccess("Profile updated successfully!");
       onSaveSuccess(payload);
     } catch (err: unknown) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+      setServerError(
+        err instanceof Error ? err.message : "Something went wrong.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -132,14 +180,15 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
 
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
-
       {/* Server messages */}
       {(serverError || serverSuccess) && (
-        <div className={`px-6 py-3 text-sm font-medium flex items-center gap-2 ${
-          serverError
-            ? "bg-red-50 border-b border-red-200 text-red-600"
-            : "bg-green-50 border-b border-green-200 text-green-600"
-        }`}>
+        <div
+          className={`px-6 py-3 text-sm font-medium flex items-center gap-2 ${
+            serverError
+              ? "bg-red-50 border-b border-red-200 text-red-600"
+              : "bg-green-50 border-b border-green-200 text-green-600"
+          }`}
+        >
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
           {serverError || serverSuccess}
         </div>
@@ -154,7 +203,6 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
         {({ errors, touched, isSubmitting }) => (
           <Form>
             <div className="p-6 space-y-5">
-
               {/* Full Name */}
               <EditField
                 name="fullName"
@@ -171,17 +219,18 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
                 value={profile?.email ?? ""}
                 icon={<LuMail />}
               />
-
-              {/* Phone — read only */}
-              <ReadOnlyField
+              {/* Phone — editable */}
+              <EditField
+                name="phoneNumber"
                 label="Phone"
-                value={profile?.phoneNumber ?? ""}
                 icon={<LuPhone />}
+                placeholder="01000000000"
+                errors={errors}
+                touched={touched}
               />
 
               {/* Specialization dropdown + Experience — 2 cols */}
               <div className="grid grid-cols-2 gap-4">
-
                 {/* Specialization — dropdown */}
                 <div className="space-y-1.5">
                   <label
@@ -198,14 +247,22 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
                       name="specialization"
                       className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer"
                       style={{
-                        backgroundColor: errors.specialization && touched.specialization ? "#fff5f5" : "white",
-                        border: errors.specialization && touched.specialization ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
+                        backgroundColor:
+                          errors.specialization && touched.specialization
+                            ? "#fff5f5"
+                            : "white",
+                        border:
+                          errors.specialization && touched.specialization
+                            ? "1.5px solid #fc8181"
+                            : "1px solid hsl(var(--color-border))",
                         color: "hsl(var(--color-text))",
                       }}
                     >
                       <option value="">Select specialization</option>
                       {SPECIALTIES.map((s) => (
-                        <option key={s.value} value={s.value}>{s.label}</option>
+                        <option key={s.value} value={s.value}>
+                          {s.label}
+                        </option>
                       ))}
                     </Field>
                     {/* Dropdown arrow */}
@@ -213,7 +270,11 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
                       ▾
                     </span>
                   </div>
-                  <ErrorMessage name="specialization" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                  <ErrorMessage
+                    name="specialization"
+                    component="p"
+                    className="text-red-500 text-xs pl-1 font-medium"
+                  />
                 </div>
 
                 {/* Experience */}
@@ -245,12 +306,20 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
                   placeholder="Board-certified internist with 15 years of experience in primary care and chronic disease management."
                   className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
                   style={{
-                    backgroundColor: errors.bio && touched.bio ? "#fff5f5" : "white",
-                    border: errors.bio && touched.bio ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
+                    backgroundColor:
+                      errors.bio && touched.bio ? "#fff5f5" : "white",
+                    border:
+                      errors.bio && touched.bio
+                        ? "1.5px solid #fc8181"
+                        : "1px solid hsl(var(--color-border))",
                     color: "hsl(var(--color-text))",
                   }}
                 />
-                <ErrorMessage name="bio" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                <ErrorMessage
+                  name="bio"
+                  component="p"
+                  className="text-red-500 text-xs pl-1 font-medium"
+                />
               </div>
             </div>
 
@@ -265,9 +334,13 @@ export default function ProfessionalInfoForm({ profile, onSaveSuccess }: Props) 
                 }}
               >
                 {isSubmitting ? (
-                  <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
+                  <>
+                    <ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...
+                  </>
                 ) : (
-                  <><HiOutlineArrowRight className="w-4 h-4" /> Save Changes</>
+                  <>
+                    <HiOutlineArrowRight className="w-4 h-4" /> Save Changes
+                  </>
                 )}
               </button>
             </div>
