@@ -1,28 +1,92 @@
 "use client";
 
-import { LuUser } from "react-icons/lu";
+import { useEffect, useState, useCallback } from "react";
+import { ImSpinner2 } from "react-icons/im";
+import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
+import ProfessionalInfoForm from "@/components/doctor/profile/ProfessionalInfoForm";
+import LicenseUploadSection from "@/components/doctor/profile/LicenseUploadSection";
+import {
+  getDoctorProfile,
+  DoctorProfile,
+  UpdateDoctorProfilePayload,
+} from "@/services/doctorService";
 
 export default function DoctorProfilePage() {
+  const [profile, setProfile] = useState<DoctorProfile | null>(null);
+  const [status,  setStatus]  = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState("");
+
+  const fetchProfile = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const data = await getDoctorProfile();
+      setProfile(data);
+      setStatus(data.status ?? "");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to load profile.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
+
+  const handleProfileSaved = (updated: UpdateDoctorProfilePayload) => {
+    setProfile((prev) => (prev ? { ...prev, ...updated } : prev));
+  };
+
   return (
-    <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3">
-        <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
-          My Profile
+    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
+      {/* Page title */}
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
+        <h1 className="text-[16px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
+          Profile Settings
         </h1>
         <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Manage your personal and professional information
+          Manage your personal information
         </p>
       </header>
-      <main className="flex-1 p-4 md:p-6 flex items-center justify-center">
-        <div className="text-center max-w-sm">
-          <div className="w-16 h-16 bg-[hsl(var(--color-primary)/0.1)] rounded-full flex items-center justify-center mx-auto mb-4 text-primary text-2xl">
-            <LuUser />
+
+      <main className="flex-1 p-6">
+        {/* Loading */}
+        {loading && (
+          <div className="flex items-center justify-center py-20">
+            <ImSpinner2 className="w-7 h-7 animate-spin text-primary" />
           </div>
-          <h2 className="text-lg font-black text-[hsl(var(--color-text))] mb-2">Profile Management</h2>
-          <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">
-            This page is currently under construction. You will be able to update your bio, specialization, and upload your license here.
-          </p>
-        </div>
+        )}
+
+        {/* Error */}
+        {!loading && error && (
+          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-5 py-4 rounded-2xl">
+            {error}
+            <button
+              onClick={fetchProfile}
+              className="block mt-2 text-xs underline font-bold"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
+        {/* Content */}
+        {!loading && !error && (
+          <div className="space-y-5">
+            <ProfileHeader profile={profile} />
+            <ProfessionalInfoForm
+              profile={profile}
+              onSaveSuccess={handleProfileSaved}
+            />
+            <LicenseUploadSection
+              profile={profile}
+              onUploadSuccess={() => { fetchProfile(); setStatus("pending"); }}
+              isPending={status === "pending"}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
