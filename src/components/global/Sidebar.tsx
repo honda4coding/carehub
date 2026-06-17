@@ -102,7 +102,7 @@ const doctorNav: NavSection[] = [
       { label: "Settings", href: "/doctor/settings", icon: <LuSettings /> },
     ],
   },
-
+];
 
 const patientNav: NavSection[] = [
   {
