@@ -24,11 +24,8 @@ function authHeaders() {
 function formatDate(dateStr: string) {
   try {
     return new Date(dateStr).toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+      day: "2-digit", month: "long", year: "numeric",
+      hour: "2-digit", minute: "2-digit",
     });
   } catch {
     return dateStr;
@@ -46,44 +43,60 @@ export default function PatientDashboard() {
 
   const showToast = useCallback((msg: string) => setToastMsg(msg), []);
 
-  // Fetch profile + timeline
   useEffect(() => {
     if (!user) return;
-
     const patientId = (user as any)._id ?? user.id;
 
     async function fetchAll() {
+      // 1. Fetch profile
       try {
-        // 1. Fetch full profile from backend
         const { data } = await axios.get(`${BASE_URL}/users/profile`, {
           headers: authHeaders(),
         });
-
         const p = data.data ?? data;
 
+        // try to get height/weight/surgeries from medical history
+        let height: number | undefined;
+        let weight: number | undefined;
+        let surgeries: string[] = [];
+
+        try {
+          const medData = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
+            headers: authHeaders(),
+          });
+          const med = medData.data?.data ?? medData.data;
+          if (med) {
+            height = med.height;
+            weight = med.weight;
+            surgeries = med.surgeries ?? [];
+          }
+        } catch { /* msh lazem ykon mawgood */ }
+
         setProfile({
-          fullName: p.fullName ?? p.userName ?? user!.name ?? "Unknown",
+          fullName:         p.fullName ?? p.userName ?? user!.name ?? "Unknown",
           nationalIdStatus: p.confirmed ? "Verified" : "Pending",
-          bloodType: p.bloodType ?? "—",
-          chronicDiseases: p.chronicDiseases ?? [],
-          allergies: p.allergies ?? [],
-          age: p.age ?? 0,
-          gender: p.gender === "female" ? "Female" : "Male",
-          address: p.address ?? "—",
-          phoneNumber: p.phone ?? p.phoneNumber ?? "—",
+          bloodType:        p.bloodType ?? "—",
+          chronicDiseases:  p.chronicDiseases ?? [],
+          allergies:        p.allergies ?? [],
+          age:              p.age ?? 0,
+          gender:           p.gender === "female" ? "Female" : "Male",
+          address:          p.address ?? "—",
+          phoneNumber:      p.phone ?? p.phoneNumber ?? "—",
+          height,
+          weight,
+          surgeries,
         });
       } catch {
-        // fallback: بنبني الـ profile من الـ AuthContext لو الـ API فشل
         setProfile({
-          fullName: user!.name ?? "Unknown",
+          fullName:         user!.name ?? "Unknown",
           nationalIdStatus: "Pending",
-          bloodType: "—",
-          chronicDiseases: [],
-          allergies: [],
-          age: 0,
-          gender: "Male",
-          address: "—",
-          phoneNumber: "—",
+          bloodType:        "—",
+          chronicDiseases:  [],
+          allergies:        [],
+          age:              0,
+          gender:           "Male",
+          address:          "—",
+          phoneNumber:      "—",
         });
       } finally {
         setProfileLoading(false);
@@ -94,9 +107,7 @@ export default function PatientDashboard() {
         const headers = authHeaders();
         const [medRes, presRes] = await Promise.allSettled([
           axios.get(`${BASE_URL}/medical-history/${patientId}`, { headers }),
-          axios.get(`${BASE_URL}/prescrption/patient/${patientId}`, {
-            headers,
-          }),
+          axios.get(`${BASE_URL}/prescrption/patient/${patientId}`, { headers }),
         ]);
 
         const entries: TimelineEntry[] = [];
@@ -125,33 +136,26 @@ export default function PatientDashboard() {
         } else showToast("Could not load medical history");
 
         if (presRes.status === "fulfilled") {
-          (presRes.value.data?.data ?? presRes.value.data ?? []).forEach(
-            (r: any) => {
-              entries.push({
-                id: `pres-${r._id}`,
-                rawDate: new Date(r.createdAt ?? Date.now()),
-                date: formatDate(r.createdAt),
-                doctorName:
-                  r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
-                specialty: r.doctorId?.specialization ?? "General",
-                chiefComplaint: r.chiefComplaint ?? "Prescription",
-                diagnosis: r.diagnosis ?? "—",
-                clinicalNotes: r.notes ?? "—",
-                prescriptions: (r.medications ?? r.prescriptions ?? []).map(
-                  (p: any) => ({
-                    medication: p.medication ?? p.name ?? "—",
-                    dosage: p.dosage ?? "—",
-                    frequency: p.frequency ?? "—",
-                  }),
-                ),
-              });
-            },
-          );
+          (presRes.value.data?.data ?? presRes.value.data ?? []).forEach((r: any) => {
+            entries.push({
+              id:             `pres-${r._id}`,
+              rawDate:        new Date(r.createdAt ?? Date.now()),
+              date:           formatDate(r.createdAt),
+              doctorName:     r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
+              specialty:      r.doctorId?.specialization ?? "General",
+              chiefComplaint: r.chiefComplaint ?? "Prescription",
+              diagnosis:      r.diagnosis ?? "—",
+              clinicalNotes:  r.notes ?? "—",
+              prescriptions:  (r.medications ?? r.prescriptions ?? []).map((p: any) => ({
+                medication: p.medication ?? p.name ?? "—",
+                dosage:     p.dosage ?? "—",
+                frequency:  p.frequency ?? "—",
+              })),
+            });
+          });
         } else showToast("Could not load prescriptions");
 
-        setTimeline(
-          entries.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime()),
-        );
+        setTimeline(entries.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime()));
       } catch (err: any) {
         showToast(err?.response?.data?.message ?? "Failed to load timeline");
       } finally {
@@ -162,18 +166,15 @@ export default function PatientDashboard() {
     fetchAll();
   }, [user, showToast]);
 
-  const filteredTimeline = timeline.filter(
-    (e) =>
-      e.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.diagnosis.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      e.chiefComplaint.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredTimeline = timeline.filter((e) =>
+    e.doctorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.diagnosis.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    e.chiefComplaint.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      {toastMsg && (
-        <Toast message={toastMsg} onClose={() => setToastMsg(null)} />
-      )}
+      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
 
       <PatientHeader
         fullName={profile?.fullName ?? user?.name ?? "..."}
@@ -193,11 +194,7 @@ export default function PatientDashboard() {
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <MedicalTimeline
-            entries={filteredTimeline}
-            loading={timelineLoading}
-            searchTerm={searchTerm}
-          />
+          <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
           <QuickActions />
         </div>
       </main>
