@@ -1,5 +1,6 @@
-import { LuPill, LuPlus, LuTrash2, LuImage, LuUpload } from "react-icons/lu";
-import { RefObject } from "react";
+import { LuPill, LuPlus, LuTrash2, LuImage, LuUpload, LuFileText, LuCamera } from "react-icons/lu";
+import { RefObject, useRef, useState } from "react";
+import WebcamCapture from "./WebcamCapture";
 
 interface RxBuilderProps {
   prescriptions: any[];
@@ -22,6 +23,12 @@ interface RxBuilderProps {
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   previewUrl: string | null;
   removeFile: () => void;
+  
+  attachments?: File[];
+  setAttachments?: (files: File[]) => void;
+  attachmentsMetadata?: { type: string; title: string }[];
+  setAttachmentsMetadata?: (meta: { type: string; title: string }[]) => void;
+  attachmentsInputRef?: RefObject<HTMLInputElement | null>;
 }
 
 // Handles writing the prescription, managing drugs, and uploading a paper Rx image
@@ -38,8 +45,62 @@ export default function RxBuilder({
   fileInputRef,
   handleFileChange,
   previewUrl,
-  removeFile
+  removeFile,
+  attachments = [],
+  setAttachments,
+  attachmentsMetadata = [],
+  setAttachmentsMetadata,
+  attachmentsInputRef
 }: RxBuilderProps) {
+  
+  const handleAddAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const newFiles = Array.from(e.target.files);
+      if (setAttachments && setAttachmentsMetadata) {
+        setAttachments([...attachments, ...newFiles]);
+        setAttachmentsMetadata([
+          ...attachmentsMetadata,
+          ...newFiles.map(f => ({ type: "lab", title: f.name }))
+        ]);
+      }
+    }
+  };
+
+  const updateAttachmentMeta = (index: number, key: 'type' | 'title', value: string) => {
+    if (setAttachmentsMetadata) {
+      const newMeta = [...attachmentsMetadata];
+      newMeta[index] = { ...newMeta[index], [key]: value };
+      setAttachmentsMetadata(newMeta);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    if (setAttachments && setAttachmentsMetadata) {
+      const newFiles = [...attachments];
+      newFiles.splice(index, 1);
+      setAttachments(newFiles);
+
+      const newMeta = [...attachmentsMetadata];
+      newMeta.splice(index, 1);
+      setAttachmentsMetadata(newMeta);
+    }
+  };
+
+  const [cameraTarget, setCameraTarget] = useState<"prescription" | "attachments" | null>(null);
+
+  const handleWebcamCapture = (file: File) => {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.items.add(file);
+    const mockEvent = { target: { files: dataTransfer.files } } as React.ChangeEvent<HTMLInputElement>;
+    
+    if (cameraTarget === "prescription") {
+      handleFileChange(mockEvent);
+    } else if (cameraTarget === "attachments") {
+      handleAddAttachments(mockEvent);
+    }
+    setCameraTarget(null);
+  };
+
   return (
     <>
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
@@ -133,18 +194,33 @@ export default function RxBuilder({
             />
 
             {!previewUrl ? (
-              <button 
-                onClick={() => fileInputRef.current?.click()}
-                className="w-full h-40 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-3 transition-colors text-[hsl(var(--color-text-muted))]"
-              >
-                <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] flex items-center justify-center">
-                  <LuUpload className="text-xl" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-[hsl(var(--color-text))]">Click to upload photo</p>
-                  <p className="text-xs mt-1">JPEG, PNG up to 5MB</p>
-                </div>
-              </button>
+              <div className="flex gap-3 h-40">
+                <button 
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-bg-soft))] flex items-center justify-center">
+                    <LuUpload className="text-xl" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-[hsl(var(--color-text))]">Upload File</p>
+                    <p className="text-[10px] mt-1">JPEG, PNG</p>
+                  </div>
+                </button>
+
+                <button 
+                  onClick={() => setCameraTarget("prescription")}
+                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                    <LuCamera className="text-xl" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-primary">Take Photo</p>
+                    <p className="text-[10px] mt-1 text-primary/70">Use Camera</p>
+                  </div>
+                </button>
+              </div>
             ) : (
               <div className="relative group rounded-xl overflow-hidden border border-[hsl(var(--color-border))]">
                 <img src={previewUrl} alt="Prescription preview" className="w-full h-40 object-cover" />
@@ -167,6 +243,109 @@ export default function RxBuilder({
           </div>
         </div>
       </div>
+
+      {/* Upload Medical Documents Section */}
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm no-print mt-6">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
+            <LuFileText className="text-primary text-xl" /> Medical Attachments (Labs, Scans)
+          </h2>
+          <div className="flex gap-2">
+            <button 
+              onClick={() => attachmentsInputRef?.current?.click()}
+              className="text-xs font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+            >
+              <LuUpload /> Upload
+            </button>
+            <button 
+              onClick={() => setCameraTarget("attachments")}
+              className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+            >
+              <LuCamera /> Camera
+            </button>
+          </div>
+        </div>
+        
+        <input 
+          type="file" 
+          multiple
+          accept="image/*,application/pdf"
+          ref={attachmentsInputRef}
+          onChange={handleAddAttachments}
+          className="hidden"
+        />
+
+        {attachments.length > 0 ? (
+          <div className="space-y-3">
+            {attachments.map((file, index) => (
+              <div key={index} className="flex flex-col md:flex-row items-center gap-3 p-3 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl">
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-primary shrink-0">
+                  <LuFileText />
+                </div>
+                <div className="flex-grow grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
+                  <div className="md:col-span-5">
+                    <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Document Title</label>
+                    <input 
+                      type="text" 
+                      value={attachmentsMetadata[index]?.title || ''} 
+                      onChange={(e) => updateAttachmentMeta(index, 'title', e.target.value)}
+                      placeholder="e.g. CBC Results"
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
+                    />
+                  </div>
+                  <div className={attachmentsMetadata[index]?.type === 'other' ? "md:col-span-3" : "md:col-span-7"}>
+                    <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Type</label>
+                    <select
+                      value={attachmentsMetadata[index]?.type || 'lab'}
+                      onChange={(e) => updateAttachmentMeta(index, 'type', e.target.value)}
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
+                    >
+                      <option value="lab">Lab Test (تحليل)</option>
+                      <option value="xray">X-Ray (أشعة عادية)</option>
+                      <option value="mri">MRI Scan (رنين)</option>
+                      <option value="ct">CT Scan (مقطعية)</option>
+                      <option value="other">Specify Other...</option>
+                    </select>
+                  </div>
+                  {attachmentsMetadata[index]?.type === 'other' && (
+                    <div className="md:col-span-4">
+                      <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Specify Type</label>
+                      <input 
+                        type="text" 
+                        placeholder="e.g. ECG"
+                        onChange={(e) => {
+                          const currentTitle = attachmentsMetadata[index]?.title || '';
+                          const cleanTitle = currentTitle.includes("]") ? currentTitle.split("] ")[1] || currentTitle : currentTitle;
+                          updateAttachmentMeta(index, 'title', e.target.value ? `[${e.target.value}] ${cleanTitle}` : cleanTitle);
+                        }}
+                        className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
+                      />
+                    </div>
+                  )}
+                </div>
+                <button 
+                  onClick={() => removeAttachment(index)} 
+                  className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-[hsl(var(--color-danger)/0.5)] hover:bg-[hsl(var(--color-danger)/0.1)] hover:text-[hsl(var(--color-danger))] transition-colors"
+                >
+                  <LuTrash2 />
+                </button>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-6 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl">
+            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">No lab tests or scans attached to this encounter.</p>
+          </div>
+        )}
+      </div>
+
+      {cameraTarget && (
+        <WebcamCapture 
+          onCapture={handleWebcamCapture} 
+          onClose={() => setCameraTarget(null)} 
+          title={cameraTarget === "prescription" ? "Capture Prescription" : "Capture Medical Document"}
+        />
+      )}
     </>
   );
 }
