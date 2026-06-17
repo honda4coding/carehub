@@ -19,6 +19,8 @@ import {
   LuChevronDown,
   LuSettings2,
   LuLock,
+  LuActivity,
+  LuHeart,
 } from "react-icons/lu";
 import { FaSquarePollVertical } from "react-icons/fa6";
 
@@ -156,7 +158,16 @@ const settingsSub: Record<
       href: "/patient/profile",
       icon: <LuUser className="text-sm" />,
     },
-
+    {
+      label: "Medical Info",
+      href: "/patient/profile/medical",
+      icon: <LuHeart className="text-sm" />,
+    },
+    {
+      label: "Vitals",
+      href: "/patient/profile/vitals",
+      icon: <LuActivity className="text-sm" />,
+    },
     {
       label: "Security",
       href: "/patient/security",
@@ -191,7 +202,15 @@ function SettingsGroup({
 }) {
   const pathname = usePathname();
   const subItems = settingsSub[role] ?? [];
-  const anyActive = subItems.some((i) => pathname.startsWith(i.href));
+  // const anyActive = subItems.some((i) => pathname.startsWith(i.href));
+  const anyActive = subItems.some((i) =>
+    i.href === "/patient/profile" ||
+    i.href === "/doctor/profile" ||
+    i.href === "/admin/profile"
+      ? pathname === i.href
+      : pathname.startsWith(i.href),
+  );
+
   const [open, setOpen] = useState(anyActive);
 
   return (
@@ -220,7 +239,13 @@ function SettingsGroup({
       {open && (
         <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
           {subItems.map((item) => {
-            const isActive = pathname.startsWith(item.href);
+            // const isActive = pathname.startsWith(item.href);
+            const isActive =
+              item.href === "/patient/profile" ||
+              item.href === "/doctor/profile" ||
+              item.href === "/admin/profile"
+                ? pathname === item.href
+                : pathname.startsWith(item.href);
             return (
               <Link
                 key={item.href}
