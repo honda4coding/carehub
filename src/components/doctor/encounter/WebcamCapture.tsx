@@ -34,8 +34,13 @@ export default function WebcamCapture({ onCapture, onClose, title = "Take Photo"
         videoRef.current.srcObject = mediaStream;
       }
     } catch (err: any) {
-      console.error("Camera access error:", err);
-      setError("Failed to access camera. Please ensure you have granted permission.");
+      if (err.name !== "NotFoundError" && err.message !== "Requested device not found") {
+        console.error("Camera access error:", err);
+      }
+      const msg = (err.name === "NotFoundError" || err.message === "Requested device not found") 
+        ? "No camera device found on this system." 
+        : "Failed to access camera. Please ensure you have granted permission.";
+      setError(msg);
     }
   };
 
