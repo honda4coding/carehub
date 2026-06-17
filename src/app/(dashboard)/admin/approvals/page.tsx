@@ -45,6 +45,9 @@ const TABS: { label: string; value: ApprovalStatus | "all" }[] = [
  
 ];
 
+const notifyPendingChange = () =>
+  window.dispatchEvent(new Event("pending-approvals-changed"));
+
 export default function ApprovalsPage() {
   const { token } = useAuth();
   const router = useRouter();
@@ -95,6 +98,7 @@ export default function ApprovalsPage() {
       setDoctors((prev) =>
         prev.map((d) => d._id === id ? { ...d, status: "approved" } : d)
       );
+      notifyPendingChange();
     } catch (err) {
       console.error("Failed to approve", err);
     } finally {
@@ -118,6 +122,7 @@ export default function ApprovalsPage() {
       setDoctors((prev) =>
         prev.map((d) => d._id === rejectModal.doctorId ? { ...d, status: "rejected" } : d)
       );
+      notifyPendingChange();
       setRejectModal({ open: false, doctorId: null });
       setRejectReason("");
     } catch (err) {
@@ -146,6 +151,7 @@ export default function ApprovalsPage() {
         setDoctors((prev) =>
             prev.map((d) => d._id === id ? { ...d, status: "pending" } : d)
         );
+        notifyPendingChange();
     } catch (err) {
         console.error("Failed to reset", err);
     } finally {
