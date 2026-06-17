@@ -124,7 +124,7 @@ export default function AdminDashboard() {
 
           setTotalPatients(dashboard.data.totalPatients);
           setTotalDoctors(dashboard.data.totalDoctors);
-          setActiveDoctors(dashboard.data.totalDoctors - dashboard.data.pendingDoctors - dashboard.data.rejectedDoctors);
+          setActiveDoctors(dashboard.data.totalDoctors - dashboard.data.pendingDoctors - ((dashboard.data as any).rejectedDoctors || 0));
       }
       catch(err: any){
         console.error("Dashboard stats error:", err);
