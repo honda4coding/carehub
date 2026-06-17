@@ -79,6 +79,7 @@ const doctorNav: NavSection[] = [
         icon: <LuSettings />,
       },
       { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
+      { label: "Reports", href: "/doctor/reports", icon: <FaSquarePollVertical /> },
     ],
   },
   {

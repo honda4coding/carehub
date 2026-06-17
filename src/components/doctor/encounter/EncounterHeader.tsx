@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LuArrowLeft, LuPrinter, LuSave } from "react-icons/lu";
 
 interface EncounterHeaderProps {
@@ -8,7 +9,7 @@ interface EncounterHeaderProps {
   isEnding: boolean;
   onBack: () => void;
   onPrint: () => void;
-  onEndSession: () => void;
+  onEndSession: (fees: number) => void;
 }
 
 // Top header bar for the encounter page, handles printing and saving
@@ -22,6 +23,8 @@ export default function EncounterHeader({
   onPrint,
   onEndSession
 }: EncounterHeaderProps) {
+  const [fees, setFees] = useState<number | "">("");
+
   return (
     <header className="no-print sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between shadow-sm">
       <div className="flex items-center gap-4">
@@ -51,9 +54,19 @@ export default function EncounterHeader({
           <LuPrinter /> Print Report
         </button>
         {isAssessmentMode && (
-          <button onClick={onEndSession} disabled={isEnding} className="bg-primary text-white text-sm font-bold px-6 py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center gap-2 disabled:opacity-50">
-            {isEnding ? "Saving..." : <><LuSave className="text-lg" /> End & Save</>}
-          </button>
+          <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-1 shadow-sm transition-all focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/20">
+            <span className="text-[hsl(var(--color-text-muted))] font-bold pl-3 text-sm">Fees:</span>
+            <input 
+              type="number" 
+              placeholder="Optional"
+              value={fees}
+              onChange={(e) => setFees(e.target.value === "" ? "" : Number(e.target.value))}
+              className="w-24 bg-transparent text-[hsl(var(--color-text))] font-black text-sm p-1.5 focus:outline-none placeholder:text-[hsl(var(--color-text-muted))/0.5]"
+            />
+            <button onClick={() => onEndSession(Number(fees) || 0)} disabled={isEnding} className="bg-primary text-white text-sm font-bold px-5 py-2 rounded-lg shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center gap-2 disabled:opacity-50">
+              {isEnding ? "Saving..." : <><LuSave className="text-lg" /> End</>}
+            </button>
+          </div>
         )}
       </div>
     </header>

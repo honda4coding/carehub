@@ -74,6 +74,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const [currentOtp, setCurrentOtp] = useState<string>("");
   const [walkInName, setWalkInName] = useState("");
   const [walkInPhone, setWalkInPhone] = useState("");
+  const [walkInAge, setWalkInAge] = useState("");
   const router = useRouter();
   
   const [searchQuery, setSearchQuery] = useState("");
@@ -298,7 +299,8 @@ const [sessions, setSessions] = useState<Session[]>([]);
       const response = await axios.post(`${baseUrl}/doctor/session/request`, {
         isOfflinePatient: true,
         guestName: walkInName,
-        guestPhone: walkInPhone
+        guestPhone: walkInPhone,
+        ...(walkInAge ? { guestAge: Number(walkInAge) } : {})
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -320,6 +322,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
       setWalkInModalOpen(false);
       setWalkInName("");
       setWalkInPhone("");
+      setWalkInAge("");
       
       router.push(`/doctor/encounter/${newSession.id}`);
     } catch (err: any) {
@@ -396,6 +399,8 @@ const [sessions, setSessions] = useState<Session[]>([]);
         setWalkInName={setWalkInName}
         walkInPhone={walkInPhone}
         setWalkInPhone={setWalkInPhone}
+        walkInAge={walkInAge}
+        setWalkInAge={setWalkInAge}
         handleWalkInRegister={handleWalkInRegister}
       />
     </div>

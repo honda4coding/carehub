@@ -323,13 +323,14 @@ export default function PatientDashboardPage() {
   };
 
   // Final submission when doctor clicks End & Save
-  const handleEndSession = async () => {
+  const handleEndSession = async (fees: number) => {
     if (!token) return;
     setIsEnding(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       
       const formData = new FormData();
+      if (fees > 0) formData.append("fees", fees.toString());
       formData.append("diagnosis", diagnosis);
       formData.append("notes", symptoms);
       formData.append("prescriptionText", prescriptionText);
