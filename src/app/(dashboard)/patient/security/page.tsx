@@ -2,7 +2,7 @@
 
 import UpdatePasswordForm from "@/components/settings/UpdatePasswordForm";
 
-export default function DoctorSecurityPage() {
+export default function PatientSecurityPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       {/* Page title */}
