@@ -20,7 +20,7 @@ import {
 import {
   formatFullDate,
   initialsOf,
-  timeRangeLabel,
+ slotTimeRangeLabel,
 } from "@/components/appointments/format";
 import EmptyState from "@/components/appointments/EmptyState";
 
@@ -63,15 +63,15 @@ export default function BookAppointmentPage() {
   const dateGroups = useMemo(() => {
     const map = new Map<string, Slot[]>();
     slots.forEach((s) => {
-      const key = new Date(s.date).toDateString();
+        const key = new Date(s.startDateTime).toDateString();
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(s);
     });
     return Array.from(map.entries())
       .map(([key, items]) => ({
         key,
-        date: new Date(items[0].date),
-        items: items.sort((a, b) => a.startTime.localeCompare(b.startTime)),
+        date: new Date(items[0].startDateTime),
+        items: items.sort((a, b) => a.startDateTime.localeCompare(b.startDateTime)),
       }))
       .sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [slots]);
@@ -210,7 +210,7 @@ export default function BookAppointmentPage() {
                             : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-primary"
                         }`}
                       >
-                        {timeRangeLabel(s.startTime, s.endTime)}
+                      {slotTimeRangeLabel(s)}
                       </button>
                     );
                   })}
@@ -222,7 +222,7 @@ export default function BookAppointmentPage() {
                     Selected:{" "}
                     <strong className="text-[hsl(var(--color-text))]">
                       {selectedSlot
-                        ? timeRangeLabel(selectedSlot.startTime, selectedSlot.endTime)
+                        ? slotTimeRangeLabel(selectedSlot)
                         : "none yet"}
                     </strong>
                   </p>
@@ -249,10 +249,10 @@ export default function BookAppointmentPage() {
                   Appointment
                 </p>
                 <p className="text-[22px] font-black">
-                  {selectedSlot ? formatFullDate(selectedSlot.date) : ""}
+                  {selectedSlot ? formatFullDate(selectedSlot.startDateTime) : ""}
                 </p>
                 <p className="text-[12.5px] font-semibold opacity-90 mt-1">
-                  {selectedSlot ? timeRangeLabel(selectedSlot.startTime, selectedSlot.endTime) : ""}
+                  {selectedSlot ? slotTimeRangeLabel(selectedSlot) : ""}
                 </p>
               </div>
               <div className="border-t-2 border-dashed border-[hsl(var(--color-border))]" />
@@ -316,8 +316,8 @@ export default function BookAppointmentPage() {
               </strong>{" "}
               on{" "}
               <strong className="text-[hsl(var(--color-text))]">
-                {selectedSlot ? formatFullDate(selectedSlot.date) : ""} ·{" "}
-                {selectedSlot ? timeRangeLabel(selectedSlot.startTime) : ""}
+                {selectedSlot ? formatFullDate(selectedSlot.startDateTime) : ""} ·{" "}
+                {selectedSlot ? slotTimeRangeLabel(selectedSlot) : ""}
               </strong>
               .
             </p>
