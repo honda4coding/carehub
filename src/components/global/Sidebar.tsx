@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { adminService } from "@/services/adminService";
+import { FaSquarePollVertical } from "react-icons/fa6";
+
 import {
   LuLayoutDashboard,
   LuStethoscope,
@@ -22,7 +25,6 @@ import {
   LuActivity,
   LuHeart,
 } from "react-icons/lu";
-import { FaSquarePollVertical } from "react-icons/fa6";
 
 interface NavItem {
   label: string;
@@ -30,6 +32,7 @@ interface NavItem {
   icon: React.ReactNode;
   badge?: number;
 }
+
 interface NavSection {
   title: string;
   items: NavItem[];
@@ -40,12 +43,7 @@ const adminNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Dashboard", href: "/admin", icon: <LuLayoutDashboard /> },
-      {
-        label: "Doctors",
-        href: "/admin/doctors",
-        icon: <LuStethoscope />,
-        badge: 3,
-      },
+      { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
       {
         label: "Appointments",
@@ -72,6 +70,9 @@ const adminNav: NavSection[] = [
     ],
   },
 ];
+
+
+
 
 const doctorNav: NavSection[] = [
   {
@@ -281,9 +282,11 @@ function SettingsGroup({
 function SidebarContent({
   role,
   onClose,
+  pendingApprovals,
 }: {
   role: string;
   onClose?: () => void;
+  pendingApprovals: number | null;
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -337,6 +340,10 @@ function SidebarContent({
                 item.href === `/${role}`
                   ? pathname === item.href
                   : pathname.startsWith(item.href);
+              const badgeValue =
+                role === "admin" && item.href === "/admin/approvals"
+                  ? pendingApprovals
+                  : item.badge;
               return (
                 <Link
                   key={item.href}
@@ -354,9 +361,9 @@ function SidebarContent({
                     {item.icon}
                   </span>
                   <span className="flex-1">{item.label}</span>
-                  {item.badge && (
+                  {!!badgeValue && (
                     <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
-                      {item.badge}
+                      {badgeValue}
                     </span>
                   )}
                 </Link>
@@ -401,12 +408,31 @@ function SidebarContent({
 
 export default function Sidebar({ role }: { role: string }) {
   const [open, setOpen] = useState(false);
+  const [pendingApprovals, setPendingApprovals] = useState<number | null>(null);
+
+  // will execute after the first render and when role is changed only
+  useEffect(() => {
+    if (role !== "admin") return;
+
+    const fetchPendingDoctors = async () => {
+      try {
+        const res = await adminService.getPendingDoctors();
+        setPendingApprovals(res?.data.length);
+      } catch {
+        setPendingApprovals(null);
+      }
+    };
+
+    fetchPendingDoctors();
+    window.addEventListener("pending-approvals-changed", fetchPendingDoctors);
+  return () => window.removeEventListener("pending-approvals-changed", fetchPendingDoctors);
+  }, [role]);
 
   return (
     <>
       {/* ── Desktop sidebar ── */}
       <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
-        <SidebarContent role={role} />
+        <SidebarContent role={role} pendingApprovals={pendingApprovals} />
       </aside>
 
       {open ? null : (
@@ -430,7 +456,7 @@ export default function Sidebar({ role }: { role: string }) {
           />
           {/* Drawer */}
           <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] shadow-2xl">
-            <SidebarContent role={role} onClose={() => setOpen(false)} />
+            <SidebarContent role={role} onClose={() => setOpen(false)} pendingApprovals={pendingApprovals} />
           </aside>
         </>
       )}
