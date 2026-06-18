@@ -2,7 +2,7 @@
 
 import UpdatePasswordForm from "@/components/settings/UpdatePasswordForm";
 
-export default function PatientSecurityPage() {
+export default function AdminSecurityPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">

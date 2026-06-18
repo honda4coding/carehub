@@ -1,6 +1,35 @@
 import { fetchClient } from "@/services/fetchClient";
 import { GetUsersParams, GetUsersResponse } from "@/types/user";
 
+// ─── Types ────────────────────────────────────────────────────────────────────
+export interface AdminProfile {
+  fullName:        string;
+  email:           string;
+  phoneNumber:     string;
+  address?:        string;
+  profilepicture?: { secure_url: string; public_id: string };
+}
+
+export interface UpdateAdminProfilePayload {
+  fullName?:    string;
+  phoneNumber?: string;
+  address?:     string;
+}
+
+// ─── API Calls ────────────────────────────────────────────────────────────────
+export async function getAdminProfile(): Promise<AdminProfile> {
+  const res = await fetchClient.get("/admin/profile");
+  return res.data;
+}
+
+export async function updateAdminProfile(payload: UpdateAdminProfilePayload): Promise<void> {
+  await fetchClient.request("/admin/profile", {
+    method: "PATCH",
+    body: JSON.stringify(payload),
+  });
+}
+
+
 export const adminService = {
 
   getUsers: (params: GetUsersParams = {}): Promise<GetUsersResponse> => {

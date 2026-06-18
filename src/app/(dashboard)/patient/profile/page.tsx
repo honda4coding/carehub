@@ -24,6 +24,7 @@ export default function PatientProfilePage() {
   return (
     <>
           {/* Page title */}
+      <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
         <h1 className="text-[16px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
           Profile
@@ -32,16 +33,17 @@ export default function PatientProfilePage() {
           Update your personal information and profile picture
         </p>
       </header>
-    <div className="max-w-[80%] px-4 py-8 space-y-5">
-      <AvatarSection
-        profile={profile}
-        onUpdate={updateAvatar}
-      />
 
-      <BasicInfoForm
-        profile={profile}
-        onSaveSuccess={updateProfile}
-      />
+      {loading ? (
+        <div className="flex items-center justify-center py-20">
+          <div className="w-6 h-6 border-2 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <main className="flex-1 p-6 space-y-5">
+          <AvatarSection profile={profile} onUpdate={updateAvatar} />
+          <BasicInfoForm profile={profile} onSaveSuccess={updateProfile} />
+        </main>
+      )}
     </div>
     </>
   );

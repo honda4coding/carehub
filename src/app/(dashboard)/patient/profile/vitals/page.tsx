@@ -26,7 +26,7 @@ export default function VitalsPage() {
           View and update your vital signs
         </p>
       </header>
-    <div className="max-w-[80%]  px-4 py-8">
+    <div className="flex-1 p-6 ">
       <VitalsForm
         profile={profile}
         onSaveSuccess={updateProfile}
