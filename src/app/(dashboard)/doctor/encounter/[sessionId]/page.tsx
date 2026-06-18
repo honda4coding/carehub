@@ -5,9 +5,12 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { LuUser, LuHistory, LuStethoscope, LuPill } from "react-icons/lu";
+
 import EncounterHeader from "@/components/doctor/encounter/EncounterHeader";
 import VitalsPanel from "@/components/doctor/encounter/VitalsPanel";
 import MedicalAlertsPanel from "@/components/doctor/encounter/MedicalAlertsPanel";
+import PastSurgeriesPanel from "@/components/doctor/encounter/PastSurgeriesPanel";
 import MedicationTracker from "@/components/doctor/encounter/MedicationTracker";
 import HistoryTimeline from "@/components/doctor/encounter/HistoryTimeline";
 import ClinicalAssessment from "@/components/doctor/encounter/ClinicalAssessment";
@@ -19,8 +22,8 @@ export default function PatientDashboardPage() {
   const sessionId = params.sessionId as string;
   const { token } = useAuth();
 
-  // Mode Toggles
-  const [isAssessmentMode, setIsAssessmentMode] = useState(false);
+  // Tab Navigation
+  const [activeTab, setActiveTab] = useState<"profile" | "history" | "assessment" | "prescription">("profile");
   const [filterText, setFilterText] = useState("");
 
   // Patient & Session Data
@@ -61,12 +64,23 @@ export default function PatientDashboardPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Attachments Upload
+  const [attachments, setAttachments] = useState<File[]>([]);
+  const [attachmentsMetadata, setAttachmentsMetadata] = useState<{ type: string; title: string }[]>([]);
+  const attachmentsInputRef = useRef<HTMLInputElement>(null);
+
   // Edit Vitals Modal
   const [isEditVitalsOpen, setIsEditVitalsOpen] = useState(false);
   const [isEditAlertsOpen, setIsEditAlertsOpen] = useState(false);
+  const [isEditSurgeriesOpen, setIsEditSurgeriesOpen] = useState(false);
+  const [isSavingAlerts, setIsSavingAlerts] = useState(false);
   const [editHeight, setEditHeight] = useState("");
   const [editWeight, setEditWeight] = useState("");
   const [editBloodType, setEditBloodType] = useState("");
+  const [editBloodPressure, setEditBloodPressure] = useState("");
+  const [editSugarLevel, setEditSugarLevel] = useState("");
+  const [editPulse, setEditPulse] = useState("");
+  const [editTemperature, setEditTemperature] = useState("");
   const [editAllergies, setEditAllergies] = useState("");
   const [editChronic, setEditChronic] = useState("");
   const [editSurgeries, setEditSurgeries] = useState<{ operationName: string, surgeonName?: string, date?: string, report?: string }[]>([]);
@@ -91,12 +105,12 @@ export default function PatientDashboardPage() {
             : {
                 name: currentSession.patientId?.fullName,
                 age: "--",
-                bloodType: currentSession.patientId?.bloodType || "-",
-                height: currentSession.patientId?.height || "-",
-                weight: currentSession.patientId?.weight || "-",
-                allergies: currentSession.patientId?.allergies || [],
-                chronic: currentSession.patientId?.chronic || [],
-                surgeries: currentSession.patientId?.surgeries || []
+                bloodType: currentSession.patientProfile?.bloodType || "-",
+                height: currentSession.patientProfile?.height || "-",
+                weight: currentSession.patientProfile?.weight || "-",
+                allergies: currentSession.patientProfile?.allergies || [],
+                chronic: currentSession.patientProfile?.chronic || [],
+                surgeries: currentSession.patientProfile?.surgeries || []
               };
           setPatientData(pData);
           setEditHeight(pData.height === "-" ? "" : pData.height);
@@ -253,49 +267,113 @@ export default function PatientDashboardPage() {
     setIsEditVitalsOpen(false);
   };
 
-  const saveAlertsLocally = () => {
-    setPatientData({
-      ...patientData,
-      allergies: editAllergies.split(",").map(s => s.trim()).filter(s => s),
-      chronic: editChronic.split(",").map(s => s.trim()).filter(s => s),
-      surgeries: editSurgeries.filter(s => s.operationName.trim() !== "")
-    });
-    setIsEditAlertsOpen(false);
+  const saveAlerts = async () => {
+    if (!token || !sessionData || sessionData.isOfflinePatient) return;
+    setIsSavingAlerts(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const allergiesArr = editAllergies.split(",").map(s => s.trim()).filter(s => s);
+      const chronicArr = editChronic.split(",").map(s => s.trim()).filter(s => s);
+
+      await axios.patch(`${baseUrl}/doctor/patient/${sessionData.patientId._id}/alerts`, {
+        allergies: allergiesArr,
+        chronic: chronicArr
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setPatientData({
+        ...patientData,
+        allergies: allergiesArr,
+        chronic: chronicArr
+      });
+      setIsEditAlertsOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to save alerts");
+    } finally {
+      setIsSavingAlerts(false);
+    }
+  };
+
+  const saveSurgeries = async () => {
+    if (!token || !sessionData || sessionData.isOfflinePatient) return;
+    setIsSavingAlerts(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const surgeriesArr = editSurgeries.filter(s => s.operationName.trim() !== "");
+
+      await axios.patch(`${baseUrl}/doctor/patient/${sessionData.patientId._id}/alerts`, {
+        surgeries: surgeriesArr
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      setPatientData({
+        ...patientData,
+        surgeries: surgeriesArr
+      });
+      setIsEditSurgeriesOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to save surgeries");
+    } finally {
+      setIsSavingAlerts(false);
+    }
   };
 
   // Final submission when doctor clicks End & Save
-  const handleEndSession = async () => {
+  const handleEndSession = async (fees: number) => {
     if (!token) return;
     setIsEnding(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       
       const formData = new FormData();
+      if (fees > 0) formData.append("fees", fees.toString());
       formData.append("diagnosis", diagnosis);
       formData.append("notes", symptoms);
       formData.append("prescriptionText", prescriptionText);
       formData.append("height", editHeight);
       formData.append("weight", editWeight);
       formData.append("bloodType", editBloodType);
-      
-      const allergiesArr = editAllergies.split(",").map(s => s.trim()).filter(s => s);
-      const chronicArr = editChronic.split(",").map(s => s.trim()).filter(s => s);
-      const surgeriesArr = editSurgeries.filter(s => s.operationName.trim() !== "");
-      formData.append("allergies", JSON.stringify(allergiesArr));
-      formData.append("chronic", JSON.stringify(chronicArr));
-      formData.append("surgeries", JSON.stringify(surgeriesArr));
+      formData.append("bloodPressure", editBloodPressure);
+      formData.append("sugarLevel", editSugarLevel);
+      formData.append("pulse", editPulse);
+      formData.append("temperature", editTemperature);
 
-      const medsToSave = prescriptions.map(p => ({
+      let medsToSave = prescriptions.map(p => ({
         medicineName: p.medicineName,
         dosage: p.dosage,
         frequency: p.frequency,
         duration: p.duration,
         instructions: p.instructions
       }));
-      formData.append("medications", JSON.stringify(medsToSave));
+
+      // Auto-add any un-added prescription input if the doctor forgot to click "Add"
+      if (drugName && dosage && frequency && duration) {
+        medsToSave.push({
+          medicineName: drugName,
+          dosage,
+          frequency,
+          duration,
+          instructions
+        });
+      }
+
+      if (medsToSave.length > 0) {
+        formData.append("medications", JSON.stringify(medsToSave));
+      }
 
       if (prescriptionFile) {
         formData.append("prescriptionImage", prescriptionFile);
+      }
+
+      if (attachments && attachments.length > 0) {
+        attachments.forEach(file => {
+          formData.append("attachments", file);
+        });
+        formData.append("attachmentsMetadata", JSON.stringify(attachmentsMetadata));
       }
 
       await axios.patch(`${baseUrl}/doctor/session/${sessionId}/end`, formData, {
@@ -319,6 +397,18 @@ export default function PatientDashboardPage() {
     window.print();
   };
 
+  const lastVisitWithVitals = fullMedicalHistory?.find(record => 
+    record.bloodPressure || record.sugarLevel || record.pulse || record.temperature
+  );
+
+  const lastVisitVitals = lastVisitWithVitals ? {
+    date: lastVisitWithVitals.createdAt,
+    bloodPressure: lastVisitWithVitals.bloodPressure,
+    sugarLevel: lastVisitWithVitals.sugarLevel,
+    pulse: lastVisitWithVitals.pulse,
+    temperature: lastVisitWithVitals.temperature,
+  } : undefined;
+
   return (
     <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
       <style dangerouslySetInnerHTML={{__html: `
@@ -334,10 +424,10 @@ export default function PatientDashboardPage() {
         loading={loading}
         patientData={patientData}
         sessionData={sessionData}
-        isAssessmentMode={isAssessmentMode}
+        isAssessmentMode={activeTab !== "profile" && activeTab !== "history"}
         isEnding={isEnding}
         onBack={() => {
-          if (isAssessmentMode) setIsAssessmentMode(false);
+          if (activeTab !== "history") setActiveTab("history");
           else router.push("/doctor");
         }}
         onPrint={handlePrint}
@@ -345,71 +435,138 @@ export default function PatientDashboardPage() {
       />
 
       {/* Main Workspace */}
-      <main className="print-area flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <main className="print-area flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col">
         
-        {/* Left Column: Context (3 cols) */}
-        <div className="lg:col-span-3 space-y-6">
-          <VitalsPanel 
-            loading={loading}
-            patientData={patientData}
-            isEditVitalsOpen={isEditVitalsOpen}
-            setIsEditVitalsOpen={setIsEditVitalsOpen}
-            editHeight={editHeight}
-            setEditHeight={setEditHeight}
-            editWeight={editWeight}
-            setEditWeight={setEditWeight}
-            editBloodType={editBloodType}
-            setEditBloodType={setEditBloodType}
-            saveVitalsLocally={saveVitalsLocally}
-          />
-
-          <MedicalAlertsPanel 
-            loading={loading}
-            patientData={patientData}
-            isEditAlertsOpen={isEditAlertsOpen}
-            setIsEditAlertsOpen={setIsEditAlertsOpen}
-            editAllergies={editAllergies}
-            setEditAllergies={setEditAllergies}
-            editChronic={editChronic}
-            setEditChronic={setEditChronic}
-            editSurgeries={editSurgeries}
-            setEditSurgeries={setEditSurgeries}
-            saveAlertsLocally={saveAlertsLocally}
-          />
-
-          <MedicationTracker 
-            activeMeds={activeMeds}
-            pastMeds={pastMeds}
-          />
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-2 mb-6 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-x-auto custom-scrollbar no-print w-fit mx-auto">
+          {[
+            { id: "profile", label: "Profile & Vitals", icon: LuUser },
+            { id: "history", label: "Medical History", icon: LuHistory },
+            { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
+            { id: "prescription", label: "Prescription", icon: LuPill }
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
+                activeTab === tab.id 
+                  ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm" 
+                  : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
+              }`}
+            >
+              <tab.icon className="text-lg" />
+              {tab.label}
+            </button>
+          ))}
         </div>
 
-        {/* Right Column: Dynamic Content (9 cols) */}
-        <div className="lg:col-span-9">
-          {!isAssessmentMode ? (
-            <HistoryTimeline 
-              setIsAssessmentMode={setIsAssessmentMode}
-              startDate={startDate}
-              setStartDate={setStartDate}
-              endDate={endDate}
-              setEndDate={setEndDate}
-              filterText={filterText}
-              setFilterText={setFilterText}
-              loadingHistory={loadingHistory}
-              page={page}
-              fullMedicalHistory={fullMedicalHistory}
-              hasMore={hasMore}
-              observerTarget={observerTarget}
-            />
-          ) : (
-            <div className="space-y-6 animate-fade-in-up">
+        {/* Tab Content Areas */}
+        <div className="animate-in fade-in zoom-in-95 duration-300">
+          
+          {/* TAB 1: Profile & Vitals */}
+          {activeTab === "profile" && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <VitalsPanel 
+                loading={loading}
+                patientData={patientData}
+                isEditVitalsOpen={isEditVitalsOpen}
+                setIsEditVitalsOpen={setIsEditVitalsOpen}
+                editHeight={editHeight}
+                setEditHeight={setEditHeight}
+                editWeight={editWeight}
+                setEditWeight={setEditWeight}
+                editBloodPressure={editBloodPressure}
+                setEditBloodPressure={setEditBloodPressure}
+                editSugarLevel={editSugarLevel}
+                setEditSugarLevel={setEditSugarLevel}
+                editPulse={editPulse}
+                setEditPulse={setEditPulse}
+                editTemperature={editTemperature}
+                setEditTemperature={setEditTemperature}
+                editBloodType={editBloodType}
+                setEditBloodType={setEditBloodType}
+                saveVitalsLocally={saveVitalsLocally}
+                lastVisitVitals={lastVisitVitals}
+              />
+              <div className="space-y-6">
+                <MedicalAlertsPanel 
+                  loading={loading}
+                  patientData={patientData}
+                  isEditAlertsOpen={isEditAlertsOpen}
+                  setIsEditAlertsOpen={setIsEditAlertsOpen}
+                  editAllergies={editAllergies}
+                  setEditAllergies={setEditAllergies}
+                  editChronic={editChronic}
+                  setEditChronic={setEditChronic}
+                  saveAlerts={saveAlerts}
+                  isSaving={isSavingAlerts}
+                />
+                <PastSurgeriesPanel 
+                  loading={loading}
+                  patientData={patientData}
+                  isEditSurgeriesOpen={isEditSurgeriesOpen}
+                  setIsEditSurgeriesOpen={setIsEditSurgeriesOpen}
+                  editSurgeries={editSurgeries}
+                  setEditSurgeries={setEditSurgeries}
+                  saveSurgeries={saveSurgeries}
+                  isSaving={isSavingAlerts}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TAB 2: Medical History */}
+          {activeTab === "history" && (
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-3">
+                <MedicationTracker 
+                  activeMeds={activeMeds}
+                  pastMeds={pastMeds}
+                />
+              </div>
+              <div className="lg:col-span-9">
+                <HistoryTimeline 
+                  setIsAssessmentMode={() => setActiveTab("assessment")}
+                  startDate={startDate}
+                  setStartDate={setStartDate}
+                  endDate={endDate}
+                  setEndDate={setEndDate}
+                  filterText={filterText}
+                  setFilterText={setFilterText}
+                  loadingHistory={loadingHistory}
+                  page={page}
+                  fullMedicalHistory={fullMedicalHistory}
+                  hasMore={hasMore}
+                  observerTarget={observerTarget}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* TAB 3: Clinical Assessment */}
+          {activeTab === "assessment" && (
+            <div className="max-w-4xl mx-auto w-full">
               <ClinicalAssessment 
                 symptoms={symptoms}
                 setSymptoms={setSymptoms}
                 diagnosis={diagnosis}
                 setDiagnosis={setDiagnosis}
-                setIsAssessmentMode={setIsAssessmentMode}
+                setIsAssessmentMode={() => setActiveTab("history")}
               />
+              <div className="mt-8 flex justify-end">
+                <button 
+                  onClick={() => setActiveTab("prescription")}
+                  className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                >
+                  Proceed to Prescription <LuPill className="text-lg" />
+                </button>
+              </div>
+            </div>
+          )}
 
+          {/* TAB 4: Prescription */}
+          {activeTab === "prescription" && (
+            <div className="max-w-4xl mx-auto w-full">
               <RxBuilder 
                 prescriptions={prescriptions}
                 setPrescriptions={setPrescriptions}
@@ -425,9 +582,15 @@ export default function PatientDashboardPage() {
                 handleFileChange={handleFileChange}
                 previewUrl={previewUrl}
                 removeFile={removeFile}
+                attachments={attachments}
+                setAttachments={setAttachments}
+                attachmentsMetadata={attachmentsMetadata}
+                setAttachmentsMetadata={setAttachmentsMetadata}
+                attachmentsInputRef={attachmentsInputRef}
               />
             </div>
           )}
+          
         </div>
       </main>
     </div>

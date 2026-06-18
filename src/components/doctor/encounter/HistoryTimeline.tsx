@@ -1,5 +1,44 @@
-import { LuHistory, LuPlus, LuStethoscope, LuClock, LuFileText, LuPill, LuImage } from "react-icons/lu";
-import { RefObject } from "react";
+import { LuHistory, LuPlus, LuStethoscope, LuFileText, LuCalendar, LuChevronDown, LuChevronUp } from "react-icons/lu";
+import { RefObject, useState } from "react";
+import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
+
+function TimelineAccordionCard({ record }: { record: any }) {
+  const [expanded, setExpanded] = useState(false);
+  const dateStr = new Date(record.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = new Date(record.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  return (
+    <div 
+      onClick={() => setExpanded(!expanded)}
+      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm hover:border-primary/50 transition-all cursor-pointer group w-full"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+            <LuCalendar className="text-lg" />
+          </span>
+          <div>
+            <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{dateStr} <span className="text-[11px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
+            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+               <LuStethoscope className="text-primary flex-shrink-0" /> 
+               {record.diagnosis || "No diagnosis recorded"}
+            </p>
+          </div>
+        </div>
+        
+        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+          {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
+        </button>
+      </div>
+
+      {expanded && (
+        <div className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border))] pt-4" onClick={(e) => e.stopPropagation()}>
+          <MedicalHistoryCard record={record} hideHeader={true} />
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface HistoryTimelineProps {
   setIsAssessmentMode: (mode: boolean) => void;
@@ -34,23 +73,7 @@ export default function HistoryTimeline({
   return (
     <div className="space-y-6">
       
-      {/* Start Assessment CTA */}
-      <div className="bg-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.15)] rounded-2xl p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 no-print">
-        <div>
-          <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2 flex items-center gap-2">
-            <LuStethoscope className="text-primary text-2xl" /> Ready for today's visit?
-          </h2>
-          <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] max-w-lg">
-            Review the patient's medical history below. When you're ready to start the clinical assessment and prescribe new medications, enter the assessment mode.
-          </p>
-        </div>
-        <button 
-          onClick={() => setIsAssessmentMode(true)}
-          className="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl shadow-[0_8px_16px_hsl(var(--color-primary)/0.2)] hover:shadow-[0_8px_24px_hsl(var(--color-primary)/0.3)] hover:-translate-y-1 transition-all whitespace-nowrap flex items-center gap-2"
-        >
-          <LuPlus className="text-xl" /> Start Assessment
-        </button>
-      </div>
+      {/* Start Assessment CTA Removed */}
 
       {/* Full Timeline */}
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
@@ -105,54 +128,8 @@ export default function HistoryTimeline({
                   <LuFileText />
                 </div>
                 {/* Timeline Card */}
-                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] hover:border-primary/30 transition-colors shadow-sm">
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1"><LuClock /> {new Date(record.createdAt).toLocaleDateString()}</span>
-                    <span className="text-[10px] font-bold bg-[hsl(var(--color-primary)/0.1)] text-primary px-2 py-1 rounded-md">Dr. {record.doctorId?.fullName || 'Unknown'}</span>
-                  </div>
-                  
-                  <h4 className="text-sm font-black text-[hsl(var(--color-text))] mb-2">Diagnosis: {record.diagnosis || "General Visit"}</h4>
-                  
-                  {record.notes && (
-                    <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mb-4 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-                      <span className="font-bold text-[hsl(var(--color-text))] block mb-1">Symptoms:</span>
-                      {record.notes}
-                    </p>
-                  )}
-
-                  {/* Render Prescriptions inline */}
-                  {record.prescriptions && record.prescriptions.length > 0 && (
-                    <div className="mt-4 border-t border-[hsl(var(--color-border-soft))] pt-3">
-                      <h5 className="text-[11px] font-bold text-[hsl(var(--color-text))] flex items-center gap-1 mb-2"><LuPill className="text-[hsl(var(--color-secondary-strong))]" /> Medications Prescribed</h5>
-                      <div className="space-y-2">
-                        {record.prescriptions.map((rx: any) => 
-                          rx.medications?.map((med: any, mIdx: number) => (
-                            <div key={mIdx} className="bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
-                              <h6 className="text-[11px] font-bold text-[hsl(var(--color-text))]">{med.medicineName}</h6>
-                              <p className="text-[10px] text-[hsl(var(--color-text-muted))]">{med.dosage} • {med.frequency} • {med.duration}</p>
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {record.prescriptionText && (
-                    <div className="mt-3 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-                      <p className="text-[10px] font-bold text-[hsl(var(--color-text))] mb-1">Rx Notes:</p>
-                      <p className="text-[11px] text-[hsl(var(--color-text-muted))]">{record.prescriptionText}</p>
-                    </div>
-                  )}
-                  
-                  {record.documents && record.documents.length > 0 && (
-                    <div className="mt-3">
-                      {record.documents.filter((d:any) => d.type === "prescription").map((doc: any, dIdx: number) => (
-                        <a key={dIdx} href={doc.secure_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] font-bold text-primary hover:underline bg-[hsl(var(--color-primary)/0.05)] px-3 py-1.5 rounded-lg border border-[hsl(var(--color-primary)/0.1)]">
-                          <LuImage /> View Scanned Rx
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)]">
+                  <TimelineAccordionCard record={record} />
                 </div>
               </div>
             ))}

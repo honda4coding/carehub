@@ -9,9 +9,8 @@ interface MedicalAlertsPanelProps {
   setEditAllergies: (val: string) => void;
   editChronic: string;
   setEditChronic: (val: string) => void;
-  editSurgeries: { operationName: string; surgeonName?: string; date?: string; report?: string }[];
-  setEditSurgeries: (val: { operationName: string; surgeonName?: string; date?: string; report?: string }[]) => void;
-  saveAlertsLocally: () => void;
+  saveAlerts: () => void;
+  isSaving: boolean;
 }
 
 // Panel to view and edit patient's allergies, chronic diseases, and past surgeries
@@ -24,26 +23,9 @@ export default function MedicalAlertsPanel({
   setEditAllergies,
   editChronic,
   setEditChronic,
-  editSurgeries,
-  setEditSurgeries,
-  saveAlertsLocally
+  saveAlerts,
+  isSaving
 }: MedicalAlertsPanelProps) {
-
-  const addSurgery = () => {
-    setEditSurgeries([...editSurgeries, { operationName: "", surgeonName: "", date: "", report: "" }]);
-  };
-
-  const updateSurgery = (index: number, field: string, value: string) => {
-    const newSurgeries = [...editSurgeries];
-    newSurgeries[index] = { ...newSurgeries[index], [field]: value };
-    setEditSurgeries(newSurgeries);
-  };
-
-  const removeSurgery = (index: number) => {
-    const newSurgeries = [...editSurgeries];
-    newSurgeries.splice(index, 1);
-    setEditSurgeries(newSurgeries);
-  };
 
   return (
     <>
@@ -72,27 +54,6 @@ export default function MedicalAlertsPanel({
               {!loading && patientData?.chronic?.length > 0 
                 ? patientData.chronic.map((c: string, i: number) => <span key={`${c}-${i}`} className="bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] text-[11px] font-bold px-2 py-1 rounded-md">{c}</span>) 
                 : <span className="text-xs text-[hsl(var(--color-text-muted))]">None reported</span>}
-            </div>
-          </div>
-          <div>
-            <p className="text-[10px] font-bold text-[hsl(var(--color-danger)/0.7)] uppercase mb-1 mt-3">Operations</p>
-            <div className="flex flex-wrap gap-2">
-              {!loading && patientData?.surgeries?.length > 0 
-                ? patientData.surgeries.map((s: any, i: number) => (
-                <div key={`${s.operationName}-${i}`} className="group/tooltip relative">
-                  <span className="bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[11px] font-bold px-2 py-1 rounded-md cursor-help border border-[hsl(var(--color-primary)/0.2)]">
-                    {s.operationName}
-                  </span>
-                  {/* Tooltip */}
-                  {(s.date || s.report) && (
-                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg shadow-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50">
-                      {s.surgeonName && <p className="text-[10px] font-bold text-[hsl(var(--color-text))] mb-1">Surgeon: {s.surgeonName}</p>}
-                      {s.date && <p className="text-[10px] font-bold text-[hsl(var(--color-primary))] mb-1">{s.date}</p>}
-                      {s.report && <p className="text-[10px] text-[hsl(var(--color-text-muted))] whitespace-pre-wrap">{s.report}</p>}
-                    </div>
-                  )}
-                </div>
-              )) : <span className="text-xs text-[hsl(var(--color-text-muted))]">None reported</span>}
             </div>
           </div>
         </div>
@@ -130,62 +91,22 @@ export default function MedicalAlertsPanel({
                   placeholder="e.g. Diabetes Type 2, Hypertension"
                 />
               </div>
-
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase">Past Surgeries / Operations</label>
-                  <button onClick={addSurgery} className="text-[10px] font-bold text-primary flex items-center gap-1 hover:underline">
-                    <LuPlus /> Add Surgery
-                  </button>
-                </div>
-                
-                <div className="space-y-4">
-                  {editSurgeries.map((surgery, index) => (
-                    <div key={index} className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border-soft))] p-4 rounded-xl relative group">
-                      <button onClick={() => removeSurgery(index)} className="absolute top-2 right-2 text-[hsl(var(--color-danger)/0.5)] hover:text-[hsl(var(--color-danger))]">
-                        <LuTrash2 />
-                      </button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 pr-6">
-                        <div>
-                          <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Operation Name *</label>
-                          <input type="text" value={surgery.operationName} onChange={(e) => updateSurgery(index, "operationName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Appendectomy" />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Date</label>
-                          <input type="text" value={surgery.date || ""} onChange={(e) => updateSurgery(index, "date", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Jan 2020" />
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 gap-3">
-                        <div>
-                          <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Surgeon Name</label>
-                          <input type="text" value={surgery.surgeonName || ""} onChange={(e) => updateSurgery(index, "surgeonName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Dr. Ahmed" />
-                        </div>
-                        <div>
-                          <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Brief Report / Notes</label>
-                          <textarea value={surgery.report || ""} onChange={(e) => updateSurgery(index, "report", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none h-16" placeholder="Any complications or notes..." />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {editSurgeries.length === 0 && (
-                    <p className="text-xs text-center text-[hsl(var(--color-text-muted))] py-4 italic border border-dashed border-[hsl(var(--color-border))] rounded-xl">No surgeries added.</p>
-                  )}
-                </div>
-              </div>
             </div>
 
             <div className="mt-8 flex justify-end gap-3 sticky bottom-0 bg-[hsl(var(--color-bg-surface))] pt-4 border-t border-[hsl(var(--color-border))] z-10">
               <button 
                 onClick={() => setIsEditAlertsOpen(false)}
                 className="px-5 py-2.5 rounded-xl text-sm font-bold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-border-soft))] hover:text-[hsl(var(--color-text))] transition-colors"
+                disabled={isSaving}
               >
                 Cancel
               </button>
               <button 
-                onClick={saveAlertsLocally}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-[1.02]"
+                onClick={saveAlerts}
+                disabled={isSaving}
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
               >
-                <LuSave /> Save Locally
+                <LuSave /> {isSaving ? "Saving..." : "Update Alerts"}
               </button>
             </div>
           </div>
