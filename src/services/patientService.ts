@@ -37,7 +37,9 @@ export interface UpdatePatientProfilePayload {
   bloodType?:   string;
   allergies?:   string[];
   chronic?:     string[];
-  pulse?:         string; 
+  pulse?:       string; 
+  height?:      string;
+  weight?:      string;
   surgeries?:   {
     operationName: string;
     surgeonName: string;
