@@ -181,11 +181,11 @@ const settingsSub: Record<
       href: "/admin/profile",
       icon: <LuUser className="text-sm" />,
     },
-    // {
-    //   label: "Preferences",
-    //   href: "/admin/preferences",
-    //   icon: <LuSettings2 className="text-sm" />,
-    // },
+    {
+      label: "Preferences",
+      href: "/admin/preferences",
+      icon: <LuSettings2 className="text-sm" />,
+    },
     {
       label: "Security",
       href: "/admin/security",
