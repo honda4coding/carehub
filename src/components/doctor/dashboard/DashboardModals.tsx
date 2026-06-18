@@ -13,6 +13,8 @@ export const DashboardModals = ({
   setWalkInName,
   walkInPhone,
   setWalkInPhone,
+  walkInAge,
+  setWalkInAge,
   handleWalkInRegister,
 }: any) => {
   return (
@@ -88,15 +90,29 @@ export const DashboardModals = ({
                     placeholder="e.g. Ahmed Ali" 
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">Phone Number</label>
-                  <input 
-                    type="tel" 
-                    value={walkInPhone}
-                    onChange={(e) => setWalkInPhone(e.target.value)}
-                    className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors" 
-                    placeholder="010..." 
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">Phone Number</label>
+                    <input 
+                      type="tel" 
+                      value={walkInPhone}
+                      onChange={(e) => setWalkInPhone(e.target.value)}
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors" 
+                      placeholder="010..." 
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">Age (Optional)</label>
+                    <input 
+                      type="number" 
+                      value={walkInAge}
+                      onChange={(e) => setWalkInAge(e.target.value)}
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors" 
+                      placeholder="e.g. 25" 
+                      min="0"
+                      max="120"
+                    />
+                  </div>
                 </div>
               </div>
 
