@@ -138,10 +138,9 @@ function TodayCard({
 }) {
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
-  const timeLabel = slotTimeRangeLabel
-    ? isoTo12Hour(appt.startDateTime) +
-      (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "")
-    : "";
+    const timeLabel =
+    isoTo12Hour(appt.startDateTime) +
+    (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
 
   return (
     <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] border-l-[3px] border-l-primary rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all duration-200">
