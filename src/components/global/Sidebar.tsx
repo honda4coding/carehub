@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
+import ThemeToggle from "@/components/ThemeToggle";
 import { FaSquarePollVertical } from "react-icons/fa6";
 
 import {
@@ -226,12 +227,12 @@ function SettingsGroup({
         onClick={() => setOpen((o) => !o)}
         className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-[10px] text-[13px] font-semibold transition-all duration-150 ${
           anyActive
-            ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]"
-            : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+            ? "bg-gradient-to-r from-primary/20 to-transparent text-primary"
+            : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
         }`}
       >
         <span
-          className={`text-base ${anyActive ? "text-primary" : "text-[hsl(var(--color-text-muted)/0.7)]"}`}
+          className={`text-base ${anyActive ? "text-primary drop-shadow-[0_0_8px_rgba(70,191,229,0.5)]" : "text-slate-500"}`}
         >
           <LuSettings />
         </span>
@@ -243,7 +244,7 @@ function SettingsGroup({
 
       {/* Sub-items */}
       {open && (
-        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
+        <div className="ml-4 mt-0.5 border-l border-slate-700/50 pl-3 space-y-0.5">
           {subItems.map((item) => {
             // const isActive = pathname.startsWith(item.href);
             const isActive =
@@ -259,15 +260,15 @@ function SettingsGroup({
                 onClick={onClose}
                 className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 ${
                   isActive
-                    ? "bg-[hsl(var(--color-primary)/0.12)] text-[hsl(var(--color-primary-strong))]"
-                    : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+                    ? "bg-gradient-to-r from-primary/10 to-transparent text-primary"
+                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                 }`}
               >
                 <span
                   className={
                     isActive
-                      ? "text-primary"
-                      : "text-[hsl(var(--color-text-muted)/0.6)]"
+                      ? "text-primary drop-shadow-[0_0_5px_rgba(70,191,229,0.5)]"
+                      : "text-slate-500"
                   }
                 >
                   {item.icon}
@@ -283,7 +284,6 @@ function SettingsGroup({
 }
 
 //////////////////
-
 function SidebarContent({
   role,
   onClose,
@@ -308,16 +308,16 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-[hsl(var(--color-border))]">
+      <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-slate-800/80">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black shadow-[0_4px_12px_hsl(var(--color-primary)/0.35)]">
+          <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black shadow-[0_0_15px_hsl(var(--color-primary)/0.4)]">
             +
           </div>
           <div>
-            <p className="text-[15px] font-black text-[hsl(var(--color-text))] tracking-tight">
+            <p className="text-[15px] font-black text-white tracking-tight">
               Care<span className="text-primary">Hub</span>
             </p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))]">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
               {role} Portal
             </p>
           </div>
@@ -326,7 +326,7 @@ function SidebarContent({
         {onClose && (
           <button
             onClick={onClose}
-            className="md:hidden p-1 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+            className="md:hidden p-1 text-slate-400 hover:text-white"
           >
             <LuX className="text-xl" />
           </button>
@@ -337,7 +337,7 @@ function SidebarContent({
       <nav className="flex-1 px-2.5 py-3 overflow-y-auto">
         {sections.map((section) => (
           <div key={section.title} className="mb-2">
-            <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
+            <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-600">
               {section.title}
             </p>
             {section.items.map((item) => {
@@ -356,18 +356,18 @@ function SidebarContent({
                   onClick={onClose}
                   className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[10px] text-[13px] font-semibold mb-0.5 transition-all duration-150 ${
                     isActive
-                      ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]"
-                      : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+                      ? "bg-gradient-to-r from-primary/20 to-transparent text-primary"
+                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                   }`}
                 >
                   <span
-                    className={`text-base ${isActive ? "text-primary" : "text-[hsl(var(--color-text-muted)/0.7)]"}`}
+                    className={`text-base ${isActive ? "text-primary drop-shadow-[0_0_8px_rgba(70,191,229,0.5)]" : "text-slate-500"}`}
                   >
                     {item.icon}
                   </span>
                   <span className="flex-1">{item.label}</span>
                   {!!badgeValue && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/20 text-primary">
                       {badgeValue}
                     </span>
                   )}
@@ -377,9 +377,8 @@ function SidebarContent({
           </div>
         ))}
 
-        {/* Account — Settings expandable */}
         <div className="mb-2">
-          <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
+          <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-600">
             Account
           </p>
           <SettingsGroup role={role} onClose={onClose} />
@@ -387,21 +386,22 @@ function SidebarContent({
       </nav>
 
       {/* User footer */}
-      <div className="px-2.5 py-3 border-t border-[hsl(var(--color-border))] flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0">
+      <div className="px-2.5 py-3 border-t border-slate-800/80 flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0 shadow-[0_0_10px_hsl(var(--color-primary)/0.3)]">
           {initials}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[12px] font-bold text-[hsl(var(--color-text))] truncate">
+          <p className="text-[12px] font-bold text-slate-200 truncate">
             {user?.name ?? "Admin"}
           </p>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-80">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-90">
             {role}
           </p>
         </div>
+        <ThemeToggle />
         <button
           onClick={logout}
-          className="w-7 h-7 rounded-lg bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] flex items-center justify-center hover:opacity-80 transition-opacity"
+          className="w-7 h-7 rounded-lg bg-red-500/10 text-red-400 flex items-center justify-center hover:bg-red-500/20 transition-colors"
           title="Sign out"
         >
           <LuLogOut className="text-[13px]" />
@@ -436,7 +436,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
+      <aside className="hidden md:flex w-[240px] shrink-0 flex-col bg-[#0B1120] dark:bg-[#030712] border-r border-slate-800/80 h-screen sticky top-0 shadow-[4px_0_24px_rgba(0,0,0,0.1)]">
         <SidebarContent role={role} pendingApprovals={pendingApprovals} />
       </aside>
 
@@ -460,7 +460,7 @@ export default function Sidebar({ role }: { role: string }) {
             onClick={() => setOpen(false)}
           />
           {/* Drawer */}
-          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] shadow-2xl">
+          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[#0B1120] dark:bg-[#030712] border-r border-slate-800/80 shadow-[4px_0_24px_rgba(0,0,0,0.3)]">
             <SidebarContent role={role} onClose={() => setOpen(false)} pendingApprovals={pendingApprovals} />
           </aside>
         </>

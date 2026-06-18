@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { ImSpinner2 } from "react-icons/im";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 import { LuShieldCheck } from "react-icons/lu";
 import AdminInfoForm from "@/components/admin/profile/AdminInfoForm";
 import { getAdminProfile, AdminProfile, UpdateAdminProfilePayload } from "@/services/adminService";
@@ -50,8 +51,9 @@ export default function AdminProfilePage() {
       <main className="flex-1 p-6">
         {/* Loading */}
         {loading && (
-          <div className="flex items-center justify-center py-20">
-            <ImSpinner2 className="w-7 h-7 animate-spin text-primary" />
+          <div className="space-y-5">
+            <Skeleton height={112} borderRadius={16} baseColor="hsl(var(--color-bg-surface))" highlightColor="hsl(var(--color-bg-soft))" />
+            <Skeleton height={350} borderRadius={16} baseColor="hsl(var(--color-bg-surface))" highlightColor="hsl(var(--color-bg-soft))" />
           </div>
         )}
 

@@ -48,6 +48,28 @@
     --color-border-soft: 215 16% 47% / 0.07;
     }
 
+    .dark {
+      /* Backgrounds */
+      --color-bg: 222 47% 7%; /* dark app background */
+      --color-bg-surface: 222 47% 11%; /* cards / sections */
+
+      /* Text */
+      --color-text: 210 40% 98%; /* main text */
+      --color-text-muted: 215 20% 65%; /* secondary text */
+
+      /* Background variants */
+      --color-bg-white: 222 47% 11%;
+      --color-bg-soft: 217 32% 17%;
+
+      /* Badges / highlights */
+      --color-badge-bg: 195 75% 20%; 
+      --color-badge-text: 195 75% 85%;
+
+      /* Borders */
+      --color-border: 215 16% 87% / 0.12;
+      --color-border-soft: 215 16% 87% / 0.07;
+    }
+
     body {
       background-color: hsl(var(--color-bg));
       color: hsl(var(--color-text));

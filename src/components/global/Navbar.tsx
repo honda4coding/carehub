@@ -5,6 +5,7 @@ import { FaBriefcaseMedical, FaSignOutAlt } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -113,6 +114,8 @@ export default function Navbar() {
                 </button>
               </div>
             )}
+
+            <ThemeToggle />
 
             {/* Mobile Menu Button */}
             <button

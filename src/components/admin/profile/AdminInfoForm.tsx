@@ -6,6 +6,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { LuUser, LuMail, LuPhone, LuMapPin, LuCheck } from "react-icons/lu";
 import { useState } from "react";
+import { toast } from "sonner";
 import { AdminProfile, UpdateAdminProfilePayload, updateAdminProfile } from "@/services/adminService";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
@@ -36,12 +37,11 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
       </label>
       <Field
         id={name} name={name} placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-        style={{
-          backgroundColor: hasError ? "#fff5f5" : "white",
-          border: hasError ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
-          color: "hsl(var(--color-text))",
-        }}
+        className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border ${
+          hasError 
+            ? "bg-red-50 border-red-400 text-red-900 dark:bg-red-900/20 dark:border-red-500/50 dark:text-red-200" 
+            : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))]"
+        }`}
       />
       <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
     </div>
@@ -55,8 +55,6 @@ interface Props {
 }
 
 export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
-  const [serverError,   setServerError]   = useState("");
-  const [serverSuccess, setServerSuccess] = useState("");
 
   const initialValues: FormValues = {
     fullName:    profile?.fullName    ?? "",
@@ -66,18 +64,16 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
 
   const handleSubmit = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
     try {
-      setServerError("");
-      setServerSuccess("");
       const payload: UpdateAdminProfilePayload = {
         fullName:    values.fullName,
         phoneNumber: values.phoneNumber || undefined,
         address:     values.address     || undefined,
       };
       await updateAdminProfile(payload);
-      setServerSuccess("Profile updated successfully!");
+      toast.success("Profile updated successfully!");
       onSaveSuccess(payload);
     } catch (err: unknown) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+      toast.error(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
       setSubmitting(false);
     }
@@ -89,17 +85,6 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
         <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Basic Information</h3>
         <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">Update your personal details</p>
       </div>
-
-      {(serverError || serverSuccess) && (
-        <div className={`mx-6 mb-3 px-4 py-3 text-sm font-medium rounded-xl flex items-center gap-2 ${
-          serverError
-            ? "bg-red-50 border border-red-200 text-red-600"
-            : "bg-green-50 border border-green-200 text-green-600"
-        }`}>
-          {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
-          {serverError || serverSuccess}
-        </div>
-      )}
 
       <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit} enableReinitialize>
         {({ errors, touched, isSubmitting }) => (

@@ -65,8 +65,7 @@ export const LoginForm = () => {
   return (
     <div className="w-full">
       <div
-        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40 shadow-xl"
-        style={{ backdropFilter: "blur(24px)", background: "rgba(255, 255, 255, 0.7)" }}
+        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-[hsl(var(--color-border))] shadow-xl bg-[hsl(var(--color-bg-surface))]/70 backdrop-blur-2xl"
       >
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold" style={{ color: "hsl(var(--color-text))" }}>
@@ -102,12 +101,11 @@ export const LoginForm = () => {
                   <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="email" type="email" placeholder="name@example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
-                    style={{
-                      backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
-                      border: errors.email && touched.email ? "1.5px solid #fc8181" : "1.5px solid transparent",
-                      color: "hsl(var(--color-text))",
-                    }}
+                    className={`w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-400 shadow-sm border ${
+                      errors.email && touched.email 
+                        ? "bg-red-50 border-red-400 text-red-900 dark:bg-red-900/20 dark:border-red-500/50 dark:text-red-200" 
+                        : "bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))]"
+                    }`}
                   />
                 </div>
                 <ErrorMessage name="email" component="p" className="text-red-500 text-xs pl-4 font-medium" />
@@ -122,12 +120,11 @@ export const LoginForm = () => {
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="password" type={showPassword ? "text" : "password"} placeholder="••••••••"
-                    className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
-                    style={{
-                      backgroundColor: errors.password && touched.password ? "#fff5f5" : "white",
-                      border: errors.password && touched.password ? "1.5px solid #fc8181" : "1.5px solid transparent",
-                      color: "hsl(var(--color-text))",
-                    }}
+                    className={`w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-400 shadow-sm border ${
+                      errors.password && touched.password 
+                        ? "bg-red-50 border-red-400 text-red-900 dark:bg-red-900/20 dark:border-red-500/50 dark:text-red-200" 
+                        : "bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))]"
+                    }`}
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors">
                     {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
