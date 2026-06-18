@@ -1,6 +1,7 @@
 "use client";
 
 import { LuUser } from "react-icons/lu";
+import Image from "next/image";
 import { DoctorProfile } from "@/services/doctorService";
 
 interface ProfileHeaderProps {
@@ -25,12 +26,13 @@ export default function ProfileHeader({ profile }: ProfileHeaderProps) {
       }}
     >
       {/* Avatar */}
-      <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center shrink-0 overflow-hidden border-2 border-white/40">
+      <div className="relative w-16 h-16 rounded-full bg-white/20 flex items-center justify-center shrink-0 overflow-hidden border-2 border-white/40">
         {profile?.profilepicture?.secure_url ? (
-          <img
+          <Image
             src={profile.profilepicture.secure_url}
             alt={profile.fullName}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
           />
         ) : (
           <span className="text-white text-xl font-black">{initials}</span>
