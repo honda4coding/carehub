@@ -1,6 +1,6 @@
 import { fetchClient } from "@/services/fetchClient";
 import { GetUsersParams, GetUsersResponse } from "@/types/user";
-import { GetPendingDoctorsResponse } from "@/types/doctor";
+import { DoctorApprovalStatus, GetDoctorsResponse, GetPendingDoctorsResponse } from "@/types/doctor";
 import { GetDashboardData } from "@/types/admin";
 
 export const adminService = {
@@ -20,6 +20,14 @@ export const adminService = {
 
   getDashboard: (): Promise<GetDashboardData> => 
     fetchClient.get("/admin/dashboard"),
+
+  
+  /** GET /admin/doctors?status=...Returns a flat (non-paginated) array of merged user+doctorDetails objects.*/
+  getDoctors: (status?:DoctorApprovalStatus | ""): Promise<GetDoctorsResponse> =>{
+    const params : Record<string,string> = {};
+    if(status) params.status = status;
+    return fetchClient.get("/admin/doctors")
+  },
 
   /** PATCH /admin/:id/activate  → sets status: "active"  */
   activateUser: (id: string) =>

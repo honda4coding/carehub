@@ -73,25 +73,21 @@ export default function AdminDashboard() {
   { 
     label: "Total Patients",   
     value: statsLoading ? "—" : totalPatients !== null ? totalPatients.toLocaleString() : "—" , 
-    trend: "+8% this week", up: true,  
     icon: <LuUsers />, 
     iconStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" },
   { 
     label: "Active Doctors",   
     value: statsLoading ? "—" : activeDoctors !== null ? activeDoctors.toLocaleString() : "—",   
-    trend: "+8% this week", up: true,  
     icon: <LuStethoscope />,  
     iconStyle: "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]" },
   { 
     label: "Appointments",     
     value: "491",   
-    trend: "+8% this week", up: true,  
     icon: <LuCalendarDays />, 
     iconStyle: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" },
   { 
     label: "Pending Requests", 
     value: loading ? "—" : `${pendingCount}`, 
-    trend: "+8% this week", up: false, 
     icon: <LuClock />,        
     iconStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]" },
 ];
@@ -190,19 +186,9 @@ export default function AdminDashboard() {
                   <div className={`w-8 h-8 md:w-9 md:h-9 rounded-[10px] flex items-center justify-center text-base md:text-[17px] ${s.iconStyle}`}>
                     {s.icon}
                   </div>
-                  {s.trend && (
-                    <span className={`text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full hidden sm:inline-flex ${s.up ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"}`}>
-                      {s.up ? "↑" : "⚠"} {s.trend}
-                    </span>
-                  )}
                 </div>
                 <p className="text-[20px] md:text-[24px] font-black text-[hsl(var(--color-text))] tracking-tight leading-none">{s.value}</p>
                 <p className="text-[11px] md:text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1">{s.label}</p>
-                {s.trend && (
-                  <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full mt-1.5 inline-flex sm:hidden ${s.up ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"}`}>
-                    {s.up ? "↑" : "⚠"} {s.trend}
-                  </span>
-                )}
               </div>
             ))}
           </div>

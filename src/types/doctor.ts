@@ -32,3 +32,22 @@ export interface GetPendingDoctorsResponse {
   data: PendingDoctorRequest[];
 }
 
+export interface Doctor {
+  _id: string;
+  fullName: string;
+  email: string;
+  role: string;
+  status: DoctorApprovalStatus;
+  address?: string;
+  confirmed: boolean;
+  createdAt: string;
+  updatedAt: string;
+  licenseUrl: string | null;
+  nationalIdUrl: string | null;
+  specialty: string | null;
+}
+
+export interface GetDoctorsResponse {
+  message?: string;
+  data: Doctor[];
+}
