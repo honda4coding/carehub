@@ -28,7 +28,7 @@ function PatientDirectoryContent() {
     const fetchPatients = async () => {
       try {
         setLoading(true);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         let url = `${baseUrl}/doctor/my-patients?limit=1000`;
         
         if (filterParam === 'today') {
