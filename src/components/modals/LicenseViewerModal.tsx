@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 
 interface LicenseViewerModalProps {
   isOpen: boolean;
@@ -36,7 +37,7 @@ export default function LicenseViewerModal({ isOpen, onClose, fileUrl }: License
           {isPdf ? (
             <iframe src={fileUrl} className="w-full h-[65vh] rounded-lg border border-[hsl(var(--color-border))]" />
           ) : (
-            <img src={fileUrl} alt="License" className="w-full rounded-lg object-contain max-h-[65vh]" />
+            <Image src={fileUrl} alt="License" width={800} height={600} className="w-full rounded-lg object-contain max-h-[65vh]" />
           )}
         </div>
       </div>

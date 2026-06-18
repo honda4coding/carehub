@@ -1,4 +1,5 @@
 import { LuPill, LuPlus, LuTrash2, LuImage, LuUpload, LuFileText, LuCamera } from "react-icons/lu";
+import Image from "next/image";
 import { RefObject, useRef, useState } from "react";
 import WebcamCapture from "./WebcamCapture";
 
@@ -223,7 +224,7 @@ export default function RxBuilder({
               </div>
             ) : (
               <div className="relative group rounded-xl overflow-hidden border border-[hsl(var(--color-border))]">
-                <img src={previewUrl} alt="Prescription preview" className="w-full h-40 object-cover" />
+                <Image src={previewUrl} alt="Prescription preview" width={400} height={160} className="w-full h-40 object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={removeFile} className="bg-red-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-lg">
                     <LuTrash2 />
