@@ -15,7 +15,7 @@ export default function PatientSecurityPage() {
         </p>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-8 space-y-5">
+      <main className="flex-1 p-6">
         <UpdatePasswordForm />
       </main>
     </div>
