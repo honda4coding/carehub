@@ -89,6 +89,11 @@ const doctorNav: NavSection[] = [
         href: "/doctor/patients",
         icon: <LuUsers />,
       },
+      {
+        label: "Reports",
+        href: "/doctor/reports",
+        icon: <FaSquarePollVertical />,
+      },
     ],
   },
   // {
