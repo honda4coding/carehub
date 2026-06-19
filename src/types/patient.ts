@@ -42,4 +42,5 @@ export interface TimelineEntry {
   diagnosis: string;
   prescriptions: Prescription[];
   clinicalNotes: string;
+  rawRecord?: any;
 }

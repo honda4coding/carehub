@@ -9,7 +9,8 @@ import { useAuth } from "@/context/AuthContext";
 
 import Toast from "@/components/patients/Toast";
 import PatientHeader from "@/components/patients/PatientHeader";
-import HealthHub from "@/components/patients/HealthHub";
+import ProfileOverview from "@/components/patients/ProfileOverview";
+import MedicalAlerts from "@/components/patients/MedicalAlerts";
 import MedicalTimeline from "@/components/patients/MedicalTimeline";
 import QuickActions from "@/components/patients/QuickActions";
 import ProfileSkeleton from "@/components/patients/skeletons/ProfileSkeleton";
@@ -115,6 +116,7 @@ export default function PatientDashboard() {
                 dosage: p.dosage ?? "—",
                 frequency: p.frequency ?? "—",
               })),
+              rawRecord: r,
             });
           });
         } else showToast("Could not load medical history");
@@ -135,6 +137,7 @@ export default function PatientDashboard() {
                 dosage:     p.dosage ?? "—",
                 frequency:  p.frequency ?? "—",
               })),
+              rawRecord: r,
             });
           });
         } else showToast("Could not load prescriptions");
@@ -170,7 +173,7 @@ export default function PatientDashboard() {
         {profileLoading ? (
           <ProfileSkeleton />
         ) : profile ? (
-          <HealthHub profile={profile} />
+          <ProfileOverview profile={profile} />
         ) : (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-[13px] text-red-600 font-bold mb-6 shadow-sm">
             Could not load profile data.
@@ -179,7 +182,16 @@ export default function PatientDashboard() {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
-          <QuickActions />
+          
+          <div className="flex flex-col gap-6">
+            {!profileLoading && profile && (
+              <MedicalAlerts 
+                allergies={profile.allergies ?? []} 
+                chronicDiseases={profile.chronicDiseases ?? []} 
+              />
+            )}
+            <QuickActions />
+          </div>
         </div>
       </main>
     </div>
