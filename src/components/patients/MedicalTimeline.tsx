@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
-import { LuClock, LuChevronDown, LuChevronUp } from "react-icons/lu";
+import { LuClock, LuChevronRight } from "react-icons/lu";
 import { TimelineEntry } from "@/types/patient";
 import TimelineCard from "./TimelineCard";
 import TimelineSkeleton from "./skeletons/TimelineSkeleton";
+import Link from "next/link";
 
 interface Props {
   entries: TimelineEntry[];
@@ -12,9 +12,7 @@ interface Props {
 }
 
 export default function MedicalTimeline({ entries, loading, searchTerm }: Props) {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const displayedEntries = isExpanded ? entries : entries.slice(0, 3);
+  const displayedEntries = entries.slice(0, 3);
 
   return (
     <div className="xl:col-span-2">
@@ -39,16 +37,12 @@ export default function MedicalTimeline({ entries, loading, searchTerm }: Props)
           </div>
           
           {entries.length > 3 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-2 w-full max-w-[200px] mx-auto flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] text-[11px] font-bold hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))] transition-colors"
+            <Link
+              href="/patient/history"
+              className="mt-2 w-full max-w-[220px] mx-auto flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] text-[11px] font-bold hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors group"
             >
-              {isExpanded ? (
-                <>Show Less <LuChevronUp /></>
-              ) : (
-                <>View All Records ({entries.length}) <LuChevronDown /></>
-              )}
-            </button>
+              View Full History ({entries.length}) <LuChevronRight className="transition-transform group-hover:translate-x-1" />
+            </Link>
           )}
         </div>
       )}
