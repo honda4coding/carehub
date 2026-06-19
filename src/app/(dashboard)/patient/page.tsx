@@ -12,6 +12,7 @@ import PatientHeader from "@/components/patients/PatientHeader";
 import ProfileOverview from "@/components/patients/ProfileOverview";
 import MedicalAlerts from "@/components/patients/MedicalAlerts";
 import MedicalTimeline from "@/components/patients/MedicalTimeline";
+import TrackerBanner from "@/components/patients/TrackerBanner";
 import QuickActions from "@/components/patients/QuickActions";
 import ProfileSkeleton from "@/components/patients/skeletons/ProfileSkeleton";
 
@@ -182,7 +183,10 @@ export default function PatientDashboard() {
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
+          <div className="xl:col-span-2 flex flex-col">
+            <TrackerBanner />
+            <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
+          </div>
           
           <div className="flex flex-col gap-6">
             {!profileLoading && profile && (
