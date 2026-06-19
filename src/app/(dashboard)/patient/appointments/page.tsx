@@ -1,468 +1,311 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import Link from "next/link";
-import {
-  LuArrowLeft, LuCheck, LuCircleAlert,
-  LuClock, LuInfo, LuMapPin, LuChevronLeft, LuChevronRight,
-} from "react-icons/lu";
+import { LuCalendarDays, LuClock, LuStethoscope, LuX, LuCreditCard, LuCheck } from "react-icons/lu";
 
 import {
-  DoctorListItem, Slot,
-  bookAppointment, getApprovedDoctors, getAvailableSlots,
+  Appointment, cancelAppointment, getDisplayStatus, getMyAppointments,
 } from "@/services/appointmentService";
-import { formatFullDate, initialsOf, slotTimeRangeLabel } from "@/components/appointments/format";
+import { dayLabel, initialsOf, isoTo12Hour } from "@/components/appointments/format";
+import AppointmentToast from "@/components/appointments/AppointmentToast";
+import CancelModal from "@/components/appointments/CancelModal";
 
-type Step = "slots" | "confirm" | "success";
+type Tab = "upcoming" | "completed" | "cancelled";
+type DisplayStatus = "upcoming" | "completed" | "cancelled";
 
-// ─── Fake clinic locations (frontend-only until backend supports it) ────────────
-const CLINIC_LOCATIONS: Record<string, { name: string; address: string }[]> = {
-  default: [
-    { name: "Main Clinic", address: "15 El-Nasr St, Nasr City, Cairo" },
-    { name: "Branch Clinic", address: "7 Port Said Corniche, Damietta" },
-  ],
+// ─── Status config ──────────────────────────────────────────────────────────────
+const STATUS_CONFIG: Record<DisplayStatus, { label: string; bg: string; text: string; dot: string; border: string }> = {
+  upcoming: {
+    label: "Upcoming",
+    bg: "bg-sky-50",
+    text: "text-sky-600",
+    dot: "bg-sky-500",
+    border: "border-sky-200",
+  },
+  completed: {
+    label: "Completed",
+    bg: "bg-emerald-50",
+    text: "text-emerald-600",
+    dot: "bg-emerald-500",
+    border: "border-emerald-200",
+  },
+  cancelled: {
+    label: "Cancelled",
+    bg: "bg-red-50",
+    text: "text-red-500",
+    dot: "bg-red-400",
+    border: "border-red-200",
+  },
 };
 
-function getClinicLocations(doctorId: string) {
-  return CLINIC_LOCATIONS[doctorId] ?? CLINIC_LOCATIONS.default;
-}
-
-// ─── Mini Calendar ─────────────────────────────────────────────────────────────
-function MiniCalendar({
-  availableDates,
-  selectedDate,
-  onSelect,
-}: {
-  availableDates: Set<string>; // "YYYY-MM-DD"
-  selectedDate: string | null;
-  onSelect: (d: string) => void;
-}) {
-  const today = new Date();
-  const [viewYear, setViewYear] = useState(today.getFullYear());
-  const [viewMonth, setViewMonth] = useState(today.getMonth());
-
-  const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0=Sun
-  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-
-  const monthLabel = new Date(viewYear, viewMonth).toLocaleDateString("en-US", { month: "long", year: "numeric" });
-
-  function prevMonth() {
-    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
-    else setViewMonth(m => m - 1);
-  }
-  function nextMonth() {
-    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
-    else setViewMonth(m => m + 1);
-  }
-
-  const cells = [];
-  // Empty cells before first day
-  for (let i = 0; i < firstDay; i++) cells.push(null);
-  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
-
+// ─── Pay modal (temporary) ──────────────────────────────────────────────────────
+function PayModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [paid, setPaid] = useState(false);
+  if (!open) return null;
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 select-none">
-      {/* Month nav */}
-      <div className="flex items-center justify-between mb-3">
-        <button onClick={prevMonth} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] transition-colors">
-          <LuChevronLeft className="text-[14px]" />
-        </button>
-        <p className="text-[12.5px] font-black text-[hsl(var(--color-text))]">{monthLabel}</p>
-        <button onClick={nextMonth} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] transition-colors">
-          <LuChevronRight className="text-[14px]" />
-        </button>
-      </div>
-
-      {/* Weekday headers */}
-      <div className="grid grid-cols-7 mb-1">
-        {["S","M","T","W","T","F","S"].map((d, i) => (
-          <div key={i} className="text-center text-[10px] font-black text-[hsl(var(--color-text-muted))] py-1">{d}</div>
-        ))}
-      </div>
-
-      {/* Days grid */}
-      <div className="grid grid-cols-7 gap-y-0.5">
-        {cells.map((day, i) => {
-          if (!day) return <div key={`e-${i}`} />;
-
-          const dateStr = `${viewYear}-${String(viewMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-          const isAvailable = availableDates.has(dateStr);
-          const isSelected = selectedDate === dateStr;
-          const isPast = new Date(dateStr) < new Date(today.toDateString());
-
-          return (
-            <button
-              key={dateStr}
-              onClick={() => isAvailable && onSelect(dateStr)}
-              disabled={!isAvailable || isPast}
-              className={`relative h-8 w-full rounded-lg text-[11px] font-bold transition-all duration-150 ${
-                isSelected
-                  ? "bg-primary text-white shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)]"
-                  : isAvailable && !isPast
-                    ? "bg-sky-50 text-sky-700 hover:bg-primary/20 hover:text-primary font-black"
-                    : "text-[hsl(var(--color-text-muted))] opacity-40 cursor-not-allowed"
-              }`}
-            >
-              {day}
-              {/* Dot indicator for available days */}
-              {isAvailable && !isPast && !isSelected && (
-                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Legend */}
-      <div className="flex items-center gap-3 mt-3 pt-3 border-t border-[hsl(var(--color-border))]">
-        <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">
-          <span className="w-2.5 h-2.5 rounded bg-sky-100 border border-sky-200" />
-          Available
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-sky-400 px-6 py-5 text-white text-center">
+          <LuCreditCard className="text-[32px] mx-auto mb-2" />
+          <p className="text-[16px] font-black">Pay for Appointment</p>
+          <p className="text-[11px] opacity-80 mt-1">Secure payment — temporary placeholder</p>
         </div>
-        <div className="flex items-center gap-1.5 text-[10px] font-semibold text-[hsl(var(--color-text-muted))]">
-          <span className="w-2.5 h-2.5 rounded bg-primary" />
-          Selected
+        <div className="p-6 space-y-4">
+          {paid ? (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
+                <LuCheck className="text-emerald-500 text-[28px]" />
+              </div>
+              <p className="text-[15px] font-black text-[hsl(var(--color-text))]">Payment successful!</p>
+              <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-1">This is a placeholder — no real charge was made.</p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-[hsl(var(--color-bg-soft))] rounded-xl p-4 border border-[hsl(var(--color-border))]">
+                <div className="flex justify-between text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mb-1">
+                  <span>Consultation fee</span><span className="text-[hsl(var(--color-text))] font-black">EGP 350</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-[hsl(var(--color-text-muted))]">
+                  <span>Platform fee</span><span>EGP 20</span>
+                </div>
+                <div className="border-t border-[hsl(var(--color-border))] mt-3 pt-3 flex justify-between text-[14px] font-black text-[hsl(var(--color-text))]">
+                  <span>Total</span><span className="text-primary">EGP 370</span>
+                </div>
+              </div>
+              <button onClick={() => setPaid(true)}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white text-[14px] font-black shadow-[0_4px_15px_hsl(var(--color-primary)/0.35)] hover:scale-[1.01] transition-all">
+                Pay Now
+              </button>
+            </>
+          )}
+          <button onClick={() => { setPaid(false); onClose(); }}
+            className="w-full py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+            {paid ? "Close" : "Cancel"}
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-// ─── Main Page ─────────────────────────────────────────────────────────────────
-export default function BookAppointmentPage() {
-  const { doctorId } = useParams<{ doctorId: string }>();
-  const router = useRouter();
+// ─── Status Badge ───────────────────────────────────────────────────────────────
+function StatusBadge({ status }: { status: DisplayStatus }) {
+  const cfg = STATUS_CONFIG[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+      {cfg.label}
+    </span>
+  );
+}
 
-  const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
-  const [slots, setSlots] = useState<Slot[]>([]);
+// ─── Appointment Card ───────────────────────────────────────────────────────────
+function ApptCard({
+  appt, onCancelClick, onPayClick,
+}: {
+  appt: Appointment;
+  onCancelClick: (a: Appointment) => void;
+  onPayClick: (a: Appointment) => void;
+}) {
+  const doctor = typeof appt.doctorId === "object" ? appt.doctorId : null;
+  const status = getDisplayStatus(appt);
+  const cfg = STATUS_CONFIG[status];
+  const timeLabel = isoTo12Hour(appt.startDateTime) + (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
+  const dateObj = new Date(appt.appointmentDate);
+
+  return (
+    <div className={`group relative flex bg-[hsl(var(--color-bg-surface))] border rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${cfg.border} border-l-4`}
+      style={{ borderLeftColor: status === "upcoming" ? "hsl(var(--color-primary))" : status === "completed" ? "#10b981" : "#f87171" }}>
+
+      {/* Date stub */}
+      <div className={`w-[90px] sm:w-[100px] shrink-0 flex flex-col items-center justify-center gap-0.5 py-4 border-r border-dashed border-[hsl(var(--color-border))] ${
+        status === "cancelled" ? "opacity-50" : ""
+      }`} style={{ background: status === "upcoming" ? "hsl(var(--color-primary)/0.06)" : status === "completed" ? "rgb(16 185 129 / 0.06)" : "rgb(248 113 113 / 0.06)" }}>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))]">
+          {dateObj.toLocaleDateString("en-US", { month: "short" })}
+        </span>
+        <span className={`text-[28px] font-black leading-none ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
+          {dateObj.getDate()}
+        </span>
+        <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))]">
+          {dateObj.toLocaleDateString("en-US", { weekday: "short" })}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 p-3.5 sm:p-4 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[13px] font-black shrink-0 shadow-sm">
+            {initialsOf(doctor?.fullName)}
+          </div>
+          <div className="min-w-0">
+            <p className={`text-[14px] font-black truncate ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
+              {doctor?.fullName ? `Dr. ${doctor.fullName}` : "Doctor"}
+            </p>
+            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+              <LuClock className="text-[10px]" />{timeLabel}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <StatusBadge status={status} />
+          {status === "upcoming" && (
+            <>
+              <button onClick={() => onPayClick(appt)}
+                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-gradient-to-r from-fuchsia-500 to-pink-400 text-white shadow-sm hover:shadow-md hover:scale-105 transition-all">
+                <LuCreditCard className="text-[12px]" />Pay
+              </button>
+              <button onClick={() => onCancelClick(appt)} title="Cancel"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-red-50 hover:text-red-500 transition-colors">
+                <LuX className="text-[14px]" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tab button ──────────────────────────────────────────────────────────────────
+function ApptTab({ label, value, active, count, color, onClick }: {
+  label: string; value: Tab; active: Tab; count: number;
+  color: string; onClick: () => void;
+}) {
+  const isActive = value === active;
+  return (
+    <button onClick={onClick}
+      className={`px-4 py-2.5 rounded-xl text-[12.5px] font-bold transition-all duration-200 flex items-center gap-2 ${
+        isActive ? "bg-[hsl(var(--color-bg-surface))] shadow-sm ring-1 ring-[hsl(var(--color-border))]" : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+      }`}>
+      {label}
+      <span className={`text-[10.5px] font-bold min-w-[20px] px-1.5 py-0.5 rounded-full ${isActive ? color : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"}`}>
+        {count}
+      </span>
+    </button>
+  );
+}
+
+// ─── Main Page ──────────────────────────────────────────────────────────────────
+export default function PatientAppointmentsPage() {
+  const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-
-  const [step, setStep] = useState<Step>("slots");
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<number>(0);
-  const [confirming, setConfirming] = useState(false);
-  const [confirmError, setConfirmError] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>("upcoming");
+  const [cancelTarget, setCancelTarget] = useState<Appointment | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [payTarget, setPayTarget] = useState<Appointment | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        const [doctors, availableSlots] = await Promise.all([
-          getApprovedDoctors(),
-          getAvailableSlots(doctorId),
-        ]);
-        setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
-        setSlots(availableSlots);
+        const data = await getMyAppointments();
+        setAppointments(data);
       } catch (err: any) {
-        setLoadError(err.message || "Failed to load available slots");
+        setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
         setLoading(false);
       }
     })();
-  }, [doctorId]);
+  }, []);
 
-  // Build set of available date strings + group slots by date
-  const { availableDates, slotsByDate } = useMemo(() => {
-    const dates = new Set<string>();
-    const byDate: Record<string, Slot[]> = {};
-    slots.forEach((s) => {
-      const d = new Date(s.startDateTime);
-      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      dates.add(key);
-      if (!byDate[key]) byDate[key] = [];
-      byDate[key].push(s);
+  const grouped = useMemo(() => {
+    const result: Record<Tab, Appointment[]> = { upcoming: [], completed: [], cancelled: [] };
+    appointments.forEach((a) => result[getDisplayStatus(a)].push(a));
+    result.upcoming.sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
+    result.completed.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+    result.cancelled.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+    return result;
+  }, [appointments]);
+
+  const upcomingByDay = useMemo(() => {
+    const map = new Map<string, { label: string; sortKey: number; items: Appointment[] }>();
+    grouped.upcoming.forEach((a) => {
+      const key = new Date(a.appointmentDate).toDateString();
+      if (!map.has(key)) map.set(key, { label: dayLabel(a.appointmentDate), sortKey: new Date(a.appointmentDate).getTime(), items: [] });
+      map.get(key)!.items.push(a);
     });
-    // Sort each day's slots by time
-    Object.values(byDate).forEach((arr) =>
-      arr.sort((a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime())
-    );
-    return { availableDates: dates, slotsByDate: byDate };
-  }, [slots]);
+    return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
+  }, [grouped.upcoming]);
 
-  const slotsForDay = selectedDate ? (slotsByDate[selectedDate] ?? []) : [];
-  const clinicLocations = getClinicLocations(doctorId);
-
-  const doctorName = doctor ? `Dr. ${doctor.userId.fullName}` : "Doctor";
-  const doctorInitials = initialsOf(doctor?.userId.fullName ?? "");
-  const doctorSpec = doctor?.specialization ?? "General Medicine";
-
-  async function handleConfirm() {
-    if (!selectedSlot) return;
-    setConfirming(true);
-    setConfirmError(null);
+  async function handleCancelConfirm() {
+    if (!cancelTarget) return;
+    setCancelling(true);
     try {
-      await bookAppointment(selectedSlot._id);
-      setStep("success");
+      await cancelAppointment(cancelTarget._id);
+      setAppointments((prev) => prev.map((a) => a._id === cancelTarget._id ? { ...a, status: "cancelled" } : a));
+      setToast({ msg: "Appointment cancelled", variant: "success" });
+      setCancelTarget(null);
     } catch (err: any) {
-      setConfirmError(err.message || "This slot was just booked. Please choose another time.");
+      setToast({ msg: err.message || "Could not cancel", variant: "error" });
     } finally {
-      setConfirming(false);
+      setCancelling(false);
     }
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
-      {/* Header */}
+    <div className="flex flex-col flex-1 min-h-screen">
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-3">
-        <Link href="/patient/doctors"
-          className="w-9 h-9 rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all shrink-0">
-          <LuArrowLeft className="text-[14px]" />
-        </Link>
-        <div className="flex-1 min-w-0">
-          <h1 className="text-[17px] font-black text-[hsl(var(--color-text))]">
-            {step === "slots" ? "Pick a time" : step === "confirm" ? "Confirm booking" : "Booking confirmed!"}
-          </h1>
-          <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">{doctorName}</p>
+        <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
+          <LuCalendarDays />
         </div>
-
-        {/* Step pills */}
-        {step !== "success" && (
-          <div className="flex items-center gap-1.5 shrink-0">
-            {(["slots","confirm"] as Step[]).map((s, i) => (
-              <div key={s} className="flex items-center gap-1.5">
-                <div className={`w-6 h-6 rounded-full text-[10px] font-black flex items-center justify-center border-2 transition-all ${
-                  step === s ? "bg-primary border-primary text-white" :
-                  (step === "confirm" && s === "slots") ? "bg-primary/15 border-primary text-primary" :
-                  "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
-                }`}>{i + 1}</div>
-                {i === 0 && <div className={`w-6 h-0.5 rounded ${step === "confirm" ? "bg-primary" : "bg-[hsl(var(--color-border))]"}`} />}
-              </div>
-            ))}
-          </div>
-        )}
+        <div>
+          <h1 className="text-[18px] md:text-[20px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">My Appointments</h1>
+          <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">Track your upcoming and past visits</p>
+        </div>
       </header>
 
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 p-4 md:p-6 overflow-auto">
+        {/* Tabs */}
+        <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] mb-6">
+          <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} color="bg-sky-100 text-sky-600" onClick={() => setTab("upcoming")} />
+          <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} color="bg-emerald-100 text-emerald-600" onClick={() => setTab("completed")} />
+          <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-red-100 text-red-500" onClick={() => setTab("cancelled")} />
+        </div>
+
         {loading ? (
-          <div className="p-6 max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="h-72 rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />
-            <div className="h-72 rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />
-          </div>
-        ) : loadError ? (
-          <div className="p-6 flex flex-col items-center justify-center min-h-[40vh]">
-            <LuCircleAlert className="text-[40px] text-[hsl(var(--color-danger))] mb-3" />
-            <p className="text-[14px] font-bold text-[hsl(var(--color-text))]">{loadError}</p>
-          </div>
-
-        ) : step === "slots" ? (
-          <div className="p-4 md:p-6 max-w-4xl mx-auto">
-            {/* Doctor card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-3.5 mb-5 shadow-sm">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[15px] font-black shrink-0 shadow-md">
-                {doctorInitials}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-[15px] font-black text-[hsl(var(--color-text))]">{doctorName}</p>
-                <p className="text-[11px] font-bold text-primary uppercase tracking-wider">{doctorSpec}</p>
-              </div>
-              <div className="text-right shrink-0">
-                <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Available on</p>
-                <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{availableDates.size} days</p>
-              </div>
+          <div className="space-y-3">{[1,2,3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
+        ) : tab === "upcoming" ? (
+          grouped.upcoming.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center mx-auto mb-4 text-[26px] text-sky-400"><LuStethoscope /></div>
+              <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1">No upcoming appointments</h3>
+              <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">When you book a visit, it'll show up here.</p>
             </div>
-
-            {availableDates.size === 0 ? (
-              <div className="bg-[hsl(var(--color-bg-surface))] border-2 border-dashed border-[hsl(var(--color-border))] rounded-2xl py-16 text-center">
-                <LuCircleAlert className="text-[32px] text-[hsl(var(--color-text-muted))] mx-auto mb-3" />
-                <p className="text-[15px] font-black text-[hsl(var(--color-text))]">No open slots right now</p>
-                <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-1">Please check back later.</p>
+          ) : upcomingByDay.map((group) => (
+            <div key={group.sortKey} className="mb-6">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                <h4 className="text-[14px] font-black text-[hsl(var(--color-text))]">{group.label}</h4>
+                <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{group.items.length} visit{group.items.length !== 1 ? "s" : ""}</span>
+                <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
               </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* LEFT — Mini calendar */}
-                <div>
-                  <MiniCalendar
-                    availableDates={availableDates}
-                    selectedDate={selectedDate}
-                    onSelect={(d) => { setSelectedDate(d); setSelectedSlot(null); }}
-                  />
-
-                  {/* Clinic location picker */}
-                  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mt-4 shadow-sm">
-                    <p className="text-[11px] font-black uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-3 flex items-center gap-1.5">
-                      <LuMapPin className="text-[13px] text-primary" />Clinic Location
-                    </p>
-                    <div className="space-y-2">
-                      {clinicLocations.map((loc, i) => (
-                        <button key={i} onClick={() => setSelectedLocation(i)}
-                          className={`w-full text-left px-3.5 py-3 rounded-xl border transition-all duration-150 ${
-                            selectedLocation === i
-                              ? "border-primary bg-primary/5 shadow-[0_0_0_1px_hsl(var(--color-primary)/0.3)]"
-                              : "border-[hsl(var(--color-border))] hover:border-primary/40 hover:bg-[hsl(var(--color-bg-soft))]"
-                          }`}>
-                          <p className={`text-[12.5px] font-black ${selectedLocation === i ? "text-primary" : "text-[hsl(var(--color-text))]"}`}>
-                            {loc.name}
-                          </p>
-                          <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mt-0.5">{loc.address}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* RIGHT — Slots for selected day */}
-                <div>
-                  {!selectedDate ? (
-                    <div className="bg-[hsl(var(--color-bg-surface))] border-2 border-dashed border-[hsl(var(--color-border))] rounded-2xl flex flex-col items-center justify-center py-14 text-center h-full">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-                        <LuClock className="text-primary text-[22px]" />
-                      </div>
-                      <p className="text-[13px] font-black text-[hsl(var(--color-text))]">Select a day</p>
-                      <p className="text-[11.5px] font-medium text-[hsl(var(--color-text-muted))] mt-1">
-                        Tap a highlighted date on the calendar
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
-                      <div className="flex items-baseline justify-between mb-4">
-                        <div>
-                          <p className="text-[14px] font-black text-[hsl(var(--color-text))]">
-                            {new Date(selectedDate + "T00:00:00").toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-                          </p>
-                          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-                            {slotsForDay.length} slot{slotsForDay.length !== 1 ? "s" : ""} available
-                          </p>
-                        </div>
-                        {selectedSlot && (
-                          <span className="text-[11px] font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg">
-                            {slotTimeRangeLabel(selectedSlot)}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="grid grid-cols-2 gap-2 max-h-[320px] overflow-y-auto pr-0.5">
-                        {slotsForDay.map((s) => {
-                          const isSelected = selectedSlot?._id === s._id;
-                          return (
-                            <button key={s._id} onClick={() => setSelectedSlot(s)}
-                              className={`py-3.5 px-2 rounded-xl border text-[12.5px] font-bold transition-all duration-200 ${
-                                isSelected
-                                  ? "bg-primary border-primary text-white shadow-[0_4px_14px_hsl(var(--color-primary)/0.4)] scale-[1.03]"
-                                  : "bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-primary hover:text-primary hover:scale-[1.02]"
-                              }`}>
-                              {slotTimeRangeLabel(s)}
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {/* Continue */}
-                      <div className="mt-4 pt-4 border-t border-[hsl(var(--color-border))]">
-                        <button
-                          disabled={!selectedSlot}
-                          onClick={() => setStep("confirm")}
-                          className={`relative w-full py-3.5 rounded-xl text-[13.5px] font-black transition-all duration-300 overflow-hidden ${
-                            selectedSlot
-                              ? "bg-gradient-to-r from-primary to-sky-400 text-white shadow-[0_4px_15px_hsl(var(--color-primary)/0.4)] hover:shadow-[0_6px_20px_hsl(var(--color-primary)/0.5)] hover:scale-[1.01]"
-                              : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] cursor-not-allowed"
-                          }`}>
-                          {selectedSlot && <span className="absolute inset-0 bg-white/10 animate-pulse rounded-xl" />}
-                          <span className="relative">{selectedSlot ? "Continue to confirm →" : "Select a time slot"}</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-        ) : step === "confirm" ? (
-          <div className="p-4 md:p-6 max-w-md mx-auto">
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-lg">
-              <div className="bg-gradient-to-r from-primary to-sky-400 px-6 py-7 text-center text-white">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-80 mb-2">Your Appointment</p>
-                <p className="text-[24px] font-black">{selectedSlot ? formatFullDate(selectedSlot.startDateTime) : ""}</p>
-                <div className="flex items-center justify-center gap-2 mt-2 bg-white/20 rounded-xl px-4 py-2 w-fit mx-auto">
-                  <LuClock className="text-[14px]" />
-                  <p className="text-[14px] font-bold">{selectedSlot ? slotTimeRangeLabel(selectedSlot) : ""}</p>
-                </div>
-              </div>
-
-              <div className="border-t-2 border-dashed border-[hsl(var(--color-border))] relative">
-                <span className="absolute -left-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[hsl(var(--color-bg))]" />
-                <span className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[hsl(var(--color-bg))]" />
-              </div>
-
-              <div className="p-6 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[14px] font-black shrink-0">
-                    {doctorInitials}
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-black text-[hsl(var(--color-text))]">{doctorName}</p>
-                    <p className="text-[12px] font-semibold text-primary">{doctorSpec}</p>
-                  </div>
-                </div>
-
-                {/* Selected location */}
-                <div className="flex items-start gap-2.5 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl p-3">
-                  <LuMapPin className="text-primary text-[14px] mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-[12px] font-black text-[hsl(var(--color-text))]">{clinicLocations[selectedLocation].name}</p>
-                    <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))]">{clinicLocations[selectedLocation].address}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-2.5 bg-sky-50 border border-sky-100 rounded-xl p-3">
-                  <LuInfo className="text-sky-400 text-[14px] mt-0.5 shrink-0" />
-                  <p className="text-[12px] font-medium text-sky-700 leading-relaxed">
-                    You can cancel anytime before the appointment from My Appointments.
-                  </p>
-                </div>
-
-                {confirmError && (
-                  <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-[12px] font-semibold">
-                    <LuCircleAlert className="text-[14px] mt-0.5 shrink-0" />{confirmError}
-                  </div>
-                )}
-
-                <button onClick={handleConfirm} disabled={confirming}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white text-[14px] font-black shadow-[0_4px_15px_hsl(var(--color-primary)/0.4)] hover:shadow-[0_6px_20px_hsl(var(--color-primary)/0.5)] hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all">
-                  {confirming ? "Booking…" : "Confirm Booking ✓"}
-                </button>
-                <button onClick={() => setStep("slots")}
-                  className="w-full py-3 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
-                  ← Change slot
-                </button>
-              </div>
+              {group.items.map((appt) => <ApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
             </div>
+          ))
+        ) : grouped[tab].length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-full bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] flex items-center justify-center mx-auto mb-4 text-[26px] text-[hsl(var(--color-text-muted))]"><LuCalendarDays /></div>
+            <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1">No {tab} appointments</h3>
+            <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">Nothing to show here yet.</p>
           </div>
-
         ) : (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
-            <div className="relative mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center mx-auto shadow-[0_8px_25px_hsl(var(--color-primary)/0.4)] animate-bounce">
-                <LuCheck className="text-[36px] text-white" />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-primary/20 animate-ping" />
-            </div>
-            <h2 className="text-[26px] font-black text-[hsl(var(--color-text))] mb-2">All booked! 🎉</h2>
-            <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] mb-1">
-              Your appointment with <strong className="text-[hsl(var(--color-text))]">{doctorName}</strong>
-            </p>
-            <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] mb-2">
-              on <strong className="text-primary">{selectedSlot ? `${formatFullDate(selectedSlot.startDateTime)} · ${slotTimeRangeLabel(selectedSlot)}` : ""}</strong>
-            </p>
-            <div className="flex items-center gap-1.5 text-[12px] font-semibold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 mb-8">
-              <LuMapPin className="text-primary text-[13px]" />
-              {clinicLocations[selectedLocation].name} — {clinicLocations[selectedLocation].address}
-            </div>
-            <div className="flex gap-3 flex-wrap justify-center">
-              <button onClick={() => router.push("/patient/appointments")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white shadow-[0_4px_15px_hsl(var(--color-primary)/0.4)] hover:scale-105 transition-all">
-                View my appointments
-              </button>
-              <button onClick={() => router.push("/patient/doctors")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
-                Book another
-              </button>
-            </div>
-          </div>
+          <div>{grouped[tab].map((appt) => <ApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
         )}
       </main>
+
+      <CancelModal
+        open={!!cancelTarget}
+        message={cancelTarget ? `Your appointment on ${dayLabel(cancelTarget.appointmentDate)} at ${isoTo12Hour(cancelTarget.startDateTime)} will be cancelled.` : ""}
+        loading={cancelling}
+        onConfirm={handleCancelConfirm}
+        onClose={() => setCancelTarget(null)}
+      />
+
+      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} />
+
+      {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
     </div>
   );
 }

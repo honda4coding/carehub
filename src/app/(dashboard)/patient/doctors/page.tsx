@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {
   LuSearch, LuCalendarPlus, LuTriangleAlert,
   LuClock, LuBriefcaseMedical, LuChevronDown, LuMapPin,
@@ -56,7 +57,7 @@ function SelectDropdown({ value, onChange, options, icon }: {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none w-full pl-10 pr-9 py-2.5 text-[12.5px] font-semibold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all cursor-pointer"
+        className="appearance-none w-full pl-10 pr-9 py-2.5 text-[12.5px] font-semibold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15 transition-all cursor-pointer"
       >
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -75,26 +76,40 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
     getAvailableSlots(userId).then(setSlots).catch(() => setSlots([])).finally(() => setLoadingSlots(false));
   }, [userId]);
 
+  // Count how many unique weekdays this doctor has slots on
+  const activeDaysCount = useMemo(() => {
+    const days = new Set(slots.map((s) => new Date(s.startDateTime).getDay()));
+    return days.size;
+  }, [slots]);
+
   const nextLabel = useMemo(() => nextAvailableLabel(slots), [slots]);
   const initials = initialsOf(fullName);
   const hasSlots = !loadingSlots && slots.length > 0;
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-primary/40 transition-all duration-300">
+    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-sky-600/40 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-[hsl(var(--color-primary)/0.6)] flex items-center justify-center shrink-0 shadow-md overflow-hidden">
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-700 to-sky-500 flex items-center justify-center shrink-0 shadow-md overflow-hidden">
           {doctor.profilepicture?.secure_url
             ? <img src={doctor.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
             : <span className="text-[20px] font-black text-white">{initials}</span>}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-black text-[hsl(var(--color-text))] truncate">Dr. {fullName}</p>
-          <p className="text-[11px] font-bold text-primary uppercase tracking-widest mt-0.5">{doctor.specialization ?? "General Practice"}</p>
+          {/* Name links to profile page */}
+          <Link
+            href={`/patient/doctors/${userId}`}
+            className="text-[15px] font-black text-[hsl(var(--color-text))] truncate block hover:text-sky-700 transition-colors"
+          >
+            Dr. {fullName}
+          </Link>
+          <p className="text-[11px] font-bold text-sky-600 uppercase tracking-widest mt-0.5">
+            {doctor.specialization ?? "General Practice"}
+          </p>
         </div>
       </div>
 
-      {/* Stats */}
+      {/* Stats: experience + days per week */}
       <div className="flex gap-2">
         {doctor.experience != null && (
           <div className="flex-1 bg-[hsl(var(--color-bg-soft))] rounded-xl p-2.5 text-center border border-[hsl(var(--color-border))]">
@@ -103,8 +118,10 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
           </div>
         )}
         <div className="flex-1 bg-[hsl(var(--color-bg-soft))] rounded-xl p-2.5 text-center border border-[hsl(var(--color-border))]">
-          <p className="text-[18px] font-black text-[hsl(var(--color-text))]">{loadingSlots ? "…" : slots.length}</p>
-          <p className="text-[9px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Open Slots</p>
+          <p className="text-[18px] font-black text-[hsl(var(--color-text))]">
+            {loadingSlots ? "…" : activeDaysCount}
+          </p>
+          <p className="text-[9px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Days/Week</p>
         </div>
       </div>
 
@@ -125,7 +142,7 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
         disabled={!hasSlots}
         className={`relative w-full py-3 rounded-xl text-[13px] font-black flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden ${
           hasSlots
-            ? "bg-gradient-to-r from-primary to-sky-400 text-white shadow-[0_4px_15px_hsl(var(--color-primary)/0.4)] hover:shadow-[0_6px_20px_hsl(var(--color-primary)/0.5)] hover:scale-[1.02] active:scale-[0.98]"
+            ? "bg-gradient-to-r from-sky-700 to-sky-500 text-white shadow-[0_4px_15px_rgba(2,132,199,0.4)] hover:shadow-[0_6px_20px_rgba(2,132,199,0.5)] hover:scale-[1.02] active:scale-[0.98]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] cursor-not-allowed"
         }`}
       >
@@ -178,29 +195,19 @@ export default function DoctorsPage() {
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
-        {/* Filters — specialty + location first, search last */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          <SelectDropdown
-            value={specialty} onChange={setSpecialty}
-            options={SPECIALTIES}
-            icon={<LuBriefcaseMedical />}
-          />
-          <SelectDropdown
-            value={governorate} onChange={setGovernorate}
-            options={GOVERNORATES}
-            icon={<LuMapPin />}
-          />
+          <SelectDropdown value={specialty} onChange={setSpecialty} options={SPECIALTIES} icon={<LuBriefcaseMedical />} />
+          <SelectDropdown value={governorate} onChange={setGovernorate} options={GOVERNORATES} icon={<LuMapPin />} />
           <div className="relative">
             <LuSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-[14px]" />
             <input
               type="text" placeholder="Search by name…"
               value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-[12.5px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all"
+              className="w-full pl-10 pr-4 py-2.5 text-[12.5px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15 transition-all"
             />
           </div>
         </div>
 
-        {/* Results count */}
         {!loading && (
           <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mb-4">
             {filtered.length} doctor{filtered.length !== 1 ? "s" : ""} found
@@ -209,7 +216,7 @@ export default function DoctorsPage() {
 
         {loading ? <Skeleton /> : filtered.length === 0 ? (
           <div className="bg-[hsl(var(--color-bg-surface))] border-2 border-dashed border-[hsl(var(--color-border))] rounded-2xl py-16 px-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center mx-auto mb-4 text-[26px]">
+            <div className="w-16 h-16 rounded-full bg-sky-600/10 text-sky-600 flex items-center justify-center mx-auto mb-4 text-[26px]">
               <LuBriefcaseMedical />
             </div>
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">No doctors found</h3>
@@ -218,7 +225,11 @@ export default function DoctorsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {filtered.map((d) => (
-              <DoctorCard key={d._id} doctor={d} onBook={(uid) => router.push(`/patient/doctors/${uid}/book`)} />
+              <DoctorCard
+                key={d._id}
+                doctor={d}
+                onBook={(uid) => router.push(`/patient/doctors/${uid}/book`)}
+              />
             ))}
           </div>
         )}
