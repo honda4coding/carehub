@@ -15,6 +15,7 @@ import MedicationTracker from "@/components/doctor/encounter/MedicationTracker";
 import HistoryTimeline from "@/components/doctor/encounter/HistoryTimeline";
 import ClinicalAssessment from "@/components/doctor/encounter/ClinicalAssessment";
 import RxBuilder from "@/components/doctor/encounter/RxBuilder";
+import DoctorVitalsCharts from "@/components/doctor/encounter/DoctorVitalsCharts";
 
 export default function PatientDashboardPage() {
   const router = useRouter();
@@ -465,53 +466,57 @@ export default function PatientDashboardPage() {
           
           {/* TAB 1: Profile & Vitals */}
           {activeTab === "profile" && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <VitalsPanel 
-                loading={loading}
-                patientData={patientData}
-                isEditVitalsOpen={isEditVitalsOpen}
-                setIsEditVitalsOpen={setIsEditVitalsOpen}
-                editHeight={editHeight}
-                setEditHeight={setEditHeight}
-                editWeight={editWeight}
-                setEditWeight={setEditWeight}
-                editBloodPressure={editBloodPressure}
-                setEditBloodPressure={setEditBloodPressure}
-                editSugarLevel={editSugarLevel}
-                setEditSugarLevel={setEditSugarLevel}
-                editPulse={editPulse}
-                setEditPulse={setEditPulse}
-                editTemperature={editTemperature}
-                setEditTemperature={setEditTemperature}
-                editBloodType={editBloodType}
-                setEditBloodType={setEditBloodType}
-                saveVitalsLocally={saveVitalsLocally}
-                lastVisitVitals={lastVisitVitals}
-              />
-              <div className="space-y-6">
-                <MedicalAlertsPanel 
+            <div className="flex flex-col gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <VitalsPanel 
                   loading={loading}
                   patientData={patientData}
-                  isEditAlertsOpen={isEditAlertsOpen}
-                  setIsEditAlertsOpen={setIsEditAlertsOpen}
-                  editAllergies={editAllergies}
-                  setEditAllergies={setEditAllergies}
-                  editChronic={editChronic}
-                  setEditChronic={setEditChronic}
-                  saveAlerts={saveAlerts}
-                  isSaving={isSavingAlerts}
+                  isEditVitalsOpen={isEditVitalsOpen}
+                  setIsEditVitalsOpen={setIsEditVitalsOpen}
+                  editHeight={editHeight}
+                  setEditHeight={setEditHeight}
+                  editWeight={editWeight}
+                  setEditWeight={setEditWeight}
+                  editBloodPressure={editBloodPressure}
+                  setEditBloodPressure={setEditBloodPressure}
+                  editSugarLevel={editSugarLevel}
+                  setEditSugarLevel={setEditSugarLevel}
+                  editPulse={editPulse}
+                  setEditPulse={setEditPulse}
+                  editTemperature={editTemperature}
+                  setEditTemperature={setEditTemperature}
+                  editBloodType={editBloodType}
+                  setEditBloodType={setEditBloodType}
+                  saveVitalsLocally={saveVitalsLocally}
+                  lastVisitVitals={lastVisitVitals}
                 />
-                <PastSurgeriesPanel 
-                  loading={loading}
-                  patientData={patientData}
-                  isEditSurgeriesOpen={isEditSurgeriesOpen}
-                  setIsEditSurgeriesOpen={setIsEditSurgeriesOpen}
-                  editSurgeries={editSurgeries}
-                  setEditSurgeries={setEditSurgeries}
-                  saveSurgeries={saveSurgeries}
-                  isSaving={isSavingAlerts}
-                />
+                <div className="space-y-6">
+                  <MedicalAlertsPanel 
+                    loading={loading}
+                    patientData={patientData}
+                    isEditAlertsOpen={isEditAlertsOpen}
+                    setIsEditAlertsOpen={setIsEditAlertsOpen}
+                    editAllergies={editAllergies}
+                    setEditAllergies={setEditAllergies}
+                    editChronic={editChronic}
+                    setEditChronic={setEditChronic}
+                    saveAlerts={saveAlerts}
+                    isSaving={isSavingAlerts}
+                  />
+                  <PastSurgeriesPanel 
+                    loading={loading}
+                    patientData={patientData}
+                    isEditSurgeriesOpen={isEditSurgeriesOpen}
+                    setIsEditSurgeriesOpen={setIsEditSurgeriesOpen}
+                    editSurgeries={editSurgeries}
+                    setEditSurgeries={setEditSurgeries}
+                    saveSurgeries={saveSurgeries}
+                    isSaving={isSavingAlerts}
+                  />
+                </div>
               </div>
+              
+              <DoctorVitalsCharts history={fullMedicalHistory} />
             </div>
           )}
 
