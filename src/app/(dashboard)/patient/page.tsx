@@ -50,41 +50,24 @@ export default function PatientDashboard() {
     async function fetchAll() {
       // 1. Fetch profile
       try {
-        const { data } = await axios.get(`${BASE_URL}/users/profile`, {
+        const { data } = await axios.get(`${BASE_URL}/patient/profile`, {
           headers: authHeaders(),
         });
         const p = data.data ?? data;
 
-        // try to get height/weight/surgeries from medical history
-        let height: number | undefined;
-        let weight: number | undefined;
-        let surgeries: string[] = [];
-
-        try {
-          const medData = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
-            headers: authHeaders(),
-          });
-          const med = medData.data?.data ?? medData.data;
-          if (med) {
-            height = med.height;
-            weight = med.weight;
-            surgeries = med.surgeries ?? [];
-          }
-        } catch { /* msh lazem ykon mawgood */ }
-
         setProfile({
           fullName:         p.fullName ?? p.userName ?? user!.name ?? "Unknown",
-          nationalIdStatus: p.confirmed ? "Verified" : "Pending",
+          nationalIdStatus: p.nationalIdStatus ?? (p.confirmed ? "Verified" : "Pending"),
           bloodType:        p.bloodType ?? "—",
-          chronicDiseases:  p.chronicDiseases ?? [],
+          chronicDiseases:  p.chronic ?? p.chronicDiseases ?? [],
           allergies:        p.allergies ?? [],
           age:              p.age ?? 0,
-          gender:           p.gender === "female" ? "Female" : "Male",
+          gender:           p.gender === "female" ? "Female" : p.gender === "male" ? "Male" : "Male",
           address:          p.address ?? "—",
-          phoneNumber:      p.phone ?? p.phoneNumber ?? "—",
-          height,
-          weight,
-          surgeries,
+          phoneNumber:      p.phoneNumber ?? p.phone ?? p.phone ?? "—",
+          height:           p.height ? Number(p.height) : undefined,
+          weight:           p.weight ? Number(p.weight) : undefined,
+          surgeries:        (p.surgeries ?? []).map((s: any) => typeof s === 'string' ? s : s.operationName || ""),
         });
       } catch {
         setProfile({
@@ -113,8 +96,9 @@ export default function PatientDashboard() {
         const entries: TimelineEntry[] = [];
 
         if (medRes.status === "fulfilled") {
-          const r = medRes.value.data?.data;
-          if (r && typeof r === "object" && r._id) {
+          const records = medRes.value.data?.data ?? medRes.value.data ?? [];
+          const arr = Array.isArray(records) ? records : records._id ? [records] : [];
+          arr.forEach((r: any) => {
             entries.push({
               id: `med-${r._id}`,
               rawDate: new Date(r.createdAt ?? r.date ?? Date.now()),
@@ -132,7 +116,7 @@ export default function PatientDashboard() {
                 frequency: p.frequency ?? "—",
               })),
             });
-          }
+          });
         } else showToast("Could not load medical history");
 
         if (presRes.status === "fulfilled") {
@@ -188,7 +172,7 @@ export default function PatientDashboard() {
         ) : profile ? (
           <HealthHub profile={profile} />
         ) : (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-[13px] text-red-600 font-bold mb-6">
+          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-[13px] text-red-600 font-bold mb-6 shadow-sm">
             Could not load profile data.
           </div>
         )}

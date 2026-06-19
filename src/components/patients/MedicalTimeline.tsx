@@ -20,7 +20,7 @@ export default function MedicalTimeline({ entries, loading, searchTerm }: Props)
       {loading ? (
         <TimelineSkeleton />
       ) : entries.length === 0 ? (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center shadow-sm">
           <p className="text-[13px] text-[hsl(var(--color-text-muted))] font-bold">
             {searchTerm ? "No encounters matched your search filters." : "No medical records found."}
           </p>

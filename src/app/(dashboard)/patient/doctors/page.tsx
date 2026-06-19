@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuStethoscope, LuSearch, LuStar, LuCalendarPlus } from "react-icons/lu";
+import Link from "next/link";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -130,7 +131,7 @@ export default function DoctorsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((d) => (
-              <div key={d._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col justify-between hover:border-[hsl(var(--color-primary)/0.3)] transition-all">
+              <div key={d._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col justify-between hover:border-[hsl(var(--color-primary)/0.3)] transition-all shadow-sm">
                 <div>
                   {/* Avatar + Name */}
                   <div className="flex items-center gap-3 mb-4">
@@ -172,9 +173,11 @@ export default function DoctorsPage() {
                 </div>
 
                 {/* Book Button */}
-                <button className="w-full mt-2 py-2.5 rounded-xl border border-[hsl(var(--color-primary)/0.3)] text-[hsl(var(--color-primary-strong))] text-[11px] font-black flex items-center justify-center gap-2 hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all">
+                <Link href={`/patient/doctors/${d._id}/book`}
+                  className="w-full mt-2 py-2.5 rounded-xl border border-[hsl(var(--color-primary)/0.3)] text-[hsl(var(--color-primary-strong))] text-[11px] font-black flex items-center justify-center gap-2 hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all"
+                >
                   <LuCalendarPlus className="text-sm" /> Book Appointment
-                </button>
+                </Link>
               </div>
             ))}
           </div>

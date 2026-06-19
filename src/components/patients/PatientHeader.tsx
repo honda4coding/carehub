@@ -33,7 +33,7 @@ export default function PatientHeader({ fullName, searchTerm, onSearch }: Props)
         </div>
         <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-all">
           <LuBell className="text-[15px]" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--color-secondary-strong))]" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--color-primary))]" />
         </button>
         <button className="hidden sm:flex w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] transition-all">
           <IoIosHelpCircleOutline className="text-[15px]" />
