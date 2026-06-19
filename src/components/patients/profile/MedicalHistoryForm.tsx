@@ -62,14 +62,14 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
         </div>
       )}
       <div className="flex gap-2">
-        <input
-          type="text" value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown} placeholder={placeholder}
-          className="flex-1 px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-          style={{ backgroundColor: "white", border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }}
-        />
-        <button type="button" onClick={handleAdd} disabled={!input.trim()}
+          <input
+            type="text" value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown} placeholder={placeholder}
+            className="flex-1 px-4 py-2.5 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
+            style={{ backgroundColor: "white", border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }}
+          />
+          <button type="button" onClick={handleAdd} disabled={!input.trim()}
           className="px-3 py-2.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] hover:opacity-80 transition-opacity disabled:opacity-30">
           <LuPlus className="w-4 h-4" />
         </button>
