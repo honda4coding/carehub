@@ -69,6 +69,7 @@ export default function PatientDashboard() {
           height:           p.height ? Number(p.height) : undefined,
           weight:           p.weight ? Number(p.weight) : undefined,
           surgeries:        (p.surgeries ?? []).map((s: any) => typeof s === 'string' ? s : s.operationName || ""),
+          profilepicture:   p.profilepicture?.secure_url,
         });
       } catch {
         setProfile({

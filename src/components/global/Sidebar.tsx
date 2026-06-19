@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -315,6 +316,23 @@ function SidebarContent({
         .slice(0, 2)
     : role.slice(0, 2).toUpperCase();
 
+  const [avatarUrl, setAvatarUrl] = useState<string | null>((user as any)?.profilepicture?.secure_url || null);
+
+  useEffect(() => {
+    if (!avatarUrl) {
+      const fetchAvatar = async () => {
+        try {
+          const res = await fetchClient.get(`/${role}/profile`);
+          const pic = res?.data?.profilepicture?.secure_url || res?.data?.user?.profilepicture?.secure_url;
+          if (pic) setAvatarUrl(pic);
+        } catch {
+          // ignore
+        }
+      };
+      fetchAvatar();
+    }
+  }, [role, avatarUrl]);
+
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
@@ -400,8 +418,12 @@ function SidebarContent({
 
       {/* User footer */}
       <div className="px-2.5 py-3 border-t border-[hsl(var(--color-border))] flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0">
-          {initials}
+        <div className="relative w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0 overflow-hidden border border-[hsl(var(--color-border-soft))]">
+          {avatarUrl ? (
+            <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
+          ) : (
+            initials
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[12px] font-bold text-[hsl(var(--color-text))] truncate">

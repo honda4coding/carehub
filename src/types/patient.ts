@@ -22,8 +22,9 @@ export interface HealthHubProfile {
   address: string;
   phoneNumber: string;
   height?: number;
-weight?: number;
-surgeries?: string[];
+  weight?: number;
+  surgeries?: string[];
+  profilepicture?: string;
 }
 
 export interface Prescription {

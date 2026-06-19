@@ -2,6 +2,7 @@
 import { LuUser, LuActivity } from "react-icons/lu";
 import { HealthHubProfile } from "@/types/patient";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Props {
   profile: HealthHubProfile;
@@ -15,8 +16,12 @@ export default function ProfileOverview({ profile }: Props) {
         {/* Main Bio Card */}
         <div className="md:col-span-8 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center shrink-0 border-2 border-[hsl(var(--color-primary))]">
-              <LuUser className="text-2xl" />
+            <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center shrink-0 border-2 border-[hsl(var(--color-primary))] overflow-hidden relative">
+              {profile.profilepicture ? (
+                <Image src={profile.profilepicture} alt={profile.fullName} fill className="object-cover" />
+              ) : (
+                <LuUser className="text-2xl" />
+              )}
             </div>
             <div>
               <div className="flex items-center gap-2">
