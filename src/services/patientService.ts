@@ -7,20 +7,21 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface PatientProfile {
-  fullName:       string;
-  email:          string;
-  phoneNumber:    string;
-  address?:       string;
+  fullName: string;
+  email: string;
+  phoneNumber: string;
+  address?: string;
   profilepicture?: { secure_url: string; public_id: string };
-  age?:           number;
-  gender?:        "male" | "female";
-  bloodType?:     string;
-  height?:        string;
-  weight?:        string;
-  pulse?:         string; 
-  allergies?:     string[];
-  chronic?:       string[];
-  surgeries?:     {
+  age?: number;
+  gender?: "male" | "female";
+  bloodType?: string;
+  height?: string;
+  weight?: string;
+  pulse?: string;
+  allergies?: string[];
+  chronic?: string[];
+  sharingSetting?: "all" | "own_only" | "otp";
+  surgeries?: {
     operationName: string;
     surgeonName: string;
     date: string;
@@ -29,18 +30,19 @@ export interface PatientProfile {
 }
 
 export interface UpdatePatientProfilePayload {
-  fullName?:    string;
+  fullName?: string;
   phoneNumber?: string;
-  address?:     string;
-  age?:         number;
-  gender?:      "male" | "female";
-  bloodType?:   string;
-  allergies?:   string[];
-  chronic?:     string[];
-  pulse?:       string; 
-  height?:      string;
-  weight?:      string;
-  surgeries?:   {
+  address?: string;
+  age?: number;
+  gender?: "male" | "female";
+  bloodType?: string;
+  allergies?: string[];
+  chronic?: string[];
+  pulse?: string;
+  height?: string;
+  weight?: string;
+  sharingSetting?: "all" | "own_only" | "otp";
+  surgeries?: {
     operationName: string;
     surgeonName: string;
     date: string;
