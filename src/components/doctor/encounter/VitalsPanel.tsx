@@ -223,9 +223,15 @@ export default function VitalsPanel({
                     <input 
                       type="text"
                       value={editBloodPressure}
-                      onChange={(e) => setEditBloodPressure(e.target.value)}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/[^\d]/g, ""); // Allow only digits
+                        if (val.length > 3) val = val.substring(0, 3) + "/" + val.substring(3, 5);
+                        else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); // special case for 90/60
+                        setEditBloodPressure(val);
+                      }}
                       className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
                       placeholder="120/80"
+                      maxLength={7}
                     />
                   </div>
                   <div>
@@ -253,11 +259,16 @@ export default function VitalsPanel({
                   <div>
                     <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase mb-1">Temp (°C)</label>
                     <input 
-                      type="number" step="0.1"
+                      type="text"
                       value={editTemperature}
-                      onChange={(e) => setEditTemperature(e.target.value)}
+                      onChange={(e) => {
+                        let val = e.target.value.replace(/[^\d]/g, "");
+                        if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
+                        setEditTemperature(val);
+                      }}
                       className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
-                      placeholder="37.0"
+                      placeholder="37.5"
+                      maxLength={4}
                     />
                   </div>
                 </div>

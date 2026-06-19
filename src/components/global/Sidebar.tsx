@@ -133,6 +133,11 @@ const patientNav: NavSection[] = [
         href: "/patient/history",
         icon: <LuClipboardList />,
       },
+      {
+        label: "Personal Tracking",
+        href: "/patient/tracking",
+        icon: <LuActivity />,
+      },
       { label: "Doctors", href: "/patient/doctors", icon: <LuStethoscope /> },
     ],
   },
@@ -176,16 +181,6 @@ const settingsSub: Record<
       label: "Profile",
       href: "/patient/profile",
       icon: <LuUser className="text-sm" />,
-    },
-    {
-      label: "Medical Info",
-      href: "/patient/profile/medical",
-      icon: <LuHeart className="text-sm" />,
-    },
-    {
-      label: "Vitals",
-      href: "/patient/profile/vitals",
-      icon: <LuActivity className="text-sm" />,
     },
     {
       label: "Security",
