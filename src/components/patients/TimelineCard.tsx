@@ -8,7 +8,7 @@ interface Props {
 
 export default function TimelineCard({ entry }: Props) {
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
       <div className="flex items-start justify-between flex-wrap gap-2 border-b border-[hsl(var(--color-border-soft))] pb-3 mb-3">
         <div>
           <span className="text-[10px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">{entry.date}</span>

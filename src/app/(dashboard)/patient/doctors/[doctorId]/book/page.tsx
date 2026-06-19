@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuArrowLeft,
   LuCheck,
@@ -10,12 +13,9 @@ import {
   LuInfo,
 } from "react-icons/lu";
 
-import {
+import type {
   DoctorListItem,
   Slot,
-  bookAppointment,
-  getApprovedDoctors,
-  getAvailableSlots,
 } from "@/services/appointmentService";
 import {
   formatFullDate,
@@ -23,6 +23,13 @@ import {
  slotTimeRangeLabel,
 } from "@/components/appointments/format";
 import EmptyState from "@/components/appointments/EmptyState";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+function authHeaders() {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 type Step = "slots" | "confirm" | "success";
 
@@ -45,14 +52,27 @@ export default function BookAppointmentPage() {
   useEffect(() => {
     (async () => {
       try {
-        const [doctors, availableSlots] = await Promise.all([
-          getApprovedDoctors(),
-          getAvailableSlots(doctorId),
+        const headers = authHeaders();
+        const [doctorsRes, slotsRes] = await Promise.all([
+          axios.get(`${BASE_URL}/doctor/all`, { headers }),
+          axios.get(`${BASE_URL}/appointmens/available-slots/${doctorId}`, { headers }),
         ]);
-        setDoctor(doctors.find((d) => d._id === doctorId) ?? null);
-        setSlots(availableSlots);
+        const allDoctors = doctorsRes.data?.data ?? doctorsRes.data ?? [];
+        const foundDoctor = allDoctors.find((d: any) => d._id === doctorId);
+        // Map doctor data: backend returns { userId: { fullName }, specialization, ... }
+        if (foundDoctor) {
+          setDoctor({
+            _id: foundDoctor._id,
+            fullName: foundDoctor.userId?.fullName ?? foundDoctor.fullName ?? "Unknown",
+            email: foundDoctor.userId?.email ?? foundDoctor.email ?? "",
+            specialization: foundDoctor.specialization ?? null,
+            experience: foundDoctor.experience ?? null,
+            bio: foundDoctor.bio ?? null,
+          });
+        }
+        setSlots(slotsRes.data?.data ?? slotsRes.data ?? []);
       } catch (err: any) {
-        setLoadError(err.message || "Failed to load available slots");
+        setLoadError(err?.response?.data?.message ?? err.message ?? "Failed to load available slots");
       } finally {
         setLoading(false);
       }
@@ -89,11 +109,16 @@ export default function BookAppointmentPage() {
     setConfirming(true);
     setConfirmError(null);
     try {
-      await bookAppointment(selectedSlot._id);
+      await axios.post(
+        `${BASE_URL}/appointmens/book`,
+        { slotId: selectedSlot._id },
+        { headers: authHeaders() }
+      );
       setStep("success");
     } catch (err: any) {
       setConfirmError(
-        err.message ||
+        err?.response?.data?.message ??
+          err.message ??
           "Sorry, this slot was just booked by someone else. Please choose another time."
       );
     } finally {
@@ -171,7 +196,7 @@ export default function BookAppointmentPage() {
                           setActiveDateKey(g.key);
                           setSelectedSlot(null);
                         }}
-                        className={`shrink-0 w-16 py-2.5 rounded-xl border text-center transition-all ${
+                        className={`shrink-0 w-16 py-2.5 rounded-xl border text-center transition-all shadow-sm ${
                           isActive
                             ? "bg-primary border-primary"
                             : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] hover:border-primary"
@@ -204,7 +229,7 @@ export default function BookAppointmentPage() {
                       <button
                         key={s._id}
                         onClick={() => setSelectedSlot(s)}
-                        className={`py-3 rounded-xl border text-[12.5px] font-bold transition-all ${
+                        className={`py-3 rounded-xl border text-[12.5px] font-bold transition-all shadow-sm ${
                           isSelected
                             ? "bg-primary border-primary text-white"
                             : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-primary"

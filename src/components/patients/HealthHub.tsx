@@ -17,7 +17,7 @@ export default function HealthHub({ profile }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
 
         {/* Bio */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div>
             <div className="flex items-start justify-between">
               <p className="text-[16px] font-black text-[hsl(var(--color-text))] leading-tight">{profile.fullName}</p>
@@ -39,7 +39,7 @@ export default function HealthHub({ profile }: Props) {
         </div>
 
         {/* Blood Type */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Blood Group</p>
             <span className="text-[11px] text-red-500">❤️</span>
@@ -54,7 +54,7 @@ export default function HealthHub({ profile }: Props) {
         </div>
 
         {/* Chronic Diseases */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Chronic Diseases</p>
             <LuActivity className="text-[14px] text-[hsl(var(--color-primary))]" />
@@ -74,7 +74,7 @@ export default function HealthHub({ profile }: Props) {
         </div>
 
         {/* Allergies */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-between shadow-sm">
           <div className="flex items-center justify-between">
             <p className="text-[11px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">Allergies</p>
             <LuShieldAlert className="text-[14px] text-[hsl(var(--color-danger))]" />
@@ -98,7 +98,7 @@ export default function HealthHub({ profile }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
         {/* Height */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary-bg,var(--color-bg-soft)))] flex items-center justify-center shrink-0">
             <LuRuler className="text-[18px] text-[hsl(var(--color-primary))]" />
           </div>
@@ -111,7 +111,7 @@ export default function HealthHub({ profile }: Props) {
         </div>
 
         {/* Weight */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4 shadow-sm">
           <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-bg-soft))] flex items-center justify-center shrink-0">
             <LuWeight className="text-[18px] text-[hsl(var(--color-primary))]" />
           </div>
@@ -124,7 +124,7 @@ export default function HealthHub({ profile }: Props) {
         </div>
 
         {/* Surgeries */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-bg-soft))] flex items-center justify-center shrink-0">
               <LuScissors className="text-[18px] text-[hsl(var(--color-text-muted))]" />

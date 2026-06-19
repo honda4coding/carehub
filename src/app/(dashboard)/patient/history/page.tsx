@@ -110,7 +110,7 @@ export default function MedicalHistoryPage() {
             {records.map((r) => {
               const isOpen = expanded === r._id;
               return (
-                <div key={r._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+                <div key={r._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
                   {/* Card Header */}
                   <button
                     onClick={() => setExpanded(isOpen ? null : r._id)}

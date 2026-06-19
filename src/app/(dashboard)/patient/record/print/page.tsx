@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { fetchClient } from "@/services/fetchClient";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuPrinter,
   LuArrowLeft,
@@ -16,6 +18,13 @@ import {
   LuLoader,
 } from "react-icons/lu";
 import Link from "next/link";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
+function printAuthHeaders() {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -48,80 +57,23 @@ interface Encounter {
   clinicalNotes: string;
 }
 
-// ─── Static fallback data (used while API is not wired) ──────────────────────
-
-const FALLBACK_PROFILE: PatientProfile = {
-  fullName: "Sarah Aly Mansour",
-  bloodType: "A+",
-  chronicDiseases: ["Hypertension", "Vitamin D Deficiency"],
-  allergies: ["Penicillin", "Peanuts"],
-  age: 32,
-  gender: "Female",
-  address: "Maadi, Cairo, Egypt",
-  phoneNumber: "+20 102 345 6789",
-  nationalIdStatus: "Verified",
-};
-
-const FALLBACK_ENCOUNTERS: Encounter[] = [
-  {
-    id: 1,
-    date: "22 May 2026",
-    doctorName: "Dr. Mohaned Ahmed",
-    specialty: "Cardiology",
-    chiefComplaint: "Mild chest tightness during light exercise",
-    diagnosis: "Initial-stage Hypertension",
-    prescriptions: [
-      { medication: "Lisinopril 10mg", dosage: "1 Tablet", frequency: "Daily — Morning" },
-      { medication: "Atorvastatin 20mg", dosage: "1 Tablet", frequency: "Daily — Bedtime" },
-    ],
-    clinicalNotes:
-      "Patient advised to reduce daily sodium intake and record blood pressure twice daily. Follow up in two weeks.",
-  },
-  {
-    id: 2,
-    date: "10 May 2026",
-    doctorName: "Dr. Khaled Taha",
-    specialty: "General Medicine",
-    chiefComplaint: "Routine annual checkup & blood panel review",
-    diagnosis: "Vitamin D3 Deficiency & Mild Fatigue",
-    prescriptions: [
-      {
-        medication: "Vitamin D3 2000 IU",
-        dosage: "1 Softgel",
-        frequency: "Daily — Morning (With meal)",
-      },
-    ],
-    clinicalNotes:
-      "Advised increasing dietary rich foods (fish, eggs) and direct sunlight exposure for 15 minutes daily.",
-  },
-  {
-    id: 3,
-    date: "15 April 2026",
-    doctorName: "Dr. Dalia Fawzy",
-    specialty: "Ophthalmology",
-    chiefComplaint: "Slight strain and blurred text when reading screens",
-    diagnosis: "Mild Presbyopia & Digital Eye Strain",
-    prescriptions: [
-      { medication: "Reading Glasses", dosage: "+1.00 Diopter", frequency: "As needed" },
-      {
-        medication: "Systane Ultra Eye Drops",
-        dosage: "1 Drop per eye",
-        frequency: "3× daily",
-      },
-    ],
-    clinicalNotes:
-      "Take 20-second breaks every 20 minutes (20-20-20 rule). Re-evaluate vision in 12 months.",
-  },
-];
+function formatDateForPrint(dateStr: string) {
+  try {
+    return new Date(dateStr).toLocaleDateString("en-GB", {
+      day: "2-digit", month: "long", year: "numeric",
+    });
+  } catch { return dateStr; }
+}
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function PrintMedicalRecordPage() {
-  const { user, token } = useAuth();
+  const { user } = useAuth();
 
-  const [profile, setProfile] = useState<PatientProfile>(FALLBACK_PROFILE);
-  const [encounters, setEncounters] = useState<Encounter[]>(FALLBACK_ENCOUNTERS);
-  const [loading, setLoading] = useState(false);
+  const [profile, setProfile] = useState<PatientProfile | null>(null);
+  const [encounters, setEncounters] = useState<Encounter[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [printedAt] = useState(() =>
     new Date().toLocaleDateString("en-GB", {
       weekday: "long",
@@ -131,49 +83,132 @@ export default function PrintMedicalRecordPage() {
     })
   );
 
-  // Fetch live data when token/user is available
   useEffect(() => {
-    if (!token || !user?.id) return;
+    if (!user) return;
+    const patientId = (user as any)._id ?? user.id;
+    if (!patientId) {
+      setError("Patient identity not found.");
+      setLoading(false);
+      return;
+    }
 
     const load = async () => {
       setLoading(true);
+      setError(null);
+      const headers = printAuthHeaders();
+
       try {
-        const [profileData, historyData, rxData] = await Promise.allSettled([
-          fetchClient.get("/patient/profile"),
-          fetchClient.get(`/medical-history/${user.id}`),
-          fetchClient.get(`/prescrption/patient/${user.id}`),
+        const [profileRes, historyRes, rxRes] = await Promise.allSettled([
+          axios.get(`${BASE_URL}/patient/profile`, { headers }),
+          axios.get(`${BASE_URL}/medical-history/${patientId}`, { headers }),
+          axios.get(`${BASE_URL}/prescrption/patient/${patientId}`, { headers }),
         ]);
 
-        if (profileData.status === "fulfilled" && profileData.value) {
-          setProfile(profileData.value as PatientProfile);
+        let profileLoaded = false;
+
+        if (profileRes.status === "fulfilled") {
+          const p = profileRes.value.data?.data ?? profileRes.value.data;
+          if (p) {
+            profileLoaded = true;
+            setProfile({
+              fullName: p.fullName ?? p.userName ?? user!.name ?? "Unknown",
+              bloodType: p.bloodType ?? "—",
+              chronicDiseases: p.chronic ?? p.chronicDiseases ?? [],
+              allergies: p.allergies ?? [],
+              age: p.age ?? 0,
+              gender: p.gender === "female" ? "Female" : p.gender === "male" ? "Male" : "—",
+              address: p.address ?? "—",
+              phoneNumber: p.phoneNumber ?? p.phone ?? "—",
+              nationalIdStatus: p.nationalIdStatus ?? (p.confirmed ? "Verified" : "Pending"),
+            });
+          }
         }
 
-        // Merge encounters + standalone prescriptions into chronological list
-        const rawEncounters: Encounter[] =
-          historyData.status === "fulfilled" && Array.isArray(historyData.value)
-            ? (historyData.value as Encounter[])
-            : FALLBACK_ENCOUNTERS;
+        type RawEntry = Encounter & { rawDate: Date };
+        const rawEntries: RawEntry[] = [];
 
-        setEncounters(rawEncounters.sort((a, b) => (a.date > b.date ? -1 : 1)));
+        if (historyRes.status === "fulfilled") {
+          const histData = historyRes.value.data?.data ?? historyRes.value.data ?? [];
+          const arr = Array.isArray(histData) ? histData : histData._id ? [histData] : [];
+          arr.forEach((r: any) => {
+            const createdAt = r.createdAt ?? r.date ?? new Date().toISOString();
+            rawEntries.push({
+              id: 0,
+              rawDate: new Date(createdAt),
+              date: formatDateForPrint(createdAt),
+              doctorName: r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
+              specialty: r.doctorId?.specialization ?? r.specialty ?? "General",
+              chiefComplaint: r.chiefComplaint ?? r.complaint ?? "—",
+              diagnosis: r.diagnosis ?? "—",
+              clinicalNotes: r.clinicalNotes ?? r.notes ?? "—",
+              prescriptions: (r.prescriptions ?? []).map((p: any) => ({
+                medication: p.medication ?? p.name ?? "—",
+                dosage: p.dosage ?? "—",
+                frequency: p.frequency ?? "—",
+              })),
+            });
+          });
+        }
+
+        if (rxRes.status === "fulfilled") {
+          const rxList = rxRes.value.data?.data ?? rxRes.value.data ?? [];
+          (Array.isArray(rxList) ? rxList : []).forEach((r: any) => {
+            const createdAt = r.createdAt ?? new Date().toISOString();
+            rawEntries.push({
+              id: 0,
+              rawDate: new Date(createdAt),
+              date: formatDateForPrint(createdAt),
+              doctorName: r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
+              specialty: r.doctorId?.specialization ?? "General",
+              chiefComplaint: r.chiefComplaint ?? "Prescription",
+              diagnosis: r.diagnosis ?? "—",
+              clinicalNotes: r.notes ?? "—",
+              prescriptions: (r.medications ?? r.prescriptions ?? []).map((p: any) => ({
+                medication: p.medication ?? p.name ?? "—",
+                dosage: p.dosage ?? "—",
+                frequency: p.frequency ?? "—",
+              })),
+            });
+          });
+        }
+
+        const sorted = rawEntries
+          .sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime())
+          .map((entry, idx) => {
+            const { rawDate: _, ...encounter } = entry;
+            return { ...encounter, id: idx + 1 };
+          });
+
+        setEncounters(sorted);
+
+        const historyFailed = historyRes.status === "rejected";
+        const rxFailed = rxRes.status === "rejected";
+
+        if (!profileLoaded && historyFailed && rxFailed) {
+          setError("Could not load medical record data. Please try again.");
+        } else if (!profileLoaded) {
+          setError("Could not load patient profile. Some sections may be incomplete.");
+        } else if (historyFailed || rxFailed) {
+          setError("Some clinical records could not be loaded. Displaying available data.");
+        }
       } catch {
-        // Silently keep fallback data
+        setError("Could not load medical record data. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
     load();
-  }, [token, user]);
+  }, [user]);
 
-  // Automatically trigger browser print dialogue once data loading finishes
   useEffect(() => {
-    if (!loading) {
+    if (!loading && !error && profile) {
       const timer = setTimeout(() => {
         window.print();
       }, 800);
       return () => clearTimeout(timer);
     }
-  }, [loading]);
+  }, [loading, error, profile]);
 
   const handlePrint = () => window.print();
 
@@ -211,13 +246,16 @@ export default function PrintMedicalRecordPage() {
                 Loading live data…
               </span>
             )}
+            {error && (
+              <span className="text-xs text-amber-700 font-semibold bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-lg max-w-xs">
+                {error}
+              </span>
+            )}
             <button
               id="btn-print-document"
               onClick={handlePrint}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-white text-sm font-bold shadow hover:opacity-90 active:scale-95 transition-all animate-fade-in"
-              style={{
-                backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))"
-              }}
+              disabled={loading || !profile}
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-doctor text-white text-sm font-bold shadow hover:opacity-90 active:scale-95 transition-all animate-fade-in disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <LuPrinter className="text-base animate-pulse" />
               Print Document
@@ -226,11 +264,19 @@ export default function PrintMedicalRecordPage() {
         </div>
       </div>
 
-      {/*
-        ════════════════════════════════════════════
-        PRINTABLE DOCUMENT
-        ════════════════════════════════════════════
-      */}
+      {loading ? (
+        <div className="print:hidden max-w-4xl mx-auto px-6 py-20 flex flex-col items-center gap-3 text-gray-500">
+          <LuLoader className="animate-spin text-2xl" />
+          <p className="text-sm font-semibold">Loading medical record…</p>
+        </div>
+      ) : !profile ? (
+        <div className="print:hidden max-w-4xl mx-auto px-6 py-20 text-center">
+          <p className="text-sm font-bold text-red-600 mb-2">{error ?? "Could not load patient profile."}</p>
+          <Link href="/patient" className="text-sm font-semibold text-[hsl(var(--color-primary))] hover:underline">
+            Back to Dashboard
+          </Link>
+        </div>
+      ) : (
       <div
         id="printable-record"
         className="
@@ -278,15 +324,15 @@ export default function PrintMedicalRecordPage() {
         <section className="mb-8">
           <SectionTitle icon={<LuUser />} label="Patient Identity" />
           <div className="grid grid-cols-2 md:grid-cols-4 gap-0 border border-black print:border-black">
-            <InfoCell label="Full Name" value={profile.fullName} wide />
-            <InfoCell label="Age" value={`${profile.age} years`} />
-            <InfoCell label="Gender" value={profile.gender} />
-            <InfoCell label="Blood Group" value={profile.bloodType} highlight />
-            <InfoCell label="Phone" value={profile.phoneNumber} />
-            <InfoCell label="Address" value={profile.address} wide />
+            <InfoCell label="Full Name" value={profile!.fullName} wide />
+            <InfoCell label="Age" value={`${profile!.age} years`} />
+            <InfoCell label="Gender" value={profile!.gender} />
+            <InfoCell label="Blood Group" value={profile!.bloodType} highlight />
+            <InfoCell label="Phone" value={profile!.phoneNumber} />
+            <InfoCell label="Address" value={profile!.address} wide />
             <InfoCell
               label="ID Status"
-              value={profile.nationalIdStatus ?? "—"}
+              value={profile!.nationalIdStatus ?? "—"}
             />
           </div>
         </section>
@@ -296,11 +342,11 @@ export default function PrintMedicalRecordPage() {
           {/* Chronic Diseases */}
           <div className="border-2 border-black print:border-black p-4">
             <SectionTitle icon={<LuActivity />} label="Chronic Diseases" />
-            {profile.chronicDiseases.length === 0 ? (
+            {profile!.chronicDiseases.length === 0 ? (
               <p className="text-sm text-gray-400 italic">None recorded</p>
             ) : (
               <ul className="space-y-1.5 mt-1">
-                {profile.chronicDiseases.map((d) => (
+                {profile!.chronicDiseases.map((d) => (
                   <li
                     key={d}
                     className="flex items-center gap-2 text-sm font-bold text-gray-900 print:text-black"
@@ -316,11 +362,11 @@ export default function PrintMedicalRecordPage() {
           {/* Allergies */}
           <div className="border-2 border-black print:border-black p-4">
             <SectionTitle icon={<LuShieldAlert />} label="Known Allergies" />
-            {profile.allergies.length === 0 ? (
+            {profile!.allergies.length === 0 ? (
               <p className="text-sm text-gray-400 italic">No allergies on file</p>
             ) : (
               <ul className="space-y-1.5 mt-1">
-                {profile.allergies.map((a) => (
+                {profile!.allergies.map((a) => (
                   <li
                     key={a}
                     className="flex items-center gap-2 text-sm font-bold text-gray-900 print:text-black"
@@ -405,6 +451,7 @@ export default function PrintMedicalRecordPage() {
           </div>
         </footer>
       </div>
+      )}
 
       {/*
         ════════════════════════════════════════════

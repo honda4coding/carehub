@@ -43,8 +43,8 @@ export default function Navbar() {
         ];
       case 'patient':
         return [
+          { label: "Dashboard", href: "/patient" },
           { label: "Medical History", href: "/patient/history" },
-          { label: "Prescriptions", href: "/patient/prescriptions" },
           { label: "Profile", href: "/patient/profile" },
         ];
       default:

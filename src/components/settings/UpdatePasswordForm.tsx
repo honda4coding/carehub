@@ -159,8 +159,7 @@ export default function UpdatePasswordForm() {
 
             {/* Submit */}
             <button type="submit" disabled={isSubmitting}
-              className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-              style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}>
+              className="w-full py-4 bg-gradient-doctor text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
               {isSubmitting ? (
                 <><ImSpinner2 className="w-5 h-5 animate-spin" /> Updating...</>
               ) : (
