@@ -1,7 +1,12 @@
-import { LuPill, LuPlus, LuTrash2, LuImage, LuUpload, LuFileText, LuCamera } from "react-icons/lu";
+import { LuPill, LuPlus, LuTrash2, LuImage, LuUpload, LuFileText, LuCamera, LuShieldAlert, LuLoader } from "react-icons/lu";
 import Image from "next/image";
-import { RefObject, useRef, useState } from "react";
+import { RefObject, useRef, useState, useEffect } from "react";
 import WebcamCapture from "./WebcamCapture";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { AUTH_COOKIE_NAME } from "@/constants/auth";
+import ReactMarkdown from "react-markdown";
+import { useDebounce } from "@/hooks/useDebounce";
 
 interface RxBuilderProps {
   prescriptions: any[];
@@ -30,6 +35,7 @@ interface RxBuilderProps {
   attachmentsMetadata?: { type: string; title: string }[];
   setAttachmentsMetadata?: (meta: { type: string; title: string }[]) => void;
   attachmentsInputRef?: RefObject<HTMLInputElement | null>;
+  patientComplaint?: string;
 }
 
 // Handles writing the prescription, managing drugs, and uploading a paper Rx image
@@ -51,7 +57,8 @@ export default function RxBuilder({
   setAttachments,
   attachmentsMetadata = [],
   setAttachmentsMetadata,
-  attachmentsInputRef
+  attachmentsInputRef,
+  patientComplaint
 }: RxBuilderProps) {
   
   const handleAddAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -102,19 +109,182 @@ export default function RxBuilder({
     setCameraTarget(null);
   };
 
+  const [checkingInteraction, setCheckingInteraction] = useState(false);
+  const [interactionResult, setInteractionResult] = useState<{analysis: string, severity: string} | null>(null);
+
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [filteredDrugs, setFilteredDrugs] = useState<string[]>([]);
+  const [isSearchingDrugs, setIsSearchingDrugs] = useState(false);
+  const drugInputRef = useRef<HTMLDivElement>(null);
+  const debouncedDrugSearch = useDebounce(drugName, 400);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (drugInputRef.current && !drugInputRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // API Search for drugs when debounced value changes
+  useEffect(() => {
+    const searchDrugsAPI = async () => {
+      if (!debouncedDrugSearch || debouncedDrugSearch.length < 2) {
+        setFilteredDrugs([]);
+        setShowSuggestions(false);
+        return;
+      }
+      
+      setIsSearchingDrugs(true);
+      try {
+        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const token = Cookies.get(AUTH_COOKIE_NAME);
+        
+        const res = await axios.get(`${baseUrl}/drugs/search?q=${debouncedDrugSearch}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        const results = res.data?.data?.drugs?.map((d: any) => d.name) || [];
+        setFilteredDrugs(results);
+        setShowSuggestions(results.length > 0);
+      } catch (err) {
+        console.error("Failed to search drugs", err);
+      } finally {
+        setIsSearchingDrugs(false);
+      }
+    };
+    
+    // Only search if we haven't just selected a drug from the list
+    if (showSuggestions || debouncedDrugSearch) {
+        searchDrugsAPI();
+    }
+  }, [debouncedDrugSearch]);
+
+  const handleDrugNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDrugName(e.target.value);
+    if (!showSuggestions) setShowSuggestions(true);
+  };
+
+  const selectDrug = (drug: string) => {
+    setDrugName(drug);
+    setShowSuggestions(false);
+  };
+
+  const handleCheckInteractions = async () => {
+    setCheckingInteraction(true);
+    setInteractionResult("");
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const token = Cookies.get(AUTH_COOKIE_NAME);
+      
+      const currentDrugs = prescriptions.map(p => p.medicineName);
+      let newDrugs = [];
+      if (drugName) newDrugs.push(drugName);
+
+      if (currentDrugs.length === 0 && newDrugs.length === 0) {
+        alert("Please add some drugs to check interactions.");
+        setCheckingInteraction(false);
+        return;
+      }
+
+      const response = await axios.post(
+        `${baseUrl}/ai/interactions`,
+        { currentDrugs, newDrugs, newComplaint: patientComplaint },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      setInteractionResult({
+        analysis: response.data?.data?.analysis || "No interactions found.",
+        severity: response.data?.data?.severity || "SAFE"
+      });
+    } catch (error) {
+      console.error(error);
+      setInteractionResult({
+        analysis: "Failed to check interactions. Please try again.",
+        severity: "WARNING"
+      });
+    } finally {
+      setCheckingInteraction(false);
+    }
+  };
+
   return (
     <>
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <LuPill className="text-primary text-xl" /> Prescription (Rx)
           </h2>
+          <button 
+            onClick={handleCheckInteractions}
+            disabled={checkingInteraction}
+            className="text-xs font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary)/0.2)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+          >
+            {checkingInteraction ? <LuLoader className="animate-spin" /> : <LuShieldAlert />}
+            AI Safety Check
+          </button>
         </div>
+
+        {interactionResult && (() => {
+          const isDanger = interactionResult.severity === "DANGER";
+          const isWarning = interactionResult.severity === "WARNING";
+          
+          let boxColors = "bg-blue-50/80 border-l-4 border-l-blue-500 border-y border-r border-transparent text-slate-800 shadow-sm";
+          let iconColor = "text-blue-500";
+          let btnColor = "text-blue-700 hover:text-blue-900";
+          
+          if (isDanger) {
+            boxColors = "bg-red-50/80 border-l-4 border-l-red-500 border-y border-r border-transparent text-slate-800 shadow-sm";
+            iconColor = "text-red-500";
+            btnColor = "text-red-700 hover:text-red-900";
+          } else if (isWarning) {
+            boxColors = "bg-amber-50/80 border-l-4 border-l-amber-500 border-y border-r border-transparent text-slate-800 shadow-sm";
+            iconColor = "text-amber-500";
+            btnColor = "text-amber-700 hover:text-amber-900";
+          }
+
+          return (
+            <div className={`mb-5 p-5 rounded-lg flex gap-4 text-[15px] ${boxColors}`}>
+              <LuShieldAlert className={`text-2xl shrink-0 mt-0.5 ${iconColor}`} />
+              <div className="font-semibold whitespace-pre-wrap leading-relaxed w-full [&>p]:my-1 [&>ul]:list-disc [&>ul]:ml-6 [&>ol]:list-decimal [&>ol]:ml-6 [&>strong]:font-black [&>strong]:text-slate-900">
+                <ReactMarkdown>{interactionResult.analysis}</ReactMarkdown>
+                <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline ${btnColor}`}>Dismiss</button>
+              </div>
+            </div>
+          );
+        })()}
         
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 p-4 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border-soft))] no-print">
-          <div className="md:col-span-2">
+          <div className="md:col-span-2 relative" ref={drugInputRef}>
             <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Drug Name</label>
-            <input value={drugName} onChange={e=>setDrugName(e.target.value)} type="text" placeholder="e.g. Amoxicillin" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <input 
+              value={drugName} 
+              onChange={handleDrugNameChange} 
+              onFocus={() => { if(filteredDrugs.length > 0 && drugName) setShowSuggestions(true); }}
+              type="text" 
+              placeholder="e.g. Amoxicillin" 
+              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" 
+              autoComplete="off"
+            />
+            {showSuggestions && (
+              <ul className="absolute z-50 w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                {isSearchingDrugs && filteredDrugs.length === 0 ? (
+                  <li className="px-3 py-3 text-sm text-[hsl(var(--color-text-muted))] flex items-center justify-center gap-2">
+                    <LuLoader className="animate-spin" /> Searching...
+                  </li>
+                ) : filteredDrugs.map((drug) => (
+                  <li 
+                    key={drug} 
+                    onClick={() => selectDrug(drug)}
+                    className="px-3 py-2 text-sm hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer transition-colors text-[hsl(var(--color-text))]"
+                  >
+                    {drug}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
           <div>
             <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Dosage</label>
