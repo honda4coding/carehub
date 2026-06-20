@@ -4,7 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
-import { LuBot, LuX, LuSend, LuLoader } from "react-icons/lu";
+import { LuBot, LuX, LuSend, LuLoader, LuPlusCircle } from "react-icons/lu";
+import ReactMarkdown from "react-markdown";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -35,18 +36,30 @@ export default function AIChatWidget() {
     scrollToBottom();
   }, [messages]);
 
+  const handleNewChat = () => {
+    setMessages([
+      { role: "ai", content: "أهلاً بك في نظام CareHub الذكي 🤖. كيف يمكنني مساعدتك اليوم؟ (مثال: محتاج دكتور باطنة شاطر في أكتوبر بكرة)" }
+    ]);
+  };
+
   const handleSend = async () => {
     if (!input.trim()) return;
 
     const userMessage = input.trim();
     setInput("");
+    
+    // Add user message to state
     setMessages(prev => [...prev, { role: "user", content: userMessage }]);
     setLoading(true);
 
     try {
+      // Exclude the very first AI welcome message from the history sent to backend if desired,
+      // but let's just send the whole history so the AI has full context of the session.
+      const chatHistory = messages.map(m => ({ role: m.role, content: m.content }));
+
       const res = await axios.post(
         `${BASE_URL}/ai/chatbot`,
-        { message: userMessage },
+        { message: userMessage, chatHistory },
         { headers: authHeaders() }
       );
       
@@ -81,9 +94,14 @@ export default function AIChatWidget() {
               <LuBot size={20} />
               CareHub AI Assistant
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:text-gray-300 transition-colors">
-              <LuX size={20} />
-            </button>
+            <div className="flex items-center gap-3">
+              <button onClick={handleNewChat} title="محادثة جديدة" className="hover:text-gray-300 transition-colors">
+                <LuPlusCircle size={20} />
+              </button>
+              <button onClick={() => setIsOpen(false)} title="إغلاق" className="hover:text-gray-300 transition-colors">
+                <LuX size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
@@ -91,14 +109,18 @@ export default function AIChatWidget() {
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div 
-                  className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${
+                  className={`max-w-[85%] p-3 rounded-2xl text-sm ${
                     msg.role === "user" 
-                    ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none" 
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none shadow-sm"
+                    ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none whitespace-pre-wrap" 
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none shadow-sm prose prose-sm max-w-none rtl:prose-reverse prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-ul:list-disc prose-ol:list-decimal prose-li:my-0"
                   }`}
                   dir="auto"
                 >
-                  {msg.content}
+                  {msg.role === "user" ? (
+                    msg.content
+                  ) : (
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  )}
                 </div>
               </div>
             ))}
