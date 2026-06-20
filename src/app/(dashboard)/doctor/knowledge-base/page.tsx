@@ -16,26 +16,23 @@ function authHeaders() {
 interface KBInfo {
   files: string[];
   sizeMB: string;
-  path: string;
+  activeDb: string;
+  databases: string[];
 }
 
 export default function KnowledgeBasePage() {
   const [info, setInfo] = useState<KBInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [dbPathInput, setDbPathInput] = useState("");
-  const [savingPath, setSavingPath] = useState(false);
+  const [switchingDb, setSwitchingDb] = useState(false);
+  const [creatingDb, setCreatingDb] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchKBInfo = async () => {
     try {
       const res = await axios.get(`${BASE_URL}/ai/knowledge-base`, { headers: authHeaders() });
       setInfo(res.data?.data);
-      // We assume res.data?.data?.path exists but the actual profile might be different.
-      // But we will populate the input if it's empty so user sees current path.
-      if (!dbPathInput && res.data?.data?.path) {
-          setDbPathInput(res.data.data.path);
-      }
+      // Data is populated from response
     } catch (err) {
       console.error("Failed to fetch KB info", err);
     } finally {
@@ -98,18 +95,37 @@ export default function KnowledgeBasePage() {
     }
   };
 
-  const handleSavePath = async () => {
-    if (!dbPathInput.trim()) return;
-    setSavingPath(true);
+  const handleSwitchDatabase = async (dbName: string) => {
+    if (!dbName || dbName === info?.activeDb) return;
+    setSwitchingDb(true);
+    setLoading(true);
     try {
-      await axios.put(`${BASE_URL}/ai/knowledge-base/settings`, { vectorDbPath: dbPathInput }, { headers: authHeaders() });
-      alert("Storage path updated successfully!");
-      fetchKBInfo();
+      await axios.put(`${BASE_URL}/ai/knowledge-base/databases/active`, { dbName }, { headers: authHeaders() });
+      await fetchKBInfo();
     } catch (err) {
       console.error(err);
-      alert("Failed to update path.");
+      alert("Failed to switch database.");
+      setLoading(false);
     } finally {
-      setSavingPath(false);
+      setSwitchingDb(false);
+    }
+  };
+
+  const handleCreateDatabase = async () => {
+    const dbName = prompt("Enter a name for the new database (e.g., Cardiology_DB):");
+    if (!dbName || !dbName.trim()) return;
+    
+    setCreatingDb(true);
+    setLoading(true);
+    try {
+      await axios.post(`${BASE_URL}/ai/knowledge-base/databases`, { dbName: dbName.trim() }, { headers: authHeaders() });
+      await fetchKBInfo();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create database.");
+      setLoading(false);
+    } finally {
+      setCreatingDb(false);
     }
   };
 
@@ -184,27 +200,30 @@ export default function KnowledgeBasePage() {
                 </div>
               </div>
               <div>
-                <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1">Current File Path</p>
-                <div className="bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))] text-xs font-mono text-[hsl(var(--color-text-muted))] break-all">
-                  {loading ? "..." : info?.path}
+                <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1">Active Database</p>
+                <div className="bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))] text-sm font-bold text-primary flex items-center gap-2">
+                  <LuHardDrive size={16}/> {loading ? "..." : info?.activeDb}
                 </div>
               </div>
 
               <div className="pt-2 border-t border-[hsl(var(--color-border-soft))]">
-                <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-2">Custom Vector Folder Path</p>
-                <input 
-                  type="text" 
-                  value={dbPathInput}
-                  onChange={(e) => setDbPathInput(e.target.value)}
-                  placeholder="e.g. C:/Clinic/Vectors"
-                  className="w-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] text-sm rounded-lg px-3 py-2 outline-none focus:border-primary transition-colors mb-2 font-mono"
-                />
-                <button 
-                  onClick={handleSavePath}
-                  disabled={savingPath || loading}
-                  className="w-full bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] font-bold text-xs py-2 rounded-lg transition-colors"
+                <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-2">Switch Database</p>
+                <select 
+                  value={info?.activeDb || ""}
+                  onChange={(e) => handleSwitchDatabase(e.target.value)}
+                  disabled={switchingDb || loading}
+                  className="w-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] text-sm rounded-lg px-3 py-2 outline-none focus:border-primary transition-colors mb-2 cursor-pointer font-bold"
                 >
-                  {savingPath ? "Saving..." : "Save Path"}
+                  {info?.databases?.map(db => (
+                    <option key={db} value={db}>{db}</option>
+                  ))}
+                </select>
+                <button 
+                  onClick={handleCreateDatabase}
+                  disabled={creatingDb || loading}
+                  className="w-full bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] font-bold text-xs py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {creatingDb ? "Creating..." : "Create New Database"}
                 </button>
               </div>
 
