@@ -207,7 +207,7 @@ export default function DoctorAppointmentsPage() {
     (async () => {
       try {
         const data = await getDoctorAppointments();
-        setAppointments(data);
+setAppointments(data as any);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
