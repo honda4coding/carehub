@@ -23,6 +23,7 @@ import {
   LuChevronRight,
 } from "react-icons/lu";
 import Link from "next/link";
+import Image from "next/image";
 import TimelineCard from "@/components/patients/TimelineCard";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -373,11 +374,14 @@ export default function PrintMedicalRecordPage() {
                           <div className="flex-1 min-w-0 pl-5 md:pl-9 border-l-2 border-[hsl(var(--color-border-soft))] relative">
                             <TimelineCard entry={{
                               id: enc.id,
+                              rawDate: enc.rawDate,
                               date: enc.date,
                               doctorName: enc.doctorName,
                               specialty: enc.specialty,
                               diagnosis: enc.diagnosis,
                               chiefComplaint: enc.chiefComplaint,
+                              prescriptions: enc.prescriptions || [],
+                              clinicalNotes: enc.clinicalNotes || "",
                               rawRecord: enc.rawData
                             }} />
                           </div>
@@ -580,10 +584,13 @@ export default function PrintMedicalRecordPage() {
                             Attachment: {doc.title || "Scan / Result"}
                           </h2>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img 
+                          <Image 
                             src={doc.secure_url} 
                             alt={doc.title || "Medical Document"} 
-                            className="max-w-full max-h-[800px] object-contain border border-gray-300"
+                            width={800}
+                            height={800}
+                            className="max-w-full h-auto max-h-[800px] object-contain border border-gray-300"
+                            unoptimized
                           />
                           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-4">Attached to Encounter on {enc.date}</p>
                         </div>

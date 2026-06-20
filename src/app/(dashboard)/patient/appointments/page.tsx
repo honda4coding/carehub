@@ -1,326 +1,311 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { AUTH_COOKIE_NAME } from "@/constants/auth";
-import { LuCalendarDays, LuClock, LuStethoscope, LuChevronLeft, LuChevronRight, LuX } from "react-icons/lu";
+import { useEffect, useMemo, useState } from "react";
+import { LuCalendarDays, LuClock, LuStethoscope, LuX, LuCreditCard, LuCheck } from "react-icons/lu";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import {
+  Appointment, cancelAppointment, getDisplayStatus, getMyAppointments,
+} from "@/services/appointmentService";
+import { dayLabel, initialsOf, isoTo12Hour } from "@/components/appointments/format";
+import AppointmentToast from "@/components/appointments/AppointmentToast";
+import CancelModal from "@/components/appointments/CancelModal";
 
-function authHeaders() {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  return token ? { Authorization: `Bearer ${token}` } : {};
-}
+type Tab = "upcoming" | "completed" | "cancelled";
+type DisplayStatus = "upcoming" | "completed" | "cancelled";
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+// ─── Status config ──────────────────────────────────────────────────────────────
+const STATUS_CONFIG: Record<DisplayStatus, { label: string; bg: string; text: string; dot: string; border: string }> = {
+  upcoming: {
+    label: "Upcoming",
+    bg: "bg-sky-50",
+    text: "text-sky-600",
+    dot: "bg-sky-500",
+    border: "border-sky-200",
+  },
+  completed: {
+    label: "Completed",
+    bg: "bg-emerald-50",
+    text: "text-emerald-600",
+    dot: "bg-emerald-500",
+    border: "border-emerald-200",
+  },
+  cancelled: {
+    label: "Cancelled",
+    bg: "bg-red-50",
+    text: "text-red-500",
+    dot: "bg-red-400",
+    border: "border-red-200",
+  },
+};
 
-function getDaysInMonth(year: number, month: number) {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfMonth(year: number, month: number) {
-  return new Date(year, month, 1).getDay();
-}
-
-function Toast({ message, type = "error", onClose }: { message: string; type?: "error" | "success"; onClose: () => void }) {
-  useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
-  const bg = type === "success" ? "bg-green-50 border-green-200 text-green-700" : "bg-red-50 border-red-200 text-red-700";
+// ─── Pay modal (temporary) ──────────────────────────────────────────────────────
+function PayModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const [paid, setPaid] = useState(false);
+  if (!open) return null;
   return (
-    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 border text-[12px] font-bold px-4 py-3 rounded-xl shadow-lg ${bg}`}>
-      {message}
-      <button onClick={onClose} className="ml-2 opacity-60 hover:opacity-100">✕</button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
+      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div className="bg-gradient-to-r from-primary to-sky-400 px-6 py-5 text-white text-center">
+          <LuCreditCard className="text-[32px] mx-auto mb-2" />
+          <p className="text-[16px] font-black">Pay for Appointment</p>
+          <p className="text-[11px] opacity-80 mt-1">Secure payment — temporary placeholder</p>
+        </div>
+        <div className="p-6 space-y-4">
+          {paid ? (
+            <div className="text-center py-4">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-3">
+                <LuCheck className="text-emerald-500 text-[28px]" />
+              </div>
+              <p className="text-[15px] font-black text-[hsl(var(--color-text))]">Payment successful!</p>
+              <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-1">This is a placeholder — no real charge was made.</p>
+            </div>
+          ) : (
+            <>
+              <div className="bg-[hsl(var(--color-bg-soft))] rounded-xl p-4 border border-[hsl(var(--color-border))]">
+                <div className="flex justify-between text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mb-1">
+                  <span>Consultation fee</span><span className="text-[hsl(var(--color-text))] font-black">EGP 350</span>
+                </div>
+                <div className="flex justify-between text-[11px] text-[hsl(var(--color-text-muted))]">
+                  <span>Platform fee</span><span>EGP 20</span>
+                </div>
+                <div className="border-t border-[hsl(var(--color-border))] mt-3 pt-3 flex justify-between text-[14px] font-black text-[hsl(var(--color-text))]">
+                  <span>Total</span><span className="text-primary">EGP 370</span>
+                </div>
+              </div>
+              <button onClick={() => setPaid(true)}
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white text-[14px] font-black shadow-[0_4px_15px_hsl(var(--color-primary)/0.35)] hover:scale-[1.01] transition-all">
+                Pay Now
+              </button>
+            </>
+          )}
+          <button onClick={() => { setPaid(false); onClose(); }}
+            className="w-full py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+            {paid ? "Close" : "Cancel"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
 
-interface AppointmentData {
-  _id: string;
-  doctorId?: { fullName?: string; email?: string } | string;
-  slotId?: { startDateTime?: string; endDateTime?: string } | string;
-  startDateTime?: string;
-  endDateTime?: string;
-  appointmentDate?: string;
-  reason?: string;
-  status: string;
-  createdAt: string;
+// ─── Status Badge ───────────────────────────────────────────────────────────────
+function StatusBadge({ status }: { status: DisplayStatus }) {
+  const cfg = STATUS_CONFIG[status];
+  return (
+    <span className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-lg border ${cfg.bg} ${cfg.text} ${cfg.border}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
+      {cfg.label}
+    </span>
+  );
 }
 
-function getDisplayStatus(appt: AppointmentData): "upcoming" | "completed" | "cancelled" {
-  if (appt.status === "cancelled") return "cancelled";
-  if (appt.status === "completed") return "completed";
-  const endISO = appt.endDateTime ?? (typeof appt.slotId === "object" ? appt.slotId?.endDateTime : null);
-  if (endISO && new Date(endISO).getTime() < Date.now()) return "completed";
-  return "upcoming";
+// ─── Appointment Card ───────────────────────────────────────────────────────────
+function ApptCard({
+  appt, onCancelClick, onPayClick,
+}: {
+  appt: Appointment;
+  onCancelClick: (a: Appointment) => void;
+  onPayClick: (a: Appointment) => void;
+}) {
+  const doctor = typeof appt.doctorId === "object" ? appt.doctorId : null;
+  const status = getDisplayStatus(appt);
+  const cfg = STATUS_CONFIG[status];
+  const timeLabel = isoTo12Hour(appt.startDateTime) + (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
+  const dateObj = new Date(appt.appointmentDate);
+
+  return (
+    <div className={`group relative flex bg-[hsl(var(--color-bg-surface))] border rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${cfg.border} border-l-4`}
+      style={{ borderLeftColor: status === "upcoming" ? "hsl(var(--color-primary))" : status === "completed" ? "#10b981" : "#f87171" }}>
+
+      {/* Date stub */}
+      <div className={`w-[90px] sm:w-[100px] shrink-0 flex flex-col items-center justify-center gap-0.5 py-4 border-r border-dashed border-[hsl(var(--color-border))] ${
+        status === "cancelled" ? "opacity-50" : ""
+      }`} style={{ background: status === "upcoming" ? "hsl(var(--color-primary)/0.06)" : status === "completed" ? "rgb(16 185 129 / 0.06)" : "rgb(248 113 113 / 0.06)" }}>
+        <span className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))]">
+          {dateObj.toLocaleDateString("en-US", { month: "short" })}
+        </span>
+        <span className={`text-[28px] font-black leading-none ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
+          {dateObj.getDate()}
+        </span>
+        <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))]">
+          {dateObj.toLocaleDateString("en-US", { weekday: "short" })}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 p-3.5 sm:p-4 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[13px] font-black shrink-0 shadow-sm">
+            {initialsOf(doctor?.fullName)}
+          </div>
+          <div className="min-w-0">
+            <p className={`text-[14px] font-black truncate ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
+              {doctor?.fullName ? `Dr. ${doctor.fullName}` : "Doctor"}
+            </p>
+            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+              <LuClock className="text-[10px]" />{timeLabel}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+          <StatusBadge status={status} />
+          {status === "upcoming" && (
+            <>
+              <button onClick={() => onPayClick(appt)}
+                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-gradient-to-r from-fuchsia-500 to-pink-400 text-white shadow-sm hover:shadow-md hover:scale-105 transition-all">
+                <LuCreditCard className="text-[12px]" />Pay
+              </button>
+              <button onClick={() => onCancelClick(appt)} title="Cancel"
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-red-50 hover:text-red-500 transition-colors">
+                <LuX className="text-[14px]" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
-function getStartDateTime(appt: AppointmentData): Date {
-  if (appt.startDateTime) return new Date(appt.startDateTime);
-  if (typeof appt.slotId === "object" && appt.slotId?.startDateTime) return new Date(appt.slotId.startDateTime);
-  if (appt.appointmentDate) return new Date(appt.appointmentDate);
-  return new Date(appt.createdAt);
+// ─── Tab button ──────────────────────────────────────────────────────────────────
+function ApptTab({ label, value, active, count, color, onClick }: {
+  label: string; value: Tab; active: Tab; count: number;
+  color: string; onClick: () => void;
+}) {
+  const isActive = value === active;
+  return (
+    <button onClick={onClick}
+      className={`px-4 py-2.5 rounded-xl text-[12.5px] font-bold transition-all duration-200 flex items-center gap-2 ${
+        isActive ? "bg-[hsl(var(--color-bg-surface))] shadow-sm ring-1 ring-[hsl(var(--color-border))]" : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+      }`}>
+      {label}
+      <span className={`text-[10.5px] font-bold min-w-[20px] px-1.5 py-0.5 rounded-full ${isActive ? color : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"}`}>
+        {count}
+      </span>
+    </button>
+  );
 }
 
-function getDoctorName(appt: AppointmentData): string {
-  if (typeof appt.doctorId === "object") {
-    return appt.doctorId?.fullName ?? "Doctor";
-  }
-  return "Doctor";
-}
-
-function formatTime(date: Date): string {
-  return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
-}
-
-export default function AppointmentsPage() {
-  const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [activeTab, setActiveTab] = useState<"upcoming" | "past">("upcoming");
-
-  const [appointments, setAppointments] = useState<AppointmentData[]>([]);
+// ─── Main Page ──────────────────────────────────────────────────────────────────
+export default function PatientAppointmentsPage() {
+  const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastMsg, setToastMsg] = useState<{ text: string; type: "error" | "success" } | null>(null);
-  const [cancellingId, setCancellingId] = useState<string | null>(null);
-
-  const showToast = useCallback((text: string, type: "error" | "success" = "error") => setToastMsg({ text, type }), []);
+  const [tab, setTab] = useState<Tab>("upcoming");
+  const [cancelTarget, setCancelTarget] = useState<Appointment | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [payTarget, setPayTarget] = useState<Appointment | null>(null);
 
   useEffect(() => {
-    async function fetchAppointments() {
+    (async () => {
       try {
-        const { data } = await axios.get(`${BASE_URL}/appointmens/my-appointments`, {
-          headers: authHeaders(),
-        });
-        setAppointments(data.data ?? data ?? []);
+        const data = await getMyAppointments();
+setAppointments(data as any);
       } catch (err: any) {
-        showToast(err?.response?.data?.message ?? "Failed to load appointments");
+        setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
         setLoading(false);
       }
-    }
-    fetchAppointments();
-  }, [showToast]);
+    })();
+  }, []);
 
-  async function handleCancel(appointmentId: string) {
-    setCancellingId(appointmentId);
+  const grouped = useMemo(() => {
+    const result: Record<Tab, Appointment[]> = { upcoming: [], completed: [], cancelled: [] };
+    appointments.forEach((a) => result[getDisplayStatus(a)].push(a));
+    result.upcoming.sort((a, b) => new Date(a.appointmentDate).getTime() - new Date(b.appointmentDate).getTime());
+    result.completed.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+    result.cancelled.sort((a, b) => new Date(b.appointmentDate).getTime() - new Date(a.appointmentDate).getTime());
+    return result;
+  }, [appointments]);
+
+  const upcomingByDay = useMemo(() => {
+    const map = new Map<string, { label: string; sortKey: number; items: Appointment[] }>();
+    grouped.upcoming.forEach((a) => {
+      const key = new Date(a.appointmentDate).toDateString();
+      if (!map.has(key)) map.set(key, { label: dayLabel(a.appointmentDate), sortKey: new Date(a.appointmentDate).getTime(), items: [] });
+      map.get(key)!.items.push(a);
+    });
+    return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
+  }, [grouped.upcoming]);
+
+  async function handleCancelConfirm() {
+    if (!cancelTarget) return;
+    setCancelling(true);
     try {
-      await axios.patch(
-        `${BASE_URL}/appointmens/cancel/${appointmentId}`,
-        {},
-        { headers: authHeaders() }
-      );
-      setAppointments(prev =>
-        prev.map(a => a._id === appointmentId ? { ...a, status: "cancelled" } : a)
-      );
-      showToast("Appointment cancelled successfully", "success");
+      await cancelAppointment(cancelTarget._id);
+      setAppointments((prev) => prev.map((a) => a._id === cancelTarget._id ? { ...a, status: "cancelled" } : a));
+      setToast({ msg: "Appointment cancelled", variant: "success" });
+      setCancelTarget(null);
     } catch (err: any) {
-      showToast(err?.response?.data?.message ?? "Failed to cancel appointment");
+      setToast({ msg: err.message || "Could not cancel", variant: "error" });
     } finally {
-      setCancellingId(null);
+      setCancelling(false);
     }
   }
 
-  const daysInMonth = getDaysInMonth(currentYear, currentMonth);
-  const firstDay = getFirstDayOfMonth(currentYear, currentMonth);
-
-  const prevMonth = () => {
-    if (currentMonth === 0) { setCurrentMonth(11); setCurrentYear(y => y - 1); }
-    else setCurrentMonth(m => m - 1);
-  };
-  const nextMonth = () => {
-    if (currentMonth === 11) { setCurrentMonth(0); setCurrentYear(y => y + 1); }
-    else setCurrentMonth(m => m + 1);
-  };
-
-  const hasAppointment = (day: number) =>
-    appointments.some(a => {
-      const d = getStartDateTime(a);
-      return d.getDate() === day && d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    });
-
-  const selectedAppts = selectedDate
-    ? appointments.filter(a => {
-        const d = getStartDateTime(a);
-        return d.toDateString() === selectedDate.toDateString();
-      })
-    : [];
-
-  const filtered = appointments.filter(a => {
-    const status = getDisplayStatus(a);
-    return activeTab === "upcoming" ? status === "upcoming" : (status === "completed" || status === "cancelled");
-  }).sort((a, b) => getStartDateTime(b).getTime() - getStartDateTime(a).getTime());
-
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      {toastMsg && <Toast message={toastMsg.text} type={toastMsg.type} onClose={() => setToastMsg(null)} />}
-
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3">
-        <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
-          Appointments
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Manage your upcoming and past appointments
-        </p>
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-3">
+        <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
+          <LuCalendarDays />
+        </div>
+        <div>
+          <h1 className="text-[18px] md:text-[20px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">My Appointments</h1>
+          <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">Track your upcoming and past visits</p>
+        </div>
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
+        {/* Tabs */}
+        <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] mb-6">
+          <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} color="bg-sky-100 text-sky-600" onClick={() => setTab("upcoming")} />
+          <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} color="bg-emerald-100 text-emerald-600" onClick={() => setTab("completed")} />
+          <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-red-100 text-red-500" onClick={() => setTab("cancelled")} />
+        </div>
+
         {loading ? (
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-pulse">
-            <div className="xl:col-span-2 h-80 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
-            <div className="h-60 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
+          <div className="space-y-3">{[1,2,3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
+        ) : tab === "upcoming" ? (
+          grouped.upcoming.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-16 h-16 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center mx-auto mb-4 text-[26px] text-sky-400"><LuStethoscope /></div>
+              <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1">No upcoming appointments</h3>
+              <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">When you book a visit, it'll show up here.</p>
+            </div>
+          ) : upcomingByDay.map((group) => (
+            <div key={group.sortKey} className="mb-6">
+              <div className="flex items-center gap-2.5 mb-3">
+                <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                <h4 className="text-[14px] font-black text-[hsl(var(--color-text))]">{group.label}</h4>
+                <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{group.items.length} visit{group.items.length !== 1 ? "s" : ""}</span>
+                <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
+              </div>
+              {group.items.map((appt) => <ApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+            </div>
+          ))
+        ) : grouped[tab].length === 0 ? (
+          <div className="text-center py-16">
+            <div className="w-16 h-16 rounded-full bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] flex items-center justify-center mx-auto mb-4 text-[26px] text-[hsl(var(--color-text-muted))]"><LuCalendarDays /></div>
+            <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1">No {tab} appointments</h3>
+            <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">Nothing to show here yet.</p>
           </div>
         ) : (
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-          {/* Calendar */}
-          <div className="xl:col-span-2">
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
-              {/* Month nav */}
-              <div className="flex items-center justify-between mb-5">
-                <button onClick={prevMonth} className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] transition-all">
-                  <LuChevronLeft className="text-sm" />
-                </button>
-                <h2 className="text-[14px] font-black text-[hsl(var(--color-text))]">
-                  {MONTHS[currentMonth]} {currentYear}
-                </h2>
-                <button onClick={nextMonth} className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] transition-all">
-                  <LuChevronRight className="text-sm" />
-                </button>
-              </div>
-
-              {/* Day headers */}
-              <div className="grid grid-cols-7 mb-2">
-                {DAYS.map(d => (
-                  <div key={d} className="text-center text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase py-1">{d}</div>
-                ))}
-              </div>
-
-              {/* Days grid */}
-              <div className="grid grid-cols-7 gap-1">
-                {Array.from({ length: firstDay }).map((_, i) => <div key={`empty-${i}`} />)}
-                {Array.from({ length: daysInMonth }).map((_, i) => {
-                  const day = i + 1;
-                  const isToday = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
-                  const isSelected = selectedDate?.getDate() === day && selectedDate?.getMonth() === currentMonth && selectedDate?.getFullYear() === currentYear;
-                  const hasAppt = hasAppointment(day);
-
-                  return (
-                    <button
-                      key={day}
-                      onClick={() => setSelectedDate(new Date(currentYear, currentMonth, day))}
-                      className={`relative aspect-square rounded-xl text-[12px] font-bold flex items-center justify-center transition-all
-                        ${isSelected ? "bg-[hsl(var(--color-primary))] text-white" :
-                          isToday ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] border border-[hsl(var(--color-primary)/0.3)]" :
-                          "hover:bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))]"}`}
-                    >
-                      {day}
-                      {hasAppt && (
-                        <span className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isSelected ? "bg-white" : "bg-[hsl(var(--color-primary))]"}`} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Selected day appointments */}
-              {selectedDate && (
-                <div className="mt-5 pt-4 border-t border-[hsl(var(--color-border-soft))]">
-                  <p className="text-[11px] font-black text-[hsl(var(--color-text-muted))] uppercase mb-3">
-                    {selectedDate.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" })}
-                  </p>
-                  {selectedAppts.length === 0 ? (
-                    <p className="text-[12px] text-[hsl(var(--color-text-muted))] font-bold">No appointments on this day.</p>
-                  ) : selectedAppts.map(a => {
-                    const startDt = getStartDateTime(a);
-                    const displayStatus = getDisplayStatus(a);
-                    return (
-                    <div key={a._id} className="flex items-center gap-3 p-3 rounded-xl bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border-soft))] mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center text-sm">
-                        <LuStethoscope />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-[12px] font-black text-[hsl(var(--color-text))]">{getDoctorName(a)}</p>
-                        <p className="text-[10px] text-[hsl(var(--color-text-muted))]">{formatTime(startDt)}</p>
-                      </div>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${
-                        displayStatus === "upcoming" ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" :
-                        displayStatus === "cancelled" ? "bg-red-50 text-red-500" :
-                        "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
-                      }`}>
-                        {displayStatus}
-                      </span>
-                    </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Appointments list */}
-          <div>
-            {/* Tabs */}
-            <div className="flex gap-2 mb-4">
-              {(["upcoming", "past"] as const).map(tab => (
-                <button key={tab} onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-2 rounded-xl text-[11px] font-black uppercase tracking-wide transition-all
-                    ${activeTab === tab ? "bg-[hsl(var(--color-primary))] text-white" : "bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))]"}`}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex flex-col gap-3">
-              {filtered.length === 0 ? (
-                <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 text-center shadow-sm">
-                  <p className="text-[12px] text-[hsl(var(--color-text-muted))] font-bold">No {activeTab} appointments.</p>
-                </div>
-              ) : filtered.map(a => {
-                const startDt = getStartDateTime(a);
-                const displayStatus = getDisplayStatus(a);
-                return (
-                <div key={a._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{getDoctorName(a)}</p>
-                      {a.reason && (
-                        <p className="text-[10px] font-bold text-[hsl(var(--color-primary-strong))] uppercase">{a.reason}</p>
-                      )}
-                    </div>
-                    <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${
-                      displayStatus === "upcoming" ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" :
-                      displayStatus === "cancelled" ? "bg-red-50 text-red-500" :
-                      "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
-                    }`}>
-                      {displayStatus}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3 text-[10px] text-[hsl(var(--color-text-muted))] font-bold">
-                    <span className="flex items-center gap-1"><LuCalendarDays className="text-xs" />{startDt.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}</span>
-                    <span className="flex items-center gap-1"><LuClock className="text-xs" />{formatTime(startDt)}</span>
-                  </div>
-                  {displayStatus === "upcoming" && (
-                    <button
-                      onClick={() => handleCancel(a._id)}
-                      disabled={cancellingId === a._id}
-                      className="mt-3 w-full py-2 rounded-xl border border-red-200 text-red-500 text-[11px] font-black flex items-center justify-center gap-1.5 hover:bg-red-50 transition-all disabled:opacity-50"
-                    >
-                      <LuX className="text-xs" />
-                      {cancellingId === a._id ? "Cancelling..." : "Cancel Appointment"}
-                    </button>
-                  )}
-                </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
+          <div>{grouped[tab].map((appt) => <ApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
         )}
       </main>
+
+      <CancelModal
+        open={!!cancelTarget}
+        message={cancelTarget ? `Your appointment on ${dayLabel(cancelTarget.appointmentDate)} at ${isoTo12Hour(cancelTarget.startDateTime)} will be cancelled.` : ""}
+        loading={cancelling}
+        onConfirm={handleCancelConfirm}
+        onClose={() => setCancelTarget(null)}
+      />
+
+      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} />
+
+      {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
     </div>
   );
 }
