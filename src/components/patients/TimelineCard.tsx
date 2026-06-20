@@ -1,57 +1,62 @@
 "use client";
-import { LuPill } from "react-icons/lu";
+import { useState } from "react";
+import { LuStethoscope, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { TimelineEntry } from "@/types/patient";
+import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 
 interface Props {
   entry: TimelineEntry;
 }
 
 export default function TimelineCard({ entry }: Props) {
-  return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-      <div className="flex items-start justify-between flex-wrap gap-2 border-b border-[hsl(var(--color-border-soft))] pb-3 mb-3">
-        <div>
-          <span className="text-[10px] font-extrabold text-[hsl(var(--color-text-muted))] uppercase">{entry.date}</span>
-          <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Encounter with {entry.doctorName}</h3>
-          <p className="text-[10px] font-bold text-[hsl(var(--color-primary-strong))] uppercase tracking-wider">{entry.specialty}</p>
-        </div>
-        <div className="bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] text-[10px] font-black px-2.5 py-1 rounded-full">
-          Chief Complaint: {entry.chiefComplaint}
-        </div>
-      </div>
+  const [expanded, setExpanded] = useState(false);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase">Clinical Diagnosis</p>
-          <p className="text-[12px] font-bold text-[hsl(var(--color-text))] mt-0.5">{entry.diagnosis}</p>
-          <div className="mt-3">
-            <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase">Doctor's Consultation Notes</p>
-            <p className="text-[11px] text-[hsl(var(--color-text-muted))] leading-relaxed mt-0.5">{entry.clinicalNotes}</p>
+  return (
+    <div className="relative group w-full">
+      {/* Timeline Node (Glowing Dot) */}
+      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] shadow-[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
+
+      {/* Card Content */}
+      <div 
+        onClick={() => setExpanded(!expanded)}
+        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 shadow-sm group-hover:border-[hsl(var(--color-primary)/0.3)] group-hover:shadow-[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
+      >
+        
+        {/* Compact Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <span className="inline-block bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-2">
+              {entry.date}
+            </span>
+            <h3 className="text-[14px] font-black text-[hsl(var(--color-text))] flex items-center gap-1.5">
+              <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> Encounter with {entry.doctorName}
+            </h3>
+            <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase mt-1 tracking-wider">{entry.specialty} • {entry.diagnosis || "No diagnosis recorded"}</p>
+          </div>
+          
+          <div className="flex flex-col items-end gap-2 shrink-0">
+            <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors self-end mt-1">
+              {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
+            </button>
           </div>
         </div>
 
-        <div className="bg-[hsl(var(--color-bg-soft))] rounded-xl p-3 border border-[hsl(var(--color-border-soft))]">
-          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2 flex items-center gap-1.5">
-            <LuPill className="text-xs" /> Issued Prescriptions:
-          </p>
-          {entry.prescriptions.length === 0 ? (
-            <p className="text-[11px] text-[hsl(var(--color-text-muted))]">No prescriptions issued.</p>
-          ) : (
-            <div className="flex flex-col gap-2">
-              {entry.prescriptions.map((rx, idx) => (
-                <div key={idx} className="bg-[hsl(var(--color-bg-surface))] rounded-lg p-2 border border-[hsl(var(--color-border-soft))] flex items-center justify-between">
-                  <div>
-                    <p className="text-[11px] font-black text-[hsl(var(--color-text))]">{rx.medication}</p>
-                    <p className="text-[9px] text-[hsl(var(--color-text-muted))] mt-0.5">Dosage: {rx.dosage}</p>
-                  </div>
-                  <span className="text-[9px] font-black bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] px-2 py-0.5 rounded">
-                    {rx.frequency}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Expanded Area (MedicalHistoryCard) */}
+        {expanded && entry.rawRecord && (
+          <div 
+            className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border-soft))] pt-4" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MedicalHistoryCard record={entry.rawRecord} hideHeader={true} />
+          </div>
+        )}
+        
+        {/* Fallback if no rawRecord is attached (shouldn't happen but just in case) */}
+        {expanded && !entry.rawRecord && (
+           <div className="mt-4 pt-4 border-t border-[hsl(var(--color-border-soft))] text-center text-sm text-[hsl(var(--color-text-muted))] italic">
+              Detailed record not available.
+           </div>
+        )}
       </div>
     </div>
   );

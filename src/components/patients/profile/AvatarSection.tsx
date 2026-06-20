@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { LuCamera, LuTrash2 } from "react-icons/lu";
 import { ImSpinner2 } from "react-icons/im";
 import { PatientProfile, uploadPatientAvatar, deletePatientAvatar } from "@/services/patientService";
@@ -55,10 +56,11 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
         <div className="relative shrink-0">
           <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] flex items-center justify-center">
             {hasImage ? (
-              <img
+              <Image
                 src={profile!.profilepicture!.secure_url}
-                alt={profile?.fullName}
-                className="w-full h-full object-cover"
+                alt={profile?.fullName || "Avatar"}
+                fill
+                className="object-cover"
               />
             ) : (
               <span className="text-2xl font-black text-[hsl(var(--color-primary-strong))]">

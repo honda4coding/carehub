@@ -96,13 +96,11 @@ function AccordionItem({
 interface Props {
   personalForm:       ReactNode;
   medicalHistoryForm: ReactNode;
-  vitalsForm:         ReactNode;
 }
 
 export default function ProfileAccordion({
   personalForm,
   medicalHistoryForm,
-  vitalsForm,
 }: Props) {
   const [openSection, setOpenSection] = useState<string>("personal");
 
@@ -120,13 +118,6 @@ export default function ProfileAccordion({
       label:    "Medical History",
       subtitle: "Blood type, allergies, chronic conditions & surgeries",
       content:  medicalHistoryForm,
-    },
-    {
-      id:       "vitals",
-      icon:     <LuActivity className="w-4 h-4" />,
-      label:    "Vitals",
-      subtitle: "Weight, height & pulse — updated periodically",
-      content:  vitalsForm,
     },
   ];
 

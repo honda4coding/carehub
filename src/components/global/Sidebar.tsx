@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
+import { fetchClient } from "@/services/fetchClient";
 import { FaSquarePollVertical } from "react-icons/fa6";
 
 import {
@@ -24,6 +26,7 @@ import {
   LuLock,
   LuActivity,
   LuHeart,
+  LuBell,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -50,6 +53,11 @@ const adminNav: NavSection[] = [
         href: "/admin/appointments",
         icon: <LuCalendarDays />,
       },
+      {
+        label: "Notifications",
+        href: "/admin/notifications",
+        icon: <LuBell />,
+      },
     ],
   },
   {
@@ -59,7 +67,6 @@ const adminNav: NavSection[] = [
         label: "Approvals",
         href: "/admin/approvals",
         icon: <LuShieldCheck />,
-        badge: 5,
       },
       {
         label: "Reports",
@@ -71,9 +78,6 @@ const adminNav: NavSection[] = [
   },
 ];
 
-
-
-
 const doctorNav: NavSection[] = [
   {
     title: "Main",
@@ -84,7 +88,7 @@ const doctorNav: NavSection[] = [
       //   href: "/doctor/appointments",
       //   icon: <LuCalendarDays />,
       // },
-           {
+      {
         label: "Appointments",
         href: "/doctor/appointments/appointments",
         icon: <LuCalendarDays />,
@@ -130,6 +134,11 @@ const patientNav: NavSection[] = [
         href: "/patient/history",
         icon: <LuClipboardList />,
       },
+      {
+        label: "Personal Tracking",
+        href: "/patient/tracking",
+        icon: <LuActivity />,
+      },
       { label: "Doctors", href: "/patient/doctors", icon: <LuStethoscope /> },
     ],
   },
@@ -173,16 +182,6 @@ const settingsSub: Record<
       label: "Profile",
       href: "/patient/profile",
       icon: <LuUser className="text-sm" />,
-    },
-    {
-      label: "Medical Info",
-      href: "/patient/profile/medical",
-      icon: <LuHeart className="text-sm" />,
-    },
-    {
-      label: "Vitals",
-      href: "/patient/profile/vitals",
-      icon: <LuActivity className="text-sm" />,
     },
     {
       label: "Security",
@@ -298,10 +297,12 @@ function SidebarContent({
   role,
   onClose,
   pendingApprovals,
+  unreadNotifications,
 }: {
   role: string;
   onClose?: () => void;
   pendingApprovals: number | null;
+  unreadNotifications: number | null;
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -314,6 +315,23 @@ function SidebarContent({
         .toUpperCase()
         .slice(0, 2)
     : role.slice(0, 2).toUpperCase();
+
+  const [avatarUrl, setAvatarUrl] = useState<string | null>((user as any)?.profilepicture?.secure_url || null);
+
+  useEffect(() => {
+    if (!avatarUrl) {
+      const fetchAvatar = async () => {
+        try {
+          const res = await fetchClient.get(`/${role}/profile`);
+          const pic = res?.data?.profilepicture?.secure_url || res?.data?.user?.profilepicture?.secure_url;
+          if (pic) setAvatarUrl(pic);
+        } catch {
+          // ignore
+        }
+      };
+      fetchAvatar();
+    }
+  }, [role, avatarUrl]);
 
   return (
     <div className="flex flex-col h-full">
@@ -358,7 +376,9 @@ function SidebarContent({
               const badgeValue =
                 role === "admin" && item.href === "/admin/approvals"
                   ? pendingApprovals
-                  : item.badge;
+                  : role === "admin" && item.href === "/admin/notifications"
+                    ? unreadNotifications
+                    : item.badge;
               return (
                 <Link
                   key={item.href}
@@ -398,8 +418,12 @@ function SidebarContent({
 
       {/* User footer */}
       <div className="px-2.5 py-3 border-t border-[hsl(var(--color-border))] flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0">
-          {initials}
+        <div className="relative w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0 overflow-hidden border border-[hsl(var(--color-border-soft))]">
+          {avatarUrl ? (
+            <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
+          ) : (
+            initials
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[12px] font-bold text-[hsl(var(--color-text))] truncate">
@@ -424,15 +448,18 @@ function SidebarContent({
 export default function Sidebar({ role }: { role: string }) {
   const [open, setOpen] = useState(false);
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null);
+  const [unreadNotifications, setUnreadNotifications] = useState<number | null>(
+    null,
+  );
 
-  // will execute after the first render and when role is changed only
+  // ── Pending approvals badge ──────────────────────────────────────────────────
   useEffect(() => {
     if (role !== "admin") return;
 
     const fetchPendingDoctors = async () => {
       try {
         const res = await adminService.getPendingDoctors();
-        setPendingApprovals(res?.data.length);
+        setPendingApprovals(res?.data.length || null);
       } catch {
         setPendingApprovals(null);
       }
@@ -440,14 +467,53 @@ export default function Sidebar({ role }: { role: string }) {
 
     fetchPendingDoctors();
     window.addEventListener("pending-approvals-changed", fetchPendingDoctors);
-  return () => window.removeEventListener("pending-approvals-changed", fetchPendingDoctors);
+    return () =>
+      window.removeEventListener(
+        "pending-approvals-changed",
+        fetchPendingDoctors,
+      );
   }, [role]);
+
+  // ── Unread notifications badge ───────────────────────────────────────────────
+  const fetchUnreadCount = useCallback(async () => {
+    if (role !== "admin") return;
+    try {
+      const res = await fetchClient.get("/notifications", {
+        params: { limit: "100" },
+      });
+      const notifications = res.data?.notifications ?? [];
+      const count = notifications.filter(
+        (n: { isRead: boolean }) => !n.isRead,
+      ).length;
+      setUnreadNotifications(count > 0 ? count : null);
+    } catch {
+      setUnreadNotifications(null);
+    }
+  }, [role]);
+
+  useEffect(() => {
+    fetchUnreadCount();
+    // Poll every 30s as a fallback (mirrors NotificationBell's polling interval)
+    const interval = setInterval(fetchUnreadCount, 30_000);
+
+    // Also re-fetch instantly whenever NotificationBell or the notifications
+    // page emits "notifications-changed" after a mark-as-read action
+    window.addEventListener("notifications-changed", fetchUnreadCount);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("notifications-changed", fetchUnreadCount);
+    };
+  }, [fetchUnreadCount]);
 
   return (
     <>
       {/* ── Desktop sidebar ── */}
       <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
-        <SidebarContent role={role} pendingApprovals={pendingApprovals} />
+        <SidebarContent
+          role={role}
+          pendingApprovals={pendingApprovals}
+          unreadNotifications={unreadNotifications}
+        />
       </aside>
 
       {open ? null : (
@@ -464,14 +530,17 @@ export default function Sidebar({ role }: { role: string }) {
       {/* ── Mobile drawer ── */}
       {open && (
         <>
-          {/* Backdrop */}
           <div
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          {/* Drawer */}
           <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] shadow-2xl">
-            <SidebarContent role={role} onClose={() => setOpen(false)} pendingApprovals={pendingApprovals} />
+            <SidebarContent
+              role={role}
+              onClose={() => setOpen(false)}
+              pendingApprovals={pendingApprovals}
+              unreadNotifications={unreadNotifications}
+            />
           </aside>
         </>
       )}

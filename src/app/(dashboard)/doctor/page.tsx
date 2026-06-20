@@ -193,19 +193,30 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
       const responseData = response.data.data;
       const newSessionData = responseData.session || responseData;
-      const tempOtp = responseData.temp_otp || response.data.temp_otp || "Not Provided";
+      const sessionStatus: SessionStatus = newSessionData.status || "pending_otp";
 
-      alert(`Test OTP for ${patient.fullName} is: ${tempOtp}`);
+      // Only show OTP alert if the session actually requires OTP verification
+      if (sessionStatus === "pending_otp") {
+        const tempOtp = responseData.temp_otp || response.data.temp_otp || "Not Provided";
+        alert(`Test OTP for ${patient.fullName} is: ${tempOtp}`);
+      } else {
+        // Session is in_progress immediately — no OTP needed
+        alert(`✅ تم السماح بالوصول الفوري للمريض بناءً على إعدادات الخصوصية الخاصة به.`);
+      }
 
      const newActiveSession: Session = {
         id: newSessionData._id,
         patient: patient.fullName,
         type: "Online",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: "pending_otp",
+        status: sessionStatus,
         initials: patient.fullName.slice(0, 2).toUpperCase(),
-        avatarStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
-        validUntil: new Date(newSessionData.validUntil).getTime(),
+        avatarStyle: sessionStatus === "in_progress"
+          ? "bg-[hsl(var(--color-success-bg))] text-success"
+          : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
+        validUntil: sessionStatus === "pending_otp" && newSessionData.validUntil
+          ? new Date(newSessionData.validUntil).getTime()
+          : undefined,
       };
 
 
@@ -226,8 +237,14 @@ const [sessions, setSessions] = useState<Session[]>([]);
     } catch (err: any) {
       console.error("Error requesting session:", err);
       const msg = err.response?.data?.message;
-      if (msg === "Session already exists for this patient" || msg === "Access already granted") {
-        alert("This patient is already in your active queue!");
+      if (
+        msg === "Session already exists for this patient" ||
+        msg === "Access already granted" ||
+        msg === "Access already granted for this patient"
+      ) {
+        // Session already active — just refresh the queue to show it
+        alert("✅ هذا المريض موجود بالفعل في طابور العيادة (الجلسة نشطة).");
+        fetchCurrentQueue();
       } else {
         alert("Failed to request access: " + (msg || err.message));
       }

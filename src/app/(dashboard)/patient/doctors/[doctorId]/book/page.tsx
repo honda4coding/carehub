@@ -3,6 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
   LuChevronLeft, LuChevronRight, LuPhone, LuPhoneCall, LuMapPin, LuBuilding2,
@@ -141,7 +144,7 @@ export default function BookAppointmentPage() {
         );
         setBookedDates(booked);
       } catch (err: any) {
-        setLoadError(err.message || "Failed to load available slots");
+        setLoadError(err?.response?.data?.message ?? err.message ?? "Failed to load available slots");
       } finally {
         setLoading(false);
       }
@@ -207,7 +210,11 @@ export default function BookAppointmentPage() {
     setConfirming(true);
     setConfirmError(null);
     try {
-      await bookAppointment(selectedSlot._id);
+      await axios.post(
+        `${BASE_URL}/appointmens/book`,
+        { slotId: selectedSlot._id },
+        { headers: authHeaders() }
+      );
       setStep("success");
     } catch (err: any) {
       setConfirmError(err.message || "This slot was just booked. Please choose another time.");

@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import { LuShieldCheck } from "react-icons/lu";
+import Image from "next/image";
 import AdminInfoForm from "@/components/admin/profile/AdminInfoForm";
 import { getAdminProfile, AdminProfile, UpdateAdminProfilePayload } from "@/services/adminService";
 
@@ -72,9 +73,9 @@ export default function AdminProfilePage() {
               className="rounded-2xl p-6 flex items-center gap-4"
               style={{ background: "linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(195 75% 38%) 100%)" }}
             >
-              <div className="w-16 h-16 rounded-full border-2 border-white/50 overflow-hidden bg-white/20 flex items-center justify-center shrink-0">
+              <div className="relative w-16 h-16 rounded-full border-2 border-white/50 overflow-hidden bg-white/20 flex items-center justify-center shrink-0">
                 {profile?.profilepicture?.secure_url ? (
-                  <img src={profile.profilepicture.secure_url} alt={profile.fullName} className="w-full h-full object-cover" />
+                  <Image src={profile.profilepicture.secure_url} alt={profile.fullName} fill className="object-cover" />
                 ) : (
                   <span className="text-white text-xl font-black">{initials}</span>
                 )}

@@ -6,9 +6,9 @@ import Cookies from "js-cookie";
 import { useAuth } from "@/context/AuthContext";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
-  LuClipboardList, LuStethoscope, LuCalendarDays,
-  LuFileText, LuPill, LuExternalLink,
+  LuClipboardList, LuStethoscope, LuCalendar, LuChevronDown, LuChevronUp, LuFileText, LuHistory
 } from "react-icons/lu";
+import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -17,24 +17,10 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleString("en-GB", {
-      day: "2-digit", month: "long", year: "numeric",
-      hour: "2-digit", minute: "2-digit",
-    });
-  } catch { return dateStr; }
-}
-
-const DOC_ICONS: Record<string, string> = {
-  lab: "🧪", xray: "🩻", mri: "🧠", ct: "💻", prescription: "💊", other: "📄"
-};
-
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
     <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl shadow-lg">
-     
       {message}
       <button onClick={onClose} className="ml-2 text-red-400 hover:text-red-600">✕</button>
     </div>
@@ -56,12 +42,54 @@ function Skeleton() {
   );
 }
 
+function TimelineAccordionCard({ record }: { record: any }) {
+  const [expanded, setExpanded] = useState(false);
+  const dateStr = new Date(record.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+  const timeStr = new Date(record.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+  return (
+    <div 
+      onClick={() => setExpanded(!expanded)}
+      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm hover:border-[hsl(var(--color-primary)/0.5)] transition-all cursor-pointer group w-full"
+    >
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-colors">
+            <LuCalendar className="text-lg" />
+          </span>
+          <div>
+            <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{dateStr} <span className="text-[11px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
+            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+               <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> 
+               {record.doctorId?.fullName ?? record.doctorId?.userName ?? "Doctor"} • {record.diagnosis || "No diagnosis recorded"}
+            </p>
+          </div>
+        </div>
+        
+        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+          {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
+        </button>
+      </div>
+
+      {expanded && (
+        <div className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border))] pt-4" onClick={(e) => e.stopPropagation()}>
+          <MedicalHistoryCard record={record} hideHeader={true} />
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MedicalHistoryPage() {
   const { user } = useAuth();
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState<string | null>(null);
+
+  // Filters State
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [filterText, setFilterText] = useState("");
 
   const showToast = useCallback((msg: string) => setToastMsg(msg), []);
 
@@ -75,7 +103,9 @@ export default function MedicalHistoryPage() {
           headers: authHeaders(),
         });
         const result = data.data ?? data;
-        setRecords(Array.isArray(result) ? result : result ? [result] : []);
+        const fetchedRecords = Array.isArray(result) ? result : result ? [result] : [];
+        // Sort descending by date
+        setRecords(fetchedRecords.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } catch (err: any) {
         showToast(err?.response?.data?.message ?? "Failed to load medical history");
       } finally {
@@ -84,6 +114,37 @@ export default function MedicalHistoryPage() {
     }
     fetchHistory();
   }, [user, showToast]);
+
+  // Apply filters
+  const filteredRecords = records.filter(r => {
+    const search = filterText.toLowerCase();
+    const docName = (r.doctorId?.fullName || r.doctorId?.userName || "").toLowerCase();
+    const specialty = (r.doctorId?.specialization || "").toLowerCase();
+    const diag = (r.diagnosis || "").toLowerCase();
+    const medications = (r.prescriptions || []).map((p: any) => (p.medication || p.name || "").toLowerCase()).join(" ");
+    
+    const matchesText = docName.includes(search) || specialty.includes(search) || diag.includes(search) || medications.includes(search);
+
+    const recordDate = new Date(r.createdAt);
+    recordDate.setHours(0, 0, 0, 0);
+    
+    let matchesStartDate = true;
+    let matchesEndDate = true;
+    
+    if (startDate) {
+      const start = new Date(startDate);
+      start.setHours(0, 0, 0, 0);
+      matchesStartDate = recordDate >= start;
+    }
+    
+    if (endDate) {
+      const end = new Date(endDate);
+      end.setHours(0, 0, 0, 0);
+      matchesEndDate = recordDate <= end;
+    }
+
+    return matchesText && matchesStartDate && matchesEndDate;
+  });
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
@@ -100,116 +161,87 @@ export default function MedicalHistoryPage() {
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
-        {loading ? <Skeleton /> : records.length === 0 ? (
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center">
-            <LuClipboardList className="text-[40px] text-[hsl(var(--color-text-muted))] mx-auto mb-3 opacity-30" />
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">No medical history records found.</p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {records.map((r) => {
-              const isOpen = expanded === r._id;
-              return (
-                <div key={r._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
-                  {/* Card Header */}
-                  <button
-                    onClick={() => setExpanded(isOpen ? null : r._id)}
-                    className="w-full p-5 flex items-start justify-between gap-4 hover:bg-[hsl(var(--color-bg-soft))] transition-all text-left"
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center shrink-0">
-                        <LuStethoscope className="text-[18px]" />
-                      </div>
-                      <div>
-                        <p className="text-[14px] font-black text-[hsl(var(--color-text))]">
-                          {r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor"}
-                        </p>
-                        <p className="text-[10px] font-bold text-[hsl(var(--color-primary-strong))] uppercase tracking-wider">
-                          {r.doctorId?.specialization ?? "General Practice"}
-                        </p>
-                        <div className="flex items-center gap-1 mt-1 text-[10px] text-[hsl(var(--color-text-muted))] font-bold">
-                          <LuCalendarDays className="text-xs" />
-                          {formatDate(r.createdAt)}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {r.documents?.length > 0 && (
-                        <span className="text-[9px] font-black px-2 py-0.5 rounded-full bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
-                          {r.documents.length} docs
-                        </span>
-                      )}
-                      <span className="text-[10px] font-black text-[hsl(var(--color-text-muted))]">
-                        {isOpen ? "▲" : "▼"}
-                      </span>
-                    </div>
-                  </button>
-
-                  {/* Expanded Content */}
-                  {isOpen && (
-                    <div className="px-5 pb-5 border-t border-[hsl(var(--color-border-soft))]">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
-
-                        {/* Diagnosis & Notes */}
-                        <div>
-                          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase mb-1.5">Diagnosis</p>
-                          <p className="text-[13px] font-bold text-[hsl(var(--color-text))] mb-4">{r.diagnosis ?? "—"}</p>
-                          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase mb-1.5">Clinical Notes</p>
-                          <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">{r.notes ?? "—"}</p>
-                        </div>
-
-                        {/* Documents */}
-                        <div>
-                          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase mb-2 flex items-center gap-1.5">
-                            <LuFileText className="text-xs" /> Associated Documents
-                          </p>
-                          {(!r.documents || r.documents.length === 0) ? (
-                            <p className="text-[11px] text-[hsl(var(--color-text-muted))]">No documents attached.</p>
-                          ) : (
-                            <div className="flex flex-col gap-2">
-                              {r.documents.map((doc: any, idx: number) => (
-                                <a
-                                  key={idx}
-                                  href={doc.secure_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="flex items-center gap-2.5 p-2.5 rounded-xl bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border-soft))] hover:border-[hsl(var(--color-primary)/0.3)] transition-all group"
-                                >
-                                  <span className="text-[18px]">{DOC_ICONS[doc.type] ?? "📄"}</span>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-[11px] font-black text-[hsl(var(--color-text))] truncate">{doc.title}</p>
-                                    <p className="text-[9px] text-[hsl(var(--color-text-muted))] uppercase font-bold">{doc.type}</p>
-                                  </div>
-                                  <LuExternalLink className="text-xs text-[hsl(var(--color-text-muted))] group-hover:text-[hsl(var(--color-primary))] transition-colors" />
-                                </a>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Linked Prescriptions */}
-                      {r.prescriptions?.length > 0 && (
-                        <div className="mt-4 pt-4 border-t border-[hsl(var(--color-border-soft))]">
-                          <p className="text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase mb-2 flex items-center gap-1.5">
-                            <LuPill className="text-xs" /> Linked Prescriptions
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {r.prescriptions.map((p: any, idx: number) => (
-                              <span key={idx} className="text-[11px] font-bold px-2.5 py-1 rounded-lg bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
-                                💊 {p.medication ?? p.name ?? `Prescription ${idx + 1}`}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
+          
+          {/* Filters Section */}
+          <div className="flex flex-col xl:flex-row items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
+            <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
+              <LuHistory className="text-[hsl(var(--color-primary))] text-xl" /> Full Medical History
+            </h3>
+            
+            <div className="flex flex-col sm:flex-row items-end gap-3 w-full xl:w-auto">
+              <div className="flex items-end gap-2 w-full sm:w-auto">
+                <div className="flex flex-col flex-1 sm:flex-none">
+                  <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">Start Date</label>
+                  <input 
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text-muted))]"
+                  />
                 </div>
-              );
-            })}
+                <span className="text-[hsl(var(--color-border))] pb-2">-</span>
+                <div className="flex flex-col flex-1 sm:flex-none">
+                  <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">End Date</label>
+                  <input 
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text-muted))]"
+                  />
+                </div>
+              </div>
+              <div className="relative w-full sm:w-auto mt-2 sm:mt-0">
+                <input 
+                  type="text"
+                  placeholder="Search doctor, diagnosis, medication..."
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  className="w-full sm:w-64 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                />
+              </div>
+            </div>
           </div>
-        )}
+
+          {/* Timeline Rendering */}
+          {loading ? (
+            <Skeleton />
+          ) : records.length === 0 ? (
+            <div className="text-center py-16 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl">
+              <LuHistory className="text-4xl text-[hsl(var(--color-border-soft))] mx-auto mb-3" />
+              <p className="text-base font-bold text-[hsl(var(--color-text))] mb-1">No Medical History</p>
+              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">You have no recorded visits yet.</p>
+            </div>
+          ) : filteredRecords.length === 0 ? (
+             <div className="text-center py-16">
+              <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mb-1">No records match your filters.</p>
+              <button 
+                onClick={() => { setStartDate(""); setEndDate(""); setFilterText(""); }}
+                className="text-[11px] text-[hsl(var(--color-primary))] font-bold hover:underline"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[hsl(var(--color-border))] before:to-transparent">
+              {filteredRecords.map((r, index) => (
+                <div key={r._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                  {/* Timeline dot */}
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                    <LuFileText />
+                  </div>
+                  {/* Timeline Card */}
+                  <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)]">
+                    <TimelineAccordionCard record={r} />
+                  </div>
+                </div>
+              ))}
+              <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))]">
+                End of history.
+              </div>
+            </div>
+          )}
+        </div>
       </main>
     </div>
   );

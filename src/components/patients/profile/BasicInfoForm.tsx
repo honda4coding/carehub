@@ -4,25 +4,27 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { ImSpinner2 } from "react-icons/im";
 import { HiOutlineArrowRight } from "react-icons/hi2";
-import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck } from "react-icons/lu";
+import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck, LuShield } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 const schema = Yup.object({
-  fullName:    Yup.string().min(3, "Min 3 characters").required("Full name is required"),
-  phoneNumber: Yup.string().min(10, "Min 10 digits").optional(),
-  age:         Yup.number().min(1).max(120).optional(),
-  gender:      Yup.string().oneOf(["male", "female"]).optional(),
-  address:     Yup.string().optional(),
+  fullName:       Yup.string().min(3, "Min 3 characters").required("Full name is required"),
+  phoneNumber:    Yup.string().min(10, "Min 10 digits").optional(),
+  age:            Yup.number().min(1).max(120).optional(),
+  gender:         Yup.string().oneOf(["male", "female"]).optional(),
+  address:        Yup.string().optional(),
+  sharingSetting: Yup.string().oneOf(["all", "own_only", "otp"]).optional(),
 });
 
 type FormValues = {
-  fullName:    string;
-  phoneNumber: string;
-  age:         number | "";
-  gender:      "male" | "female" | "";
-  address:     string;
+  fullName:       string;
+  phoneNumber:    string;
+  age:            number | "";
+  gender:         "male" | "female" | "";
+  address:        string;
+  sharingSetting: "all" | "own_only" | "otp" | "";
 };
 
 // ─── Reusable field ───────────────────────────────────────────────────────────
@@ -63,11 +65,12 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
   const [serverSuccess, setServerSuccess] = useState("");
 
   const initialValues: FormValues = {
-    fullName:    profile?.fullName    ?? "",
-    phoneNumber: profile?.phoneNumber ?? "",
-    age:         profile?.age         ?? "",
-    gender:      profile?.gender      ?? "",
-    address:     profile?.address     ?? "",
+    fullName:       profile?.fullName       ?? "",
+    phoneNumber:    profile?.phoneNumber    ?? "",
+    age:            profile?.age            ?? "",
+    gender:         profile?.gender         ?? "",
+    address:        profile?.address        ?? "",
+    sharingSetting: profile?.sharingSetting ?? "",
   };
 
   const handleSubmit = async (values: FormValues, { setSubmitting }: FormikHelpers<FormValues>) => {
@@ -75,11 +78,12 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
       setServerError("");
       setServerSuccess("");
       const payload: UpdatePatientProfilePayload = {
-        fullName:    values.fullName,
-        phoneNumber: values.phoneNumber || undefined,
-        age:         values.age === "" ? undefined : Number(values.age),
-        gender:      values.gender     || undefined,
-        address:     values.address    || undefined,
+        fullName:       values.fullName,
+        phoneNumber:    values.phoneNumber    || undefined,
+        age:            values.age === "" ? undefined : Number(values.age),
+        gender:         values.gender         || undefined,
+        address:        values.address        || undefined,
+        sharingSetting: (values.sharingSetting || undefined) as "all" | "own_only" | "otp" | undefined,
       };
       await updatePatientProfile(payload);
       setServerSuccess("Profile updated successfully!");
@@ -161,6 +165,33 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
 
               {/* Address */}
               <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St, Cairo" errors={errors} touched={touched} />
+
+              {/* Privacy Setting */}
+              <div className="space-y-1.5">
+                <label htmlFor="sharingSetting" className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
+                  <span className="w-4 h-4"><LuShield /></span> Medical Record Privacy
+                </label>
+                <div className="relative">
+                  <Field
+                    as="select" id="sharingSetting" name="sharingSetting"
+                    className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer"
+                    style={{
+                      backgroundColor: errors.sharingSetting && touched.sharingSetting ? "#fff5f5" : "white",
+                      border: errors.sharingSetting && touched.sharingSetting ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
+                      color: "hsl(var(--color-text))",
+                    }}
+                  >
+                    <option value="all"> Public — All doctors can view instantly</option>
+                    <option value="own_only"> Restricted — Current doctor only</option>
+                    <option value="otp"> Protected — Requires OTP verification</option>
+                  </Field>
+                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+                </div>
+                <ErrorMessage name="sharingSetting" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                <p className="text-[11px] text-[hsl(var(--color-text-muted))] pl-1">
+                  Controls how doctors access your medical records.
+                </p>
+              </div>
             </div>
 
             {/* Save button */}
