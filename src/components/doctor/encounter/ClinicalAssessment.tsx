@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { LuClipboardList, LuX, LuMic } from "react-icons/lu";
+import { LuClipboardList, LuX, LuMic, LuWand } from "react-icons/lu";
+import { useParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import AIDiagnosisModal from "./AIDiagnosisModal";
 
 interface ClinicalAssessmentProps {
   symptoms: string;
@@ -18,6 +21,10 @@ export default function ClinicalAssessment({
   setIsAssessmentMode
 }: ClinicalAssessmentProps) {
   const [listeningTo, setListeningTo] = useState<"symptoms" | "diagnosis" | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const params = useParams();
+  const sessionId = params.sessionId as string;
+  const { token } = useAuth();
 
   const startListening = (field: "symptoms" | "diagnosis") => {
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -99,17 +106,25 @@ export default function ClinicalAssessment({
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Primary Diagnosis</label>
-            <button 
-              onClick={() => startListening("diagnosis")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                listeningTo === "diagnosis" 
-                  ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
-                  : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
-              }`}
-            >
-              <LuMic className={listeningTo === "diagnosis" ? "animate-bounce" : ""} />
-              {listeningTo === "diagnosis" ? "Listening..." : "Dictate"}
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[hsl(var(--color-primary)/0.1)] text-primary hover:bg-primary hover:text-white border border-transparent hover:border-primary/20"
+              >
+                <LuWand /> AI Suggest
+              </button>
+              <button 
+                onClick={() => startListening("diagnosis")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  listeningTo === "diagnosis" 
+                    ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
+                    : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
+                }`}
+              >
+                <LuMic className={listeningTo === "diagnosis" ? "animate-bounce" : ""} />
+                {listeningTo === "diagnosis" ? "Listening..." : "Dictate"}
+              </button>
+            </div>
           </div>
           <textarea 
             value={diagnosis}
@@ -119,6 +134,20 @@ export default function ClinicalAssessment({
           />
         </div>
       </div>
+
+      {token && (
+        <AIDiagnosisModal 
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          symptoms={symptoms}
+          currentDiagnosis={diagnosis}
+          sessionId={sessionId}
+          token={token}
+          onSelectDiagnosis={(selectedDiagnosis) => {
+            setDiagnosis(diagnosis ? `${diagnosis}\n${selectedDiagnosis}` : selectedDiagnosis);
+          }}
+        />
+      )}
     </div>
   );
 }
