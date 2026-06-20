@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
-import { LuBrainCircuit, LuLoader, LuAlertTriangle } from "react-icons/lu";
+import { LuBrainCircuit, LuLoader } from "react-icons/lu";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 

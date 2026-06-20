@@ -174,7 +174,8 @@ export default function RxBuilder({
 
   const handleCheckInteractions = async () => {
     setCheckingInteraction(true);
-    setInteractionResult("");
+   setInteractionResult(null);
+
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const token = Cookies.get(AUTH_COOKIE_NAME);
