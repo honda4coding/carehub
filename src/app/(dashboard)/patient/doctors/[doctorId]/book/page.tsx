@@ -3,9 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import axios from "axios";
-import Cookies from "js-cookie";
-import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
   LuChevronLeft, LuChevronRight, LuPhone, LuPhoneCall, LuMapPin, LuBuilding2,
@@ -133,7 +130,7 @@ export default function BookAppointmentPage() {
           getAvailableSlots(doctorId),
           getMyAppointments(),
         ]);
-        setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
+        setDoctor(doctors.find((d) => d._id === doctorId) ?? null);
         setSlots(availableSlots);
 
         // Build set of date keys the patient is already booked on
@@ -144,7 +141,7 @@ export default function BookAppointmentPage() {
         );
         setBookedDates(booked);
       } catch (err: any) {
-        setLoadError(err?.response?.data?.message ?? err.message ?? "Failed to load available slots");
+        setLoadError(err.message || "Failed to load available slots");
       } finally {
         setLoading(false);
       }
@@ -210,11 +207,7 @@ export default function BookAppointmentPage() {
     setConfirming(true);
     setConfirmError(null);
     try {
-      await axios.post(
-        `${BASE_URL}/appointmens/book`,
-        { slotId: selectedSlot._id },
-        { headers: authHeaders() }
-      );
+      await bookAppointment(selectedSlot._id);
       setStep("success");
     } catch (err: any) {
       setConfirmError(err.message || "This slot was just booked. Please choose another time.");
@@ -225,8 +218,8 @@ export default function BookAppointmentPage() {
 
   // ── Doctor info ────────────────────────────────────────────────────────────
 
-  const doctorName = doctor ? `Dr. ${doctor.userId.fullName}` : "Doctor";
-  const doctorInitials = initialsOf(doctor?.userId.fullName ?? "");
+  const doctorName = doctor ? `Dr. ${doctor.fullName}` : "Doctor";
+  const doctorInitials = initialsOf(doctor?.fullName ?? "");
   const doctorSpec = doctor?.specialization ?? "General Medicine";
   const contact: DoctorContact =
     (doctor as (DoctorListItem & { contact?: DoctorContact }) | null)?.contact ?? {};
