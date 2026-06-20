@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
-import { LuBot, LuX, LuSend, LuLoader, LuPlusCircle } from "react-icons/lu";
+import { LuBot, LuX, LuSend, LuLoader, LuPlus } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -96,7 +96,7 @@ export default function AIChatWidget() {
             </div>
             <div className="flex items-center gap-3">
               <button onClick={handleNewChat} title="محادثة جديدة" className="hover:text-gray-300 transition-colors">
-                <LuPlusCircle size={20} />
+                <LuPlus size={20} />
               </button>
               <button onClick={() => setIsOpen(false)} title="إغلاق" className="hover:text-gray-300 transition-colors">
                 <LuX size={20} />
