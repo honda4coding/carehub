@@ -130,7 +130,7 @@ export default function BookAppointmentPage() {
           getAvailableSlots(doctorId),
           getMyAppointments(),
         ]);
-        setDoctor(doctors.find((d) => d._id === doctorId) ?? null);
+        setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
         setSlots(availableSlots);
 
         // Build set of date keys the patient is already booked on
@@ -218,8 +218,8 @@ export default function BookAppointmentPage() {
 
   // ── Doctor info ────────────────────────────────────────────────────────────
 
-  const doctorName = doctor ? `Dr. ${doctor.fullName}` : "Doctor";
-  const doctorInitials = initialsOf(doctor?.fullName ?? "");
+  const doctorName = doctor ? `Dr. ${doctor.userId.fullName}` : "Doctor";
+  const doctorInitials = initialsOf(doctor?.userId.fullName ?? "");
   const doctorSpec = doctor?.specialization ?? "General Medicine";
   const contact: DoctorContact =
     (doctor as (DoctorListItem & { contact?: DoctorContact }) | null)?.contact ?? {};
