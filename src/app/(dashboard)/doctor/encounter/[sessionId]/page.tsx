@@ -16,6 +16,7 @@ import HistoryTimeline from "@/components/doctor/encounter/HistoryTimeline";
 import ClinicalAssessment from "@/components/doctor/encounter/ClinicalAssessment";
 import RxBuilder from "@/components/doctor/encounter/RxBuilder";
 import DoctorVitalsCharts from "@/components/doctor/encounter/DoctorVitalsCharts";
+import PatientInsightsCard from "@/components/doctor/encounter/PatientInsightsCard";
 
 export default function PatientDashboardPage() {
   const router = useRouter();
@@ -467,6 +468,9 @@ export default function PatientDashboardPage() {
           {/* TAB 1: Profile & Vitals */}
           {activeTab === "profile" && (
             <div className="flex flex-col gap-6">
+              {patientData?._id && (
+                <PatientInsightsCard patientId={patientData._id} />
+              )}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <VitalsPanel 
                   loading={loading}
@@ -579,6 +583,7 @@ export default function PatientDashboardPage() {
                 dosage={dosage} setDosage={setDosage}
                 frequency={frequency} setFrequency={setFrequency}
                 duration={duration} setDuration={setDuration}
+                patientComplaint={diagnosis}
                 instructions={instructions} setInstructions={setInstructions}
                 handleAddDrug={handleAddDrug}
                 removeDrug={removeDrug}
