@@ -92,6 +92,11 @@ function dayHoursLabel(slotsForDay: Slot[]): string {
   return `${fmt(first.startDateTime)} – ${fmt(last.endDateTime)}`;
 }
 
+// Earliest-first sort, reused for both the auto-pick and the dropdown order.
+function byStartTime(a: Slot, b: Slot) {
+  return new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime();
+}
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export default function BookAppointmentPage() {
@@ -163,6 +168,12 @@ export default function BookAppointmentPage() {
   const monthCells = useMemo(() => (viewMonth ? buildMonthCells(viewMonth) : []), [viewMonth]);
   const selectedGroup = selectedDateKey ? groupsByLocalKey.get(selectedDateKey) ?? null : null;
 
+  // Slots for the selected day, soonest first — this is what backs the dropdown.
+  const sortedDaySlots = useMemo(
+    () => (selectedGroup ? [...selectedGroup.slots].sort(byStartTime) : []),
+    [selectedGroup]
+  );
+
   // ── Handlers ───────────────────────────────────────────────────────────────
 
   function goToMonth(offset: number) {
@@ -181,13 +192,14 @@ export default function BookAppointmentPage() {
     setSelectedSlot(null);
   }
 
+  // Opens the online-booking panel and pre-fills the dropdown with the next
+  // slot in line. If the patient never touches the dropdown, this is exactly
+  // what gets booked when they hit Continue.
   function handleBookOnline() {
     if (!selectedGroup || selectedGroup.slots.length === 0) return;
-    const earliest = [...selectedGroup.slots].sort(
-      (a, b) => new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime()
-    )[0];
-    setSelectedSlot(earliest);
-    setStep("confirm");
+    const nextInLine = [...selectedGroup.slots].sort(byStartTime)[0];
+    setSelectedSlot(nextInLine);
+    setBookingMode("online");
   }
 
   async function handleConfirm() {
@@ -465,6 +477,45 @@ export default function BookAppointmentPage() {
                             >
                               Contact to confirm
                             </button>
+                          </div>
+                        )}
+
+                        {bookingMode === "online" && (
+                          <div>
+                            <label className="block text-[11px] font-bold text-[hsl(var(--color-text-muted))] mb-1.5">
+                              Choose a time
+                            </label>
+                            <select
+                              value={selectedSlot?._id ?? ""}
+                              onChange={(e) => {
+                                const slot = sortedDaySlots.find((s) => s._id === e.target.value);
+                                if (slot) setSelectedSlot(slot);
+                              }}
+                              className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-sky-50 text-[13px] font-bold text-sky-800 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
+                            >
+                              {sortedDaySlots.map((s) => (
+                                <option key={s._id} value={s._id}>
+                                  {slotTimeRangeLabel(s)}
+                                </option>
+                              ))}
+                            </select>
+                            <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mb-4">
+                              We've pre-selected the next available time — pick another from the list if you'd prefer.
+                            </p>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => { setBookingMode(null); setSelectedSlot(null); }}
+                                className="flex-1 py-3 rounded-xl border border-[hsl(var(--color-border))] text-[12.5px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all"
+                              >
+                                ← Back
+                              </button>
+                              <button
+                                onClick={() => setStep("confirm")}
+                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[12.5px] font-black transition-all"
+                              >
+                                Continue →
+                              </button>
+                            </div>
                           </div>
                         )}
 
