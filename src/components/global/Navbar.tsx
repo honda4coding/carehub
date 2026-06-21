@@ -58,11 +58,11 @@ export default function Navbar() {
     <nav className="bg-[hsl(var(--color-bg))]/80 backdrop-blur-md border-b border-[hsl(var(--color-text-muted)/0.1)] fixed w-full top-0 z-50 transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
+
           {/* Logo Area */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-9 h-9 bg-[hsl(var(--color-primary))] rounded-xl flex items-center justify-center shadow-lg shadow-[hsl(var(--color-primary)/0.2)] group-hover:scale-110 transition-transform"> 
-              <FaBriefcaseMedical className="text-white text-lg"/>  
+            <div className="w-9 h-9 bg-[hsl(var(--color-primary))] rounded-xl flex items-center justify-center shadow-lg shadow-[hsl(var(--color-primary)/0.2)] group-hover:scale-110 transition-transform">
+              <FaBriefcaseMedical className="text-white text-lg" />
             </div>
             <span className="text-xl font-black text-[hsl(var(--color-text))] tracking-tight">
               Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
@@ -158,7 +158,7 @@ export default function Navbar() {
               </div>
             )}
             {isAuthenticated && (
-              <button 
+              <button
                 onClick={() => {
                   logout();
                   setIsOpen(false);

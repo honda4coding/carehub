@@ -15,6 +15,7 @@ import MedicalTimeline from "@/components/patients/MedicalTimeline";
 import TrackerBanner from "@/components/patients/TrackerBanner";
 import QuickActions from "@/components/patients/QuickActions";
 import ProfileSkeleton from "@/components/patients/skeletons/ProfileSkeleton";
+import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -170,6 +171,7 @@ export default function PatientDashboard() {
                 chronicDiseases={profile.chronicDiseases ?? []} 
               />
             )}
+            <MedicationSummaryWidget />
             <QuickActions />
           </div>
         </div>

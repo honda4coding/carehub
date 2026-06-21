@@ -12,6 +12,7 @@ import {
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
 } from "recharts";
+import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -259,6 +260,10 @@ export default function TrackingPage() {
               </div>
             </div>
 
+            {/* Medications Tracking Widget (Second Row) */}
+            <div className="md:col-span-12 mt-2">
+              <MedicationSummaryWidget />
+            </div>
           </div>
         )}
 
