@@ -11,7 +11,7 @@ import EncounterHeader from "@/components/doctor/encounter/EncounterHeader";
 import VitalsPanel from "@/components/doctor/encounter/VitalsPanel";
 import MedicalAlertsPanel from "@/components/doctor/encounter/MedicalAlertsPanel";
 import PastSurgeriesPanel from "@/components/doctor/encounter/PastSurgeriesPanel";
-import MedicationTracker from "@/components/doctor/encounter/MedicationTracker";
+import MedicationCompliancePanel from "@/components/doctor/encounter/MedicationCompliancePanel";
 import HistoryTimeline from "@/components/doctor/encounter/HistoryTimeline";
 import ClinicalAssessment from "@/components/doctor/encounter/ClinicalAssessment";
 import RxBuilder from "@/components/doctor/encounter/RxBuilder";
@@ -528,10 +528,13 @@ export default function PatientDashboardPage() {
           {activeTab === "history" && (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <div className="lg:col-span-3">
-                <MedicationTracker 
-                  activeMeds={activeMeds}
-                  pastMeds={pastMeds}
-                />
+                {sessionData && !sessionData.isOfflinePatient && sessionData.patientId ? (
+                  <MedicationCompliancePanel patientId={sessionData.patientId._id} />
+                ) : (
+                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center">
+                    <p className="text-sm text-gray-500">Compliance tracking is not available for offline patients.</p>
+                  </div>
+                )}
               </div>
               <div className="lg:col-span-9">
                 <HistoryTimeline 
