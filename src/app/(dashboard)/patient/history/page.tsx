@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuth } from "@/context/AuthContext";
@@ -93,11 +93,17 @@ export default function MedicalHistoryPage() {
 
   const showToast = useCallback((msg: string) => setToastMsg(msg), []);
 
+  // Infinite Scroll State
+  const [visibleCount, setVisibleCount] = useState(10);
+  const observerTarget = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!user) return;
     const patientId = (user as any)._id ?? user.id;
 
     async function fetchHistory() {
+      setLoading(true);
+
       try {
         const { data } = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
           headers: authHeaders(),
@@ -107,7 +113,7 @@ export default function MedicalHistoryPage() {
         // Sort descending by date
         setRecords(fetchedRecords.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } catch (err: any) {
-        showToast(err?.response?.data?.message ?? "Failed to load medical history");
+        showToast("Failed to load medical history");
       } finally {
         setLoading(false);
       }
@@ -146,6 +152,36 @@ export default function MedicalHistoryPage() {
     return matchesText && matchesStartDate && matchesEndDate;
   });
 
+  // Reset infinite scroll when filters change
+  useEffect(() => {
+    setVisibleCount(10);
+  }, [filterText, startDate, endDate]);
+
+  const displayedRecords = filteredRecords.slice(0, visibleCount);
+  const hasMoreRecords = visibleCount < filteredRecords.length;
+
+  // Intersection Observer for Infinite Scroll
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && hasMoreRecords) {
+          setVisibleCount(prev => prev + 10);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [hasMoreRecords]);
+
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
@@ -164,40 +200,40 @@ export default function MedicalHistoryPage() {
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
           
           {/* Filters Section */}
-          <div className="flex flex-col xl:flex-row items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
-            <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-              <LuHistory className="text-[hsl(var(--color-primary))] text-xl" /> Full Medical History
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
+            <h3 className="text-[17px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
+              <LuHistory className="text-sky-600 text-[20px]" /> Full Medical History
             </h3>
             
-            <div className="flex flex-col sm:flex-row items-end gap-3 w-full xl:w-auto">
-              <div className="flex items-end gap-2 w-full sm:w-auto">
-                <div className="flex flex-col flex-1 sm:flex-none">
-                  <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">Start Date</label>
+            <div className="flex flex-col sm:flex-row flex-wrap items-end sm:items-center gap-3 w-full xl:w-auto">
+              <div className="flex items-center gap-2 w-full sm:w-auto bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] p-1 rounded-xl">
+                <div className="flex flex-col w-full sm:w-auto">
                   <input 
                     type="date"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text-muted))]"
+                    className="w-full sm:w-32 bg-transparent border-none rounded-lg px-2 py-1.5 text-[12px] font-medium outline-none text-[hsl(var(--color-text-muted))]"
+                    title="Start Date"
                   />
                 </div>
-                <span className="text-[hsl(var(--color-border))] pb-2">-</span>
-                <div className="flex flex-col flex-1 sm:flex-none">
-                  <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">End Date</label>
+                <span className="text-[hsl(var(--color-text-muted))] font-bold text-[10px] uppercase">-</span>
+                <div className="flex flex-col w-full sm:w-auto">
                   <input 
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text-muted))]"
+                    className="w-full sm:w-32 bg-transparent border-none rounded-lg px-2 py-1.5 text-[12px] font-medium outline-none text-[hsl(var(--color-text-muted))]"
+                    title="End Date"
                   />
                 </div>
               </div>
-              <div className="relative w-full sm:w-auto mt-2 sm:mt-0">
+              <div className="relative w-full sm:flex-1 sm:min-w-[200px] xl:w-auto xl:flex-none">
                 <input 
                   type="text"
                   placeholder="Search doctor, diagnosis, medication..."
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  className="w-full sm:w-64 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
                 />
               </div>
             </div>
@@ -207,24 +243,28 @@ export default function MedicalHistoryPage() {
           {loading ? (
             <Skeleton />
           ) : records.length === 0 ? (
-            <div className="text-center py-16 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl">
-              <LuHistory className="text-4xl text-[hsl(var(--color-border-soft))] mx-auto mb-3" />
-              <p className="text-base font-bold text-[hsl(var(--color-text))] mb-1">No Medical History</p>
-              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">You have no recorded visits yet.</p>
+            <div className="text-center py-16 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl bg-[hsl(var(--color-bg-soft)/0.5)]">
+              <div className="w-16 h-16 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center mx-auto mb-4">
+                 <LuHistory className="text-[32px]" />
+              </div>
+              <p className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">No Medical History</p>
+              <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] max-w-xs mx-auto leading-relaxed">
+                 You have no recorded visits or diagnoses yet.
+              </p>
             </div>
           ) : filteredRecords.length === 0 ? (
-             <div className="text-center py-16">
-              <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mb-1">No records match your filters.</p>
+             <div className="text-center py-16 bg-[hsl(var(--color-bg-soft))] rounded-2xl">
+              <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mb-2">No records match your filters.</p>
               <button 
                 onClick={() => { setStartDate(""); setEndDate(""); setFilterText(""); }}
-                className="text-[11px] text-[hsl(var(--color-primary))] font-bold hover:underline"
+                className="text-[12px] text-sky-600 font-black hover:underline"
               >
                 Clear all filters
               </button>
             </div>
           ) : (
             <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[hsl(var(--color-border))] before:to-transparent">
-              {filteredRecords.map((r, index) => (
+              {displayedRecords.map((r, index) => (
                 <div key={r._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                   {/* Timeline dot */}
                   <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
@@ -236,9 +276,19 @@ export default function MedicalHistoryPage() {
                   </div>
                 </div>
               ))}
-              <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))]">
-                End of history.
-              </div>
+              
+              {/* Infinite Scroll Trigger */}
+              {hasMoreRecords && (
+                <div ref={observerTarget} className="flex justify-center py-6 relative z-10">
+                  <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+
+              {!hasMoreRecords && filteredRecords.length > 0 && (
+                <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))] shadow-sm">
+                  End of history ({filteredRecords.length} records)
+                </div>
+              )}
             </div>
           )}
         </div>

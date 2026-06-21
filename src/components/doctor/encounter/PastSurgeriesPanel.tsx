@@ -47,7 +47,7 @@ export default function PastSurgeriesPanel({
         </h3>
         <button 
           onClick={() => setIsEditSurgeriesOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary)/0.5)] opacity-0 group-hover:opacity-100 transition-opacity hover:text-[hsl(var(--color-primary))]"
+          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] text-[hsl(var(--color-primary))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.2)] shadow-sm"
         >
           <LuPen />
         </button>

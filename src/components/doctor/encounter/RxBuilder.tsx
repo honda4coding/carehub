@@ -418,22 +418,22 @@ export default function RxBuilder({
 
       {/* Upload Medical Documents Section */}
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm no-print mt-6">
-        <div className="flex items-center justify-between mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <LuFileText className="text-primary text-xl" /> Medical Attachments (Labs, Scans)
+            <LuFileText className="text-primary text-xl shrink-0" /> <span className="truncate">Medical Attachments (Labs, Scans)</span>
           </h2>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button 
               onClick={() => attachmentsInputRef?.current?.click()}
-              className="text-xs font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+              className="flex-1 sm:flex-none justify-center text-xs font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0"
             >
-              <LuUpload /> Upload
+              <LuUpload className="shrink-0" /> Upload
             </button>
             <button 
               onClick={() => setCameraTarget("attachments")}
-              className="text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1"
+              className="flex-1 sm:flex-none justify-center text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0"
             >
-              <LuCamera /> Camera
+              <LuCamera className="shrink-0" /> Camera
             </button>
           </div>
         </div>

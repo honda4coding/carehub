@@ -69,7 +69,7 @@ export default function VitalsPanel({
         </h3>
         <button 
           onClick={() => setIsEditVitalsOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] opacity-0 group-hover:opacity-100 transition-opacity hover:text-primary"
+          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary hover:border-[hsl(var(--color-primary)/0.3)] shadow-sm"
         >
           <LuPen />
         </button>
@@ -101,15 +101,15 @@ export default function VitalsPanel({
                   </span>
                 )}
               </div>
-              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm group/blood relative overflow-hidden">
+              <div className="flex flex-col items-center justify-center bg-[hsl(var(--color-bg-surface))] p-3 rounded-xl border border-[hsl(var(--color-border))] shadow-sm group/blood relative">
                 <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mb-1"><LuDroplet className="text-red-500"/> Blood</span>
                 <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.bloodType || "Unknown"}</span>
                 <button 
                   onClick={() => setIsEditBloodTypeOpen(true)} 
-                  className="absolute inset-0 flex items-center justify-center bg-black/60 text-white opacity-0 group-hover/blood:opacity-100 transition-opacity"
+                  className="absolute top-1.5 right-1.5 w-5 h-5 flex items-center justify-center rounded-md bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary"
                   title="Edit Blood Type"
                 >
-                  <LuPen className="text-sm" />
+                  <LuPen className="text-[10px]" />
                 </button>
               </div>
             </div>

@@ -85,23 +85,25 @@ export default function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          <input 
-            type="date" 
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="text-[11px] font-semibold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-md px-2 py-1.5 outline-none focus:border-primary"
-          />
-          <span className="text-[12px] text-[hsl(var(--color-text-muted))]">to</span>
-          <input 
-            type="date" 
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="text-[11px] font-semibold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-md px-2 py-1.5 outline-none focus:border-primary"
-          />
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mt-4 md:mt-0 w-full md:w-auto">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <input 
+              type="date" 
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="text-[11px] font-semibold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-md px-2 py-1.5 outline-none focus:border-primary flex-1 sm:w-auto sm:min-w-[120px]"
+            />
+            <span className="text-[12px] text-[hsl(var(--color-text-muted))]">to</span>
+            <input 
+              type="date" 
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="text-[11px] font-semibold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-md px-2 py-1.5 outline-none focus:border-primary flex-1 sm:w-auto sm:min-w-[120px]"
+            />
+          </div>
           <button 
             onClick={() => { setStartDate(""); setEndDate(""); }}
-            className="text-[11px] font-bold text-[hsl(var(--color-danger))] px-3 py-1.5 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] rounded-md hover:opacity-80 transition-opacity"
+            className="w-full sm:w-auto text-[11px] font-bold text-[hsl(var(--color-danger))] px-3 py-1.5 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] rounded-md hover:opacity-80 transition-opacity whitespace-nowrap"
           >
             Reset
           </button>

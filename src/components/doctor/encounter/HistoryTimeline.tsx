@@ -77,41 +77,41 @@ export default function HistoryTimeline({
 
       {/* Full Timeline */}
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-4">
-          <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <LuHistory className="text-primary text-xl" /> Full Medical History
+        <div className="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-4">
+          <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
+            <LuHistory className="text-primary text-xl shrink-0" /> Full Medical History
           </h3>
-          <div className="flex flex-col sm:flex-row items-end gap-3 w-full sm:w-auto">
-            <div className="flex items-end gap-2">
-              <div className="flex flex-col">
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-end gap-3 w-full 2xl:w-auto">
+            <div className="flex items-end gap-2 w-full lg:w-auto shrink-0">
+              <div className="flex flex-col flex-1 lg:flex-none">
                 <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">Start</label>
                 <input 
                   type="date"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
+                  className="w-full lg:w-32 min-w-0 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-2 sm:px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
                   title="Start Date"
                 />
               </div>
-              <span className="text-[hsl(var(--color-border))] pb-2">-</span>
-              <div className="flex flex-col">
+              <span className="text-[hsl(var(--color-border))] pb-2 shrink-0">-</span>
+              <div className="flex flex-col flex-1 lg:flex-none">
                 <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">End</label>
                 <input 
                   type="date"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full sm:w-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
+                  className="w-full lg:w-32 min-w-0 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-2 sm:px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
                   title="End Date"
                 />
               </div>
             </div>
-            <div className="relative w-full sm:w-auto">
+            <div className="relative w-full lg:w-auto flex-1 min-w-0">
               <input 
                 type="text"
                 placeholder="Search doctor, diagnosis..."
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
-                className="w-full sm:w-56 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2 text-xs font-medium focus:border-primary outline-none"
+                className="w-full lg:w-56 min-w-0 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2 text-xs font-medium focus:border-primary outline-none"
               />
             </div>
           </div>

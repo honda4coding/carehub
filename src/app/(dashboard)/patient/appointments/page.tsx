@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { LuCalendarDays, LuClock, LuStethoscope, LuX, LuCreditCard, LuCheck } from "react-icons/lu";
+import { LuCalendarDays, LuClock, LuStethoscope, LuX, LuCreditCard, LuCheck, LuPhone, LuMapPin } from "react-icons/lu";
+import Link from "next/link";
 
 import {
   Appointment, cancelAppointment, getDisplayStatus, getMyAppointments,
@@ -107,11 +108,16 @@ function ApptCard({
   onCancelClick: (a: Appointment) => void;
   onPayClick: (a: Appointment) => void;
 }) {
-  const doctor = typeof appt.doctorId === "object" ? appt.doctorId : null;
+  const doctor = typeof appt.doctorId === "object" ? (appt.doctorId as any) : null;
   const status = getDisplayStatus(appt);
   const cfg = STATUS_CONFIG[status];
   const timeLabel = isoTo12Hour(appt.startDateTime) + (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
   const dateObj = new Date(appt.appointmentDate);
+
+  const docName = doctor?.fullName || doctor?.userId?.fullName || doctor?.user?.fullName;
+  const docPhone = doctor?.phoneNumber || doctor?.userId?.phoneNumber || doctor?.phone;
+  const docAddress = doctor?.clinicAddress || doctor?.address || doctor?.clinicInfo?.address;
+  const docPic = doctor?.profilepicture?.secure_url || doctor?.userId?.profilepicture?.secure_url;
 
   return (
     <div className={`group relative flex bg-[hsl(var(--color-bg-surface))] border rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${cfg.border} border-l-4`}
@@ -134,17 +140,37 @@ function ApptCard({
 
       {/* Body */}
       <div className="flex-1 p-3.5 sm:p-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[13px] font-black shrink-0 shadow-sm">
-            {initialsOf(doctor?.fullName)}
-          </div>
-          <div className="min-w-0">
-            <p className={`text-[14px] font-black truncate ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
-              {doctor?.fullName ? `Dr. ${doctor.fullName}` : "Doctor"}
-            </p>
-            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-              <LuClock className="text-[10px]" />{timeLabel}
-            </p>
+        <div className="flex items-center gap-3.5 min-w-0">
+          <Link href={doctor?._id ? `/patient/doctors/${doctor._id}` : "#"} className="shrink-0 hover:opacity-80 transition-opacity">
+            {docPic ? (
+              <img src={docPic} alt={docName || "Doctor"} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-[hsl(var(--color-border))]" />
+            ) : (
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[14px] font-black shadow-sm">
+                {initialsOf(docName || "Doctor")}
+              </div>
+            )}
+          </Link>
+          <div className="min-w-0 flex flex-col justify-center">
+            <Link href={doctor?._id ? `/patient/doctors/${doctor._id}` : "#"} className="hover:underline decoration-primary underline-offset-2">
+              <p className={`text-[15px] font-black truncate ${status === "cancelled" ? "line-through text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-text))]"}`}>
+                {docName ? `Dr. ${docName}` : "Doctor"}
+              </p>
+            </Link>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5">
+              <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1">
+                <LuClock className="text-[12px] text-primary" />{timeLabel}
+              </p>
+              {docPhone && (
+                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1">
+                  <LuPhone className="text-[11px]" />{docPhone}
+                </p>
+              )}
+              {docAddress && (
+                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 max-w-[150px] sm:max-w-[200px] truncate">
+                  <LuMapPin className="text-[11px]" />{docAddress}
+                </p>
+              )}
+            </div>
           </div>
         </div>
 
@@ -153,7 +179,7 @@ function ApptCard({
           {status === "upcoming" && (
             <>
               <button onClick={() => onPayClick(appt)}
-                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-gradient-to-r from-fuchsia-500 to-pink-400 text-white shadow-sm hover:shadow-md hover:scale-105 transition-all">
+                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all">
                 <LuCreditCard className="text-[12px]" />Pay
               </button>
               <button onClick={() => onCancelClick(appt)} title="Cancel"
@@ -176,10 +202,12 @@ function ApptTab({ label, value, active, count, color, onClick }: {
   const isActive = value === active;
   return (
     <button onClick={onClick}
-      className={`px-4 py-2.5 rounded-xl text-[12.5px] font-bold transition-all duration-200 flex items-center gap-2 ${
-        isActive ? "bg-[hsl(var(--color-bg-surface))] shadow-sm ring-1 ring-[hsl(var(--color-border))]" : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+      className={`relative flex-1 sm:flex-none min-w-[110px] sm:min-w-0 px-2 sm:px-5 py-2.5 rounded-xl text-[11.5px] sm:text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-2 z-10 ${
+        isActive 
+          ? "bg-[hsl(var(--color-bg-surface))] shadow-sm ring-1 ring-[hsl(var(--color-border))]" 
+          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))/0.5]"
       }`}>
-      {label}
+      <span className={isActive ? "text-[hsl(var(--color-text))]" : ""}>{label}</span>
       <span className={`text-[10.5px] font-bold min-w-[20px] px-1.5 py-0.5 rounded-full ${isActive ? color : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"}`}>
         {count}
       </span>
@@ -246,22 +274,30 @@ setAppointments(data as any);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-3">
-        <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
-          <LuCalendarDays />
-        </div>
-        <div>
-          <h1 className="text-[18px] md:text-[20px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">My Appointments</h1>
-          <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">Track your upcoming and past visits</p>
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
+            <LuCalendarDays />
+          </div>
+          <div>
+            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+              My Appointments
+            </h1>
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+              Track your upcoming and past visits
+            </p>
+          </div>
         </div>
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         {/* Tabs */}
-        <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] mb-6">
-          <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} color="bg-sky-100 text-sky-600" onClick={() => setTab("upcoming")} />
-          <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} color="bg-emerald-100 text-emerald-600" onClick={() => setTab("completed")} />
-          <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-red-100 text-red-500" onClick={() => setTab("cancelled")} />
+        <div className="flex justify-center mb-6">
+          <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))] shadow-inner">
+            <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} color="bg-sky-100 text-sky-600" onClick={() => setTab("upcoming")} />
+            <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} color="bg-emerald-100 text-emerald-600" onClick={() => setTab("completed")} />
+            <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-red-100 text-red-500" onClick={() => setTab("cancelled")} />
+          </div>
         </div>
 
         {loading ? (

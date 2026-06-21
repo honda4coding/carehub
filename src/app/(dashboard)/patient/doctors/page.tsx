@@ -57,7 +57,7 @@ function SelectDropdown({ value, onChange, options, icon }: {
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="appearance-none w-full pl-10 pr-9 py-2.5 text-[12.5px] font-semibold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15 transition-all cursor-pointer"
+        className="appearance-none w-full pl-10 pr-9 py-2.5 text-[12.5px] font-semibold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all cursor-pointer"
       >
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
@@ -87,23 +87,23 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
   const hasSlots = !loadingSlots && slots.length > 0;
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-sky-600/40 transition-all duration-300">
+    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-700 to-sky-500 flex items-center justify-center shrink-0 shadow-md overflow-hidden">
+        <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 border border-[hsl(var(--color-primary)/0.2)] overflow-hidden">
           {doctor.profilepicture?.secure_url
             ? <img src={doctor.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
-            : <span className="text-[20px] font-black text-white">{initials}</span>}
+            : <span className="text-[20px] font-black text-primary">{initials}</span>}
         </div>
         <div className="min-w-0 flex-1">
           {/* Name links to profile page */}
           <Link
             href={`/patient/doctors/${userId}`}
-            className="text-[15px] font-black text-[hsl(var(--color-text))] truncate block hover:text-sky-700 transition-colors"
+            className="text-[15px] font-black text-[hsl(var(--color-text))] truncate block hover:text-[hsl(var(--color-primary-strong))] transition-colors"
           >
             Dr. {fullName}
           </Link>
-          <p className="text-[11px] font-bold text-sky-600 uppercase tracking-widest mt-0.5">
+          <p className="text-[11px] font-bold text-primary uppercase tracking-widest mt-0.5">
             {doctor.specialization ?? "General Practice"}
           </p>
         </div>
@@ -142,7 +142,7 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
         disabled={!hasSlots}
         className={`relative w-full py-3 rounded-xl text-[13px] font-black flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden ${
           hasSlots
-            ? "bg-gradient-to-r from-sky-700 to-sky-500 text-white shadow-[0_4px_15px_rgba(2,132,199,0.4)] hover:shadow-[0_6px_20px_rgba(2,132,199,0.5)] hover:scale-[1.02] active:scale-[0.98]"
+            ? "bg-primary text-white shadow-sm hover:bg-[hsl(var(--color-primary-strong))] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] cursor-not-allowed"
         }`}
       >
@@ -203,7 +203,7 @@ export default function DoctorsPage() {
             <input
               type="text" placeholder="Search by name…"
               value={search} onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 text-[12.5px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15 transition-all"
+              className="w-full pl-10 pr-4 py-2.5 text-[12.5px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all"
             />
           </div>
         </div>
@@ -216,7 +216,7 @@ export default function DoctorsPage() {
 
         {loading ? <Skeleton /> : filtered.length === 0 ? (
           <div className="bg-[hsl(var(--color-bg-surface))] border-2 border-dashed border-[hsl(var(--color-border))] rounded-2xl py-16 px-6 text-center">
-            <div className="w-16 h-16 rounded-full bg-sky-600/10 text-sky-600 flex items-center justify-center mx-auto mb-4 text-[26px]">
+            <div className="w-16 h-16 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center mx-auto mb-4 text-[26px]">
               <LuBriefcaseMedical />
             </div>
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">No doctors found</h3>
