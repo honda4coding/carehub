@@ -1,9 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -326,10 +323,6 @@ export default function MedicalHistoryPage() {
                 </div>
               )}
             </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Medications Sidebar */}
             <div className="w-full lg:w-1/3 xl:w-1/4 shrink-0">
@@ -398,19 +391,6 @@ export default function MedicalHistoryPage() {
                       )}
                     </div>
                   </div>
-                </div>
-              ))}
-              
-              {/* Infinite Scroll Trigger */}
-              {hasMoreRecords && (
-                <div ref={observerTarget} className="flex justify-center py-6 relative z-10">
-                  <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
-                </div>
-              )}
-
-              {!hasMoreRecords && filteredRecords.length > 0 && (
-                <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))] shadow-sm">
-                  End of history ({filteredRecords.length} records)
                 </div>
               )}
             </div>
