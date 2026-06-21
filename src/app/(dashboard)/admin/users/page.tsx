@@ -30,6 +30,14 @@ const ROLE_OPTIONS: { label: string; value: UserRole | "" }[] = [
   { label: "Admin", value: "admin" },
 ];
 
+const STATUS_OPTIONS: { label: string; value: UserStatus | "" }[] = [
+  { label: "All Statuses", value: "" },
+  { label: "Active", value: "active" },
+  { label: "Pending", value: "pending" },
+  { label: "Blocked", value: "blocked" },
+  { label: "Rejected", value: "rejected" },
+];
+
 // Badge configs (matches admin/page.tsx patterns)
 const statusConfig: Record<UserStatus, { style: string; label: string }> = {
   active: {
@@ -198,6 +206,7 @@ export default function AdminUserManagementPage() {
   // Filters
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "">("");
+  const [statusFilter, setStatusFilter] = useState<UserStatus | "">("");
   const [page, setPage] = useState(1);
 
   // row action loading { userId: boolean }
@@ -220,7 +229,7 @@ export default function AdminUserManagementPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [roleFilter]);
+  }, [roleFilter, statusFilter]);
 
   // useCallback ==> to avoid creating a new copy of the function in every render
   const fetchUsers = useCallback(async () => {
@@ -231,6 +240,7 @@ export default function AdminUserManagementPage() {
         page,
         limit: PAGE_SIZE,
         ...(roleFilter ? { role: roleFilter } : {}),
+        ...(statusFilter ? { status: statusFilter } : {}),
       });
       setUsers(res.data.users);
       setPagination(res.data.pagination);
@@ -346,6 +356,11 @@ export default function AdminUserManagementPage() {
                 Filtered: {roleFilter}
               </span>
             )}
+            {statusFilter && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))]">
+                Status: {statusFilter}
+              </span>
+            )}
           </div>
         )}
 
@@ -368,25 +383,48 @@ export default function AdminUserManagementPage() {
                   className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
                 />
               </div>
-              {/* Role filter */}
-              <div className="relative flex items-center flex-1 sm:flex-none">
-                <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
-                <select
-                  value={roleFilter}
-                  onChange={(e) =>
-                    setRoleFilter(e.target.value as UserRole | "")
-                  }
-                  className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
-                >
-                  {ROLE_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
-                  ▾
-                </span>
+              {/* Role & Status filters */}
+              <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                <div className="relative flex items-center w-full sm:w-auto">
+                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <select
+                    value={roleFilter}
+                    onChange={(e) =>
+                      setRoleFilter(e.target.value as UserRole | "")
+                    }
+                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                  >
+                    {ROLE_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                    ▾
+                  </span>
+                </div>
+                
+                {/* Status filter */}
+                <div className="relative flex items-center w-full sm:w-auto">
+                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as UserStatus | "")
+                    }
+                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                  >
+                    {STATUS_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                    ▾
+                  </span>
+                </div>
               </div>
             </div>
           </div>

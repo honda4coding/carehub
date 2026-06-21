@@ -17,20 +17,15 @@ import {
 import { useRouter } from "next/navigation";
 import { adminService } from "@/services/adminService";
 import { DoctorApprovalStatus, PendingDoctorRequest } from "@/types/doctor";
+import { DailyStats } from "@/types/admin";
+import { fetchClient } from "@/services/fetchClient";
 import Link from "next/link";
 import NotificationBell from "@/components/admin/notifications/NotificationBell";
+import { ResponsiveContainer, LineChart, Line, XAxis, Tooltip as RechartsTooltip } from "recharts";
 
-// CHART_MONTHS remains static placeholder data: no backend endpoint currently
-// exposes monthly registration trends. See report for the proposed
-// `/admin/stats/monthly-overview` endpoint.
-const CHART_MONTHS = [
-  { month: "Jan", pct: 55 },
-  { month: "Feb", pct: 68 },
-  { month: "Mar", pct: 58 },
-  { month: "Apr", pct: 83 },
-  { month: "May", pct: 92 },
-  { month: "Jun", pct: 78 },
-];
+// Max years logic
+const currentYear = new Date().getFullYear();
+const YEARS = [currentYear, currentYear - 1, currentYear - 2];
 
 const statusConfig: Record<
   DoctorApprovalStatus,
@@ -89,8 +84,14 @@ export default function AdminDashboard() {
   const [totalPatients, setTotalPatients] = useState<number | null>(null);
   const [activeDoctors, setActiveDoctors] = useState<number | null>(null);
   const [totalDoctors, setTotalDoctors] = useState<number | null>(null);
+  const [totalAppointments, setTotalAppointments] = useState<number | null>(null);
   const [statsLoading, setStatsLoading] = useState(true);
   const [statsError, setStatsError] = useState<string | null>(null);
+
+  const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
+  
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
+  const [activitiesLoading, setActivitiesLoading] = useState(true);
 
   const router = useRouter();
 
@@ -121,7 +122,11 @@ export default function AdminDashboard() {
     },
     {
       label: "Appointments",
-      value: "491",
+      value: statsLoading
+        ? "—"
+        : totalAppointments !== null
+          ? totalAppointments.toLocaleString()
+          : "—",
       icon: <LuCalendarDays />,
       iconStyle:
         "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
@@ -162,6 +167,7 @@ export default function AdminDashboard() {
 
         setTotalPatients(dashboard.data.totalPatients);
         setTotalDoctors(dashboard.data.totalDoctors);
+        setTotalAppointments(dashboard.data.totalAppointments);
         setActiveDoctors(
           dashboard.data.totalDoctors -
             dashboard.data.pendingDoctors -
@@ -176,6 +182,33 @@ export default function AdminDashboard() {
     };
 
     fetchStats();
+  }, []);
+
+  useEffect(() => {
+    const fetchDaily = async () => {
+      try {
+        const res = await adminService.getDailyStats();
+        setDailyStats(res.data);
+      } catch (err) {
+        console.error("Failed to fetch daily stats", err);
+      }
+    };
+    fetchDaily();
+  }, []);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      setActivitiesLoading(true);
+      try {
+        const res = await fetchClient.get("/notifications", { params: { limit: "5" } });
+        setRecentActivities(res.data?.notifications ?? []);
+      } catch (err) {
+        console.error("Failed to fetch activities", err);
+      } finally {
+        setActivitiesLoading(false);
+      }
+    };
+    fetchActivities();
   }, []);
 
   const filtered = requests.filter(
@@ -236,32 +269,27 @@ export default function AdminDashboard() {
           {/* Chart + Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
             {/* Chart */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
-                  Monthly Overview
+                  Activity - Last 30 Days
                 </p>
-                <span className="text-[12px] font-bold text-primary cursor-pointer">
-                  2026 ▾
-                </span>
               </div>
-              <div className="flex items-end gap-2 h-24">
-                {CHART_MONTHS.map((m) => (
-                  <div
-                    key={m.month}
-                    className="flex-1 flex flex-col items-center gap-1"
-                  >
-                    <div
-                      className="w-full rounded-t-[5px] bg-gradient-doctor hover:opacity-80 transition-opacity cursor-pointer"
-                      style={{ height: `${m.pct}%` }}
+              <div className="h-24 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={dailyStats}>
+                    <XAxis dataKey="date" hide />
+                    <RechartsTooltip 
+                      contentStyle={{ backgroundColor: 'hsl(var(--color-bg-surface))', borderRadius: '8px', border: '1px solid hsl(var(--color-border))', fontSize: '10px', fontWeight: 'bold' }}
+                      itemStyle={{ fontWeight: 'bold' }}
+                      labelStyle={{ color: 'hsl(var(--color-text-muted))', marginBottom: '2px' }}
                     />
-                    <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))]">
-                      {m.month}
-                    </span>
-                  </div>
-                ))}
+                    <Line type="monotone" name="Users" dataKey="usersCount" stroke="#6C5DD3" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                    <Line type="monotone" name="Appointments" dataKey="appointmentsCount" stroke="#00BFA6" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 pt-3 border-t border-[hsl(var(--color-border))]">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-auto pt-3 border-t border-[hsl(var(--color-border))]">
                 {[
                   {
                     val: statsLoading
@@ -282,7 +310,11 @@ export default function AdminDashboard() {
                     dotClass: "bg-secondary",
                   },
                   {
-                    val: "491",
+                    val: statsLoading
+                      ? "—"
+                      : totalAppointments !== null
+                        ? totalAppointments.toLocaleString()
+                        : "—",
                     lbl: "Appointments",
                     dotClass: "bg-[hsl(var(--color-success))]",
                   },
@@ -308,50 +340,36 @@ export default function AdminDashboard() {
                 <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
                   Recent Activity
                 </p>
-                <span className="text-[12px] font-bold text-primary cursor-pointer">
-                  View all
-                </span>
               </div>
               <div className="flex flex-col">
-                {loading ? (
+                {activitiesLoading ? (
                   <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-6">
-                    Loading...
+                    Loading activities...
                   </p>
-                ) : requestsError ? (
-                  <p className="text-center text-[12px] text-[hsl(var(--color-danger))] py-6">
-                    {requestsError}
-                  </p>
-                ) : requests.length === 0 ? (
+                ) : recentActivities.length === 0 ? (
                   <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-6">
                     No recent activity
                   </p>
                 ) : (
-                  [...requests]
-                    .sort(
-                      (a, b) =>
-                        new Date(b.createdAt).getTime() -
-                        new Date(a.createdAt).getTime(),
-                    )
-                    .slice(0, 4)
-                    .map((r, i, arr) => (
-                      <div
-                        key={r._id}
-                        className={`flex items-start gap-3 py-2.5 ${i < arr.length - 1 ? "border-b border-[hsl(var(--color-border-soft))]" : ""}`}
-                      >
-                        <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[13px] shrink-0 bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
-                          <LuUserPlus />
-                        </div>
-                        <div>
-                          <p className="text-[12px] font-semibold text-[hsl(var(--color-text))] leading-snug">
-                            New doctor registration — {r.fullName}
-                          </p>
-                          <p className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-                            {formatRelativeTime(r.createdAt)}
-                            {r.specialty ? ` · ${r.specialty}` : ""}
-                          </p>
-                        </div>
+                  recentActivities.slice(0, 4).map((n, i, arr) => (
+                    <div
+                      key={n._id}
+                      className={`flex items-start gap-3 py-2.5 ${i < arr.length - 1 ? "border-b border-[hsl(var(--color-border-soft))]" : ""}`}
+                    >
+                      <div className="w-[30px] h-[30px] rounded-full flex items-center justify-center text-[13px] shrink-0 bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
+                         <LuClock />
                       </div>
-                    ))
+                      <div>
+                        <p className="text-[12px] font-semibold text-[hsl(var(--color-text))] leading-snug">
+                          {n.message}
+                        </p>
+                        <p className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                          {formatRelativeTime(n.createdAt)}
+                          {n.type ? ` · ${n.type}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                  ))
                 )}
               </div>
             </div>

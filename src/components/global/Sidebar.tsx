@@ -47,6 +47,7 @@ const adminNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Dashboard", href: "/admin", icon: <LuLayoutDashboard /> },
+      { label: "Analytics", href: "/admin/analytics", icon: <FaSquarePollVertical /> },
       { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
       {
