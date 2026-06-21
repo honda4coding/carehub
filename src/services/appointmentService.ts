@@ -19,6 +19,8 @@ export interface DoctorListItem {
     fullName: string;
     email: string;
     confirmed: boolean;
+    phone?: string;
+    phoneNumber?: string;
   };
   specialization?: string | null;
   experience?: number | null;
