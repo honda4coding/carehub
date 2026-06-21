@@ -137,12 +137,12 @@ return (
 
     {/* Tabs + Search */}
     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-      <div className="flex gap-1">
+      <div className="flex gap-1 flex-wrap w-full sm:w-auto">
         {TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setActiveTab(tab.value)}
-            className={`text-[11px] font-bold px-3 py-1.5 rounded-[8px] transition-all ${
+            className={`text-[11px] font-bold px-3 py-1.5 rounded-[8px] transition-all flex-1 sm:flex-none ${
               activeTab === tab.value
                 ? "bg-primary text-white"
                 : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))]"
@@ -153,18 +153,18 @@ return (
         ))}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto mt-2 sm:mt-0">
         {unreadCount > 0 && (
           <button
             onClick={handleMarkAllAsRead}
-            className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] bg-primary text-white hover:opacity-90 transition-all"
+            className="flex items-center justify-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] bg-primary text-white hover:opacity-90 transition-all flex-1 sm:flex-none whitespace-nowrap"
           >
             <LuCheckCheck />
             Mark All Read
           </button>
         )}
 
-        <div className="relative flex items-center">
+        <div className="relative flex items-center flex-1 sm:flex-none">
           <LuSearch className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
 
           <input
@@ -172,7 +172,7 @@ return (
             placeholder="Search notifications..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-[220px] outline-none"
+            className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full sm:w-[220px] outline-none transition-colors focus:border-[hsl(var(--color-primary)/0.5)]"
           />
         </div>
       </div>
@@ -192,88 +192,115 @@ return (
           </p>
         </div>
       ) : (
-        <table className="w-full min-w-[700px]">
-          <thead>
-            <tr className="border-b border-[hsl(var(--color-border))]">
-              <th className="pb-2.5 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
-                Message
-              </th>
+        <>
+          {/* Desktop Table */}
+          <table className="w-full min-w-[700px] hidden lg:table">
+            <thead>
+              <tr className="border-b border-[hsl(var(--color-border))]">
+                <th className="pb-3 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
+                  Message
+                </th>
 
-              <th className="pb-2.5 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
-                Type
-              </th>
+                <th className="pb-3 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
+                  Type
+                </th>
 
-              <th className="pb-2.5 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
-                Date
-              </th>
+                <th className="pb-3 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
+                  Date
+                </th>
 
-              <th className="pb-2.5 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
-                Status
-              </th>
+                <th className="pb-3 text-left text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
+                  Status
+                </th>
 
-              <th className="pb-2.5 text-center text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filtered.map((notification) => (
-              <tr
-                key={notification._id}
-                className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0"
-              >
-                <td className="py-3">
-                  <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">
-                    {notification.message}
-                  </p>
-                </td>
-
-                <td className="py-3 text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
-                  {notification.type}
-                </td>
-
-                <td className="py-3 text-[12px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                  {new Date(
-                    notification.createdAt
-                  ).toLocaleString()}
-                </td>
-
-                <td className="py-3">
-                  <span
-                    className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${
-                      notification.isRead
-                        ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
-                        : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
-                    }`}
-                  >
-                    {notification.isRead
-                      ? "Read"
-                      : "Unread"}
-                  </span>
-                </td>
-
-                <td className="py-3">
-                  <div className="flex justify-center">
-                    {!notification.isRead && (
-                      <button
-                        onClick={() =>
-                          handleMarkAsRead(
-                            notification._id
-                          )
-                        }
-                        className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all"
-                      >
-                        <LuCheck className="text-[11px]" />
-                        Mark Read
-                      </button>
-                    )}
-                  </div>
-                </td>
+                <th className="pb-3 text-center text-[10px] font-black uppercase tracking-[.07em] text-[hsl(var(--color-text-muted))]">
+                  Actions
+                </th>
               </tr>
+            </thead>
+
+            <tbody>
+              {filtered.map((notification) => (
+                <tr
+                  key={notification._id}
+                  className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                >
+                  <td className="py-3.5 pr-4">
+                    <p className="text-[13px] font-medium text-[hsl(var(--color-text))]">
+                      {notification.message}
+                    </p>
+                  </td>
+
+                  <td className="py-3.5 pr-4 text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
+                    {notification.type}
+                  </td>
+
+                  <td className="py-3.5 pr-4 text-[12px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                    {new Date(
+                      notification.createdAt
+                    ).toLocaleString()}
+                  </td>
+
+                  <td className="py-3.5 pr-4">
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${
+                        notification.isRead
+                          ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
+                          : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
+                      }`}
+                    >
+                      {notification.isRead
+                        ? "Read"
+                        : "Unread"}
+                    </span>
+                  </td>
+
+                  <td className="py-3.5">
+                    <div className="flex justify-center">
+                      {!notification.isRead && (
+                        <button
+                          onClick={() =>
+                            handleMarkAsRead(
+                              notification._id
+                            )
+                          }
+                          className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white hover:border-primary transition-all"
+                        >
+                          <LuCheck className="text-[11px]" />
+                          Mark Read
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Mobile Card View */}
+          <div className="lg:hidden flex flex-col gap-4 py-2">
+            {filtered.map((notification) => (
+              <div key={notification._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+                <div className="flex justify-between items-start mb-3">
+                  <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${notification.isRead ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"}`}>
+                    {notification.isRead ? "Read" : "Unread"}
+                  </span>
+                  <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">{notification.type}</span>
+                </div>
+                <p className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-4 leading-tight">{notification.message}</p>
+                
+                <div className="flex items-center justify-between mt-4 pt-3 border-t border-[hsl(var(--color-border-soft))]">
+                  <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{new Date(notification.createdAt).toLocaleString()}</p>
+                  {!notification.isRead && (
+                    <button onClick={() => handleMarkAsRead(notification._id)} className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-primary hover:text-white transition-all border border-[hsl(var(--color-primary)/0.2)]">
+                      <LuCheck className="text-[12px]" /> Mark Read
+                    </button>
+                  )}
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </>
       )}
     </div>
   </div>

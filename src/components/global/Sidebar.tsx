@@ -50,11 +50,6 @@ const adminNav: NavSection[] = [
       { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
       {
-        label: "Appointments",
-        href: "/admin/appointments",
-        icon: <LuCalendarDays />,
-      },
-      {
         label: "Notifications",
         href: "/admin/notifications",
         icon: <LuBell />,
@@ -69,12 +64,6 @@ const adminNav: NavSection[] = [
         href: "/admin/approvals",
         icon: <LuShieldCheck />,
       },
-      {
-        label: "Reports",
-        href: "/admin/reports",
-        icon: <FaSquarePollVertical />,
-      },
-      // { label: "Settings", href: "/admin/settings", icon: <LuSettings /> },
     ],
   },
 ];
@@ -200,11 +189,6 @@ const settingsSub: Record<
       label: "Profile",
       href: "/admin/profile",
       icon: <LuUser className="text-sm" />,
-    },
-    {
-      label: "Preferences",
-      href: "/admin/preferences",
-      icon: <LuSettings2 className="text-sm" />,
     },
     {
       label: "Security",
@@ -343,7 +327,7 @@ function SidebarContent({
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-[hsl(var(--color-border))]">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black shadow-[0_4px_12px_hsl(var(--color-primary)/0.35)]">
             +
           </div>
@@ -355,7 +339,7 @@ function SidebarContent({
               {role} Portal
             </p>
           </div>
-        </div>
+        </Link>
         {/* Close btn — mobile only */}
         {onClose && (
           <button
