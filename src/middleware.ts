@@ -7,12 +7,6 @@ export function middleware(request: NextRequest) {
   const role = request.cookies.get(ROLE_COOKIE_NAME)?.value;
   const { pathname } = request.nextUrl;
 
-  // Redirect authenticated users away from auth pages
-  const authPaths = ['/login', '/register', '/admin-login'];
-  if (authPaths.includes(pathname) && token && role) {
-    return NextResponse.redirect(new URL(`/${role}`, request.url));
-  }
-
   // Handle protected route access control
   const protectedPaths = ['/admin', '/doctor', '/patient'];
   const isProtectedRoute = protectedPaths.some(path => 
@@ -30,6 +24,16 @@ export function middleware(request: NextRequest) {
     if (role && !pathname.startsWith(`/${role}`)) {
       return NextResponse.redirect(new URL(`/${role}`, request.url));
     }
+  }
+
+  // Redirect authenticated users away from auth pages
+  const authPaths = ['/login', '/register', '/admin-login'];
+  const isAuthRoute = authPaths.some(path => pathname === path || pathname.startsWith(`${path}/`));
+  
+  if (isAuthRoute && token) {
+    // If they have a token, redirect to their role dashboard, default to patient if role is somehow missing
+    const redirectRole = role || 'patient';
+    return NextResponse.redirect(new URL(`/${redirectRole}`, request.url));
   }
 
   return NextResponse.next();

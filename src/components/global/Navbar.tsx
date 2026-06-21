@@ -23,9 +23,9 @@ export default function Navbar() {
 
     if (!isAuthenticated) {
       return [
-        { label: "Platform", href: "#" },
-        { label: "Specialties", href: "#" },
-        { label: "About", href: "#" },
+        { label: "Home", href: "/" },
+        { label: "About", href: "/about" },
+        { label: "Doctors", href: "/doctors" },
       ];
     }
 
@@ -34,7 +34,7 @@ export default function Navbar() {
         return [
           { label: "Admin Panel", href: "/admin" },
           { label: "Users Control", href: "/admin/users" },
-          { label: "Analytics", href: "/admin/stats" },
+          { label: "Approvals", href: "/admin/approvals" },
         ];
       case 'doctor':
         return [
@@ -134,7 +134,7 @@ export default function Navbar() {
                 key={index}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
-                className="block px-4 py-3 rounded-xl font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-primary))] transition-all"
+                className="block text-center px-4 py-3 rounded-xl font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-primary))] transition-all"
               >
                 {link.label}
               </Link>
@@ -142,18 +142,11 @@ export default function Navbar() {
             {!isLoading && !isAuthenticated && (
               <div className="pt-4 border-t border-[hsl(var(--color-text-muted)/0.1)] space-y-3">
                 <Link
-                  href="/login?role=doctor"
+                  href="/login"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center text-xs font-bold py-2.5 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
+                  className="block text-center text-sm font-bold py-3 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
                 >
-                  Doctor Login
-                </Link>
-                <Link
-                  href="/login?role=patient"
-                  onClick={() => setIsOpen(false)}
-                  className="block text-center text-xs font-bold py-2.5 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
-                >
-                  Patient Login
+                  Sign In
                 </Link>
                 <Link
                   href="/register"

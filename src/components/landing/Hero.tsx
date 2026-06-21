@@ -33,10 +33,10 @@ const Hero = () => {
           </p>
 
           {/* Action Buttons */}
-          <div className="mt-12 flex flex-wrap gap-4">
+          <div className="mt-12 flex flex-wrap gap-4 justify-center lg:justify-start">
             <Link 
               href="/register?role=patient" 
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 bg-[hsl(var(--color-primary))] text-white font-bold shadow-xl shadow-[hsl(var(--color-primary)/0.25)] hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-[hsl(var(--color-primary))] text-white font-bold shadow-xl shadow-[hsl(var(--color-primary)/0.25)] hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
             >
               Register as Patient
               <LuArrowRight className="h-5 w-5" />
@@ -44,7 +44,7 @@ const Hero = () => {
             
             <Link 
               href="/register?role=doctor" 
-              className="inline-flex items-center gap-2 rounded-2xl px-8 py-4 bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] border-2 border-[hsl(var(--color-text-muted)/0.1)] font-bold hover:border-[hsl(var(--color-secondary))] hover:text-[hsl(var(--color-secondary))] transition-all duration-300 shadow-sm"
+              className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] border-2 border-[hsl(var(--color-text-muted)/0.1)] font-bold hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] transition-all duration-300 shadow-sm"
             >
               Join as Doctor
               <LuStethoscope className="h-5 w-5" />
