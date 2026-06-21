@@ -17,7 +17,7 @@ export default function CTASection() {
             Join thousands of patients and medical professionals who have already made the switch to the most intelligent healthcare ecosystem.
           </p>
           
-          <div className="flex flex-wrap justify-center gap-4 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
             <Link 
               href="/register?role=patient" 
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-white text-[hsl(var(--color-primary))] font-black shadow-xl hover:-translate-y-1 hover:shadow-2xl transition-all duration-300"

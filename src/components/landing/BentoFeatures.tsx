@@ -22,7 +22,7 @@ export default function BentoFeatures() {
         </div>
 
         {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 auto-rows-[250px] lg:auto-rows-[300px]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 md:auto-rows-[280px] lg:auto-rows-[320px]">
           
           {/* Large Card: AI Safety */}
           <div className="md:col-span-2 row-span-1 md:row-span-2 rounded-[2.5rem] p-8 lg:p-12 bg-linear-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] shadow-2xl relative overflow-hidden group flex flex-col justify-between h-full">

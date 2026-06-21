@@ -33,13 +33,13 @@ const Hero = () => {
           </p>
 
           {/* Action Buttons */}
-          <div className="mt-12 flex flex-wrap gap-4 justify-center lg:justify-start">
+          <div className="mt-10 sm:mt-12 flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto">
             <Link 
               href="/register?role=patient" 
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-[hsl(var(--color-primary))] text-white font-bold shadow-xl shadow-[hsl(var(--color-primary)/0.25)] hover:-translate-y-0.5 hover:shadow-2xl transition-all duration-300"
             >
               Register as Patient
-              <LuArrowRight className="h-5 w-5" />
+              <LuArrowRight className="h-5 w-5 shrink-0" />
             </Link>
             
             <Link 
@@ -47,14 +47,14 @@ const Hero = () => {
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] border-2 border-[hsl(var(--color-text-muted)/0.1)] font-bold hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] transition-all duration-300 shadow-sm"
             >
               Join as Doctor
-              <LuStethoscope className="h-5 w-5" />
+              <LuStethoscope className="h-5 w-5 shrink-0" />
             </Link>
           </div>
         </div>
 
         {/* Right Content - Visuals */}
-        <div className="relative w-full flex justify-center lg:justify-end">
-          <div className="relative w-full max-w-xl aspect-4/5 lg:aspect-square">
+        <div className="relative w-full flex justify-center lg:justify-end mt-8 lg:mt-0">
+          <div className="relative w-full max-w-md sm:max-w-xl aspect-4/5 lg:aspect-square">
             {/* Background Glow */}
             <div className="absolute -inset-4 bg-linear-to-tr from-[hsl(var(--color-primary)/0.2)] to-[hsl(var(--color-secondary)/0.2)] blur-3xl rounded-full opacity-50" />
             
@@ -64,20 +64,20 @@ const Hero = () => {
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 600px"
-              className="object-cover rounded-4xl shadow-2xl relative z-10 border border-white/20"
+              className="object-cover rounded-3xl sm:rounded-4xl shadow-2xl relative z-10 border border-white/20"
             />
 
             {/* Floating Activity Card */}
-            <div className="absolute bottom-8 -left-4 sm:-left-8 bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-2xl p-5 flex items-center gap-4 z-20 border border-[hsl(var(--color-text-muted)/0.1)] animate-bounce-slow">
-              <div className="h-12 w-12 rounded-xl bg-gradient-doctor text-white flex items-center justify-center shrink-0 shadow-lg">
-                <LuActivity className="h-6 w-6" />
+            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:bottom-8 sm:-left-8 bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-2xl p-4 sm:p-5 flex items-center gap-3 sm:gap-4 z-20 border border-[hsl(var(--color-text-muted)/0.1)] animate-bounce-slow w-[90%] sm:w-auto max-w-[300px] sm:max-w-none">
+              <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-gradient-doctor text-white flex items-center justify-center shrink-0 shadow-lg">
+                <LuActivity className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>
-              <div className="min-w-35">
-                <p className="text-sm font-black text-[hsl(var(--color-text))] uppercase tracking-tight">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs sm:text-sm font-black text-[hsl(var(--color-text))] uppercase tracking-tight truncate">
                   Vitals Synced
                 </p>
-                <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase opacity-60">Real-time update</p>
-                <div className="mt-3 h-1.5 w-full rounded-full bg-[hsl(var(--color-bg-soft))] overflow-hidden">
+                <p className="text-[9px] sm:text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase opacity-60">Real-time update</p>
+                <div className="mt-2 sm:mt-3 h-1.5 w-full rounded-full bg-[hsl(var(--color-bg-soft))] overflow-hidden">
                   <div className="h-full w-3/4 rounded-full bg-linear-to-r from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))]" />
                 </div>
               </div>
