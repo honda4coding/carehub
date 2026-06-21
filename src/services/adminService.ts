@@ -1,7 +1,7 @@
 import { fetchClient } from "@/services/fetchClient";
 import { GetUsersParams, GetUsersResponse } from "@/types/user";
 import { DoctorApprovalStatus, GetDoctorsResponse, GetPendingDoctorsResponse } from "@/types/doctor";
-import { GetDashboardData } from "@/types/admin";
+import { GetDashboardData, MonthlyStats, DailyStats, AnalyticsData } from "@/types/admin";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AdminProfile {
@@ -49,6 +49,19 @@ export const adminService = {
 
   getDashboard: (): Promise<GetDashboardData> => 
     fetchClient.get("/admin/dashboard"),
+
+  getMonthlyStats: (year?: number): Promise<{ data: MonthlyStats[] }> =>
+    fetchClient.get("/admin/stats/monthly", { params: year ? { year: String(year) } : {} }),
+
+  getDailyStats: (): Promise<{ data: DailyStats[] }> =>
+    fetchClient.get("/admin/stats/daily"),
+
+  getAnalyticsData: (startDate?: string, endDate?: string): Promise<{ data: AnalyticsData }> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admin/stats/analytics", { params });
+  },
 
   
   /** GET /admin/doctors?status=...Returns a flat (non-paginated) array of merged user+doctorDetails objects.*/

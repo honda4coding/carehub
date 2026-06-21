@@ -349,31 +349,28 @@ const [sessions, setSessions] = useState<Session[]>([]);
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen relative">
+    <div className="flex flex-col flex-1 min-h-screen relative min-w-0">
       {/* Header */}
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between">
-        <div>
-          <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
+        <div className="min-w-0">
+          <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 truncate">
             Doctor Workspace
           </h1>
-          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0 truncate">
             Welcome back, Dr. {user?.name || (user as any)?.fullName || "Doctor"}
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
             <LuBell className="text-[15px]" />
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
-          </button>
-          <button className="hidden sm:flex w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
-            <IoIosHelpCircleOutline className="text-[15px]" />
           </button>
         </div>
       </header>
 
       {/* Content */}
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 p-4 md:p-6 overflow-x-hidden overflow-y-auto min-w-0 flex flex-col gap-4">
         
         <DoctorActions 
           searchQuery={searchQuery}

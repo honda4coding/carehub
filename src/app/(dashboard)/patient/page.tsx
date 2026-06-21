@@ -91,59 +91,34 @@ export default function PatientDashboard() {
 
       // 2. Fetch timeline
       try {
-        const headers = authHeaders();
-        const [medRes, presRes] = await Promise.allSettled([
-          axios.get(`${BASE_URL}/medical-history/${patientId}`, { headers }),
-          axios.get(`${BASE_URL}/prescrption/patient/${patientId}`, { headers }),
-        ]);
+        const { data } = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
+          headers: authHeaders(),
+        });
 
         const entries: TimelineEntry[] = [];
-
-        if (medRes.status === "fulfilled") {
-          const records = medRes.value.data?.data ?? medRes.value.data ?? [];
-          const arr = Array.isArray(records) ? records : records._id ? [records] : [];
-          arr.forEach((r: any) => {
-            entries.push({
-              id: `med-${r._id}`,
-              rawDate: new Date(r.createdAt ?? r.date ?? Date.now()),
-              date: formatDate(r.createdAt ?? r.date),
-              doctorName:
-                r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
-              specialty:
-                r.specialty ?? r.doctorId?.specialization ?? "General",
-              chiefComplaint: r.chiefComplaint ?? r.complaint ?? "—",
-              diagnosis: r.diagnosis ?? "—",
-              clinicalNotes: r.clinicalNotes ?? r.notes ?? "—",
-              prescriptions: (r.prescriptions ?? []).map((p: any) => ({
-                medication: p.medication ?? p.name ?? "—",
-                dosage: p.dosage ?? "—",
-                frequency: p.frequency ?? "—",
-              })),
-              rawRecord: r,
-            });
+        const records = data?.data ?? data ?? [];
+        const arr = Array.isArray(records) ? records : records._id ? [records] : [];
+        
+        arr.forEach((r: any) => {
+          entries.push({
+            id: `med-${r._id}`,
+            rawDate: new Date(r.createdAt ?? r.date ?? Date.now()),
+            date: formatDate(r.createdAt ?? r.date),
+            doctorName:
+              r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
+            specialty:
+              r.specialty ?? r.doctorId?.specialization ?? "General",
+            chiefComplaint: r.chiefComplaint ?? r.complaint ?? "—",
+            diagnosis: r.diagnosis ?? "—",
+            clinicalNotes: r.clinicalNotes ?? r.notes ?? "—",
+            prescriptions: (r.prescriptions ?? []).map((p: any) => ({
+              medication: p.medication ?? p.name ?? "—",
+              dosage: p.dosage ?? "—",
+              frequency: p.frequency ?? "—",
+            })),
+            rawRecord: r,
           });
-        } else showToast("Could not load medical history");
-
-        if (presRes.status === "fulfilled") {
-          (presRes.value.data?.data ?? presRes.value.data ?? []).forEach((r: any) => {
-            entries.push({
-              id:             `pres-${r._id}`,
-              rawDate:        new Date(r.createdAt ?? Date.now()),
-              date:           formatDate(r.createdAt),
-              doctorName:     r.doctorId?.fullName ?? r.doctorId?.userName ?? "Doctor",
-              specialty:      r.doctorId?.specialization ?? "General",
-              chiefComplaint: r.chiefComplaint ?? "Prescription",
-              diagnosis:      r.diagnosis ?? "—",
-              clinicalNotes:  r.notes ?? "—",
-              prescriptions:  (r.medications ?? r.prescriptions ?? []).map((p: any) => ({
-                medication: p.medication ?? p.name ?? "—",
-                dosage:     p.dosage ?? "—",
-                frequency:  p.frequency ?? "—",
-              })),
-              rawRecord: r,
-            });
-          });
-        } else showToast("Could not load prescriptions");
+        });
 
         setTimeline(entries.sort((a, b) => b.rawDate.getTime() - a.rawDate.getTime()));
       } catch (err: any) {

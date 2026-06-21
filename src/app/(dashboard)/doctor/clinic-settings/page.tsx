@@ -195,54 +195,94 @@ export default function ClinicManagementPage() {
                 </button>
               </div>
 
-              <div className="overflow-x-auto border border-[hsl(var(--color-border))] rounded-xl">
-                <table className="w-full text-left">
-                  <thead className="bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))]">
-                    <tr>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Service Name</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Price (EGP)</th>
-                      <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))] text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {services.map((service, index) => (
-                      <tr key={service.id} className="border-b border-[hsl(var(--color-border))] last:border-0 hover:bg-[hsl(var(--color-bg-soft)/0.5)]">
-                        <td className="px-4 py-3">
-                          <input 
-                            type="text" 
-                            value={service.name}
-                            onChange={(e) => {
-                              const newSvc = [...services];
-                              newSvc[index].name = e.target.value;
-                              setServices(newSvc);
-                            }}
-                            className="bg-transparent border-0 outline-none text-[13px] font-bold text-[hsl(var(--color-text))] w-full"
-                          />
-                        </td>
-                        <td className="px-4 py-3">
-                          <div className="flex items-center gap-1">
-                            <span className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
+              <div className="w-full">
+                {/* Mobile View: Cards */}
+                <div className="md:hidden flex flex-col gap-3 mt-2">
+                  {services.map((service, index) => (
+                    <div key={service.id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Service Name</span>
+                        <button className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] p-1 rounded-md transition-colors bg-[hsl(var(--color-danger)/0.05)] hover:bg-[hsl(var(--color-danger)/0.1)]">
+                          <LuTrash2 className="text-[14px]" />
+                        </button>
+                      </div>
+                      <input 
+                        type="text" 
+                        value={service.name}
+                        onChange={(e) => {
+                          const newSvc = [...services];
+                          newSvc[index].name = e.target.value;
+                          setServices(newSvc);
+                        }}
+                        className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] outline-none text-[13px] font-bold text-[hsl(var(--color-text))] w-full px-3 py-2 rounded-lg focus:border-primary"
+                      />
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Price (EGP):</span>
+                        <input 
+                          type="number" 
+                          value={service.price}
+                          onChange={(e) => {
+                            const newSvc = [...services];
+                            newSvc[index].price = e.target.value;
+                            setServices(newSvc);
+                          }}
+                          className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] outline-none text-[13px] font-bold text-[hsl(var(--color-text))] flex-1 px-3 py-2 rounded-lg focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop View: Table */}
+                <div className="hidden md:block overflow-x-auto border border-[hsl(var(--color-border))] rounded-xl">
+                  <table className="w-full text-left">
+                    <thead className="bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))]">
+                      <tr>
+                        <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Service Name</th>
+                        <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Price (EGP)</th>
+                        <th className="px-4 py-3 text-[11px] font-bold uppercase text-[hsl(var(--color-text-muted))] text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {services.map((service, index) => (
+                        <tr key={service.id} className="border-b border-[hsl(var(--color-border))] last:border-0 hover:bg-[hsl(var(--color-bg-soft)/0.5)]">
+                          <td className="px-4 py-3">
                             <input 
-                              type="number" 
-                              value={service.price}
+                              type="text" 
+                              value={service.name}
                               onChange={(e) => {
                                 const newSvc = [...services];
-                                newSvc[index].price = e.target.value;
+                                newSvc[index].name = e.target.value;
                                 setServices(newSvc);
                               }}
-                              className="bg-transparent border-0 outline-none text-[13px] font-bold text-[hsl(var(--color-text))] w-20"
+                              className="bg-transparent border-0 outline-none text-[13px] font-bold text-[hsl(var(--color-text))] w-full"
                             />
-                          </div>
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <button className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] p-1.5 rounded-lg transition-colors">
-                            <LuTrash2 className="text-[14px]" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                          </td>
+                          <td className="px-4 py-3">
+                            <div className="flex items-center gap-1">
+                              <span className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
+                              <input 
+                                type="number" 
+                                value={service.price}
+                                onChange={(e) => {
+                                  const newSvc = [...services];
+                                  newSvc[index].price = e.target.value;
+                                  setServices(newSvc);
+                                }}
+                                className="bg-transparent border-0 outline-none text-[13px] font-bold text-[hsl(var(--color-text))] w-20"
+                              />
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <button className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] p-1.5 rounded-lg transition-colors">
+                              <LuTrash2 className="text-[14px]" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
 
             </div>

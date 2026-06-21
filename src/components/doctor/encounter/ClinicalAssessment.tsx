@@ -66,14 +66,14 @@ export default function ClinicalAssessment({
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
-      <div className="flex items-center justify-between mb-5">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-          <LuClipboardList className="text-primary text-xl" /> Clinical Assessment
+          <LuClipboardList className="text-primary text-xl shrink-0" /> Clinical Assessment
         </h2>
         <button 
           onClick={() => setIsAssessmentMode(false)} 
-          className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 no-print border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-soft))] transition-colors"
+          className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 no-print border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-soft))] transition-colors w-fit"
         >
           <LuX /> Cancel Assessment
         </button>
@@ -81,17 +81,17 @@ export default function ClinicalAssessment({
       
       <div className="space-y-5">
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Chief Complaints / Symptoms</label>
             <button 
               onClick={() => startListening("symptoms")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all w-fit ${
                 listeningTo === "symptoms" 
                   ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
                   : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
               }`}
             >
-              <LuMic className={listeningTo === "symptoms" ? "animate-bounce" : ""} />
+              <LuMic className={listeningTo === "symptoms" ? "animate-bounce shrink-0" : "shrink-0"} />
               {listeningTo === "symptoms" ? "Listening..." : "Dictate"}
             </button>
           </div>
@@ -104,14 +104,14 @@ export default function ClinicalAssessment({
         </div>
         
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
             <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Primary Diagnosis</label>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[hsl(var(--color-primary)/0.1)] text-primary hover:bg-primary hover:text-white border border-transparent hover:border-primary/20"
               >
-                <LuWand /> AI Suggest
+                <LuWand className="shrink-0" /> AI Suggest
               </button>
               <button 
                 onClick={() => startListening("diagnosis")}
@@ -121,7 +121,7 @@ export default function ClinicalAssessment({
                     : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
                 }`}
               >
-                <LuMic className={listeningTo === "diagnosis" ? "animate-bounce" : ""} />
+                <LuMic className={listeningTo === "diagnosis" ? "animate-bounce shrink-0" : "shrink-0"} />
                 {listeningTo === "diagnosis" ? "Listening..." : "Dictate"}
               </button>
             </div>

@@ -20,23 +20,10 @@ export default function PatientHeader({ fullName, searchTerm, onSearch }: Props)
         </p>
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="relative hidden sm:flex">
-          <LuSearch className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[13px] text-[hsl(var(--color-text-muted))]" />
-          <input
-            type="text"
-            placeholder="Search timeline..."
-            value={searchTerm}
-            onChange={(e) => onSearch(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[12px] rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none w-[200px] focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
-          />
-        </div>
+      <div className="flex items-center gap-2 shrink-0">
         <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-all">
           <LuBell className="text-[15px]" />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--color-primary))]" />
-        </button>
-        <button className="hidden sm:flex w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] items-center justify-center hover:bg-[hsl(var(--color-bg-soft))] transition-all">
-          <IoIosHelpCircleOutline className="text-[15px]" />
         </button>
       </div>
     </header>

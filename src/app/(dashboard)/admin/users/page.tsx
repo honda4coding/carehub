@@ -30,6 +30,14 @@ const ROLE_OPTIONS: { label: string; value: UserRole | "" }[] = [
   { label: "Admin", value: "admin" },
 ];
 
+const STATUS_OPTIONS: { label: string; value: UserStatus | "" }[] = [
+  { label: "All Statuses", value: "" },
+  { label: "Active", value: "active" },
+  { label: "Pending", value: "pending" },
+  { label: "Blocked", value: "blocked" },
+  { label: "Rejected", value: "rejected" },
+];
+
 // Badge configs (matches admin/page.tsx patterns)
 const statusConfig: Record<UserStatus, { style: string; label: string }> = {
   active: {
@@ -198,6 +206,7 @@ export default function AdminUserManagementPage() {
   // Filters
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<UserRole | "">("");
+  const [statusFilter, setStatusFilter] = useState<UserStatus | "">("");
   const [page, setPage] = useState(1);
 
   // row action loading { userId: boolean }
@@ -220,7 +229,7 @@ export default function AdminUserManagementPage() {
 
   useEffect(() => {
     setPage(1);
-  }, [roleFilter]);
+  }, [roleFilter, statusFilter]);
 
   // useCallback ==> to avoid creating a new copy of the function in every render
   const fetchUsers = useCallback(async () => {
@@ -231,6 +240,7 @@ export default function AdminUserManagementPage() {
         page,
         limit: PAGE_SIZE,
         ...(roleFilter ? { role: roleFilter } : {}),
+        ...(statusFilter ? { status: statusFilter } : {}),
       });
       setUsers(res.data.users);
       setPagination(res.data.pagination);
@@ -346,6 +356,11 @@ export default function AdminUserManagementPage() {
                 Filtered: {roleFilter}
               </span>
             )}
+            {statusFilter && (
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))]">
+                Status: {statusFilter}
+              </span>
+            )}
           </div>
         )}
 
@@ -356,37 +371,60 @@ export default function AdminUserManagementPage() {
             <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
               All Users
             </p>
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto mt-2 sm:mt-0">
               {/* Mobile search */}
-              <div className="relative flex items-center sm:hidden">
+              <div className="relative flex items-center sm:hidden flex-1 sm:flex-none">
                 <LuSearch className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
                 <input
                   type="text"
                   placeholder="Search…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-[130px] outline-none focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
+                  className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
                 />
               </div>
-              {/* Role filter */}
-              <div className="relative flex items-center">
-                <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
-                <select
-                  value={roleFilter}
-                  onChange={(e) =>
-                    setRoleFilter(e.target.value as UserRole | "")
-                  }
-                  className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors"
-                >
-                  {ROLE_OPTIONS.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
-                  ▾
-                </span>
+              {/* Role & Status filters */}
+              <div className="flex items-center gap-2 flex-1 sm:flex-none">
+                <div className="relative flex items-center w-full sm:w-auto">
+                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <select
+                    value={roleFilter}
+                    onChange={(e) =>
+                      setRoleFilter(e.target.value as UserRole | "")
+                    }
+                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                  >
+                    {ROLE_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                    ▾
+                  </span>
+                </div>
+                
+                {/* Status filter */}
+                <div className="relative flex items-center w-full sm:w-auto">
+                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <select
+                    value={statusFilter}
+                    onChange={(e) =>
+                      setStatusFilter(e.target.value as UserStatus | "")
+                    }
+                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                  >
+                    {STATUS_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                    ▾
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -409,115 +447,183 @@ export default function AdminUserManagementPage() {
 
           {/* Table — scrollable on mobile */}
           <div className="overflow-x-auto -mx-4 px-4">
-            <table className="w-full min-w-[600px]">
-              <thead>
-                <tr className="border-b border-[hsl(var(--color-border))]">
-                  {["User", "Email", "Role", "Status", "Joined", "Actions"].map(
-                    (h, i) => (
-                      <th
-                        key={h}
-                        className="pb-2.5 text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase tracking-[.07em] text-left pr-4"
-                        style={{ textAlign: i === 5 ? "right" : "left" }}
-                      >
-                        {h}
-                      </th>
-                    ),
-                  )}
-                </tr>
-              </thead>
-              <tbody>
-                {/* Loading */}
-                {isLoading &&
-                  Array.from({ length: 8 }).map((_, i) => (
-                    <SkeletonRow key={i} />
-                  ))}
-
-                {/* Empty */}
-                {!isLoading && !error && visible.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="py-16 text-center">
-                      <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
-                      <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-                        {debouncedSearch
-                          ? "No users match your search."
-                          : "No users found."}
-                      </p>
-                      {debouncedSearch && (
-                        <button
-                          onClick={() => setSearch("")}
-                          className="mt-2 text-[11px] font-bold text-primary hover:underline"
-                        >
-                          Clear search
-                        </button>
+                {/* Desktop Table View */}
+                <table className="w-full min-w-[600px] hidden lg:table">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--color-border))]">
+                      {["User", "Email", "Role", "Status", "Joined", "Actions"].map(
+                        (h, i) => (
+                          <th
+                            key={h}
+                            className="pb-3 text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase tracking-[.07em] text-left pr-4"
+                            style={{ textAlign: i === 5 ? "right" : "left" }}
+                          >
+                            {h}
+                          </th>
+                        ),
                       )}
-                    </td>
-                  </tr>
-                )}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Loading */}
+                    {isLoading &&
+                      Array.from({ length: 8 }).map((_, i) => (
+                        <SkeletonRow key={i} />
+                      ))}
 
-                {/* Rows */}
-                {!isLoading &&
-                  visible.map((user) => {
-                    const sc =
-                      statusConfig[user.status] ?? statusConfig.pending;
-                    const rc = roleConfig[user.role] ?? roleConfig.patient;
-                    return (
-                      <tr
-                        key={user._id}
-                        className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
-                      >
-                        {/* Name */}
-                        <td className="py-2.5 pr-4">
-                          <div className="flex items-center gap-2">
-                            <div
-                              className={`w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-black shrink-0 ${pickAvatar(user._id)}`}
-                            >
-                              {getAvatarChars(user.fullName)}
-                            </div>
-                            <p className="text-[12px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap">
-                              {user.fullName}
-                            </p>
-                          </div>
-                        </td>
-                        {/* Email */}
-                        <td className="py-2.5 pr-4 max-w-[170px]">
-                          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
-                            {user.email}
+                    {/* Empty */}
+                    {!isLoading && !error && visible.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="py-16 text-center">
+                          <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
+                          <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+                            {debouncedSearch
+                              ? "No users match your search."
+                              : "No users found."}
                           </p>
-                        </td>
-                        {/* Role badge */}
-                        <td className="py-2.5 pr-4">
-                          <span
-                            className={`inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${rc.style}`}
-                          >
-                            {rc.label}
-                          </span>
-                        </td>
-                        {/* Status badge */}
-                        <td className="py-2.5 pr-4">
-                          <span
-                            className={`inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${sc.style}`}
-                          >
-                            {sc.label}
-                          </span>
-                        </td>
-                        {/* Joined */}
-                        <td className="py-2.5 pr-4 text-[11px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                          {fmtDate(user.createdAt)}
-                        </td>
-                        {/* Actions */}
-                        <td className="py-2.5">
-                          <RowActions
-                            user={user}
-                            busy={!!actionBusy[user._id]}
-                            onActivate={handleActivate}
-                            onDeactivate={handleDeactivate}
-                          />
+                          {debouncedSearch && (
+                            <button
+                              onClick={() => setSearch("")}
+                              className="mt-2 text-[11px] font-bold text-primary hover:underline"
+                            >
+                              Clear search
+                            </button>
+                          )}
                         </td>
                       </tr>
-                    );
-                  })}
-              </tbody>
-            </table>
+                    )}
+
+                    {/* Rows */}
+                    {!isLoading &&
+                      visible.map((user) => {
+                        const sc = statusConfig[user.status] ?? statusConfig.pending;
+                        const rc = roleConfig[user.role] ?? roleConfig.patient;
+                        return (
+                          <tr
+                            key={user._id}
+                            className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                          >
+                            {/* Name */}
+                            <td className="py-3.5 pr-4">
+                              <div className="flex items-center gap-3">
+                                <div
+                                  className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 ${pickAvatar(user._id)}`}
+                                >
+                                  {getAvatarChars(user.fullName)}
+                                </div>
+                                <p className="text-[13px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap">
+                                  {user.fullName}
+                                </p>
+                              </div>
+                            </td>
+                            {/* Email */}
+                            <td className="py-3.5 pr-4 max-w-[170px]">
+                              <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
+                                {user.email}
+                              </p>
+                            </td>
+                            {/* Role badge */}
+                            <td className="py-3.5 pr-4">
+                              <span
+                                className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${rc.style}`}
+                              >
+                                {rc.label}
+                              </span>
+                            </td>
+                            {/* Status badge */}
+                            <td className="py-3.5 pr-4">
+                              <span
+                                className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${sc.style}`}
+                              >
+                                {sc.label}
+                              </span>
+                            </td>
+                            {/* Joined */}
+                            <td className="py-3.5 pr-4 text-[12px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                              {fmtDate(user.createdAt)}
+                            </td>
+                            {/* Actions */}
+                            <td className="py-3.5">
+                              <RowActions
+                                user={user}
+                                busy={!!actionBusy[user._id]}
+                                onActivate={handleActivate}
+                                onDeactivate={handleDeactivate}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+
+                {/* Mobile Card View */}
+                <div className="lg:hidden flex flex-col gap-4 py-2">
+                  {/* Loading */}
+                  {isLoading &&
+                    Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] h-32 animate-pulse" />
+                    ))}
+
+                  {/* Empty */}
+                  {!isLoading && !error && visible.length === 0 && (
+                    <div className="py-16 text-center">
+                      <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
+                      <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+                        {debouncedSearch ? "No users match your search." : "No users found."}
+                      </p>
+                    </div>
+                  )}
+
+                  {!isLoading &&
+                    visible.map((user) => {
+                      const sc = statusConfig[user.status] ?? statusConfig.pending;
+                      const rc = roleConfig[user.role] ?? roleConfig.patient;
+                      return (
+                        <div key={user._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+                          {/* Card Header: Avatar, Name, Role */}
+                          <div className="flex justify-between items-start mb-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-black shrink-0 ${pickAvatar(user._id)}`}>
+                                {getAvatarChars(user.fullName)}
+                              </div>
+                              <div>
+                                <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight">{user.fullName}</p>
+                                <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">{user.email}</p>
+                              </div>
+                            </div>
+                            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap shrink-0 ${rc.style}`}>
+                              {rc.label}
+                            </span>
+                          </div>
+                          
+                          {/* Card Body: Details */}
+                          <div className="flex items-center justify-between mb-4 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
+                            <div>
+                              <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Joined</p>
+                              <p className="font-semibold text-[hsl(var(--color-text))]">{fmtDate(user.createdAt)}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Status</p>
+                              <span className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${sc.style}`}>
+                                {sc.label}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Card Footer: Actions */}
+                          <div className="border-t border-[hsl(var(--color-border-soft))] pt-3 flex justify-end">
+                            <RowActions
+                              user={user}
+                              busy={!!actionBusy[user._id]}
+                              onActivate={handleActivate}
+                              onDeactivate={handleDeactivate}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                </div>
           </div>
 
           {/* Pagination */}

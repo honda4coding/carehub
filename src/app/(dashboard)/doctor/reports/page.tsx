@@ -110,46 +110,49 @@ export default function DoctorReportsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="flex items-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl shadow-[0_2px_8px_rgb(0,0,0,0.04)] overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all">
-            <div className="flex items-center px-3 py-2.5 bg-[hsl(var(--color-bg-soft))] border-r border-[hsl(var(--color-border))]">
-              <LuCalendarDays className="text-primary text-lg" />
-            </div>
-            <div className="flex items-center relative group">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
+            {/* Date Range Picker */}
+            <div className="flex items-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl shadow-[0_2px_8px_rgb(0,0,0,0.04)] overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all flex-1 min-w-0">
+              <div className="flex items-center px-2 sm:px-3 py-2.5 bg-[hsl(var(--color-bg-soft))] border-r border-[hsl(var(--color-border))]">
+                <LuCalendarDays className="text-primary text-base sm:text-lg shrink-0" />
+              </div>
               <input 
                 type="date" 
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-sm font-black text-[hsl(var(--color-text))] focus:outline-none px-3 py-2.5 w-[135px] hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100"
+                className="bg-transparent text-[11px] sm:text-sm font-black text-[hsl(var(--color-text))] focus:outline-none px-1 sm:px-3 py-2.5 flex-1 w-full min-w-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
               />
-            </div>
-            <div className="flex items-center px-3 text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border-x border-[hsl(var(--color-border))] h-full">
-              <span className="text-[10px] font-black uppercase tracking-widest opacity-70">To</span>
-            </div>
-            <div className="flex items-center relative group">
+              <div className="flex items-center px-1.5 sm:px-3 text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border-x border-[hsl(var(--color-border))] h-full">
+                <span className="text-[10px] font-black uppercase tracking-widest opacity-70">To</span>
+              </div>
               <input 
                 type="date" 
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-sm font-black text-[hsl(var(--color-text))] focus:outline-none px-3 py-2.5 w-[135px] hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:opacity-50 hover:[&::-webkit-calendar-picker-indicator]:opacity-100"
+                className="bg-transparent text-[11px] sm:text-sm font-black text-[hsl(var(--color-text))] focus:outline-none px-1 sm:px-3 py-2.5 flex-1 w-full min-w-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
               />
             </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              {(startDate || endDate) && (
+                <button 
+                  onClick={() => { setStartDate(""); setEndDate(""); }}
+                  className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-rose-500 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm shrink-0"
+                  title="Reset Filters"
+                >
+                  <LuRotateCcw className="text-lg" />
+                </button>
+              )}
+              <button 
+                onClick={handleExport}
+                className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-primary)/0.1)] hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm shrink-0 whitespace-nowrap"
+              >
+                <LuDownload className="text-lg" /> Export
+              </button>
+            </div>
           </div>
-          {(startDate || endDate) && (
-            <button 
-              onClick={() => { setStartDate(""); setEndDate(""); }}
-              className="flex items-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-rose-500 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm"
-              title="Reset Filters"
-            >
-              <LuRotateCcw className="text-lg" />
-            </button>
-          )}
-          <button 
-            onClick={handleExport}
-            className="flex items-center gap-2 bg-[hsl(var(--color-primary)/0.1)] hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm"
-          >
-            <LuDownload className="text-lg" /> Export
-          </button>
         </div>
       </header>
 

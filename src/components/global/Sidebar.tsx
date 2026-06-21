@@ -35,6 +35,7 @@ interface NavItem {
   href: string;
   icon: React.ReactNode;
   badge?: number;
+  subItems?: { label: string; href: string; icon: React.ReactNode }[];
 }
 
 interface NavSection {
@@ -47,13 +48,9 @@ const adminNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Dashboard", href: "/admin", icon: <LuLayoutDashboard /> },
+      { label: "Analytics", href: "/admin/analytics", icon: <FaSquarePollVertical /> },
       { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
-      {
-        label: "Appointments",
-        href: "/admin/appointments",
-        icon: <LuCalendarDays />,
-      },
       {
         label: "Notifications",
         href: "/admin/notifications",
@@ -69,12 +66,6 @@ const adminNav: NavSection[] = [
         href: "/admin/approvals",
         icon: <LuShieldCheck />,
       },
-      {
-        label: "Reports",
-        href: "/admin/reports",
-        icon: <FaSquarePollVertical />,
-      },
-      // { label: "Settings", href: "/admin/settings", icon: <LuSettings /> },
     ],
   },
 ];
@@ -84,20 +75,22 @@ const doctorNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Workspace", href: "/doctor", icon: <LuLayoutDashboard /> },
-      // {
-      //   label: "Appointments",
-      //   href: "/doctor/appointments",
-      //   icon: <LuCalendarDays />,
-      // },
       {
         label: "Appointments",
-        href: "/doctor/appointments/appointments",
+        href: "/doctor/appointments",
         icon: <LuCalendarDays />,
-      },
-      {
-        label: "My Schedule",
-        href: "/doctor/appointments/schedule",
-        icon: <LuSettings2 />,
+        subItems: [
+          {
+            label: "Appointments",
+            href: "/doctor/appointments/appointments",
+            icon: <LuCalendarDays className="text-sm" />,
+          },
+          {
+            label: "My Schedule",
+            href: "/doctor/appointments/schedule",
+            icon: <LuSettings2 className="text-sm" />,
+          },
+        ]
       },
       {
         label: "Patient Directory",
@@ -116,13 +109,6 @@ const doctorNav: NavSection[] = [
       },
     ],
   },
-  // {
-  //   title: "Account",
-  //   items: [
-  //     { label: "Profile", href: "/doctor/profile", icon: <LuUser /> },
-  //     { label: "Settings", href: "/doctor/settings", icon: <LuSettings /> },
-  //   ],
-  // },
 ];
 
 const patientNav: NavSection[] = [
@@ -200,11 +186,6 @@ const settingsSub: Record<
       label: "Profile",
       href: "/admin/profile",
       icon: <LuUser className="text-sm" />,
-    },
-    {
-      label: "Preferences",
-      href: "/admin/preferences",
-      icon: <LuSettings2 className="text-sm" />,
     },
     {
       label: "Security",
@@ -297,6 +278,68 @@ function SettingsGroup({
   );
 }
 
+function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
+  const pathname = usePathname();
+  const subItems = item.subItems ?? [];
+  const anyActive = subItems.some((i) => pathname.startsWith(i.href));
+
+  const [open, setOpen] = useState(anyActive);
+
+  return (
+    <div className="mb-0.5">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-[10px] text-[13px] font-semibold transition-all duration-150 ${
+          anyActive
+            ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]"
+            : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+        }`}
+      >
+        <span
+          className={`text-base ${anyActive ? "text-primary" : "text-[hsl(var(--color-text-muted)/0.7)]"}`}
+        >
+          {item.icon}
+        </span>
+        <span className="flex-1 text-left">{item.label}</span>
+        <LuChevronDown
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open && (
+        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
+          {subItems.map((sub) => {
+            const isActive = pathname.startsWith(sub.href);
+            return (
+              <Link
+                key={sub.href}
+                href={sub.href}
+                onClick={onClose}
+                className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-[12px] font-semibold transition-all duration-150 ${
+                  isActive
+                    ? "bg-[hsl(var(--color-primary)/0.12)] text-[hsl(var(--color-primary-strong))]"
+                    : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+                }`}
+              >
+                <span
+                  className={
+                    isActive
+                      ? "text-primary"
+                      : "text-[hsl(var(--color-text-muted)/0.6)]"
+                  }
+                >
+                  {sub.icon}
+                </span>
+                {sub.label}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
 //////////////////
 
 function SidebarContent({
@@ -343,7 +386,7 @@ function SidebarContent({
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-[hsl(var(--color-border))]">
-        <div className="flex items-center gap-3">
+        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black shadow-[0_4px_12px_hsl(var(--color-primary)/0.35)]">
             +
           </div>
@@ -355,7 +398,7 @@ function SidebarContent({
               {role} Portal
             </p>
           </div>
-        </div>
+        </Link>
         {/* Close btn — mobile only */}
         {onClose && (
           <button
@@ -375,6 +418,10 @@ function SidebarContent({
               {section.title}
             </p>
             {section.items.map((item) => {
+              if (item.subItems && item.subItems.length > 0) {
+                return <NavGroup key={item.href} item={item} onClose={onClose} />;
+              }
+
               const isActive =
                 item.href === `/${role}`
                   ? pathname === item.href
