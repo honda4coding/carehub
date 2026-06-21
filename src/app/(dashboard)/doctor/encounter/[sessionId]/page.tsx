@@ -440,26 +440,28 @@ export default function PatientDashboardPage() {
       <main className="print-area flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col">
         
         {/* Tab Navigation */}
-        <div className="flex items-center gap-2 mb-6 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-x-auto custom-scrollbar no-print w-fit mx-auto">
-          {[
-            { id: "profile", label: "Profile & Vitals", icon: LuUser },
-            { id: "history", label: "Medical History", icon: LuHistory },
-            { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
-            { id: "prescription", label: "Prescription", icon: LuPill }
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all whitespace-nowrap ${
-                activeTab === tab.id 
-                  ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm" 
-                  : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
-              }`}
-            >
-              <tab.icon className="text-lg" />
-              {tab.label}
-            </button>
-          ))}
+        <div className="mb-6 w-full no-print flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm w-full lg:w-auto">
+            {[
+              { id: "profile", label: "Profile & Vitals", icon: LuUser },
+              { id: "history", label: "Medical History", icon: LuHistory },
+              { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
+              { id: "prescription", label: "Prescription", icon: LuPill }
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)}
+                className={`flex items-center justify-center gap-2 px-3 md:px-5 py-2.5 rounded-xl text-[12px] md:text-sm font-bold transition-all flex-1 sm:flex-none min-w-[130px] sm:min-w-0 ${
+                  activeTab === tab.id 
+                    ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm" 
+                    : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
+                }`}
+              >
+                <tab.icon className="text-base md:text-lg shrink-0" />
+                <span className="truncate">{tab.label}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Tab Content Areas */}

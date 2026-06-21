@@ -296,16 +296,16 @@ export default function DoctorSchedulePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
             <LuSettings2 />
           </div>
           <div>
-            <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
               My Schedule
             </h1>
-            <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
               Set your weekly hours and generate bookable slots
             </p>
           </div>
@@ -356,15 +356,13 @@ export default function DoctorSchedulePage() {
                       <div className="flex items-center gap-3 px-4 py-3">
                         <button
                           onClick={() => toggleDay(day)}
-                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all duration-150 ${
+                          className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-300 ${
                             isSelected
-                              ? "bg-primary border-primary shadow-[0_2px_6px_hsl(var(--color-primary)/0.4)]"
-                              : "border-[hsl(var(--color-border))] hover:border-primary"
+                              ? "bg-[hsl(var(--color-primary)/0.15)] border-primary text-primary"
+                              : "border-[hsl(var(--color-border-strong))] bg-transparent"
                           }`}
                         >
-                          {isSelected && (
-                            <LuCheck className="text-white text-[11px]" />
-                          )}
+                          {isSelected && <LuCheck className="text-[14px] font-black" />}
                         </button>
 
                         <span
@@ -469,10 +467,10 @@ export default function DoctorSchedulePage() {
                                       },
                                     }))
                                   }
-                                  className={`px-3 py-1 rounded-lg text-[11.5px] font-bold border transition-all duration-150 ${
+                                  className={`px-3.5 py-1.5 rounded-xl text-[12px] font-bold border transition-all duration-300 ${
                                     tc?.appointmentDuration === d
-                                      ? "bg-primary text-white border-primary"
-                                      : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:border-primary hover:text-primary"
+                                      ? "bg-primary text-white border-primary shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)] -translate-y-0.5"
+                                      : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:border-primary hover:text-primary hover:-translate-y-0.5 shadow-sm"
                                   }`}
                                 >
                                   {d} min
@@ -560,7 +558,7 @@ export default function DoctorSchedulePage() {
               <button
                 onClick={handleGenerate}
                 disabled={generating || selectedDays.size === 0}
-                className="w-full py-3 rounded-xl bg-primary text-white text-[13.5px] font-bold shadow-[0_4px_14px_hsl(var(--color-primary)/0.35)] hover:opacity-90 disabled:opacity-50 disabled:shadow-none transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-primary text-white text-[14px] font-bold shadow-[0_4px_14px_hsl(var(--color-primary)/0.35)] hover:opacity-90 hover:-translate-y-0.5 disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 transition-all flex items-center justify-center gap-2"
               >
                 <LuRefreshCw
                   className={`text-[14px] ${generating ? "animate-spin" : ""}`}
@@ -658,24 +656,27 @@ export default function DoctorSchedulePage() {
                         {/* Expanded list — the individual slots for this day */}
                         {isOpen && (
                           <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] px-4 py-3">
-                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 gap-2">
                               {group.slots.map((slot) => (
                                 <div
-                                  key={slot._id}
-                                  className="flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))]"
-                                >
-                                  <span className="text-[11.5px] font-bold text-[hsl(var(--color-text))]">
-                                    {slotTimeRangeLabel(slot)}
-                                  </span>
-                                  <button
-                                    onClick={() => handleDeleteSlot(slot._id)}
-                                    disabled={deletingSlot === slot._id}
-                                    className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors disabled:opacity-40 shrink-0"
-                                    title="Delete this slot"
+                                    key={slot._id}
+                                    className="group flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3.5 py-3 hover:border-primary hover:shadow-[0_2px_8px_hsl(var(--color-primary)/0.15)] hover:-translate-y-0.5 transition-all duration-300"
                                   >
-                                    <LuTrash2 className="text-[12px]" />
-                                  </button>
-                                </div>
+                                    <div className="flex items-center gap-2">
+                                      <LuClock className="text-primary text-[13px]" />
+                                      <span className="text-[12.5px] font-bold text-[hsl(var(--color-text))]">
+                                        {slotTimeRangeLabel(slot)}
+                                      </span>
+                                    </div>
+                                    <button
+                                      onClick={() => handleDeleteSlot(slot._id)}
+                                      disabled={deletingSlot === slot._id}
+                                      className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] p-1.5 rounded-md transition-all duration-300 disabled:opacity-40 shrink-0"
+                                      title="Delete this slot"
+                                    >
+                                      <LuTrash2 className="text-[14px]" />
+                                    </button>
+                                  </div>
                               ))}
                             </div>
                           </div>

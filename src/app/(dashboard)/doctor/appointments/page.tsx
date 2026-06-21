@@ -64,24 +64,26 @@ function SectionToggle({
   onChange: (s: Section) => void;
 }) {
   return (
-    <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))]">
+    <div className="inline-flex items-center bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm shrink-0">
       {(["appointments", "schedule"] as Section[]).map((s) => {
         const isActive = s === active;
         return (
           <button
             key={s}
             onClick={() => onChange(s)}
-            className={`px-4 py-2 rounded-[9px] text-[12.5px] font-bold transition-all duration-200 flex items-center gap-1.5 ${
+            className={`relative px-5 py-2.5 rounded-xl text-[13px] font-bold transition-all duration-300 flex items-center gap-2 overflow-hidden ${
               isActive
-                ? "bg-primary text-white shadow-[0_2px_8px_hsl(var(--color-primary)/0.35)]"
-                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))]"
+                ? "text-primary shadow-sm"
+                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
             }`}
           >
+            {isActive && <div className="absolute inset-0 bg-[hsl(var(--color-primary)/0.1)] rounded-xl -z-10" />}
             {s === "appointments" ? (
-              <><LuUsers className="text-[13px]" />Appointments</>
+              <LuUsers className={`text-[14px] ${isActive ? "" : "opacity-70"}`} />
             ) : (
-              <><LuSettings2 className="text-[13px]" />My Schedule</>
+              <LuSettings2 className={`text-[14px] ${isActive ? "" : "opacity-70"}`} />
             )}
+            <span className="relative z-10">{s === "appointments" ? "Appointments" : "My Schedule"}</span>
           </button>
         );
       })}
@@ -106,17 +108,17 @@ function ApptTab({
   return (
     <button
       onClick={onClick}
-      className={`relative px-4 py-2.5 rounded-[10px] text-[12.5px] font-bold transition-all duration-200 flex items-center gap-2 ${
+      className={`relative flex-1 sm:flex-none min-w-[110px] sm:min-w-0 px-2 sm:px-5 py-2.5 rounded-xl text-[11.5px] sm:text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
         isActive
-          ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary-strong))] shadow-sm ring-1 ring-[hsl(var(--color-border))]"
-          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+          ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm"
+          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))]"
       }`}
     >
       {label}
       <span
-        className={`text-[10.5px] font-bold min-w-[20px] px-1.5 py-0.5 rounded-full transition-colors ${
+        className={`text-[10px] font-black min-w-[22px] px-1.5 py-0.5 rounded-full transition-colors ${
           isActive
-            ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
+            ? "bg-primary text-white shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
         }`}
       >
@@ -143,34 +145,36 @@ function TodayCard({
     (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] border-l-[3px] border-l-primary rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all duration-200">
+    <div className="group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer active:scale-[0.99]">
+      <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-gradient-to-b from-primary to-[hsl(var(--color-primary-strong))] rounded-l-2xl" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--color-primary)/0.03)] to-transparent pointer-events-none" />
       {/* Avatar */}
-      <div className="relative w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-white text-[13px] font-black shrink-0 ring-2 ring-[hsl(var(--color-bg-surface))] shadow-sm">
+      <div className="relative w-12 h-12 rounded-full bg-gradient-secondary flex items-center justify-center text-white text-[14px] font-black shrink-0 shadow-[0_2px_10px_hsl(var(--color-secondary)/0.3)] z-10">
         {initialsOf(patient?.fullName)}
       </div>
 
       {/* Info */}
-      <div className="flex-1 min-w-0">
-        <p className="text-[14px] font-bold text-[hsl(var(--color-text))] truncate">
+      <div className="flex-1 min-w-0 z-10">
+        <p className="text-[15px] font-black text-[hsl(var(--color-text))] truncate">
           {patient?.fullName ?? "Patient"}
         </p>
-        <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+        <p className="text-[12px] font-bold text-[hsl(var(--color-primary))] flex items-center gap-1.5 mt-1">
           <LuClock className="text-[11px]" />
           {timeLabel}
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2.5 shrink-0">
+      <div className="flex items-center gap-3 shrink-0 z-10">
         <StatusBadge status={status} />
         {status === "upcoming" && (
           <button
             onClick={() => onComplete(appt._id)}
             disabled={completing}
-            className="flex items-center gap-1.5 text-[11.5px] font-bold px-3.5 py-1.5 rounded-lg bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] hover:bg-[hsl(var(--color-success))] hover:text-white disabled:opacity-50 transition-colors duration-150"
+            className="flex items-center gap-1.5 text-[12px] font-bold px-4 py-2 rounded-xl bg-[hsl(var(--color-success)/0.1)] text-[hsl(var(--color-success))] hover:bg-[hsl(var(--color-success))] hover:text-white shadow-sm hover:shadow-[0_4px_12px_hsl(var(--color-success)/0.3)] hover:-translate-y-0.5 disabled:opacity-50 transition-all duration-300"
           >
-            <LuCheck className="text-[12px]" />
-            Done
+            <LuCheck className="text-[14px]" />
+            Complete
           </button>
         )}
       </div>
@@ -189,27 +193,27 @@ function ApptRow({ appt }: { appt: Appointment }) {
 
   return (
     <div
-      className={`group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${
-        dimmed ? "opacity-60" : ""
+      className={`group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-300 hover:shadow-md hover:-translate-y-1 cursor-pointer ${
+        dimmed ? "opacity-60 saturate-50" : ""
       }`}
     >
       {/* Date stub */}
       <div
-        className={`w-[88px] sm:w-[100px] shrink-0 flex flex-col items-center justify-center gap-0.5 py-3 border-r-2 border-dashed border-[hsl(var(--color-border-soft))] ${
+        className={`w-[90px] sm:w-[110px] shrink-0 flex flex-col items-center justify-center gap-1 py-4 border-r-2 border-dashed border-[hsl(var(--color-border))] relative z-10 ${
           dimmed
             ? "bg-[hsl(var(--color-bg-soft))]"
-            : "bg-[hsl(var(--color-primary)/0.07)]"
+            : "bg-[hsl(var(--color-primary)/0.05)]"
         }`}
       >
         <span
-          className={`text-[10px] font-bold uppercase tracking-wider ${
+          className={`text-[11px] font-black uppercase tracking-widest ${
             dimmed ? "text-[hsl(var(--color-text-muted))]" : "text-primary"
           }`}
         >
           {new Date(appt.appointmentDate).toLocaleDateString("en-US", { month: "short" })}
         </span>
         <span
-          className={`text-[27px] font-black leading-none ${
+          className={`text-[28px] font-black leading-none tracking-tighter ${
             dimmed
               ? "text-[hsl(var(--color-text-muted))]"
               : "text-[hsl(var(--color-text))]"
@@ -218,26 +222,26 @@ function ApptRow({ appt }: { appt: Appointment }) {
           {new Date(appt.appointmentDate).getDate()}
         </span>
         <span
-          className={`text-[10px] font-bold mt-0.5 ${
-            dimmed ? "text-[hsl(var(--color-text-muted))]" : "text-primary"
+          className={`text-[11px] font-bold mt-1 ${
+            dimmed ? "text-[hsl(var(--color-text-muted))]" : "text-[hsl(var(--color-primary-strong))]"
           }`}
         >
           {isoTo12Hour(appt.startDateTime)}
         </span>
         {/* Punch holes */}
-        <span className="absolute -right-[8px] -top-[8px] w-4 h-4 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
-        <span className="absolute -right-[8px] -bottom-[8px] w-4 h-4 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
+        <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
+        <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
       </div>
 
       {/* Body */}
-      <div className="flex-1 p-3.5 sm:p-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white text-[13px] font-black shrink-0 ring-2 ring-[hsl(var(--color-bg-surface))] shadow-sm">
+      <div className="flex-1 p-4 sm:p-5 flex items-center justify-between gap-4 flex-wrap bg-gradient-to-r from-[hsl(var(--color-bg-surface))] to-transparent">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-12 h-12 rounded-full bg-gradient-secondary flex items-center justify-center text-white text-[14px] font-black shrink-0 shadow-sm">
             {initialsOf(patient?.fullName)}
           </div>
           <div className="min-w-0">
             <p
-              className={`text-[14px] font-bold truncate ${
+              className={`text-[15px] font-black truncate ${
                 dimmed
                   ? "text-[hsl(var(--color-text-muted))] line-through"
                   : "text-[hsl(var(--color-text))]"
@@ -245,8 +249,8 @@ function ApptRow({ appt }: { appt: Appointment }) {
             >
               {patient?.fullName ?? "Patient"}
             </p>
-            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate flex items-center gap-1 mt-0.5">
-              <LuClock className="text-[10px]" />
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] truncate flex items-center gap-1.5 mt-1">
+              <LuClock className="text-[11px] text-primary" />
               {timeLabel}
             </p>
           </div>
@@ -268,17 +272,20 @@ function SlotChip({
   deleting: boolean;
 }) {
   return (
-    <div className="flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-2.5 hover:border-[hsl(var(--color-text-muted)/0.3)] transition-colors duration-150">
-      <span className="text-[12.5px] font-bold text-[hsl(var(--color-text))]">
-        {slotTimeRangeLabel(slot)}
-      </span>
+    <div className="group flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3.5 py-3 hover:border-primary hover:shadow-[0_2px_8px_hsl(var(--color-primary)/0.15)] hover:-translate-y-0.5 transition-all duration-300">
+      <div className="flex items-center gap-2">
+        <LuClock className="text-primary text-[13px]" />
+        <span className="text-[12.5px] font-bold text-[hsl(var(--color-text))]">
+          {slotTimeRangeLabel(slot)}
+        </span>
+      </div>
       <button
         onClick={() => onDelete(slot._id)}
         disabled={deleting}
-        className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors disabled:opacity-40"
+        className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] p-1.5 rounded-md transition-all duration-300 disabled:opacity-40"
         title="Delete slot"
       >
-        <LuTrash2 className="text-[13px]" />
+        <LuTrash2 className="text-[14px]" />
       </button>
     </div>
   );
@@ -488,15 +495,15 @@ export default function DoctorAppointmentsPage() {
     <div className="flex flex-col flex-1 min-h-screen">
       {/* ── Header ── */}
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
             <LuCalendarDays />
           </div>
           <div>
-            <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
               Appointments
             </h1>
-            <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
               Manage your schedule and patient visits
             </p>
           </div>
@@ -512,11 +519,13 @@ export default function DoctorAppointmentsPage() {
         {section === "appointments" && (
           <>
             {/* Tab bar */}
-            <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] mb-6">
-              <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
-              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+            <div className="mb-6 w-full flex justify-center">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] w-full lg:w-auto">
+                <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
+                <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+                <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+                <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+              </div>
             </div>
 
             {apptLoading ? (
@@ -623,13 +632,13 @@ export default function DoctorAppointmentsPage() {
                     <button
                       key={d}
                       onClick={() => setDuration(d)}
-                      className={`px-3.5 py-1.5 rounded-lg text-[12px] font-bold border transition-all duration-150 ${
+                      className={`px-4 py-2 rounded-xl text-[12.5px] font-bold border-2 transition-all duration-300 active:scale-95 ${
                         duration === d
-                          ? "bg-primary text-white border-primary shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                          : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:border-primary hover:text-primary"
+                          ? "bg-primary text-white border-primary shadow-[0_4px_14px_hsl(var(--color-primary)/0.3)] -translate-y-0.5"
+                          : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary)/0.5)] hover:text-primary"
                       }`}
                     >
-                      {d} min
+                      {d} mins
                     </button>
                   ))}
                 </div>
@@ -645,28 +654,32 @@ export default function DoctorAppointmentsPage() {
                   return (
                     <div
                       key={day}
-                      className={`border rounded-xl overflow-hidden transition-all duration-150 ${
+                      className={`border-2 rounded-2xl overflow-hidden transition-all duration-300 ${
                         isSelected
-                          ? "border-primary bg-[hsl(var(--color-primary)/0.04)]"
-                          : "border-[hsl(var(--color-border))]"
+                          ? "border-primary bg-gradient-to-r from-[hsl(var(--color-primary)/0.05)] to-transparent shadow-sm"
+                          : "border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-border-strong))]"
                       }`}
                     >
                       {/* Day row */}
-                      <div className="flex items-center gap-3 px-4 py-3">
+                      <div className="flex items-center gap-4 px-5 py-4 cursor-pointer" onClick={(e) => {
+                         if ((e.target as HTMLElement).tagName !== 'BUTTON' && (e.target as HTMLElement).tagName !== 'svg' && (e.target as HTMLElement).tagName !== 'path') {
+                           toggleDay(day);
+                         }
+                      }}>
                         {/* Checkbox */}
                         <button
                           onClick={() => toggleDay(day)}
-                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 transition-all duration-150 ${
+                          className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-300 ${
                             isSelected
-                              ? "bg-primary border-primary shadow-[0_2px_6px_hsl(var(--color-primary)/0.4)]"
-                              : "border-[hsl(var(--color-border))] hover:border-primary"
+                              ? "bg-[hsl(var(--color-primary)/0.15)] border-primary text-primary"
+                              : "border-[hsl(var(--color-border-strong))] bg-transparent"
                           }`}
                         >
-                          {isSelected && <LuCheck className="text-white text-[11px]" />}
+                          {isSelected && <LuCheck className="text-[14px] font-black" />}
                         </button>
 
                         <span
-                          className={`text-[13px] font-bold flex-1 ${
+                          className={`text-[14px] font-black flex-1 transition-colors duration-300 ${
                             isSelected
                               ? "text-[hsl(var(--color-text))]"
                               : "text-[hsl(var(--color-text-muted))]"
@@ -678,63 +691,62 @@ export default function DoctorAppointmentsPage() {
                         {/* Time summary + expand */}
                         {isSelected && tc && (
                           <button
-                            onClick={() => setExpandedDay(isExpanded ? null : day)}
-                            className="flex items-center gap-1 text-[11.5px] font-semibold text-primary hover:text-primary-strong transition-colors"
+                            onClick={(e) => { e.stopPropagation(); setExpandedDay(isExpanded ? null : day); }}
+                            className="flex items-center gap-1.5 text-[12.5px] font-bold text-primary hover:text-primary-strong transition-colors bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary)/0.15)] px-3 py-1.5 rounded-lg"
                           >
+                            <LuClock className="text-[13px]" />
                             {tc.startTime} – {tc.endTime}
-                            {isExpanded ? (
-                              <LuChevronDown className="text-[12px]" />
-                            ) : (
-                              <LuChevronRight className="text-[12px]" />
-                            )}
+                            <LuChevronDown className={`text-[14px] transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
                           </button>
                         )}
                       </div>
 
                       {/* Expanded time picker */}
-                      {isSelected && isExpanded && (
-                        <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] px-4 py-3 flex items-end gap-3">
-                          <div className="flex-1">
-                            <label className="block text-[11px] font-bold text-[hsl(var(--color-text-muted))] mb-1">
-                              Start
-                            </label>
-                            <input
-                              type="time"
-                              value={tc?.startTime ?? "09:00"}
-                              onChange={(e) =>
-                                setTimeConfig((prev) => ({
-                                  ...prev,
-                                  [day]: { ...prev[day]!, startTime: e.target.value },
-                                }))
-                              }
-                              className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[13px] font-medium outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all"
-                            />
+                      <div className={`grid transition-all duration-300 ${isExpanded && isSelected ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
+                        <div className="overflow-hidden">
+                          <div className="border-t border-[hsl(var(--color-primary)/0.1)] bg-[hsl(var(--color-primary)/0.03)] px-5 py-4 flex flex-wrap sm:flex-nowrap items-end gap-3">
+                            <div className="flex-1 min-w-[120px]">
+                              <label className="block text-[11px] font-bold text-primary mb-1.5">
+                                Start Time
+                              </label>
+                              <input
+                                type="time"
+                                value={tc?.startTime ?? "09:00"}
+                                onChange={(e) =>
+                                  setTimeConfig((prev) => ({
+                                    ...prev,
+                                    [day]: { ...prev[day]!, startTime: e.target.value },
+                                  }))
+                                }
+                                className="w-full px-4 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[13px] font-bold outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] transition-all shadow-sm"
+                              />
+                            </div>
+                            <div className="flex-1 min-w-[120px]">
+                              <label className="block text-[11px] font-bold text-primary mb-1.5">
+                                End Time
+                              </label>
+                              <input
+                                type="time"
+                                value={tc?.endTime ?? "17:00"}
+                                onChange={(e) =>
+                                  setTimeConfig((prev) => ({
+                                    ...prev,
+                                    [day]: { ...prev[day]!, endTime: e.target.value },
+                                  }))
+                                }
+                                className="w-full px-4 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[13px] font-bold outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] transition-all shadow-sm"
+                              />
+                            </div>
+                            <button
+                              onClick={() => handleSaveDay(day)}
+                              disabled={savingDay === day}
+                              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-primary text-white text-[13px] font-bold shadow-[0_4px_12px_hsl(var(--color-primary)/0.3)] hover:opacity-90 disabled:opacity-60 hover:-translate-y-0.5 transition-all duration-300"
+                            >
+                              {savingDay === day ? "Saving…" : "Save Day"}
+                            </button>
                           </div>
-                          <div className="flex-1">
-                            <label className="block text-[11px] font-bold text-[hsl(var(--color-text-muted))] mb-1">
-                              End
-                            </label>
-                            <input
-                              type="time"
-                              value={tc?.endTime ?? "17:00"}
-                              onChange={(e) =>
-                                setTimeConfig((prev) => ({
-                                  ...prev,
-                                  [day]: { ...prev[day]!, endTime: e.target.value },
-                                }))
-                              }
-                              className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[13px] font-medium outline-none focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all"
-                            />
-                          </div>
-                          <button
-                            onClick={() => handleSaveDay(day)}
-                            disabled={savingDay === day}
-                            className="px-4 py-2 rounded-lg bg-primary text-white text-[12px] font-bold shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)] hover:opacity-90 disabled:opacity-60 transition-opacity"
-                          >
-                            {savingDay === day ? "Saving…" : "Save"}
-                          </button>
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 })}
@@ -788,10 +800,10 @@ export default function DoctorAppointmentsPage() {
                 <button
                   onClick={handleGenerate}
                   disabled={generating || selectedDays.size === 0}
-                  className="w-full py-3 rounded-xl bg-primary text-white text-[13.5px] font-bold shadow-[0_4px_14px_hsl(var(--color-primary)/0.35)] hover:opacity-90 disabled:opacity-50 disabled:shadow-none transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-primary to-[hsl(var(--color-primary-strong))] text-white text-[14px] font-black shadow-[0_4px_20px_hsl(var(--color-primary)/0.4)] hover:shadow-[0_6px_25px_hsl(var(--color-primary)/0.5)] hover:-translate-y-1 disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 transition-all duration-300 flex items-center justify-center gap-2 mt-2"
                 >
-                  <LuRefreshCw className={`text-[14px] ${generating ? "animate-spin" : ""}`} />
-                  {generating ? "Generating…" : "Generate slots"}
+                  <LuRefreshCw className={`text-[16px] ${generating ? "animate-spin" : ""}`} />
+                  {generating ? "Generating..." : "Generate Slots"}
                 </button>
 
                 {selectedDays.size === 0 && (

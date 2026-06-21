@@ -21,12 +21,12 @@ export const DoctorActions = ({
           <p className="text-xs text-[hsl(var(--color-text-muted))] font-medium mb-4">Search for an online patient by name, phone, or ID to request access.</p>
           
           <div className="relative">
-            <div className="flex items-center border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-bg-surface))] rounded-xl p-1 focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.2)] transition-all">
-              <LuSearch className="ml-3 mr-2 text-[hsl(var(--color-primary))] text-lg" />
+            <div className="flex items-center border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-bg-surface))] rounded-xl p-1 focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.2)] transition-all min-w-0">
+              <LuSearch className="ml-2 sm:ml-3 mr-2 text-[hsl(var(--color-primary))] text-base sm:text-lg shrink-0" />
               <input 
                 type="text" 
                 placeholder="e.g. 01012345678 or Mahmoud..." 
-                className="flex-1 bg-transparent border-none outline-none text-sm py-2 font-medium"
+                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] sm:text-sm py-2 font-medium"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -34,7 +34,7 @@ export const DoctorActions = ({
               <button 
                 onClick={handleSearch}
                 disabled={isSearching}
-                className="bg-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
+                className="bg-primary text-white text-[11px] sm:text-xs font-bold px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 shrink-0 ml-1"
               >
                 {isSearching ? "Searching..." : "Search"}
               </button>

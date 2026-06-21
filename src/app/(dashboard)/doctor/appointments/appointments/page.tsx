@@ -121,19 +121,19 @@ function ApptRow({ appt }: { appt: Appointment }) {
           {isoTo12Hour(appt.startDateTime)}
         </span>
         {/* Punch holes */}
-        <span className="absolute -right-[8px] -top-[8px] w-4 h-4 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
-        <span className="absolute -right-[8px] -bottom-[8px] w-4 h-4 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
+        <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
+        <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
       </div>
 
       {/* Body */}
-      <div className="flex-1 p-3.5 sm:p-4 flex items-center justify-between gap-3 flex-wrap">
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white text-[13px] font-black shrink-0 ring-2 ring-[hsl(var(--color-bg-surface))] shadow-sm">
+      <div className="flex-1 p-4 sm:p-5 flex items-center justify-between gap-4 flex-wrap bg-gradient-to-r from-[hsl(var(--color-bg-surface))] to-transparent">
+        <div className="flex items-center gap-4 min-w-0">
+          <div className="w-12 h-12 rounded-full bg-gradient-secondary flex items-center justify-center text-white text-[14px] font-black shrink-0 shadow-sm">
             {initialsOf(patient?.fullName)}
           </div>
           <div className="min-w-0">
             <p
-              className={`text-[14px] font-bold truncate ${
+              className={`text-[15px] font-black truncate ${
                 dimmed
                   ? "text-[hsl(var(--color-text-muted))] line-through"
                   : "text-[hsl(var(--color-text))]"
@@ -141,8 +141,8 @@ function ApptRow({ appt }: { appt: Appointment }) {
             >
               {patient?.fullName ?? "Patient"}
             </p>
-            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate flex items-center gap-1 mt-0.5">
-              <LuClock className="text-[10px]" />
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] truncate flex items-center gap-1.5 mt-1">
+              <LuClock className="text-[11px] text-primary" />
               {timeLabel}
             </p>
           </div>
@@ -171,17 +171,17 @@ function ApptTab({
   return (
     <button
       onClick={onClick}
-      className={`relative px-4 py-2.5 rounded-[10px] text-[12.5px] font-bold transition-all duration-200 flex items-center gap-2 ${
+      className={`relative flex-1 sm:flex-none min-w-[110px] sm:min-w-0 px-2 sm:px-5 py-2.5 rounded-xl text-[11.5px] sm:text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
         isActive
-          ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary-strong))] shadow-sm ring-1 ring-[hsl(var(--color-border))]"
-          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+          ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm"
+          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))]"
       }`}
     >
       {label}
       <span
-        className={`text-[10.5px] font-bold min-w-[20px] px-1.5 py-0.5 rounded-full transition-colors ${
+        className={`text-[10px] font-black min-w-[22px] px-1.5 py-0.5 rounded-full transition-colors ${
           isActive
-            ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
+            ? "bg-primary text-white shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
         }`}
       >
@@ -297,15 +297,15 @@ setAppointments(data as any);
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.12)] text-primary items-center justify-center text-[18px] shrink-0">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
             <LuCalendarDays />
           </div>
           <div>
-            <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
               Appointments
             </h1>
-            <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
               Your patient visits, today and beyond
             </p>
           </div>
@@ -315,11 +315,13 @@ setAppointments(data as any);
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         {/* Tab bar */}
-        <div className="inline-flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] mb-6">
-          <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
-          <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-          <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-          <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+        <div className="mb-6 w-full flex justify-center">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] w-full lg:w-auto">
+            <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
+            <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+            <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+            <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+          </div>
         </div>
 
         {apptLoading ? (
