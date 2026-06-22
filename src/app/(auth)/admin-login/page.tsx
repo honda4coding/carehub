@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { Formik, Form, Field, ErrorMessage, FieldProps } from "formik";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/Button";
+import { AuthCard } from "@/components/auth/AuthCard";
 import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck } from "react-icons/hi";
 import { ImSpinner2 } from "react-icons/im";
 import { useAuth } from "@/context/AuthContext";
@@ -45,22 +49,26 @@ export default function AdminLoginPage() {
   }
 };
 
-  const inputClasses = "w-full pl-10 pr-4 py-3 border border-soft rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] outline-none transition-all";
-
   return (
-    <div className="min-h-screen bg-[hsl(var(--color-bg-soft))] flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl mb-4">
-            <HiShieldCheck className="text-3xl" />
+    <div
+      className="min-h-screen flex items-center justify-center p-6" 
+      style={{
+        background: `
+          radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
+          radial-gradient(circle at bottom left, hsl(var(--color-primary) / 0.15) 0%, transparent 40%),
+          hsl(var(--color-bg))
+        `,
+      }}
+    >
+      <main className="w-full max-w-md">
+        <AuthCard>
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl mx-auto mb-4 shadow-lg shadow-[hsl(var(--color-primary)/0.2)]">
+              <HiShieldCheck className="text-3xl" />
+            </div>
+            <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">Admin Portal</h1>
+            <p className="text-[hsl(var(--color-text-muted))] text-sm mt-1">Authorized access only</p>
           </div>
-          <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">Admin Portal</h1>
-          <p className="text-[hsl(var(--color-text-muted))] text-sm mt-1">Authorized access only</p>
-        </div>
-
-        {/* Login Card */}
-        <div className="bg-white rounded-3xl p-8 /50 border border-slate-100">
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={adminLoginSchema}
@@ -69,60 +77,61 @@ export default function AdminLoginPage() {
             {() => (
               <Form className="space-y-6">
                 {/* Email Field */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-[hsl(var(--color-text-muted))] ml-1 uppercase tracking-wider">Admin Email</label>
-                  <div className="relative">
-                    <HiOutlineMail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
-                    <Field
-                      name="email"
-                      type="email"
-                      placeholder="admin@carehub.com"
-                      className={inputClasses}
-                    />
-                  </div>
-                  <ErrorMessage name="email" component="p" className="text-danger text-xs ml-1" />
+                <div>
+                  <Label>Admin Email</Label>
+                  <Field name="email">
+                    {({ field, meta }: FieldProps) => (
+                      <Input
+                        {...field}
+                        type="email"
+                        placeholder="admin@carehub.com"
+                        leftIcon={<HiOutlineMail className="w-5 h-5" />}
+                        error={!!(meta.touched && meta.error)}
+                      />
+                    )}
+                  </Field>
+                  <ErrorMessage name="email" component="p" className="text-[hsl(var(--color-danger))] text-xs pl-2 font-bold mt-1" />
                 </div>
 
                 {/* Password Field */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-[hsl(var(--color-text-muted))] ml-1 uppercase tracking-wider">Master Password</label>
-                  <div className="relative">
-                    <HiOutlineLockClosed className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg" />
-                    <Field
-                      name="password"
-                      type="password"
-                      placeholder="••••••••"
-                      className={inputClasses}
-                    />
-                  </div>
-                  <ErrorMessage name="password" component="p" className="text-danger text-xs ml-1" />
+                <div>
+                  <Label>Master Password</Label>
+                  <Field name="password">
+                    {({ field, meta }: FieldProps) => (
+                      <Input
+                        {...field}
+                        type="password"
+                        placeholder="••••••••"
+                        leftIcon={<HiOutlineLockClosed className="w-5 h-5" />}
+                        error={!!(meta.touched && meta.error)}
+                      />
+                    )}
+                  </Field>
+                  <ErrorMessage name="password" component="p" className="text-[hsl(var(--color-danger))] text-xs pl-2 font-bold mt-1" />
                 </div>
 
                 {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[hsl(var(--color-primary))] text-white font-bold py-4 rounded-xl -[hsl(var(--color-primary)/0.3)] hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-                >
-                  {loading ? (
-                    <>
-                      <ImSpinner2 className="animate-spin" />
-                      Authenticating...
-                    </>
-                  ) : (
-                    "Authorize Access"
-                  )}
-                </button>
+                <div className="pt-2">
+                  <Button
+                    type="submit"
+                    variant="gradient"
+                    className="w-full"
+                    isLoading={loading}
+                  >
+                    Authorize Access
+                  </Button>
+                </div>
               </Form>
             )}
           </Formik>
-        </div>
 
-        {/* Branding */}
-        <p className="text-center mt-8 text-[hsl(var(--color-text-muted))] text-[10px] font-bold uppercase tracking-[0.2em]">
-          CareHub Control Systems v1.0
-        </p>
-      </div>
+          <div className="mt-10 pt-8 border-t border-[hsl(var(--color-border))] text-center">
+            <p className="text-center text-[hsl(var(--color-text-muted))] text-[10px] font-bold uppercase tracking-[0.2em]">
+              CareHub Control Systems v1.0
+            </p>
+          </div>
+        </AuthCard>
+      </main>
     </div>
   );
 }

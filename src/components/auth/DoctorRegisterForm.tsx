@@ -7,6 +7,9 @@ import { useState } from 'react';
 import { MdPerson, MdEmail, MdPhone, MdLock, MdMedicalServices, MdBadge, MdLocationOn } from 'react-icons/md';
 import { FaIdCard, FaFileUpload } from 'react-icons/fa';
 import { ImSpinner2 } from 'react-icons/im';
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Button } from "@/components/ui/Button";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -84,92 +87,109 @@ export default function DoctorRegisterForm() {
     },
   });
 
-  const inputClasses = "w-full pl-10 pr-4 py-2 border border-[hsl(var(--color-text-muted)/0.3)] rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] transition-all outline-none bg-[hsl(var(--color-bg-white))] text-[hsl(var(--color-text))] placeholder-[hsl(var(--color-text-muted)/0.6)]";
-  const labelClasses = "block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5 ml-1";
-  const iconClasses = "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]";
-
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Full Name */}
       <div>
-        <label className={labelClasses}>Full Name <span className="text-danger">*</span></label>
-        <div className="relative">
-          <MdPerson className={iconClasses} />
-          <input type="text" {...formik.getFieldProps('fullName')} className={inputClasses} placeholder="Dr. Ahmed Mohamed" />
-        </div>
+        <Label>Full Name <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input 
+          type="text" 
+          {...formik.getFieldProps('fullName')} 
+          placeholder="Dr. Ahmed Mohamed" 
+          leftIcon={<MdPerson className="w-5 h-5" />}
+          error={!!(formik.touched.fullName && formik.errors.fullName)}
+        />
         {formik.touched.fullName && formik.errors.fullName && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.fullName}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.fullName}</p>
         )}
       </div>
 
       {/* Email */}
       <div>
-        <label className={labelClasses}>Email <span className="text-danger">*</span></label>
-        <div className="relative">
-          <MdEmail className={iconClasses} />
-          <input type="email" {...formik.getFieldProps('email')} className={inputClasses} placeholder="doctor@clinic.com" />
-        </div>
+        <Label>Email <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input 
+          type="email" 
+          {...formik.getFieldProps('email')} 
+          placeholder="doctor@clinic.com" 
+          leftIcon={<MdEmail className="w-5 h-5" />}
+          error={!!(formik.touched.email && formik.errors.email)}
+        />
         {formik.touched.email && formik.errors.email && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.email}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.email}</p>
         )}
       </div>
 
       {/* Phone Number */}
       <div>
-        <label className={labelClasses}>Phone Number <span className="text-danger">*</span></label>
-        <div className="relative">
-          <MdPhone className={iconClasses} />
-          <input type="tel" {...formik.getFieldProps('phoneNumber')} className={inputClasses} placeholder="01234567890" />
-        </div>
+        <Label>Phone Number <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input 
+          type="tel" 
+          {...formik.getFieldProps('phoneNumber')} 
+          placeholder="01234567890" 
+          leftIcon={<MdPhone className="w-5 h-5" />}
+          error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
+        />
         {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.phoneNumber}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.phoneNumber}</p>
         )}
       </div>
 
       {/* National ID Upload */}
       <div>
-        <label className={labelClasses}>National ID Image <span className="text-danger">*</span></label>
-        <div className="relative">
-          <FaIdCard className={iconClasses} />
-          <input
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={(e) => formik.setFieldValue('nationalId', e.target.files?.[0] ?? null)}
-            className={`${inputClasses} file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-badge-bg))] file:text-[hsl(var(--color-badge-text))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer`}
-          />
-        </div>
+        <Label>National ID Image <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input
+          type="file"
+          accept="image/*,application/pdf"
+          onChange={(e) => formik.setFieldValue('nationalId', e.target.files?.[0] ?? null)}
+          leftIcon={<FaIdCard className="w-5 h-5" />}
+          error={!!(formik.touched.nationalId && formik.errors.nationalId)}
+          className="file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-primary)/0.1)] file:text-[hsl(var(--color-primary))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer"
+        />
         <p className="text-[hsl(var(--color-text-muted))] text-[10px] mt-1 ml-1 uppercase tracking-wider">JPG, PNG, PDF (Max 5MB)</p>
         {formik.touched.nationalId && formik.errors.nationalId && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.nationalId}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.nationalId}</p>
         )}
       </div>
 
       {/* Password & Confirm */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className={labelClasses}>Password <span className="text-danger">*</span></label>
-          <div className="relative">
-            <MdLock className={iconClasses} />
-            <input type="password" {...formik.getFieldProps('password')} className={inputClasses} placeholder="********" />
-          </div>
-          {formik.touched.password && formik.errors.password && <p className="text-danger text-xs mt-1">{formik.errors.password}</p>}
+          <Label>Password <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Input 
+            type="password" 
+            {...formik.getFieldProps('password')} 
+            placeholder="********" 
+            leftIcon={<MdLock className="w-5 h-5" />}
+            error={!!(formik.touched.password && formik.errors.password)}
+          />
+          {formik.touched.password && formik.errors.password && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.password}</p>}
         </div>
         <div>
-          <label className={labelClasses}>Confirm <span className="text-danger">*</span></label>
-          <div className="relative">
-            <MdLock className={iconClasses} />
-            <input type="password" {...formik.getFieldProps('confirmPassword')} className={inputClasses} placeholder="********" />
-          </div>
-          {formik.touched.confirmPassword && formik.errors.confirmPassword && <p className="text-danger text-xs mt-1">{formik.errors.confirmPassword}</p>}
+          <Label>Confirm <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Input 
+            type="password" 
+            {...formik.getFieldProps('confirmPassword')} 
+            placeholder="********" 
+            leftIcon={<MdLock className="w-5 h-5" />}
+            error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
+          />
+          {formik.touched.confirmPassword && formik.errors.confirmPassword && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.confirmPassword}</p>}
         </div>
       </div>
 
       {/* Specialty */}
       <div>
-        <label className={labelClasses}>Specialty <span className="text-danger">*</span></label>
+        <Label>Specialty <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <div className="relative">
-          <MdMedicalServices className={iconClasses} />
-          <select {...formik.getFieldProps('specialty')} className={`${inputClasses} appearance-none cursor-pointer`}>
+          <MdMedicalServices className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <select 
+            {...formik.getFieldProps('specialty')} 
+            className={`w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer shadow-sm shadow-black/5 appearance-none ${
+              formik.touched.specialty && formik.errors.specialty 
+              ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger)/0.05)] focus:ring-4 focus:ring-[hsl(var(--color-danger)/0.1)]'
+              : 'border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]'
+            }`}
+          >
             <option value="">Select specialty</option>
             {specialties.map((spec) => (
               <option key={spec.value} value={spec.value}>{spec.label}</option>
@@ -177,62 +197,65 @@ export default function DoctorRegisterForm() {
           </select>
         </div>
         {formik.touched.specialty && formik.errors.specialty && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.specialty}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.specialty}</p>
         )}
       </div>
 
       {/* Syndicate ID */}
       <div>
-        <label className={labelClasses}>Syndicate ID <span className="text-danger">*</span></label>
-        <div className="relative">
-          <MdBadge className={iconClasses} />
-          <input type="number" {...formik.getFieldProps('syndicateId')} className={inputClasses} placeholder="123456" />
-        </div>
+        <Label>Syndicate ID <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input 
+          type="number" 
+          {...formik.getFieldProps('syndicateId')} 
+          placeholder="123456" 
+          leftIcon={<MdBadge className="w-5 h-5" />}
+          error={!!(formik.touched.syndicateId && formik.errors.syndicateId)}
+        />
         {formik.touched.syndicateId && formik.errors.syndicateId && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.syndicateId}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.syndicateId}</p>
         )}
       </div>
 
       {/* License Image */}
       <div>
-        <label className={labelClasses}>License Image <span className="text-danger">*</span></label>
-        <div className="relative">
-          <FaFileUpload className={iconClasses} />
-          <input
-            type="file"
-            accept="image/*,application/pdf"
-            onChange={(e) => formik.setFieldValue('licenseImage', e.target.files?.[0] ?? null)}
-            className={`${inputClasses} file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-badge-bg))] file:text-[hsl(var(--color-badge-text))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer`}
-          />
-        </div>
+        <Label>License Image <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Input
+          type="file"
+          accept="image/*,application/pdf"
+          onChange={(e) => formik.setFieldValue('licenseImage', e.target.files?.[0] ?? null)}
+          leftIcon={<FaFileUpload className="w-5 h-5" />}
+          error={!!(formik.touched.licenseImage && formik.errors.licenseImage)}
+          className="file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-primary)/0.1)] file:text-[hsl(var(--color-primary))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer"
+        />
         {formik.touched.licenseImage && formik.errors.licenseImage && (
-          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.licenseImage}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.licenseImage}</p>
         )}
       </div>
 
       {/* Address */}
       <div>
-        <label className={labelClasses}>Address (Optional)</label>
+        <Label>Address (Optional)</Label>
         <div className="relative">
-          <MdLocationOn className="absolute left-3 top-3 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-          <textarea {...formik.getFieldProps('address')} rows={2} className={`${inputClasses} py-3`} placeholder="Clinic or Hospital address" />
+          <MdLocationOn className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <textarea 
+            {...formik.getFieldProps('address')} 
+            rows={2} 
+            className="w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)] shadow-sm shadow-black/5" 
+            placeholder="Clinic or Hospital address" 
+          />
         </div>
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="w-full bg-gradient-doctor text-white font-bold py-4 rounded-xl transition-all hover:opacity-90 active:scale-[0.98] -[hsl(var(--color-primary)/0.3)] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
-      >
-        {loading ? (
-          <span className="flex items-center justify-center gap-2">
-            <ImSpinner2 className="animate-spin h-5 w-5 text-white" />
-            Processing...
-          </span>
-        ) : (
-          'Complete Registration'
-        )}
-      </button>
+      <div className="pt-2">
+        <Button
+          type="submit"
+          variant="gradient"
+          className="w-full py-4 text-lg"
+          isLoading={loading}
+        >
+          Complete Registration
+        </Button>
+      </div>
     </form>
   );
 }
