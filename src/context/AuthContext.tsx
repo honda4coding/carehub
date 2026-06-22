@@ -3,7 +3,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
+import axios from 'axios';
 
+// Configure Axios globally to send HttpOnly cookies with every request
+axios.defaults.withCredentials = true;
 import { User, AuthContextType } from '@/types/auth';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
 

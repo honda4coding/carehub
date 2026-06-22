@@ -54,7 +54,7 @@ export async function uploadDoctorLicense(file: File): Promise<void> {
 
   const res = await fetch(`${BASE_URL}/doctor/license`, {
     method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include", headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
 

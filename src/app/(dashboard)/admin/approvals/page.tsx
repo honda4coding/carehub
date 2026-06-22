@@ -73,7 +73,7 @@ export default function ApprovalsPage() {
     const fetchDoctors = async () => {
       try {
           const res = await fetch(`${BASE_URL}/admin/doctors`, {
-            headers: { Authorization: `Bearer ${token}` },
+            credentials: "include", headers: { Authorization: `Bearer ${token}` },
           });
           const json = await res.json();
           setDoctors(json.data || []);
@@ -92,7 +92,7 @@ export default function ApprovalsPage() {
     try {
       const res = await fetch(`${BASE_URL}/admin/doctors/${id}/approve`, {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${token}` },
+        credentials: "include", headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed");
       setDoctors((prev) =>
@@ -112,7 +112,7 @@ export default function ApprovalsPage() {
     try {
       const res = await fetch(`${BASE_URL}/admin/doctors/${rejectModal.doctorId}/reject`, {
         method: "PATCH",
-        headers: {
+        credentials: "include", headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
@@ -145,7 +145,7 @@ export default function ApprovalsPage() {
     try {
         const res = await fetch(`${BASE_URL}/admin/doctors/${id}/pending`, {
             method: "PATCH",
-            headers: { Authorization: `Bearer ${token}` },
+            credentials: "include", headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed");
         setDoctors((prev) =>

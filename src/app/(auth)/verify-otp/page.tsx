@@ -66,7 +66,7 @@ function VerifyOtpContent() {
       setServerError("");
       const res = await fetch(`${BASE_URL}/users/confirm-email`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: emailInput, code: values.code }),
       });
       const data = await res.json();
@@ -93,7 +93,7 @@ function VerifyOtpContent() {
       setServerError("");
       const res = await fetch(`${BASE_URL}/users/reset-password`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: emailInput,
           code: values.code,
@@ -132,7 +132,7 @@ const handleResend = async () => {
 
     const res = await fetch(url, {
       method,
-      headers: { "Content-Type": "application/json" },
+      credentials: "include", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: emailInput }),
     });
     const data = await res.json();

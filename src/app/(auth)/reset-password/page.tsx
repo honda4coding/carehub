@@ -61,7 +61,7 @@ const handleSendOtp = async (email: string) => {
     setServerError("");
     const res = await fetch(`${BASE_URL}/users/forget-password`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      credentials: "include", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
@@ -85,7 +85,7 @@ const handleSendOtp = async (email: string) => {
       setServerError("");
       const res = await fetch(`${BASE_URL}/users/reset-password`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: values.email,
           code: values.code,

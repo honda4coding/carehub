@@ -66,6 +66,7 @@ export default function DoctorRegisterForm() {
 
         const res = await fetch(`${BASE_URL}/users/signup`, {
           method: "POST",
+          credentials: "include",
           body: formData,
         });
 

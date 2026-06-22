@@ -39,7 +39,7 @@ export const fetchClient = {
 
     const config: RequestInit = {
       ...options,
-      headers,
+      credentials: "include", headers,
     };
 
     let url = `${BASE_URL}${endpoint}`;
