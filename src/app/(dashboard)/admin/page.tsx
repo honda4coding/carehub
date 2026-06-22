@@ -18,9 +18,12 @@ import { useRouter } from "next/navigation";
 import { adminService } from "@/services/adminService";
 import { DoctorApprovalStatus, PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
-import { fetchClient } from "@/services/fetchClient";
 import Link from "next/link";
 import NotificationBell from "@/components/admin/notifications/NotificationBell";
+import { Topbar } from "@/components/global/Topbar";
+import { Card } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { fetchClient } from "@/services/fetchClient";
 import { ResponsiveContainer, LineChart, Line, XAxis, Tooltip as RechartsTooltip } from "recharts";
 
 // Max years logic
@@ -221,33 +224,25 @@ export default function AdminDashboard() {
     <>
       <div className="flex flex-col flex-1 min-h-screen">
         {/* ── Topbar ── */}
-        <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
-          <div className="md:block">
-            <h1 className="text-[15px] md:text-[17px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              Dashboard
-            </h1>
-            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-              {new Date().toLocaleDateString("en-GB", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <NotificationBell />
-          </div>
-        </header>
+        <Topbar 
+          title="Dashboard" 
+          subtitle={new Date().toLocaleDateString("en-GB", {
+            weekday: "long",
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          })}
+          rightElement={<NotificationBell />}
+        />
 
         {/* ── Content ── */}
         <main className="flex-1 p-4 md:p-6 overflow-auto">
           {/* Stat cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
             {STATS.map((s) => (
-              <div
+              <Card
                 key={s.label}
-                className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-3 md:p-4"
+                className="p-3 md:p-4"
               >
                 <div className="flex items-center justify-between mb-2 md:mb-3">
                   <div
@@ -262,14 +257,14 @@ export default function AdminDashboard() {
                 <p className="text-[11px] md:text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1">
                   {s.label}
                 </p>
-              </div>
+              </Card>
             ))}
           </div>
 
           {/* Chart + Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
             {/* Chart */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col">
+            <Card className="p-4 flex flex-col">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
                   Activity - Last 30 Days
@@ -332,10 +327,10 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
-            </div>
+            </Card>
 
             {/* Activity */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+            <Card className="p-4">
               <div className="flex items-center justify-between mb-4">
                 <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
                   Recent Activity
@@ -372,7 +367,7 @@ export default function AdminDashboard() {
                   ))
                 )}
               </div>
-            </div>
+            </Card>
           </div>
 
           {/* Stats error banner */}
@@ -386,20 +381,21 @@ export default function AdminDashboard() {
           )}
 
           {/* Approvals table */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+          <Card className="p-4">
             <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
               <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
                 Pending Doctor Approvals
               </p>
               <div className="flex items-center gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                <div className="relative flex items-center flex-1 sm:flex-none">
-                  <LuSearch className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
-                  <input
+                <div className="flex-1 sm:flex-none">
+                  <Input
+                    size="sm"
                     type="text"
                     placeholder="Filter..."
                     value={filter}
                     onChange={(e) => setFilter(e.target.value)}
-                    className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full sm:w-[120px] outline-none focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
+                    leftIcon={<LuSearch />}
+                    className="w-full sm:w-[150px] bg-[hsl(var(--color-bg-soft))] focus:bg-[hsl(var(--color-bg-surface))]"
                   />
                 </div>
                 <Link
@@ -533,7 +529,7 @@ export default function AdminDashboard() {
                 </>
               )}
             </div>
-          </div>
+          </Card>
         </main>
       </div>
     </>

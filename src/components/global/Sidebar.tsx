@@ -49,22 +49,27 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Dashboard", href: "/admin", icon: <LuLayoutDashboard /> },
       { label: "Analytics", href: "/admin/analytics", icon: <FaSquarePollVertical /> },
-      { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
-      { label: "Users", href: "/admin/users", icon: <LuUsers /> },
-      {
-        label: "Notifications",
-        href: "/admin/notifications",
-        icon: <LuBell />,
-      },
     ],
   },
   {
     title: "Management",
     items: [
+      { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
+      { label: "Users", href: "/admin/users", icon: <LuUsers /> },
       {
         label: "Approvals",
         href: "/admin/approvals",
         icon: <LuShieldCheck />,
+      },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      {
+        label: "Notifications",
+        href: "/admin/notifications",
+        icon: <LuBell />,
       },
     ],
   },
@@ -385,16 +390,14 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-[hsl(var(--color-border))]">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black -[0_4px_12px_hsl(var(--color-primary)/0.35)]">
-            +
-          </div>
-          <div>
-            <p className="text-[15px] font-black text-[hsl(var(--color-text))] tracking-tight">
-              Care<span className="text-primary">Hub</span>
-            </p>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))]">
+      <div className="h-[73px] shrink-0 flex items-center justify-between gap-3 px-5 border-b border-[hsl(var(--color-border))]">
+        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity group">
+          <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform shrink-0" />
+          <div className="flex flex-col justify-center mt-0.5">
+            <span className="text-[19px] font-bold text-[hsl(var(--color-text))] tracking-tight leading-none mb-[3px]">
+              CareHub
+            </span>
+            <p className="text-[9px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] leading-none">
               {role} Portal
             </p>
           </div>
@@ -450,7 +453,7 @@ function SidebarContent({
                   </span>
                   <span className="flex-1">{item.label}</span>
                   {!!badgeValue && (
-                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ml-auto">
                       {badgeValue}
                     </span>
                   )}
@@ -470,29 +473,31 @@ function SidebarContent({
       </nav>
 
       {/* User footer */}
-      <div className="px-2.5 py-3 border-t border-[hsl(var(--color-border))] flex items-center gap-2.5">
-        <div className="relative w-8 h-8 rounded-full bg-gradient-brand flex items-center justify-center text-white text-[11px] font-black shrink-0 overflow-hidden border border-[hsl(var(--color-border-soft))]">
-          {avatarUrl ? (
-            <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
-          ) : (
-            initials
-          )}
+      <div className="p-4 border-t border-[hsl(var(--color-border))] mt-auto shrink-0">
+        <div className="flex items-center gap-3 p-2.5 rounded-[12px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] hover:border-[hsl(var(--color-border))] transition-colors group cursor-pointer">
+          <div className="relative w-10 h-10 rounded-[8px] bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] text-[14px] font-black shrink-0 overflow-hidden">
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
+            ) : (
+              initials
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[14px] font-bold text-[hsl(var(--color-text))] truncate leading-tight mb-0.5">
+              {user?.name ? user.name.split(" ")[0] : "Admin"}
+            </p>
+            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[hsl(var(--color-primary))] leading-tight">
+              {role}
+            </p>
+          </div>
+          <button
+            onClick={logout}
+            className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] flex items-center justify-center hover:bg-[hsl(var(--color-danger)/0.2)] transition-all shrink-0"
+            title="Sign out"
+          >
+            <LuLogOut className="text-[16px]" />
+          </button>
         </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-[12px] font-bold text-[hsl(var(--color-text))] truncate">
-            {user?.name ?? "Admin"}
-          </p>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-primary opacity-80">
-            {role}
-          </p>
-        </div>
-        <button
-          onClick={logout}
-          className="w-7 h-7 rounded-lg bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] flex items-center justify-center hover:opacity-80 transition-opacity"
-          title="Sign out"
-        >
-          <LuLogOut className="text-[13px]" />
-        </button>
       </div>
     </div>
   );
@@ -561,7 +566,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}
@@ -573,7 +578,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />

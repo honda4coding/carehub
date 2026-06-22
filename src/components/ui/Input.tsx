@@ -4,37 +4,41 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg';
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className = '', error, leftIcon, rightIcon, ...props }, ref) => {
-    const baseStyles = 'w-full py-4 rounded-2xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.6)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-text shadow-sm shadow-black/5';
+  ({ className = '', error, leftIcon, rightIcon, size = 'lg', ...props }, ref) => {
+    const sizeStyles = {
+      sm: 'py-2 px-3 text-[11px] rounded-[8px]',
+      md: 'py-3 px-4 text-[13px] rounded-xl',
+      lg: 'py-4 px-4 rounded-2xl'
+    };
+
+    const baseStyles = `w-full ${sizeStyles[size]} outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.6)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-text`;
     
     const errorStyles = error 
       ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger)/0.05)] focus:ring-4 focus:ring-[hsl(var(--color-danger)/0.1)]' 
       : 'border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]';
 
-    let paddingStyles = 'px-4';
-    if (leftIcon && rightIcon) paddingStyles = 'pl-12 pr-12';
-    else if (leftIcon) paddingStyles = 'pl-12 pr-4';
-    else if (rightIcon) paddingStyles = 'pl-4 pr-12';
-
     return (
       <div className="relative w-full">
         {leftIcon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
+          <div className={`absolute left-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
             {leftIcon}
           </div>
         )}
         
         <input
           ref={ref}
-          className={`${baseStyles} ${errorStyles} ${paddingStyles} ${className}`}
+          className={`${baseStyles} ${errorStyles} ${
+            leftIcon ? (size === 'sm' ? 'pl-8' : 'pl-12') : ''
+          } ${rightIcon ? (size === 'sm' ? 'pr-8' : 'pr-12') : ''} ${className}`}
           {...props}
         />
 
         {rightIcon && (
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
+          <div className={`absolute right-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
             {rightIcon}
           </div>
         )}

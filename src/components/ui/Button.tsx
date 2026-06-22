@@ -30,12 +30,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-bold rounded-2xl transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed active:scale-95';
     
     const variants = {
-      primary: 'bg-[hsl(var(--color-primary))] text-white hover:bg-[hsl(var(--color-primary-strong))] hover:-translate-y-0.5 shadow-md shadow-[hsl(var(--color-primary)/0.2)]',
-      secondary: 'bg-[hsl(var(--color-secondary))] text-white hover:bg-[hsl(var(--color-secondary-strong))] hover:-translate-y-0.5',
-      gradient: 'bg-linear-to-r from-[#0891B2] to-[hsl(var(--color-primary))] text-white hover:opacity-90 hover:-translate-y-0.5 shadow-lg shadow-[hsl(var(--color-primary)/0.25)]',
-      outline: 'bg-transparent border-2 border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))]',
-      ghost: 'bg-transparent text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-surface-hover))] hover:text-[hsl(var(--color-text))]',
-      danger: 'bg-[hsl(var(--color-danger))] text-white hover:opacity-90 hover:-translate-y-0.5 shadow-md shadow-[hsl(var(--color-danger)/0.2)]',
+      primary: 'bg-[hsl(var(--color-primary))] text-white hover:bg-[hsl(var(--color-primary-strong))] hover:-translate-y-0.5',
+      secondary: 'bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary))] hover:bg-[hsl(var(--color-secondary)/0.25)] hover:-translate-y-0.5',
+      gradient: 'bg-linear-to-r from-[#0891B2] to-[hsl(var(--color-primary))] text-white hover:opacity-90 hover:-translate-y-0.5',
+      outline: 'bg-transparent border-2 border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary)/0.05)] hover:-translate-y-0.5',
+      ghost: 'bg-transparent text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]',
+      danger: 'bg-[hsl(var(--color-danger))] text-white hover:opacity-90 hover:-translate-y-0.5',
     };
 
     const sizes = {

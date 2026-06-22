@@ -13,7 +13,7 @@ export const Badge: React.FC<BadgeProps> = ({
   const baseStyles = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider';
   
   const variants = {
-    primary: 'bg-[hsl(var(--color-primary))] text-white shadow-sm',
+    primary: 'bg-[hsl(var(--color-primary))] text-white',
     success: 'bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]',
     warning: 'bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]',
     danger: 'bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]',
