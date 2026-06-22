@@ -221,7 +221,7 @@ export default function RxBuilder({
           <button 
             onClick={handleCheckInteractions}
             disabled={checkingInteraction}
-            className="text-xs font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary)/0.2)] px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50"
+            className="text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {checkingInteraction ? <LuLoader className="animate-spin" /> : <LuShieldAlert />}
             AI Safety Check
@@ -251,7 +251,7 @@ export default function RxBuilder({
               <LuShieldAlert className={`text-2xl shrink-0 mt-0.5 ${iconColor}`} />
               <div className="font-semibold whitespace-pre-wrap leading-relaxed w-full [&>p]:my-1 [&>ul]:list-disc [&>ul]:ml-6 [&>ol]:list-decimal [&>ol]:ml-6 [&>strong]:font-black [&>strong]:text-main">
                 <ReactMarkdown>{interactionResult.analysis}</ReactMarkdown>
-                <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline ${btnColor}`}>Dismiss</button>
+                <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline cursor-pointer ${btnColor}`}>Dismiss</button>
               </div>
             </div>
           );
@@ -259,7 +259,7 @@ export default function RxBuilder({
         
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 p-4 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border-soft))] no-print">
           <div className="md:col-span-2 relative" ref={drugInputRef}>
-            <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Drug Name</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Drug Name</label>
             <input 
               value={drugName} 
               onChange={handleDrugNameChange} 
@@ -288,17 +288,17 @@ export default function RxBuilder({
             )}
           </div>
           <div>
-            <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Dosage</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Dosage</label>
             <input value={dosage} onChange={e=>setDosage(e.target.value)} type="text" placeholder="500mg" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
           </div>
           <div>
-            <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Frequency</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Frequency</label>
             <input value={frequency} onChange={e=>setFrequency(e.target.value)} type="text" placeholder="1x3" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))]">Duration</label>
-              <label className="flex items-center gap-1 cursor-pointer text-[9px] font-bold text-[hsl(var(--color-primary))] uppercase">
+              <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))]">Duration</label>
+              <label className="flex items-center gap-1 cursor-pointer text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase">
                 <input type="checkbox" checked={duration.toLowerCase() === "lifelong"} onChange={(e) => setDuration(e.target.checked ? "Lifelong" : "")} className="accent-primary w-3 h-3" />
                 Lifelong
               </label>
@@ -306,11 +306,11 @@ export default function RxBuilder({
             <input disabled={duration.toLowerCase() === "lifelong"} value={duration} onChange={e=>setDuration(e.target.value)} type="text" placeholder="5 days" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
           </div>
           <div className="md:col-span-5 mt-2">
-            <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Instructions (Optional)</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Instructions (Optional)</label>
             <input value={instructions} onChange={e=>setInstructions(e.target.value)} type="text" placeholder="e.g. After meals" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
           </div>
           <div className="flex items-end mt-2 md:col-span-1">
-            <button onClick={handleAddDrug} className="w-full bg-[hsl(var(--color-secondary)/0.1)] text-[hsl(var(--color-secondary-strong))] hover:bg-[hsl(var(--color-secondary)/0.2)] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-colors">
+            <button onClick={handleAddDrug} className="w-full bg-[hsl(var(--color-secondary))] text-white hover:bg-[hsl(var(--color-secondary-strong))] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer">
               <LuPlus /> Add
             </button>
           </div>
@@ -322,7 +322,7 @@ export default function RxBuilder({
             {prescriptions.map((drug) => (
               <div key={drug.id} className="flex items-center justify-between p-3 border border-[hsl(var(--color-border))] rounded-xl hover:border-primary/50 transition-colors group bg-[hsl(var(--color-bg-soft))]">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-primary">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-primary))]">
                     <LuPill />
                   </div>
                   <div>
@@ -331,7 +331,7 @@ export default function RxBuilder({
                     {drug.instructions && <p className="text-[11px] text-[hsl(var(--color-primary))] mt-0.5 font-semibold">{drug.instructions}</p>}
                   </div>
                 </div>
-                <button onClick={() => removeDrug(drug.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-[hsl(var(--color-danger)/0.5)] hover:bg-[hsl(var(--color-danger)/0.1)] hover:text-[hsl(var(--color-danger))] transition-colors no-print">
+                <button onClick={() => removeDrug(drug.id)} className="w-8 h-8 flex items-center justify-center rounded-lg text-[hsl(var(--color-danger)/0.5)] hover:bg-[hsl(var(--color-danger)/0.1)] hover:text-[hsl(var(--color-danger))] transition-colors no-print cursor-pointer">
                   <LuTrash2 />
                 </button>
               </div>
@@ -369,27 +369,27 @@ export default function RxBuilder({
               <div className="flex gap-3 h-40">
                 <button 
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))]"
+                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))] cursor-pointer"
                 >
                   <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-bg-soft))] flex items-center justify-center">
                     <LuUpload className="text-xl" />
                   </div>
                   <div className="text-center">
                     <p className="text-sm font-bold text-[hsl(var(--color-text))]">Upload File</p>
-                    <p className="text-[10px] mt-1">JPEG, PNG</p>
+                    <p className="text-[11px] mt-1">JPEG, PNG</p>
                   </div>
                 </button>
 
                 <button 
                   onClick={() => setCameraTarget("prescription")}
-                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-primary hover:bg-[hsl(var(--color-primary)/0.02)] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))]"
+                  className="flex-1 border-2 border-dashed border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-bg-soft))] rounded-xl flex flex-col items-center justify-center gap-2 transition-colors text-[hsl(var(--color-text-muted))] cursor-pointer"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] flex items-center justify-center">
                     <LuCamera className="text-xl" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-bold text-primary">Take Photo</p>
-                    <p className="text-[10px] mt-1 text-primary/70">Use Camera</p>
+                    <p className="text-sm font-bold text-[hsl(var(--color-primary))]">Take Photo</p>
+                    <p className="text-[10px] mt-1 text-[hsl(var(--color-primary))/0.7]">Use Camera</p>
                   </div>
                 </button>
               </div>
@@ -397,7 +397,7 @@ export default function RxBuilder({
               <div className="relative group rounded-xl overflow-hidden border border-[hsl(var(--color-border))]">
                 <Image src={previewUrl} alt="Prescription preview" width={400} height={160} className="w-full h-40 object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={removeFile} className="bg-danger text-white p-2 rounded-full hover:scale-110 transition-transform">
+                  <button onClick={removeFile} className="bg-danger text-white p-2 rounded-full hover:scale-110 transition-transform cursor-pointer">
                     <LuTrash2 />
                   </button>
                 </div>
@@ -425,13 +425,13 @@ export default function RxBuilder({
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button 
               onClick={() => attachmentsInputRef?.current?.click()}
-              className="flex-1 sm:flex-none justify-center text-xs font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0"
+              className="flex-1 sm:flex-none justify-center text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
             >
               <LuUpload className="shrink-0" /> Upload
             </button>
             <button 
               onClick={() => setCameraTarget("attachments")}
-              className="flex-1 sm:flex-none justify-center text-xs font-bold bg-primary/10 text-primary hover:bg-primary/20 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0"
+              className="flex-1 sm:flex-none justify-center text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
             >
               <LuCamera className="shrink-0" /> Camera
             </button>
@@ -451,12 +451,12 @@ export default function RxBuilder({
           <div className="space-y-3">
             {attachments.map((file, index) => (
               <div key={index} className="flex flex-col md:flex-row items-center gap-3 p-3 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl">
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-primary shrink-0">
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-primary))] shrink-0">
                   <LuFileText />
                 </div>
                 <div className="flex-grow grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
                   <div className="md:col-span-5">
-                    <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Document Title</label>
+                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Document Title</label>
                     <input 
                       type="text" 
                       value={attachmentsMetadata[index]?.title || ''} 
@@ -466,7 +466,7 @@ export default function RxBuilder({
                     />
                   </div>
                   <div className={attachmentsMetadata[index]?.type === 'other' ? "md:col-span-3" : "md:col-span-7"}>
-                    <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Type</label>
+                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Type</label>
                     <select
                       value={attachmentsMetadata[index]?.type || 'lab'}
                       onChange={(e) => updateAttachmentMeta(index, 'type', e.target.value)}
@@ -480,8 +480,8 @@ export default function RxBuilder({
                     </select>
                   </div>
                   {attachmentsMetadata[index]?.type === 'other' && (
-                    <div className="md:col-span-4">
-                      <label className="block text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Specify Type</label>
+                     <div className="md:col-span-4">
+                      <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Specify Type</label>
                       <input 
                         type="text" 
                         placeholder="e.g. ECG"
@@ -497,7 +497,7 @@ export default function RxBuilder({
                 </div>
                 <button 
                   onClick={() => removeAttachment(index)} 
-                  className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-[hsl(var(--color-danger)/0.5)] hover:bg-[hsl(var(--color-danger)/0.1)] hover:text-[hsl(var(--color-danger))] transition-colors"
+                  className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-[hsl(var(--color-danger)/0.5)] hover:bg-[hsl(var(--color-danger)/0.1)] hover:text-[hsl(var(--color-danger))] transition-colors cursor-pointer"
                 >
                   <LuTrash2 />
                 </button>

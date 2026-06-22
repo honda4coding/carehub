@@ -1,6 +1,7 @@
 import { LuHistory, LuPlus, LuStethoscope, LuFileText, LuCalendar, LuChevronDown, LuChevronUp } from "react-icons/lu";
 import { RefObject, useState } from "react";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
+import DateRangeFilter from "@/components/ui/DateRangeFilter";
 
 function TimelineAccordionCard({ record }: { record: any }) {
   const [expanded, setExpanded] = useState(false);
@@ -14,19 +15,19 @@ function TimelineAccordionCard({ record }: { record: any }) {
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-primary group-hover:bg-primary group-hover:text-white transition-colors">
+          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-colors">
             <LuCalendar className="text-lg" />
           </span>
           <div>
-            <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{dateStr} <span className="text-[11px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
-            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-               <LuStethoscope className="text-primary flex-shrink-0" /> 
+            <p className="text-[15px] font-black text-[hsl(var(--color-text))]">{dateStr} <span className="text-[13px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
+            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+               <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> 
                {record.diagnosis || "No diagnosis recorded"}
             </p>
           </div>
         </div>
         
-        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer">
           {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
         </button>
       </div>
@@ -81,30 +82,14 @@ export default function HistoryTimeline({
           <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
             <LuHistory className="text-primary text-xl shrink-0" /> Full Medical History
           </h3>
-          <div className="flex flex-col lg:flex-row items-stretch lg:items-end gap-3 w-full 2xl:w-auto">
-            <div className="flex items-end gap-2 w-full lg:w-auto shrink-0">
-              <div className="flex flex-col flex-1 lg:flex-none">
-                <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">Start</label>
-                <input 
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full lg:w-32 min-w-0 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-2 sm:px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
-                  title="Start Date"
-                />
-              </div>
-              <span className="text-[hsl(var(--color-border))] pb-2 shrink-0">-</span>
-              <div className="flex flex-col flex-1 lg:flex-none">
-                <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">End</label>
-                <input 
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full lg:w-32 min-w-0 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-2 sm:px-3 py-2 text-xs font-medium focus:border-primary outline-none text-[hsl(var(--color-text-muted))]"
-                  title="End Date"
-                />
-              </div>
-            </div>
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 w-full 2xl:w-auto">
+            <DateRangeFilter
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={setStartDate}
+              onEndDateChange={setEndDate}
+              onReset={startDate || endDate ? () => { setStartDate(""); setEndDate(""); } : undefined}
+            />
             <div className="relative w-full lg:w-auto flex-1 min-w-0">
               <input 
                 type="text"
@@ -124,7 +109,7 @@ export default function HistoryTimeline({
             {fullMedicalHistory.map((record: any, index: number) => (
               <div key={record._id || index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                 {/* Timeline dot */}
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-primary font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                   <LuFileText />
                 </div>
                 {/* Timeline Card */}

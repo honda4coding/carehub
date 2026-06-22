@@ -18,6 +18,11 @@ import RxBuilder from "@/components/doctor/encounter/RxBuilder";
 import DoctorVitalsCharts from "@/components/doctor/encounter/DoctorVitalsCharts";
 import PatientInsightsCard from "@/components/doctor/encounter/PatientInsightsCard";
 
+import ProfileTab from "@/components/doctor/encounter/tabs/ProfileTab";
+import HistoryTab from "@/components/doctor/encounter/tabs/HistoryTab";
+import AssessmentTab from "@/components/doctor/encounter/tabs/AssessmentTab";
+import PrescriptionTab from "@/components/doctor/encounter/tabs/PrescriptionTab";
+
 export default function PatientDashboardPage() {
   const router = useRouter();
   const params = useParams();
@@ -451,9 +456,9 @@ export default function PatientDashboardPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center justify-center gap-2 px-3 md:px-5 py-2.5 rounded-xl text-[12px] md:text-sm font-bold transition-all flex-1 sm:flex-none min-w-[130px] sm:min-w-0 ${
+                className={`flex items-center justify-center gap-2 px-3 md:px-5 py-2.5 rounded-xl text-[12px] md:text-sm font-bold transition-all flex-1 sm:flex-none min-w-[130px] sm:min-w-0 cursor-pointer ${
                   activeTab === tab.id 
-                    ? "bg-[hsl(var(--color-primary)/0.1)] text-primary " 
+                    ? "bg-[hsl(var(--color-primary))] text-white " 
                     : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
                 }`}
               >
@@ -469,141 +474,78 @@ export default function PatientDashboardPage() {
           
           {/* TAB 1: Profile & Vitals */}
           {activeTab === "profile" && (
-            <div className="flex flex-col gap-6">
-              {patientData?._id && (
-                <PatientInsightsCard patientId={patientData._id} />
-              )}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <VitalsPanel 
-                  loading={loading}
-                  patientData={patientData}
-                  isEditVitalsOpen={isEditVitalsOpen}
-                  setIsEditVitalsOpen={setIsEditVitalsOpen}
-                  editHeight={editHeight}
-                  setEditHeight={setEditHeight}
-                  editWeight={editWeight}
-                  setEditWeight={setEditWeight}
-                  editBloodPressure={editBloodPressure}
-                  setEditBloodPressure={setEditBloodPressure}
-                  editSugarLevel={editSugarLevel}
-                  setEditSugarLevel={setEditSugarLevel}
-                  editPulse={editPulse}
-                  setEditPulse={setEditPulse}
-                  editTemperature={editTemperature}
-                  setEditTemperature={setEditTemperature}
-                  editBloodType={editBloodType}
-                  setEditBloodType={setEditBloodType}
-                  saveVitalsLocally={saveVitalsLocally}
-                  lastVisitVitals={lastVisitVitals}
-                />
-                <div className="space-y-6">
-                  <MedicalAlertsPanel 
-                    loading={loading}
-                    patientData={patientData}
-                    isEditAlertsOpen={isEditAlertsOpen}
-                    setIsEditAlertsOpen={setIsEditAlertsOpen}
-                    editAllergies={editAllergies}
-                    setEditAllergies={setEditAllergies}
-                    editChronic={editChronic}
-                    setEditChronic={setEditChronic}
-                    saveAlerts={saveAlerts}
-                    isSaving={isSavingAlerts}
-                  />
-                  <PastSurgeriesPanel 
-                    loading={loading}
-                    patientData={patientData}
-                    isEditSurgeriesOpen={isEditSurgeriesOpen}
-                    setIsEditSurgeriesOpen={setIsEditSurgeriesOpen}
-                    editSurgeries={editSurgeries}
-                    setEditSurgeries={setEditSurgeries}
-                    saveSurgeries={saveSurgeries}
-                    isSaving={isSavingAlerts}
-                  />
-                </div>
-              </div>
-              
-              <DoctorVitalsCharts history={fullMedicalHistory} />
-            </div>
+            <ProfileTab 
+              loading={loading}
+              patientData={patientData}
+              fullMedicalHistory={fullMedicalHistory}
+              isEditVitalsOpen={isEditVitalsOpen} setIsEditVitalsOpen={setIsEditVitalsOpen}
+              editHeight={editHeight} setEditHeight={setEditHeight}
+              editWeight={editWeight} setEditWeight={setEditWeight}
+              editBloodPressure={editBloodPressure} setEditBloodPressure={setEditBloodPressure}
+              editSugarLevel={editSugarLevel} setEditSugarLevel={setEditSugarLevel}
+              editPulse={editPulse} setEditPulse={setEditPulse}
+              editTemperature={editTemperature} setEditTemperature={setEditTemperature}
+              editBloodType={editBloodType} setEditBloodType={setEditBloodType}
+              saveVitalsLocally={saveVitalsLocally}
+              lastVisitVitals={lastVisitVitals}
+              isEditAlertsOpen={isEditAlertsOpen} setIsEditAlertsOpen={setIsEditAlertsOpen}
+              editAllergies={editAllergies} setEditAllergies={setEditAllergies}
+              editChronic={editChronic} setEditChronic={setEditChronic}
+              saveAlerts={saveAlerts}
+              isEditSurgeriesOpen={isEditSurgeriesOpen} setIsEditSurgeriesOpen={setIsEditSurgeriesOpen}
+              editSurgeries={editSurgeries} setEditSurgeries={setEditSurgeries}
+              saveSurgeries={saveSurgeries}
+              isSavingAlerts={isSavingAlerts}
+            />
           )}
 
           {/* TAB 2: Medical History */}
           {activeTab === "history" && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-              <div className="lg:col-span-3">
-                {sessionData && !sessionData.isOfflinePatient && sessionData.patientId ? (
-                  <MedicationCompliancePanel patientId={sessionData.patientId._id} />
-                ) : (
-                  <div className="bg-white rounded-3xl p-6 border border-soft text-center">
-                    <p className="text-sm text-muted">Compliance tracking is not available for offline patients.</p>
-                  </div>
-                )}
-              </div>
-              <div className="lg:col-span-9">
-                <HistoryTimeline 
-                  setIsAssessmentMode={() => setActiveTab("assessment")}
-                  startDate={startDate}
-                  setStartDate={setStartDate}
-                  endDate={endDate}
-                  setEndDate={setEndDate}
-                  filterText={filterText}
-                  setFilterText={setFilterText}
-                  loadingHistory={loadingHistory}
-                  page={page}
-                  fullMedicalHistory={fullMedicalHistory}
-                  hasMore={hasMore}
-                  observerTarget={observerTarget}
-                />
-              </div>
-            </div>
+            <HistoryTab 
+              sessionData={sessionData}
+              startDate={startDate} setStartDate={setStartDate}
+              endDate={endDate} setEndDate={setEndDate}
+              filterText={filterText} setFilterText={setFilterText}
+              loadingHistory={loadingHistory}
+              page={page}
+              fullMedicalHistory={fullMedicalHistory}
+              hasMore={hasMore}
+              observerTarget={observerTarget}
+              setIsAssessmentMode={() => setActiveTab("assessment")}
+            />
           )}
 
           {/* TAB 3: Clinical Assessment */}
           {activeTab === "assessment" && (
-            <div className="max-w-4xl mx-auto w-full">
-              <ClinicalAssessment 
-                symptoms={symptoms}
-                setSymptoms={setSymptoms}
-                diagnosis={diagnosis}
-                setDiagnosis={setDiagnosis}
-                setIsAssessmentMode={() => setActiveTab("history")}
-              />
-              <div className="mt-8 flex justify-end">
-                <button 
-                  onClick={() => setActiveTab("prescription")}
-                  className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
-                >
-                  Proceed to Prescription <LuPill className="text-lg" />
-                </button>
-              </div>
-            </div>
+            <AssessmentTab 
+              symptoms={symptoms} setSymptoms={setSymptoms}
+              diagnosis={diagnosis} setDiagnosis={setDiagnosis}
+              setIsAssessmentMode={() => setActiveTab("history")}
+              onProceedToPrescription={() => setActiveTab("prescription")}
+            />
           )}
 
           {/* TAB 4: Prescription */}
           {activeTab === "prescription" && (
-            <div className="max-w-4xl mx-auto w-full">
-              <RxBuilder 
-                prescriptions={prescriptions}
-                setPrescriptions={setPrescriptions}
-                drugName={drugName} setDrugName={setDrugName}
-                dosage={dosage} setDosage={setDosage}
-                frequency={frequency} setFrequency={setFrequency}
-                duration={duration} setDuration={setDuration}
-                patientComplaint={diagnosis}
-                instructions={instructions} setInstructions={setInstructions}
-                handleAddDrug={handleAddDrug}
-                removeDrug={removeDrug}
-                prescriptionText={prescriptionText} setPrescriptionText={setPrescriptionText}
-                fileInputRef={fileInputRef}
-                handleFileChange={handleFileChange}
-                previewUrl={previewUrl}
-                removeFile={removeFile}
-                attachments={attachments}
-                setAttachments={setAttachments}
-                attachmentsMetadata={attachmentsMetadata}
-                setAttachmentsMetadata={setAttachmentsMetadata}
-                attachmentsInputRef={attachmentsInputRef}
-              />
-            </div>
+            <PrescriptionTab 
+              prescriptions={prescriptions} setPrescriptions={setPrescriptions}
+              drugName={drugName} setDrugName={setDrugName}
+              dosage={dosage} setDosage={setDosage}
+              frequency={frequency} setFrequency={setFrequency}
+              duration={duration} setDuration={setDuration}
+              patientComplaint={diagnosis}
+              instructions={instructions} setInstructions={setInstructions}
+              handleAddDrug={handleAddDrug}
+              removeDrug={removeDrug}
+              prescriptionText={prescriptionText} setPrescriptionText={setPrescriptionText}
+              fileInputRef={fileInputRef}
+              handleFileChange={handleFileChange}
+              previewUrl={previewUrl}
+              removeFile={removeFile}
+              attachments={attachments} setAttachments={setAttachments}
+              attachmentsMetadata={attachmentsMetadata} setAttachmentsMetadata={setAttachmentsMetadata}
+              attachmentsInputRef={attachmentsInputRef}
+            />
           )}
           
         </div>

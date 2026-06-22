@@ -30,7 +30,7 @@ export default function ApptTab({
         className={`text-[10px] font-black min-w-[22px] px-1.5 py-0.5 rounded-full transition-colors ${
           isActive
             ? "bg-[hsl(var(--color-secondary))] text-white"
-            : "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
+            : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
         }`}
       >
         {count}
