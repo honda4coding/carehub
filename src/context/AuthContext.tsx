@@ -54,7 +54,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace(`/${newRole}`);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      await axios.post(`${BASE_URL}/users/logout`);
+    } catch (error) {
+      console.error("Failed to logout from backend:", error);
+    }
+
     setToken(null);
     setRole(null);
     setUser(null);
