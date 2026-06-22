@@ -48,7 +48,7 @@ export default function AnalyticsPage() {
         const [res, pendingRes, dailyRes] = await Promise.all([
           adminService.getAnalyticsData(startDate, endDate),
           adminService.getPendingDoctors(startDate, endDate),
-          adminService.getDailyStats(startDate, endDate)
+          adminService.getDailyStats(startDate, endDate, true)
         ]);
         setAnalyticsData(res.data);
         setPendingRequests(pendingRes.data);

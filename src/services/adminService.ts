@@ -53,10 +53,11 @@ export const adminService = {
   getMonthlyStats: (year?: number): Promise<{ data: MonthlyStats[] }> =>
     fetchClient.get("/admin/stats/monthly", { params: year ? { year: String(year) } : {} }),
 
-  getDailyStats: (startDate?: string, endDate?: string): Promise<{ data: DailyStats[] }> => {
+  getDailyStats: (startDate?: string, endDate?: string, defaultAllTime?: boolean): Promise<{ data: DailyStats[] }> => {
     const params = new URLSearchParams();
     if (startDate) params.append("startDate", startDate);
     if (endDate) params.append("endDate", endDate);
+    if (defaultAllTime) params.append("defaultAllTime", "true");
     const qs = params.toString();
     return fetchClient.get(`/admin/stats/daily${qs ? `?${qs}` : ""}`);
   },

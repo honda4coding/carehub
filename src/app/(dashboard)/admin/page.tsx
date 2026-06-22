@@ -165,9 +165,9 @@ export default function AdminDashboard() {
             <ActivityOverviewChart
               dailyStats={dailyStats}
               statsLoading={statsLoading}
-              totalPatients={totalPatients || null}
-              totalDoctors={totalDoctors || null}
-              totalAppointments={totalAppointments || null}
+              totalPatients={totalPatients ?? null}
+              totalDoctors={totalDoctors ?? null}
+              totalAppointments={totalAppointments ?? null}
             />
           </div>
 
