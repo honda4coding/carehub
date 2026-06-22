@@ -97,9 +97,9 @@ export default function DoctorReportsPage() {
       `}} />
 
       {/* Header */}
-      <header className="no-print sticky top-0 z-40 bg-[hsl(var(--color-bg-surface)/0.8)] backdrop-blur-xl border-b border-[hsl(var(--color-border))] px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between shadow-sm gap-4">
+      <header className="no-print sticky top-0 z-40 bg-[hsl(var(--color-bg-surface)/0.8)] backdrop-blur-xl border-b border-[hsl(var(--color-border))] px-6 py-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center text-xl shadow-inner">
+          <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center text-xl">
             <LuTrendingUp />
           </div>
           <div>
@@ -113,7 +113,7 @@ export default function DoctorReportsPage() {
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 w-full md:w-auto mt-4 md:mt-0">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
             {/* Date Range Picker */}
-            <div className="flex items-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl shadow-[0_2px_8px_rgb(0,0,0,0.04)] overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all flex-1 min-w-0">
+            <div className="flex items-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl -[0_2px_8px_rgb(0,0,0,0.04)] overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary/50 transition-all flex-1 min-w-0">
               <div className="flex items-center px-2 sm:px-3 py-2.5 bg-[hsl(var(--color-bg-soft))] border-r border-[hsl(var(--color-border))]">
                 <LuCalendarDays className="text-primary text-base sm:text-lg shrink-0" />
               </div>
@@ -139,7 +139,7 @@ export default function DoctorReportsPage() {
               {(startDate || endDate) && (
                 <button 
                   onClick={() => { setStartDate(""); setEndDate(""); }}
-                  className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-rose-500 px-4 py-2.5 rounded-xl font-bold transition-all shadow-sm shrink-0"
+                  className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-rose-500 px-4 py-2.5 rounded-xl font-bold transition-all shrink-0"
                   title="Reset Filters"
                 >
                   <LuRotateCcw className="text-lg" />
@@ -147,7 +147,7 @@ export default function DoctorReportsPage() {
               )}
               <button 
                 onClick={handleExport}
-                className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-primary)/0.1)] hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm shrink-0 whitespace-nowrap"
+                className="flex flex-1 sm:flex-none items-center justify-center gap-2 bg-[hsl(var(--color-primary)/0.1)] hover:bg-primary text-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all shrink-0 whitespace-nowrap"
               >
                 <LuDownload className="text-lg" /> Export
               </button>
@@ -160,7 +160,7 @@ export default function DoctorReportsPage() {
       <main className="print-area flex-1 p-6 max-w-7xl mx-auto w-full space-y-6">
         
         {loading && data && (
-          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-1.5 rounded-full shadow-lg text-xs font-bold animate-pulse">
+          <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-primary text-white px-4 py-1.5 rounded-full text-xs font-bold animate-pulse">
             Refreshing Data...
           </div>
         )}
@@ -169,7 +169,7 @@ export default function DoctorReportsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           
           {/* Revenue */}
-          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-800/30 shadow-sm relative overflow-hidden group">
+          <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-5 rounded-2xl border border-emerald-100 dark:border-emerald-800/30 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
               <LuBanknote className="text-6xl text-emerald-600 dark:text-emerald-400" />
             </div>
@@ -186,16 +186,16 @@ export default function DoctorReportsPage() {
           </div>
 
           {/* Total Visits */}
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 rounded-2xl border border-blue-100 dark:border-blue-800/30 shadow-sm relative overflow-hidden group">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 rounded-2xl border border-blue-100 dark:border-blue-800/30 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-              <LuUsers className="text-6xl text-blue-600 dark:text-blue-400" />
+              <LuUsers className="text-6xl text-primary dark:text-blue-400" />
             </div>
-            <p className="text-sm font-bold text-blue-600/80 dark:text-blue-400/80 mb-1">Total Visits</p>
-            <h3 className="text-3xl font-black text-blue-700 dark:text-blue-300">
+            <p className="text-sm font-bold text-primary/80 dark:text-blue-400/80 mb-1">Total Visits</p>
+            <h3 className="text-3xl font-black text-primary dark:text-blue-300">
               {data?.kpis.totalVisits || 0}
             </h3>
             <p className="text-xs font-bold mt-2 flex items-center gap-1">
-              <span className={data?.kpis.visitsGrowth! >= 0 ? "text-blue-500" : "text-rose-500"}>
+              <span className={data?.kpis.visitsGrowth! >= 0 ? "text-primary" : "text-rose-500"}>
                 {data?.kpis.visitsGrowth! >= 0 ? "+" : ""}{data?.kpis.visitsGrowth}%
               </span>
               <span className="text-[hsl(var(--color-text-muted))]">vs previous period</span>
@@ -203,7 +203,7 @@ export default function DoctorReportsPage() {
           </div>
 
           {/* Online vs Walkin */}
-          <div className="bg-gradient-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm sm:col-span-2 flex flex-col justify-center">
+          <div className="bg-gradient-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] sm:col-span-2 flex flex-col justify-center">
             <p className="text-sm font-bold text-[hsl(var(--color-text-muted))] mb-3">Visit Distribution</p>
             <div className="flex items-center gap-4">
               <div className="flex-1">
@@ -238,7 +238,7 @@ export default function DoctorReportsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Visit Trends Area Chart */}
-          <div className="lg:col-span-2 bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-5 shadow-sm">
+          <div className="lg:col-span-2 bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-5">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-base font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
@@ -288,7 +288,7 @@ export default function DoctorReportsPage() {
           </div>
 
           {/* Age Demographics Pie Chart */}
-          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-5 shadow-sm">
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-5">
             <h3 className="text-base font-bold text-[hsl(var(--color-text))] flex items-center gap-2 mb-2">
               <LuFileChartPie className="text-rose-500" /> Patient Demographics
             </h3>

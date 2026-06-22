@@ -25,7 +25,7 @@ export default function TicketCard({
 
   return (
     <div
-      className={`relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden mb-3 transition-shadow hover:shadow-md ${
+      className={`relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl  overflow-hidden mb-3   ${
         dimmed ? "opacity-70" : ""
       }`}
     >

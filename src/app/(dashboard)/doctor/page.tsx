@@ -364,7 +364,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
         <div className="flex items-center gap-2 shrink-0">
           <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
             <LuBell className="text-[15px]" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger" />
           </button>
         </div>
       </header>

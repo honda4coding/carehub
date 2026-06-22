@@ -178,7 +178,7 @@ export default function ApprovalsPage() {
         </div>
 
         {/* Card */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
 
           {/* Tabs + Search */}
           <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
@@ -347,7 +347,7 @@ export default function ApprovalsPage() {
                     const initials = (doc.fullName ?? "??").slice(0, 2).toUpperCase();
                     const avatarStyle = avatarStyles[index % avatarStyles.length];
                     return (
-                      <div key={doc._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+                      <div key={doc._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))]">
                         {/* Card Header: Avatar, Name, Status */}
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-3">
@@ -420,7 +420,7 @@ export default function ApprovalsPage() {
           onClick={() => setRejectModal({ open: false, doctorId: null })}
         >
           <div
-            className="bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-xl w-[90vw] max-w-md p-6"
+            className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-[90vw] max-w-md p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-[14px] font-black text-[hsl(var(--color-text))] mb-1">Reject Doctor</h2>

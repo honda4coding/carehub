@@ -65,7 +65,7 @@ export const LoginForm = () => {
   return (
     <div className="w-full">
       <div
-        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40 shadow-xl"
+        className="rounded-[2.5rem] p-8 md:p-12 relative overflow-hidden border border-white/40"
         style={{ backdropFilter: "blur(24px)", background: "rgba(255, 255, 255, 0.7)" }}
       >
         <div className="text-center mb-8">
@@ -88,7 +88,7 @@ export const LoginForm = () => {
           {({ errors, touched, isSubmitting, status }) => (
             <Form className="space-y-5">
               {status && (
-                <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center">
+                <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-4 py-3 rounded-2xl text-center">
                   {status}
                 </div>
               )}
@@ -102,7 +102,7 @@ export const LoginForm = () => {
                   <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="email" type="email" placeholder="name@example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
                       border: errors.email && touched.email ? "1.5px solid #fc8181" : "1.5px solid transparent",
@@ -110,7 +110,7 @@ export const LoginForm = () => {
                     }}
                   />
                 </div>
-                <ErrorMessage name="email" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="email" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               {/* Password */}
@@ -122,7 +122,7 @@ export const LoginForm = () => {
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="password" type={showPassword ? "text" : "password"} placeholder="••••••••"
-                    className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-12 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.password && touched.password ? "#fff5f5" : "white",
                       border: errors.password && touched.password ? "1.5px solid #fc8181" : "1.5px solid transparent",
@@ -133,7 +133,7 @@ export const LoginForm = () => {
                     {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
                   </button>
                 </div>
-                <ErrorMessage name="password" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="password" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               {/* Remember + Forgot */}
@@ -161,7 +161,7 @@ export const LoginForm = () => {
               <div className="pt-4">
                 <button
                   type="submit" disabled={isSubmitting}
-                  className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     backgroundImage:
                       "linear-gradient(to right, #0891B2, hsl(var(--color-primary)))",
@@ -179,7 +179,7 @@ export const LoginForm = () => {
         </Formik>
 
         {/* Footer */}
-        <div className="mt-10 pt-8 border-t border-slate-200/50 text-center space-y-4">
+        <div className="mt-10 pt-8 border-t border-soft/50 text-center space-y-4">
           <p className="text-sm" style={{ color: "hsl(var(--color-text-muted))" }}>
             New to Carehub?{" "}
             <Link href="/register" className="font-bold hover:underline underline-offset-4 transition-all" style={{ color: "hsl(var(--color-primary-strong))" }}>

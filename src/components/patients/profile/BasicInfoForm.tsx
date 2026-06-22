@@ -49,7 +49,7 @@ function EditField({ name, label, icon, placeholder, type = "text", errors, touc
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>
   );
 }
@@ -105,8 +105,8 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
       {(serverError || serverSuccess) && (
         <div className={`mx-6 mb-3 px-4 py-3 text-sm font-medium rounded-xl flex items-center gap-2 ${
           serverError
-            ? "bg-red-50 border border-red-200 text-red-600"
-            : "bg-green-50 border border-green-200 text-green-600"
+            ? "bg-danger-light border border-red-200 text-danger"
+            : "bg-success-light border border-green-200 text-success"
         }`}>
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
           {serverError || serverSuccess}
@@ -159,7 +159,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                     </Field>
                     <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
                   </div>
-                  <ErrorMessage name="gender" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                  <ErrorMessage name="gender" component="p" className="text-danger text-xs pl-1 font-medium" />
                 </div>
               </div>
 
@@ -187,7 +187,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                   </Field>
                   <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
                 </div>
-                <ErrorMessage name="sharingSetting" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                <ErrorMessage name="sharingSetting" component="p" className="text-danger text-xs pl-1 font-medium" />
                 <p className="text-[11px] text-[hsl(var(--color-text-muted))] pl-1">
                   Controls how doctors access your medical records.
                 </p>

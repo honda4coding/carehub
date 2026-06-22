@@ -43,7 +43,7 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>
   );
 }
@@ -93,8 +93,8 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
       {(serverError || serverSuccess) && (
         <div className={`mx-6 mb-3 px-4 py-3 text-sm font-medium rounded-xl flex items-center gap-2 ${
           serverError
-            ? "bg-red-50 border border-red-200 text-red-600"
-            : "bg-green-50 border border-green-200 text-green-600"
+            ? "bg-danger-light border border-red-200 text-danger"
+            : "bg-success-light border border-green-200 text-success"
         }`}>
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
           {serverError || serverSuccess}

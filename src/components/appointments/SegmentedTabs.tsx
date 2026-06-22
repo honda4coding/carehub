@@ -23,7 +23,7 @@ export default function SegmentedTabs({
             onClick={() => onChange(tab.value)}
             className={`px-4 py-2 rounded-lg text-[12.5px] font-bold transition-all duration-150 flex items-center gap-1.5 ${
               isActive
-                ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm"
+                ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] "
                 : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
             }`}
           >

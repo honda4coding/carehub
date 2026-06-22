@@ -15,7 +15,7 @@ export const DoctorActions = ({
   return (
     <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       <div className="md:col-span-2 relative">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 h-full flex flex-col justify-center relative shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 h-full flex flex-col justify-center relative">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(var(--color-primary)/0.05)] rounded-bl-full rounded-tr-2xl -z-10" />
           <h2 className="text-lg font-black text-[hsl(var(--color-text))] mb-1">Start New Consultation</h2>
           <p className="text-xs text-[hsl(var(--color-text-muted))] font-medium mb-4">Search for an online patient by name, phone, or ID to request access.</p>
@@ -41,7 +41,7 @@ export const DoctorActions = ({
             </div>
 
             {showSearchResults && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl shadow-lg overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
+              <div className="absolute top-full left-0 right-0 mt-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
                 <div className="p-2 border-b border-[hsl(var(--color-border-soft))] bg-[hsl(var(--color-bg-soft))] flex justify-between items-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Search Results</span>
                   <button onClick={() => setShowSearchResults(false)} className="text-[10px] text-[hsl(var(--color-danger))] font-bold">Close</button>
@@ -90,7 +90,7 @@ export const DoctorActions = ({
       </div>
 
       <div className="md:col-span-1">
-        <div className="bg-gradient-doctor rounded-2xl p-6 h-full flex flex-col justify-center items-center text-center shadow-md relative overflow-hidden group">
+        <div className="bg-gradient-doctor rounded-2xl p-6 h-full flex flex-col justify-center items-center text-center relative overflow-hidden group">
           <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
           <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl mb-3 backdrop-blur-sm">
             <LuUserPlus />
@@ -99,7 +99,7 @@ export const DoctorActions = ({
           <p className="text-white/80 text-xs font-medium mb-4 relative z-10">For patients without the app</p>
           <button 
             onClick={() => setWalkInModalOpen(true)}
-            className="w-full bg-white text-primary text-sm font-bold py-2.5 rounded-xl shadow-sm hover:scale-[1.02] transition-transform relative z-10"
+            className="w-full bg-white text-primary text-sm font-bold py-2.5 rounded-xl hover:scale-[1.02] transition-transform relative z-10"
           >
             Register Offline Patient
           </button>

@@ -387,7 +387,7 @@ function SidebarContent({
       {/* Logo */}
       <div className="flex items-center justify-between gap-3 px-5 py-[18px] border-b border-[hsl(var(--color-border))]">
         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black shadow-[0_4px_12px_hsl(var(--color-primary)/0.35)]">
+          <div className="w-9 h-9 rounded-[10px] bg-primary flex items-center justify-center text-white text-lg font-black -[0_4px_12px_hsl(var(--color-primary)/0.35)]">
             +
           </div>
           <div>
@@ -573,7 +573,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] shadow-sm"
+          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />
@@ -587,7 +587,7 @@ export default function Sidebar({ role }: { role: string }) {
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] shadow-2xl">
+          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))]">
             <SidebarContent
               role={role}
               onClose={() => setOpen(false)}

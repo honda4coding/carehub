@@ -24,7 +24,7 @@ function HistoryCard({ item, index }: { item: any; index: number }) {
       {/* Card Content */}
       <div 
         onClick={() => setExpanded(!expanded)}
-        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 transition-all cursor-pointer group"
       >
         
         {/* Top Bar */}
@@ -158,7 +158,7 @@ function WalkinHistoryContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
       {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-4 shadow-sm z-10 sticky top-0">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-4 z-10 sticky top-0">
         <button 
           onClick={() => router.back()}
           className="p-2 bg-[hsl(var(--color-bg-soft))] hover:bg-primary hover:text-white rounded-lg transition-colors border border-[hsl(var(--color-border))] flex-shrink-0"
@@ -179,7 +179,7 @@ function WalkinHistoryContent() {
         <div className="max-w-4xl mx-auto w-full">
           
           {/* Smart Toolbar */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-8 flex flex-col md:flex-row gap-4 items-center">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-8 flex flex-col md:flex-row gap-4 items-center">
             
             {/* Search */}
             <div className="relative flex-1 w-full">
@@ -217,7 +217,7 @@ function WalkinHistoryContent() {
             {(searchTerm || dateFilter || sortOrder !== "newest") && (
               <button 
                 onClick={() => { setSearchTerm(""); setDateFilter(""); setSortOrder("newest"); }}
-                className="w-full md:w-auto px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[12px] rounded-xl border border-red-100 transition-colors"
+                className="w-full md:w-auto px-4 py-2.5 bg-danger-light hover:bg-danger-light text-danger font-bold text-[12px] rounded-xl border border-red-100 transition-colors"
               >
                 Clear
               </button>
@@ -237,7 +237,7 @@ function WalkinHistoryContent() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm">
+            <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl">
               <LuHistory className="text-6xl text-[hsl(var(--color-text-muted))] opacity-20 mb-4" />
               <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2">No History Found</h2>
               <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] max-w-sm">

@@ -1,23 +1,17 @@
-  /* src/app/globals.css */
-  @import "tailwindcss";
+/* src/app/globals.css */
+@import "tailwindcss";
 
-
-    /* --color-primary: #46BFE5;
-    --color-secondary: #F472B6;
-    --color-bg-white: #FFFFFF;
-    --color-bg-surface: #F8FAFC;
-    --color-text-dark: #083344; */
-
-    @layer base {
-    :root {
-
-      /* Backgrounds */
+@layer base {
+  :root {
+    /* Backgrounds */
     --color-bg: 210 40% 98%; /* light app background */
     --color-bg-surface: 0 0% 100%; /* cards / sections */
+    --color-bg-surface-hover: 210 40% 96%; /* subtle gray background */
 
     /* Text */
     --color-text: 222 47% 11%; /* main text */
     --color-text-muted: 215 16% 47%; /* secondary text */
+    --color-text-inverse: 0 0% 100%; /* white text */
 
     /* Primary (from #46BFE5 → cyan/teal system) */
     --color-primary: 195 75% 58%; /* main */
@@ -26,14 +20,6 @@
     /* Secondary (from #F472B6 → pink system) */
     --color-secondary: 330 80% 70%; /* soft pink */
     --color-secondary-strong: 330 75% 60%; /* stronger pink */
-
-    /* Background variants */
-    --color-bg-white: 0 0% 100%; /* pure white */
-    --color-bg-soft: 210 40% 96%; /* subtle gray background */
-
-    /* Badges / highlights */
-    --color-badge-bg: 195 70% 94%; /* light primary tint */
-    --color-badge-text: 195 75% 30%; /* dark primary text */
 
     /* Status colors (dashboard) */
     --color-success: 142 60% 35%;
@@ -46,58 +32,71 @@
     /* Borders */
     --color-border: 215 16% 47% / 0.12;
     --color-border-soft: 215 16% 47% / 0.07;
-    }
-
-    body {
-      background-color: hsl(var(--color-bg));
-      color: hsl(var(--color-text));
-      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    }
   }
 
-
-  @layer utilities {
-    .bg-primary {
-      background-color: hsl(var(--color-primary));
-    }
-    
-    .bg-secondary {
-      background-color: hsl(var(--color-secondary));
-    }
-    
-    .text-primary {
-      color: hsl(var(--color-primary));
-    }
-    
-    .text-secondary {
-      color: hsl(var(--color-secondary));
-    }
-
-    .bg-gradient-brand {
-      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
-    }
-    
-    .bg-gradient-doctor {
-      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-primary)));
-    }
-    
-    .bg-gradient-patient {
-      background-image: linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)));
-    }
-    
-    .text-gradient {
-      background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
-      background-clip: text;
-      -webkit-background-clip: text; 
-      color: transparent;
-    }
-
-    
-    .border-primary {
-      border-color: var(--color-primary);
-    }
-    
-    .focus\:ring-primary:focus {
-      --tw-ring-color: var(--color-primary);
-    }
+  body {
+    background-color: hsl(var(--color-bg));
+    color: hsl(var(--color-text));
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
+}
+
+@layer utilities {
+  /* Typography Scale */
+  .text-xs { font-size: 12px; line-height: 16px; }
+  .text-sm { font-size: 14px; line-height: 20px; }
+  .text-base { font-size: 16px; line-height: 24px; }
+  .text-lg { font-size: 18px; line-height: 28px; }
+  .text-xl { font-size: 24px; line-height: 32px; } /* Designer Request: 24px */
+  .text-2xl { font-size: 32px; line-height: 40px; } /* Designer Request: 32px */
+  .text-4xl { font-size: 64px; line-height: 1; } /* Designer Request: 64px */
+
+  /* Text Colors */
+  .text-main { color: hsl(var(--color-text)); }
+  .text-muted { color: hsl(var(--color-text-muted)); }
+  .text-inverse { color: hsl(var(--color-text-inverse)); }
+  .text-primary { color: hsl(var(--color-primary)); }
+  .text-secondary { color: hsl(var(--color-secondary)); }
+  .text-success { color: hsl(var(--color-success)); }
+  .text-warning { color: hsl(var(--color-warning)); }
+  .text-danger { color: hsl(var(--color-danger)); }
+
+  /* Background Colors */
+  .bg-surface { background-color: hsl(var(--color-bg-surface)); }
+  .bg-soft { background-color: hsl(var(--color-bg-surface-hover)); }
+  .bg-primary { background-color: hsl(var(--color-primary)); }
+  .bg-secondary { background-color: hsl(var(--color-secondary)); }
+  .bg-success { background-color: hsl(var(--color-success)); }
+  .bg-warning { background-color: hsl(var(--color-warning)); }
+  .bg-danger { background-color: hsl(var(--color-danger)); }
+  .bg-success-light { background-color: hsl(var(--color-success-bg)); }
+  .bg-warning-light { background-color: hsl(var(--color-warning-bg)); }
+  .bg-danger-light { background-color: hsl(var(--color-danger-bg)); }
+
+  /* Border Colors */
+  .border-soft { border-color: hsl(var(--color-border-soft)); }
+  .border-main { border-color: hsl(var(--color-border)); }
+  .border-primary { border-color: hsl(var(--color-primary)); }
+
+  /* Custom Rings */
+  .focus\:ring-primary:focus {
+    --tw-ring-color: hsl(var(--color-primary));
+  }
+
+  /* Gradients */
+  .bg-gradient-brand {
+    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+  }
+  .bg-gradient-doctor {
+    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-primary)));
+  }
+  .bg-gradient-patient {
+    background-image: linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)));
+  }
+  .text-gradient {
+    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+    background-clip: text;
+    -webkit-background-clip: text; 
+    color: transparent;
+  }
+}

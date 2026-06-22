@@ -580,7 +580,7 @@ export default function AdminUserManagementPage() {
                       const sc = statusConfig[user.status] ?? statusConfig.pending;
                       const rc = roleConfig[user.role] ?? roleConfig.patient;
                       return (
-                        <div key={user._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+                        <div key={user._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))]">
                           {/* Card Header: Avatar, Name, Role */}
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-3">

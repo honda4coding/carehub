@@ -32,7 +32,7 @@ export const CurrentQueue = ({
   const router = useRouter();
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <div>
           <p className="text-[13px] font-black uppercase text-[hsl(var(--color-text))]">Current Queue</p>

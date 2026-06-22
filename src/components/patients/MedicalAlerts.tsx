@@ -13,7 +13,7 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
     <div className="flex flex-col gap-4">
       {/* Allergies */}
       {allergies.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-danger-bg))] rounded-2xl p-4 shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-danger-bg))] rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <LuShieldAlert className="text-[hsl(var(--color-danger))]" />
             <h3 className="text-[12px] font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">Allergies</h3>
@@ -30,7 +30,7 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
 
       {/* Chronic Diseases */}
       {chronicDiseases.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-warning-bg))] rounded-2xl p-4 shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-warning-bg))] rounded-2xl p-4">
           <div className="flex items-center gap-2 mb-3">
             <LuActivity className="text-[hsl(var(--color-warning))]" />
             <h3 className="text-[12px] font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">Chronic Conditions</h3>

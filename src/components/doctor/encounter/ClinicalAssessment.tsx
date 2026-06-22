@@ -66,7 +66,7 @@ export default function ClinicalAssessment({
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6 shadow-sm">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
           <LuClipboardList className="text-primary text-xl shrink-0" /> Clinical Assessment
@@ -87,7 +87,7 @@ export default function ClinicalAssessment({
               onClick={() => startListening("symptoms")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all w-fit ${
                 listeningTo === "symptoms" 
-                  ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
+                  ? "bg-danger-light text-danger border border-red-200 animate-pulse" 
                   : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
               }`}
             >
@@ -117,7 +117,7 @@ export default function ClinicalAssessment({
                 onClick={() => startListening("diagnosis")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                   listeningTo === "diagnosis" 
-                    ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
+                    ? "bg-danger-light text-danger border border-red-200 animate-pulse" 
                     : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
                 }`}
               >

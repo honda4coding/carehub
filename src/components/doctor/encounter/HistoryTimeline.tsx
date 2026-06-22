@@ -10,7 +10,7 @@ function TimelineAccordionCard({ record }: { record: any }) {
   return (
     <div 
       onClick={() => setExpanded(!expanded)}
-      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm hover:border-primary/50 transition-all cursor-pointer group w-full"
+      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 hover:border-primary/50 transition-all cursor-pointer group w-full"
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -76,7 +76,7 @@ export default function HistoryTimeline({
       {/* Start Assessment CTA Removed */}
 
       {/* Full Timeline */}
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
         <div className="flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-4">
           <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
             <LuHistory className="text-primary text-xl shrink-0" /> Full Medical History
@@ -124,7 +124,7 @@ export default function HistoryTimeline({
             {fullMedicalHistory.map((record: any, index: number) => (
               <div key={record._id || index} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                 {/* Timeline dot */}
-                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-primary font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-primary font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                   <LuFileText />
                 </div>
                 {/* Timeline Card */}

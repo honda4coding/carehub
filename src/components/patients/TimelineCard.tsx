@@ -14,12 +14,12 @@ export default function TimelineCard({ entry }: Props) {
   return (
     <div className="relative group w-full">
       {/* Timeline Node (Glowing Dot) */}
-      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] shadow-[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
+      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] -[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
 
       {/* Card Content */}
       <div 
         onClick={() => setExpanded(!expanded)}
-        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 shadow-sm group-hover:border-[hsl(var(--color-primary)/0.3)] group-hover:shadow-[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
+        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 group-hover:border-[hsl(var(--color-primary)/0.3)] -[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
       >
         
         {/* Compact Header */}

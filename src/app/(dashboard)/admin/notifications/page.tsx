@@ -133,7 +133,7 @@ return (
   </div>
 
   {/* Card */}
-  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
+  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
 
     {/* Tabs + Search */}
     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
@@ -280,7 +280,7 @@ return (
           {/* Mobile Card View */}
           <div className="lg:hidden flex flex-col gap-4 py-2">
             {filtered.map((notification) => (
-              <div key={notification._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+              <div key={notification._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))]">
                 <div className="flex justify-between items-start mb-3">
                   <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${notification.isRead ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"}`}>
                     {notification.isRead ? "Read" : "Unread"}

@@ -41,7 +41,7 @@ export default function PatientInsightsCard({ patientId }: { patientId: string }
   if (error) return null;
 
   return (
-    <div className="bg-gradient-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-primary))/0.3] rounded-2xl p-6 shadow-sm mb-8 relative overflow-hidden">
+    <div className="bg-gradient-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-primary))/0.3] rounded-2xl p-6 mb-8 relative overflow-hidden">
       <div className="absolute -top-10 -right-10 text-[hsl(var(--color-primary))/0.05]">
         <LuBrainCircuit size={150} />
       </div>

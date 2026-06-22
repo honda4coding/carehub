@@ -45,14 +45,14 @@ export default function AdminLoginPage() {
   }
 };
 
-  const inputClasses = "w-full pl-10 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] outline-none transition-all";
+  const inputClasses = "w-full pl-10 pr-4 py-3 border border-soft rounded-xl focus:ring-2 focus:ring-[hsl(var(--color-primary))] focus:border-[hsl(var(--color-primary))] outline-none transition-all";
 
   return (
     <div className="min-h-screen bg-[hsl(var(--color-bg-soft))] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl shadow-lg mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl mb-4">
             <HiShieldCheck className="text-3xl" />
           </div>
           <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">Admin Portal</h1>
@@ -60,7 +60,7 @@ export default function AdminLoginPage() {
         </div>
 
         {/* Login Card */}
-        <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
+        <div className="bg-white rounded-3xl p-8 /50 border border-slate-100">
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={adminLoginSchema}
@@ -80,7 +80,7 @@ export default function AdminLoginPage() {
                       className={inputClasses}
                     />
                   </div>
-                  <ErrorMessage name="email" component="p" className="text-red-500 text-xs ml-1" />
+                  <ErrorMessage name="email" component="p" className="text-danger text-xs ml-1" />
                 </div>
 
                 {/* Password Field */}
@@ -95,14 +95,14 @@ export default function AdminLoginPage() {
                       className={inputClasses}
                     />
                   </div>
-                  <ErrorMessage name="password" component="p" className="text-red-500 text-xs ml-1" />
+                  <ErrorMessage name="password" component="p" className="text-danger text-xs ml-1" />
                 </div>
 
                 {/* Submit Button */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[hsl(var(--color-primary))] text-white font-bold py-4 rounded-xl shadow-lg shadow-[hsl(var(--color-primary)/0.3)] hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="w-full bg-[hsl(var(--color-primary))] text-white font-bold py-4 rounded-xl -[hsl(var(--color-primary)/0.3)] hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>

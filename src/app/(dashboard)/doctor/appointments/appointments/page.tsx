@@ -39,9 +39,9 @@ function TodayCard({
     (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] border-l-[3px] border-l-primary rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all duration-200">
+    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] border-l-[3px] border-l-primary rounded-2xl p-4 flex items-center gap-4 hover:-translate-y-[1px] transition-all duration-200">
       {/* Avatar */}
-      <div className="relative w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-white text-[13px] font-black shrink-0 ring-2 ring-[hsl(var(--color-bg-surface))] shadow-sm">
+      <div className="relative w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-white text-[13px] font-black shrink-0 ring-2 ring-[hsl(var(--color-bg-surface))]">
         {initialsOf(patient?.fullName)}
       </div>
 
@@ -85,7 +85,7 @@ function ApptRow({ appt }: { appt: Appointment }) {
 
   return (
     <div
-      className={`group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${
+      className={`group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl  overflow-hidden mb-3 transition-all duration-200  hover:-translate-y-[1px] ${
         dimmed ? "opacity-60" : ""
       }`}
     >
@@ -121,14 +121,14 @@ function ApptRow({ appt }: { appt: Appointment }) {
           {isoTo12Hour(appt.startDateTime)}
         </span>
         {/* Punch holes */}
-        <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
-        <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] shadow-inner" />
+        <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
+        <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]" />
       </div>
 
       {/* Body */}
       <div className="flex-1 p-4 sm:p-5 flex items-center justify-between gap-4 flex-wrap bg-gradient-to-r from-[hsl(var(--color-bg-surface))] to-transparent">
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-12 h-12 rounded-full bg-gradient-secondary flex items-center justify-center text-white text-[14px] font-black shrink-0 shadow-sm">
+          <div className="w-12 h-12 rounded-full bg-gradient-secondary flex items-center justify-center text-white text-[14px] font-black shrink-0">
             {initialsOf(patient?.fullName)}
           </div>
           <div className="min-w-0">
@@ -173,7 +173,7 @@ function ApptTab({
       onClick={onClick}
       className={`relative flex-1 sm:flex-none min-w-[110px] sm:min-w-0 px-2 sm:px-5 py-2.5 rounded-xl text-[11.5px] sm:text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-1.5 sm:gap-2 ${
         isActive
-          ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm"
+          ? "bg-[hsl(var(--color-primary)/0.1)] text-primary "
           : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))]"
       }`}
     >
@@ -181,7 +181,7 @@ function ApptTab({
       <span
         className={`text-[10px] font-black min-w-[22px] px-1.5 py-0.5 rounded-full transition-colors ${
           isActive
-            ? "bg-primary text-white shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)]"
+            ? "bg-primary text-white -[0_2px_8px_hsl(var(--color-primary)/0.4)]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
         }`}
       >
@@ -296,9 +296,9 @@ setAppointments(data as any);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 -[0_1px_0_hsl(var(--color-border))]">
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0">
             <LuCalendarDays />
           </div>
           <div>

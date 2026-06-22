@@ -441,7 +441,7 @@ export default function PatientDashboardPage() {
         
         {/* Tab Navigation */}
         <div className="mb-6 w-full no-print flex justify-center">
-          <div className="flex flex-wrap items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm w-full lg:w-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] w-full lg:w-auto">
             {[
               { id: "profile", label: "Profile & Vitals", icon: LuUser },
               { id: "history", label: "Medical History", icon: LuHistory },
@@ -453,7 +453,7 @@ export default function PatientDashboardPage() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center justify-center gap-2 px-3 md:px-5 py-2.5 rounded-xl text-[12px] md:text-sm font-bold transition-all flex-1 sm:flex-none min-w-[130px] sm:min-w-0 ${
                   activeTab === tab.id 
-                    ? "bg-[hsl(var(--color-primary)/0.1)] text-primary shadow-sm" 
+                    ? "bg-[hsl(var(--color-primary)/0.1)] text-primary " 
                     : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))]"
                 }`}
               >
@@ -533,8 +533,8 @@ export default function PatientDashboardPage() {
                 {sessionData && !sessionData.isOfflinePatient && sessionData.patientId ? (
                   <MedicationCompliancePanel patientId={sessionData.patientId._id} />
                 ) : (
-                  <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 text-center">
-                    <p className="text-sm text-gray-500">Compliance tracking is not available for offline patients.</p>
+                  <div className="bg-white rounded-3xl p-6 border border-soft text-center">
+                    <p className="text-sm text-muted">Compliance tracking is not available for offline patients.</p>
                   </div>
                 )}
               </div>
@@ -570,7 +570,7 @@ export default function PatientDashboardPage() {
               <div className="mt-8 flex justify-end">
                 <button 
                   onClick={() => setActiveTab("prescription")}
-                  className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2"
+                  className="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-xl font-bold transition-all flex items-center gap-2"
                 >
                   Proceed to Prescription <LuPill className="text-lg" />
                 </button>

@@ -500,7 +500,7 @@ export default function AdminDashboard() {
                         <div 
                           key={req._id} 
                           onClick={() => router.push("/admin/approvals")}
-                          className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm cursor-pointer hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                          className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] cursor-pointer hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
                         >
                           <div className="flex justify-between items-start mb-3">
                             <div className="flex items-center gap-3">

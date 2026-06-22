@@ -71,7 +71,7 @@ export default function AIDiagnosisModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[hsl(var(--color-bg-base))] rounded-3xl shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col border border-[hsl(var(--color-border))]">
+      <div className="bg-[hsl(var(--color-bg-base))] rounded-3xl w-full max-w-2xl overflow-hidden flex flex-col border border-[hsl(var(--color-border))]">
         
         {/* Header */}
         <div className="px-6 py-5 border-b border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex justify-between items-center">
@@ -86,7 +86,7 @@ export default function AIDiagnosisModal({
           </div>
           <button 
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-[hsl(var(--color-bg-soft))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-red-50 hover:text-red-500 transition-colors"
+            className="w-8 h-8 rounded-full bg-[hsl(var(--color-bg-soft))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-danger-light hover:text-danger transition-colors"
           >
             <LuX />
           </button>
@@ -104,7 +104,7 @@ export default function AIDiagnosisModal({
               </p>
               <button 
                 onClick={fetchDiagnoses}
-                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md hover:shadow-lg flex items-center gap-2 mx-auto"
+                className="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 mx-auto"
               >
                 <LuWand /> Generate Diagnoses
               </button>
@@ -119,11 +119,11 @@ export default function AIDiagnosisModal({
           )}
 
           {error && !loading && (
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
-              <LuTriangleAlert className="text-red-500 text-xl shrink-0 mt-0.5" />
+            <div className="bg-danger-light border border-red-200 rounded-xl p-4 flex items-start gap-3">
+              <LuTriangleAlert className="text-danger text-xl shrink-0 mt-0.5" />
               <div>
                 <h4 className="text-red-800 font-bold text-sm">Analysis Failed</h4>
-                <p className="text-red-600 text-sm mt-1">{error}</p>
+                <p className="text-danger text-sm mt-1">{error}</p>
               </div>
             </div>
           )}
@@ -131,7 +131,7 @@ export default function AIDiagnosisModal({
           {diagnoses.length > 0 && !loading && (
             <div className="space-y-4">
               <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-2">
-                <LuCheck className="text-green-500 text-base" /> AI Suggestions
+                <LuCheck className="text-success text-base" /> AI Suggestions
               </p>
               {diagnoses.map((diag, index) => (
                 <div 
@@ -172,7 +172,7 @@ export default function AIDiagnosisModal({
             <button 
               onClick={fetchDiagnoses}
               disabled={loading}
-              className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow flex items-center gap-2 disabled:opacity-50"
+              className="bg-primary hover:bg-primary/90 text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 disabled:opacity-50"
             >
               <LuWand /> Retry Analysis
             </button>

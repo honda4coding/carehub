@@ -21,9 +21,9 @@ function authHeaders() {
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl shadow-lg">
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-danger-light border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl">
       {message}
-      <button onClick={onClose} className="ml-2 text-red-400 hover:text-red-600">✕</button>
+      <button onClick={onClose} className="ml-2 text-red-400 hover:text-danger">✕</button>
     </div>
   );
 }
@@ -51,7 +51,7 @@ function TimelineAccordionCard({ record }: { record: any }) {
   return (
     <div 
       onClick={() => setExpanded(!expanded)}
-      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm hover:border-[hsl(var(--color-primary)/0.5)] transition-all cursor-pointer group w-full"
+      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 hover:border-[hsl(var(--color-primary)/0.5)] transition-all cursor-pointer group w-full"
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
@@ -224,7 +224,7 @@ export default function MedicalHistoryPage() {
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
           
           {/* Filters Section */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
@@ -299,7 +299,7 @@ export default function MedicalHistoryPage() {
                   {displayedRecords.map((r, index) => (
                     <div key={r._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
                       {/* Timeline dot */}
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow-sm z-10">
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                         <LuFileText />
                       </div>
                       {/* Timeline Card */}
@@ -316,7 +316,7 @@ export default function MedicalHistoryPage() {
                     </div>
                   )}
                   {!hasMoreRecords && filteredRecords.length > 0 && (
-                    <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))] shadow-sm">
+                    <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))]">
                       End of history ({filteredRecords.length} records)
                     </div>
                   )}
@@ -328,32 +328,32 @@ export default function MedicalHistoryPage() {
             <div className="w-full lg:w-1/3 xl:w-1/4 shrink-0">
               {/* Medications Section */}
               {!loading && allMedications.length > 0 && (
-                <div className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
+                <div className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
                   <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                    <LuPill className="text-blue-500 text-lg" /> Patient Medications
+                    <LuPill className="text-primary text-lg" /> Patient Medications
                   </h3>
                   <div className="flex flex-col gap-8">
                     {/* Active Medications */}
                     <div>
-                      <h4 className="text-[13px] font-bold text-gray-700 mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-green-500"></span> Active
+                      <h4 className="text-[13px] font-bold text-main mb-3 flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-success"></span> Active
                       </h4>
                       {allMedications.filter(m => m.status === 'active').length === 0 ? (
-                        <p className="text-[11px] text-gray-500 italic">No active medications.</p>
+                        <p className="text-[11px] text-muted italic">No active medications.</p>
                       ) : (
                         <div className="space-y-3">
                           {allMedications.filter(m => m.status === 'active').map((med: any, idx) => (
-                            <div key={idx} className="bg-white border border-gray-100 rounded-xl p-3 shadow-sm flex flex-col hover:border-green-300 transition-colors">
+                            <div key={idx} className="bg-white border border-soft rounded-xl p-3 flex flex-col hover:border-green-300 transition-colors">
                               <div className="flex justify-between items-start mb-1">
-                                <h5 className="text-[13px] font-bold text-gray-900">{med.medicineName}</h5>
-                                <span className="text-[9px] font-bold text-green-700 bg-green-50 px-2 py-0.5 rounded-md">Active</span>
+                                <h5 className="text-[13px] font-bold text-main">{med.medicineName}</h5>
+                                <span className="text-[9px] font-bold text-green-700 bg-success-light px-2 py-0.5 rounded-md">Active</span>
                               </div>
-                              <div className="text-[11px] text-gray-500 flex flex-wrap gap-x-2 gap-y-1 mb-2">
+                              <div className="text-[11px] text-muted flex flex-wrap gap-x-2 gap-y-1 mb-2">
                                 <span>{med.dosage}</span>
                                 <span>•</span>
                                 <span>{med.frequency}</span>
                               </div>
-                              <div className="text-[9px] font-medium text-gray-400">
+                              <div className="text-[9px] font-medium text-muted">
                                 Since: {med.date.toLocaleDateString()}
                               </div>
                             </div>
@@ -364,25 +364,25 @@ export default function MedicalHistoryPage() {
 
                     {/* Past Medications */}
                     <div>
-                      <h4 className="text-[13px] font-bold text-gray-700 mb-3 flex items-center gap-2">
+                      <h4 className="text-[13px] font-bold text-main mb-3 flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-gray-400"></span> Past
                       </h4>
                       {allMedications.filter(m => m.status !== 'active').length === 0 ? (
-                        <p className="text-[11px] text-gray-500 italic">No past medications.</p>
+                        <p className="text-[11px] text-muted italic">No past medications.</p>
                       ) : (
                         <div className="space-y-3">
                           {allMedications.filter(m => m.status !== 'active').map((med: any, idx) => (
-                            <div key={idx} className="bg-gray-50 border border-gray-100 rounded-xl p-3 shadow-sm flex flex-col hover:border-gray-300 transition-colors opacity-80">
+                            <div key={idx} className="bg-soft border border-soft rounded-xl p-3 flex flex-col hover:border-soft transition-colors opacity-80">
                               <div className="flex justify-between items-start mb-1">
-                                <h5 className="text-[13px] font-bold text-gray-700">{med.medicineName}</h5>
-                                <span className="text-[9px] font-bold text-gray-600 bg-gray-200 px-2 py-0.5 rounded-md">Past</span>
+                                <h5 className="text-[13px] font-bold text-main">{med.medicineName}</h5>
+                                <span className="text-[9px] font-bold text-muted bg-gray-200 px-2 py-0.5 rounded-md">Past</span>
                               </div>
-                              <div className="text-[11px] text-gray-500 flex flex-wrap gap-x-2 gap-y-1 mb-2">
+                              <div className="text-[11px] text-muted flex flex-wrap gap-x-2 gap-y-1 mb-2">
                                 <span>{med.dosage}</span>
                                 <span>•</span>
                                 <span>{med.frequency}</span>
                               </div>
-                              <div className="text-[9px] font-medium text-gray-400">
+                              <div className="text-[9px] font-medium text-muted">
                                 Date: {med.date.toLocaleDateString()}
                               </div>
                             </div>

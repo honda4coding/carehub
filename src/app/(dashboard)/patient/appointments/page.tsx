@@ -32,8 +32,8 @@ const STATUS_CONFIG: Record<DisplayStatus, { label: string; bg: string; text: st
   },
   cancelled: {
     label: "Cancelled",
-    bg: "bg-red-50",
-    text: "text-red-500",
+    bg: "bg-danger-light",
+    text: "text-danger",
     dot: "bg-red-400",
     border: "border-red-200",
   },
@@ -45,7 +45,7 @@ function PayModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-sm overflow-hidden">
         <div className="bg-gradient-to-r from-primary to-sky-400 px-6 py-5 text-white text-center">
           <LuCreditCard className="text-[32px] mx-auto mb-2" />
           <p className="text-[16px] font-black">Pay for Appointment</p>
@@ -74,7 +74,7 @@ function PayModal({ open, onClose }: { open: boolean; onClose: () => void }) {
                 </div>
               </div>
               <button onClick={() => setPaid(true)}
-                className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white text-[14px] font-black shadow-[0_4px_15px_hsl(var(--color-primary)/0.35)] hover:scale-[1.01] transition-all">
+                className="w-full py-3 rounded-xl bg-gradient-to-r from-primary to-sky-400 text-white text-[14px] font-black -[0_4px_15px_hsl(var(--color-primary)/0.35)] hover:scale-[1.01] transition-all">
                 Pay Now
               </button>
             </>
@@ -120,7 +120,7 @@ function ApptCard({
   const docPic = doctor?.profilepicture?.secure_url || doctor?.userId?.profilepicture?.secure_url;
 
   return (
-    <div className={`group relative flex bg-[hsl(var(--color-bg-surface))] border rounded-2xl shadow-sm overflow-hidden mb-3 transition-all duration-200 hover:shadow-md hover:-translate-y-[1px] ${cfg.border} border-l-4`}
+    <div className={`group relative flex bg-[hsl(var(--color-bg-surface))] border rounded-2xl overflow-hidden mb-3 transition-all duration-200 hover:-translate-y-[1px] ${cfg.border} border-l-4`}
       style={{ borderLeftColor: status === "upcoming" ? "hsl(var(--color-primary))" : status === "completed" ? "#10b981" : "#f87171" }}>
 
       {/* Date stub */}
@@ -143,9 +143,9 @@ function ApptCard({
         <div className="flex items-center gap-3.5 min-w-0">
           <Link href={doctor?._id ? `/patient/doctors/${doctor._id}` : "#"} className="shrink-0 hover:opacity-80 transition-opacity">
             {docPic ? (
-              <img src={docPic} alt={docName || "Doctor"} className="w-12 h-12 rounded-xl object-cover shadow-sm border border-[hsl(var(--color-border))]" />
+              <img src={docPic} alt={docName || "Doctor"} className="w-12 h-12 rounded-xl object-cover border border-[hsl(var(--color-border))]" />
             ) : (
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[14px] font-black shadow-sm">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-sky-400 flex items-center justify-center text-white text-[14px] font-black">
                 {initialsOf(docName || "Doctor")}
               </div>
             )}
@@ -179,11 +179,11 @@ function ApptCard({
           {status === "upcoming" && (
             <>
               <button onClick={() => onPayClick(appt)}
-                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-primary text-white shadow-sm hover:shadow-md hover:-translate-y-[1px] transition-all">
+                className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-lg bg-primary text-white hover:-translate-y-[1px] transition-all">
                 <LuCreditCard className="text-[12px]" />Pay
               </button>
               <button onClick={() => onCancelClick(appt)} title="Cancel"
-                className="w-7 h-7 rounded-lg flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-red-50 hover:text-red-500 transition-colors">
+                className="w-7 h-7 rounded-lg flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-danger-light hover:text-danger transition-colors">
                 <LuX className="text-[14px]" />
               </button>
             </>
@@ -204,7 +204,7 @@ function ApptTab({ label, value, active, count, color, onClick }: {
     <button onClick={onClick}
       className={`relative flex-1 sm:flex-none min-w-[110px] sm:min-w-0 px-2 sm:px-5 py-2.5 rounded-xl text-[11.5px] sm:text-[13px] font-bold transition-all duration-300 flex items-center justify-center gap-2 z-10 ${
         isActive 
-          ? "bg-[hsl(var(--color-bg-surface))] shadow-sm ring-1 ring-[hsl(var(--color-border))]" 
+          ? "bg-[hsl(var(--color-bg-surface))]  ring-1 ring-[hsl(var(--color-border))]" 
           : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))/0.5]"
       }`}>
       <span className={isActive ? "text-[hsl(var(--color-text))]" : ""}>{label}</span>
@@ -274,9 +274,9 @@ setAppointments(data as any);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 -[0_1px_0_hsl(var(--color-border))]">
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0">
             <LuCalendarDays />
           </div>
           <div>
@@ -293,10 +293,10 @@ setAppointments(data as any);
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         {/* Tabs */}
         <div className="flex justify-center mb-6">
-          <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))] shadow-inner">
+          <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
             <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} color="bg-sky-100 text-sky-600" onClick={() => setTab("upcoming")} />
             <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} color="bg-emerald-100 text-emerald-600" onClick={() => setTab("completed")} />
-            <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-red-100 text-red-500" onClick={() => setTab("cancelled")} />
+            <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} color="bg-danger-light text-danger" onClick={() => setTab("cancelled")} />
           </div>
         </div>
 

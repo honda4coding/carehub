@@ -122,7 +122,7 @@ function EditField({
       <ErrorMessage
         name={name}
         component="p"
-        className="text-red-500 text-xs pl-1 font-medium"
+        className="text-danger text-xs pl-1 font-medium"
       />
     </div>
   );
@@ -185,8 +185,8 @@ export default function ProfessionalInfoForm({
         <div
           className={`px-6 py-3 text-sm font-medium flex items-center gap-2 ${
             serverError
-              ? "bg-red-50 border-b border-red-200 text-red-600"
-              : "bg-green-50 border-b border-green-200 text-green-600"
+              ? "bg-danger-light border-b border-red-200 text-danger"
+              : "bg-success-light border-b border-green-200 text-success"
           }`}
         >
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
@@ -273,7 +273,7 @@ export default function ProfessionalInfoForm({
                   <ErrorMessage
                     name="specialization"
                     component="p"
-                    className="text-red-500 text-xs pl-1 font-medium"
+                    className="text-danger text-xs pl-1 font-medium"
                   />
                 </div>
 
@@ -318,7 +318,7 @@ export default function ProfessionalInfoForm({
                 <ErrorMessage
                   name="bio"
                   component="p"
-                  className="text-red-500 text-xs pl-1 font-medium"
+                  className="text-danger text-xs pl-1 font-medium"
                 />
               </div>
             </div>

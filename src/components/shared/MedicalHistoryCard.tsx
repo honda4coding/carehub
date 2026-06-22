@@ -9,7 +9,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
   const hasVitals = record.bloodPressure || record.sugarLevel || record.pulse || record.temperature || (record.height && record.height !== "-") || (record.weight && record.weight !== "-");
   
   return (
-    <div className={`w-full ${hideHeader ? '' : 'bg-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] hover:border-primary/30 transition-colors shadow-sm'}`}>
+    <div className={`w-full ${hideHeader ? '' : 'bg-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] hover:border-primary/30 transition-colors '}`}>
       {/* Header */}
       {!hideHeader && (
         <div className="flex flex-wrap justify-between items-start mb-4 gap-2 border-b border-[hsl(var(--color-border-soft))] pb-3">
@@ -114,7 +114,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
               else if (doc.type === "xray" || doc.type === "mri" || doc.type === "ct") { icon = <LuImage />; }
               
               return (
-                <a key={dIdx} href={doc.secure_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary hover:bg-[hsl(var(--color-primary)/0.1)] transition-colors bg-[hsl(var(--color-primary)/0.05)] px-3 py-1.5 rounded-lg border border-[hsl(var(--color-primary)/0.15)] shadow-sm">
+                <a key={dIdx} href={doc.secure_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[10px] font-bold text-primary hover:bg-[hsl(var(--color-primary)/0.1)] transition-colors bg-[hsl(var(--color-primary)/0.05)] px-3 py-1.5 rounded-lg border border-[hsl(var(--color-primary)/0.15)]">
                   {icon} {label}
                 </a>
               );

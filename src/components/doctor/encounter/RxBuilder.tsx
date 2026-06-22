@@ -213,7 +213,7 @@ export default function RxBuilder({
 
   return (
     <>
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <LuPill className="text-primary text-xl" /> Prescription (Rx)
@@ -232,16 +232,16 @@ export default function RxBuilder({
           const isDanger = interactionResult.severity === "DANGER";
           const isWarning = interactionResult.severity === "WARNING";
           
-          let boxColors = "bg-blue-50/80 border-l-4 border-l-blue-500 border-y border-r border-transparent text-slate-800 shadow-sm";
-          let iconColor = "text-blue-500";
-          let btnColor = "text-blue-700 hover:text-blue-900";
+          let boxColors = "bg-blue-50/80 border-l-4 border-l-blue-500 border-y border-r border-transparent text-main ";
+          let iconColor = "text-primary";
+          let btnColor = "text-primary hover:text-blue-900";
           
           if (isDanger) {
-            boxColors = "bg-red-50/80 border-l-4 border-l-red-500 border-y border-r border-transparent text-slate-800 shadow-sm";
-            iconColor = "text-red-500";
+            boxColors = "bg-danger-light/80 border-l-4 border-l-red-500 border-y border-r border-transparent text-main ";
+            iconColor = "text-danger";
             btnColor = "text-red-700 hover:text-red-900";
           } else if (isWarning) {
-            boxColors = "bg-amber-50/80 border-l-4 border-l-amber-500 border-y border-r border-transparent text-slate-800 shadow-sm";
+            boxColors = "bg-amber-50/80 border-l-4 border-l-amber-500 border-y border-r border-transparent text-main ";
             iconColor = "text-amber-500";
             btnColor = "text-amber-700 hover:text-amber-900";
           }
@@ -249,7 +249,7 @@ export default function RxBuilder({
           return (
             <div className={`mb-5 p-5 rounded-lg flex gap-4 text-[15px] ${boxColors}`}>
               <LuShieldAlert className={`text-2xl shrink-0 mt-0.5 ${iconColor}`} />
-              <div className="font-semibold whitespace-pre-wrap leading-relaxed w-full [&>p]:my-1 [&>ul]:list-disc [&>ul]:ml-6 [&>ol]:list-decimal [&>ol]:ml-6 [&>strong]:font-black [&>strong]:text-slate-900">
+              <div className="font-semibold whitespace-pre-wrap leading-relaxed w-full [&>p]:my-1 [&>ul]:list-disc [&>ul]:ml-6 [&>ol]:list-decimal [&>ol]:ml-6 [&>strong]:font-black [&>strong]:text-main">
                 <ReactMarkdown>{interactionResult.analysis}</ReactMarkdown>
                 <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline ${btnColor}`}>Dismiss</button>
               </div>
@@ -270,7 +270,7 @@ export default function RxBuilder({
               autoComplete="off"
             />
             {showSuggestions && (
-              <ul className="absolute z-50 w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] mt-1 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+              <ul className="absolute z-50 w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] mt-1 rounded-lg max-h-48 overflow-y-auto">
                 {isSearchingDrugs && filteredDrugs.length === 0 ? (
                   <li className="px-3 py-3 text-sm text-[hsl(var(--color-text-muted))] flex items-center justify-center gap-2">
                     <LuLoader className="animate-spin" /> Searching...
@@ -346,7 +346,7 @@ export default function RxBuilder({
       </div>
 
       {/* Upload Rx Section */}
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm no-print">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 no-print">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-5">
           <LuImage className="text-primary text-xl" /> Alternatively: Upload Paper Prescription
         </h2>
@@ -397,7 +397,7 @@ export default function RxBuilder({
               <div className="relative group rounded-xl overflow-hidden border border-[hsl(var(--color-border))]">
                 <Image src={previewUrl} alt="Prescription preview" width={400} height={160} className="w-full h-40 object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <button onClick={removeFile} className="bg-red-500 text-white p-2 rounded-full hover:scale-110 transition-transform shadow-lg">
+                  <button onClick={removeFile} className="bg-danger text-white p-2 rounded-full hover:scale-110 transition-transform">
                     <LuTrash2 />
                   </button>
                 </div>
@@ -417,7 +417,7 @@ export default function RxBuilder({
       </div>
 
       {/* Upload Medical Documents Section */}
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm no-print mt-6">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 no-print mt-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <LuFileText className="text-primary text-xl shrink-0" /> <span className="truncate">Medical Attachments (Labs, Scans)</span>

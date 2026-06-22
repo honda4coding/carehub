@@ -153,7 +153,7 @@ export default function PatientDashboard() {
         ) : profile ? (
           <ProfileOverview profile={profile} />
         ) : (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-[13px] text-red-600 font-bold mb-6 shadow-sm">
+          <div className="bg-danger-light border border-red-200 rounded-2xl p-6 text-center text-[13px] text-danger font-bold mb-6">
             Could not load profile data.
           </div>
         )}

@@ -61,7 +61,7 @@ export default function Navbar() {
 
           {/* Logo Area */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-9 h-9 bg-[hsl(var(--color-primary))] rounded-xl flex items-center justify-center shadow-lg shadow-[hsl(var(--color-primary)/0.2)] group-hover:scale-110 transition-transform">
+            <div className="w-9 h-9 bg-[hsl(var(--color-primary))] rounded-xl flex items-center justify-center -[hsl(var(--color-primary)/0.2)] group-hover:scale-110 transition-transform">
               <FaBriefcaseMedical className="text-white text-lg" />
             </div>
             <span className="text-xl font-black text-[hsl(var(--color-text))] tracking-tight">
@@ -81,7 +81,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {isLoading ? (
               // Pulse skeleton during hydration
-              <div className="w-20 h-8 bg-slate-100 animate-pulse rounded-full" />
+              <div className="w-20 h-8 bg-soft animate-pulse rounded-full" />
             ) : !isAuthenticated ? (
               // Guest Navigation
               <>
@@ -92,7 +92,7 @@ export default function Navbar() {
                 </div>
                 <Link
                   href="/register"
-                  className="text-[hsl(var(--color-primary))] font-bold text-sm px-5 py-2 rounded-full border-2 border-[hsl(var(--color-primary)/0.2)] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all duration-300 shadow-sm active:scale-95"
+                  className="text-[hsl(var(--color-primary))] font-bold text-sm px-5 py-2 rounded-full border-2 border-[hsl(var(--color-primary)/0.2)] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all duration-300 active:scale-95"
                 >
                   Sign up
                 </Link>
@@ -106,7 +106,7 @@ export default function Navbar() {
                 </div>
                 <button
                   onClick={logout}
-                  className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all duration-300 shadow-sm"
+                  className="flex items-center gap-2 bg-danger-light text-danger px-4 py-2 rounded-xl font-bold text-xs hover:bg-danger hover:text-white transition-all duration-300"
                 >
                   <FaSignOutAlt />
                   <span className="hidden sm:inline">Sign Out</span>
@@ -151,7 +151,7 @@ export default function Navbar() {
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl shadow-sm hover:opacity-90 active:scale-95 transition-all"
+                  className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all"
                 >
                   Sign up
                 </Link>
@@ -163,7 +163,7 @@ export default function Navbar() {
                   logout();
                   setIsOpen(false);
                 }}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-colors"
+                className="w-full mt-4 flex items-center justify-center gap-2 bg-danger-light text-danger py-3 rounded-xl font-bold hover:bg-danger hover:text-white transition-colors"
               >
                 <FaSignOutAlt /> Sign Out
               </button>

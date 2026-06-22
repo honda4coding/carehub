@@ -24,7 +24,7 @@ function RegisterContent() {
   };
 
   return (
-    <div className="max-w-2xl w-full bg-white rounded-[2.5rem] shadow-xl p-8 md:p-12 self-start border border-white/40 backdrop-blur-3xl">
+    <div className="max-w-2xl w-full bg-white rounded-[2.5rem] p-8 md:p-12 self-start border border-white/40 backdrop-blur-3xl">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-[hsl(var(--color-text))]">
           Create New Account
@@ -44,7 +44,7 @@ function RegisterContent() {
         )}
       </div>
 
-      <div className="text-center mt-10 pt-8 border-t border-slate-200/50">
+      <div className="text-center mt-10 pt-8 border-t border-soft/50">
         <p className="text-[hsl(var(--color-text-muted))]">
           Already have an account?{" "}
           <a

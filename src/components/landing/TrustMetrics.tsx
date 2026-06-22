@@ -36,7 +36,7 @@ export default function TrustMetrics() {
           {metrics.map((m, i) => (
             <div 
               key={i} 
-              className="bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-8 text-center border border-[hsl(var(--color-text-muted)/0.1)] shadow-xl hover:-translate-y-2 transition-all duration-300"
+              className="bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-8 text-center border border-[hsl(var(--color-text-muted)/0.1)] hover:-translate-y-2 transition-all duration-300"
             >
               <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center bg-[hsl(var(--color-primary)/0.1)] rounded-2xl">
                 {m.icon}

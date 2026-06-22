@@ -74,7 +74,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center shadow-md hover:opacity-80 transition-opacity disabled:opacity-50"
+            className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center hover:opacity-80 transition-opacity disabled:opacity-50"
           >
             {uploading
               ? <ImSpinner2 className="w-3.5 h-3.5 animate-spin" />
@@ -133,7 +133,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
       </div>
 
       {error && (
-        <p className="text-red-500 text-xs font-medium mt-3">{error}</p>
+        <p className="text-danger text-xs font-medium mt-3">{error}</p>
       )}
     </div>
   );

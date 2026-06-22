@@ -58,7 +58,7 @@ export default function AdminProfilePage() {
 
         {/* Error */}
         {!loading && error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-5 py-4 rounded-2xl">
+          <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-5 py-4 rounded-2xl">
             {error}
             <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">Try again</button>
           </div>

@@ -471,7 +471,7 @@ export default function AdminDoctorsPage() {
                     visible.map((doc) => {
                       const sc = statusConfig[doc.status] ?? statusConfig.pending;
                       return (
-                        <div key={doc._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm">
+                        <div key={doc._id} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))]">
                           {/* Card Header: Avatar, Name, Status */}
                           <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-3">

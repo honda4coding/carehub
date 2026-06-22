@@ -43,7 +43,7 @@ export default function PlatformWorkflow() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
             {steps.map((step, index) => (
               <div key={index} className="flex flex-col items-center text-center group">
-                <div className="w-20 h-20 bg-[hsl(var(--color-bg-surface))] rounded-2xl flex items-center justify-center shadow-xl border border-[hsl(var(--color-text-muted)/0.1)] mb-6 text-[hsl(var(--color-primary))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-[hsl(var(--color-primary)/0.25)]">
+                <div className="w-20 h-20 bg-[hsl(var(--color-bg-surface))] rounded-2xl flex items-center justify-center border border-[hsl(var(--color-text-muted)/0.1)] mb-6 text-[hsl(var(--color-primary))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-all duration-300 group-hover:-translate-y-2 -[hsl(var(--color-primary)/0.25)]">
                   {step.icon}
                 </div>
                 <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-[hsl(var(--color-text))] text-white font-black text-xs mb-4">

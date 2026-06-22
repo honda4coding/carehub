@@ -45,7 +45,7 @@ export default function ClinicManagementPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
       {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
             <LuSettings className="text-primary" /> Clinic Settings
@@ -56,7 +56,7 @@ export default function ClinicManagementPage() {
         </div>
         <button 
           onClick={handleSave}
-          className="bg-primary text-white text-[12px] font-bold px-4 py-2 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.3)] hover:scale-[1.02] transition-transform flex items-center gap-2"
+          className="bg-primary text-white text-[12px] font-bold px-4 py-2 rounded-xl -[0_4px_12px_hsl(var(--color-primary)/0.3)] hover:scale-[1.02] transition-transform flex items-center gap-2"
         >
           <LuSave className="text-lg" /> Save Changes
         </button>
@@ -66,7 +66,7 @@ export default function ClinicManagementPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           
           {/* Section 1: Working Hours */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm lg:col-span-1">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 lg:col-span-1">
             <div className="flex items-center gap-2 mb-5">
               <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-primary">
                 <LuCalendarDays />
@@ -124,7 +124,7 @@ export default function ClinicManagementPage() {
           <div className="lg:col-span-2 space-y-6">
             
             {/* Section 2: Consultation Rules */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
               <div className="flex items-center gap-2 mb-5">
                 <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-warning-bg))] flex items-center justify-center text-[hsl(var(--color-warning))]">
                   <LuClock />
@@ -175,14 +175,14 @@ export default function ClinicManagementPage() {
                       checked={allowWalkIns}
                       onChange={() => setAllowWalkIns(!allowWalkIns)}
                     />
-                    <div className="w-11 h-6 bg-[hsl(var(--color-border))] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                    <div className="w-11 h-6 bg-[hsl(var(--color-border))] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-soft after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                   </label>
                 </div>
               </div>
             </div>
 
             {/* Section 3: Services & Pricing */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-success-bg))] flex items-center justify-center text-[hsl(var(--color-success))]">

@@ -24,8 +24,8 @@ function authHeaders() {
 function Toast({ message, type = "error", onClose }: { message: string; type?: "error" | "success"; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 border text-[12px] font-bold px-4 py-3 rounded-xl shadow-lg ${
-      type === "error" ? "bg-red-50 border-red-200 text-red-700" : "bg-green-50 border-green-200 text-green-700"
+    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 border text-[12px] font-bold px-4 py-3 rounded-xl  ${
+      type === "error" ? "bg-danger-light border-red-200 text-red-700" : "bg-success-light border-green-200 text-green-700"
     }`}>
       {message}
       <button onClick={onClose} className="ml-2 hover:opacity-70">✕</button>
@@ -117,10 +117,10 @@ export default function TrackingPage() {
   if (latestRecord && latestRecord.weight && latestRecord.height) {
     const hM = latestRecord.height / 100;
     currentBMI = Number((latestRecord.weight / (hM * hM)).toFixed(1));
-    if (currentBMI < 18.5) { bmiStatus = "Underweight"; bmiColor = "text-blue-500"; }
-    else if (currentBMI >= 18.5 && currentBMI <= 24.9) { bmiStatus = "Normal"; bmiColor = "text-green-500"; }
+    if (currentBMI < 18.5) { bmiStatus = "Underweight"; bmiColor = "text-primary"; }
+    else if (currentBMI >= 18.5 && currentBMI <= 24.9) { bmiStatus = "Normal"; bmiColor = "text-success"; }
     else if (currentBMI >= 25 && currentBMI <= 29.9) { bmiStatus = "Overweight"; bmiColor = "text-orange-500"; }
-    else { bmiStatus = "Obese"; bmiColor = "text-red-500"; }
+    else { bmiStatus = "Obese"; bmiColor = "text-danger"; }
   }
 
   // XP and Streak Math
@@ -202,7 +202,7 @@ export default function TrackingPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             
             {/* XP & Level Card */}
-            <div className="md:col-span-4 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm flex items-center gap-4">
+            <div className="md:col-span-4 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center border-2 border-[hsl(var(--color-primary))] shrink-0">
                 <span className="font-black text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
               </div>
@@ -218,7 +218,7 @@ export default function TrackingPage() {
             </div>
 
             {/* Streak Card */}
-            <div className="md:col-span-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm flex items-center justify-between">
+            <div className="md:col-span-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-black text-[hsl(var(--color-text))]">Current Streak</h3>
                 <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5">Log daily to keep the fire alive!</p>
@@ -230,29 +230,29 @@ export default function TrackingPage() {
             </div>
 
             {/* Badges Card */}
-            <div className="md:col-span-5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm flex flex-col justify-center">
+            <div className="md:col-span-5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-center">
               <h3 className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
               <div className="flex items-center justify-around">
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasBeginner ? "bg-blue-100 text-blue-500 border-2 border-blue-200" : "bg-gray-100 text-gray-400 dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasBeginner ? "bg-blue-100 text-primary border-2 border-blue-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
                     <LuMedal className="text-xl" />
                   </div>
                   <span className="text-[9px] font-bold text-center w-16">First Log</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasConsistent ? "bg-orange-100 text-orange-500 border-2 border-orange-200" : "bg-gray-100 text-gray-400 dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasConsistent ? "bg-orange-100 text-orange-500 border-2 border-orange-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
                     <LuFlame className="text-xl" />
                   </div>
                   <span className="text-[9px] font-bold text-center w-16">3-Day Streak</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasHealthy ? "bg-green-100 text-green-500 border-2 border-green-200" : "bg-gray-100 text-gray-400 dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasHealthy ? "bg-success-light text-success border-2 border-green-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
                     <LuHeart className="text-xl" />
                   </div>
                   <span className="text-[9px] font-bold text-center w-16">Normal BMI</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasWizard ? "bg-purple-100 text-purple-500 border-2 border-purple-200" : "bg-gray-100 text-gray-400 dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasWizard ? "bg-purple-100 text-purple-500 border-2 border-purple-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
                     <LuStar className="text-xl" />
                   </div>
                   <span className="text-[9px] font-bold text-center w-16">10 Logs</span>
@@ -268,7 +268,7 @@ export default function TrackingPage() {
         )}
 
         {/* Quick Log Form */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
           <h2 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
@@ -329,7 +329,7 @@ export default function TrackingPage() {
         </div>
 
         {/* Filters Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 gap-4">
           <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto">
             <LuFilter className="text-[hsl(var(--color-primary))]" /> Compare Periods
           </h3>
@@ -344,7 +344,7 @@ export default function TrackingPage() {
               <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full sm:w-36 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none" />
             </div>
             {(startDate || endDate) && (
-              <button onClick={() => { setStartDate(""); setEndDate(""); }} className="mt-4 px-3 py-2 rounded-xl text-xs font-bold text-red-500 bg-red-50 hover:bg-red-100 transition-colors shrink-0">
+              <button onClick={() => { setStartDate(""); setEndDate(""); }} className="mt-4 px-3 py-2 rounded-xl text-xs font-bold text-danger bg-danger-light hover:bg-danger-light transition-colors shrink-0">
                 Clear
               </button>
             )}
@@ -363,7 +363,7 @@ export default function TrackingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* BMI & Weight Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
               <div className="flex justify-between items-start mb-6">
                 <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
                   <LuScale className="text-[hsl(var(--color-primary))]" /> Weight & BMI Trends
@@ -391,9 +391,9 @@ export default function TrackingPage() {
             </div>
 
             {/* Blood Pressure Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
               <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuHeart className="text-red-500" /> Blood Pressure History
+                <LuHeart className="text-danger" /> Blood Pressure History
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -411,9 +411,9 @@ export default function TrackingPage() {
             </div>
 
             {/* Blood Sugar & Temp Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col lg:col-span-2">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col lg:col-span-2">
               <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuDroplets className="text-blue-500" /> Sugar & Pulse Trends
+                <LuDroplets className="text-primary" /> Sugar & Pulse Trends
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">

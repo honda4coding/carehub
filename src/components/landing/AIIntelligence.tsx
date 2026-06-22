@@ -51,12 +51,12 @@ export default function AIIntelligence() {
           {/* Subtle glow behind the card */}
           <div className="absolute inset-0 bg-linear-to-tr from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] rounded-3xl blur-2xl opacity-10 animate-pulse" />
           
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] rounded-3xl p-6 lg:p-8 shadow-2xl relative z-10">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] rounded-3xl p-6 lg:p-8 relative z-10">
             
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-[hsl(var(--color-text-muted)/0.1)]">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
-                <span className="text-red-500 font-black tracking-widest text-xs uppercase">Interaction Alert</span>
+                <div className="w-3 h-3 rounded-full bg-danger animate-ping" />
+                <span className="text-danger font-black tracking-widest text-xs uppercase">Interaction Alert</span>
               </div>
               <span className="text-[hsl(var(--color-text-muted))] font-mono text-xs font-bold">AI Confidence: 99.8%</span>
             </div>
@@ -74,13 +74,13 @@ export default function AIIntelligence() {
                </div>
 
                {/* Mock Patient History Conflict */}
-               <div className="bg-red-500/10 rounded-xl p-4 border border-red-500/20">
+               <div className="bg-danger/10 rounded-xl p-4 border border-red-500/20">
                   <div className="flex items-start gap-3">
-                    <LuTriangleAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <LuTriangleAlert className="w-5 h-5 text-danger shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-xs text-red-600 font-black uppercase tracking-wider mb-1 block">Critical Conflict Detected</span>
+                      <span className="text-xs text-danger font-black uppercase tracking-wider mb-1 block">Critical Conflict Detected</span>
                       <p className="text-[hsl(var(--color-text))] text-sm leading-relaxed">
-                        Patient is currently active on <span className="font-black text-red-600">Tamsulosin 0.4mg</span>. Co-administration may result in severe symptomatic hypotension.
+                        Patient is currently active on <span className="font-black text-danger">Tamsulosin 0.4mg</span>. Co-administration may result in severe symptomatic hypotension.
                       </p>
                     </div>
                   </div>

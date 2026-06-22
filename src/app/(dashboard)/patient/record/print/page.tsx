@@ -290,7 +290,7 @@ export default function PrintMedicalRecordPage() {
       {mode === "select" && (
         <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
           {/* Header */}
-          <div className="sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] shadow-sm">
+          <div className="sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))]">
             <div className="max-w-4xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
               <div className="flex items-center gap-3">
                 <Link
@@ -310,7 +310,7 @@ export default function PrintMedicalRecordPage() {
               <button
                 onClick={() => setMode("preview")}
                 disabled={loading || !profile || selectedIds.length === 0}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] text-white text-sm font-bold shadow hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Preview Document ({selectedIds.length})
               </button>
@@ -330,7 +330,7 @@ export default function PrintMedicalRecordPage() {
               </div>
             ) : (
               <div className="space-y-6">
-                <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
+                <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h2 className="text-lg font-black text-[hsl(var(--color-text))]">Clinical Encounters</h2>
@@ -423,11 +423,11 @@ export default function PrintMedicalRecordPage() {
       {mode === "preview" && profile && (
         <>
           {/* Action Header for Preview */}
-          <div className="print:hidden sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm">
+          <div className="print:hidden sticky top-0 z-30 bg-white border-b border-soft">
             <div className="max-w-4xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
               <button
                 onClick={() => setMode("select")}
-                className="flex items-center gap-1.5 text-sm font-semibold text-gray-500 hover:text-gray-800 transition-colors"
+                className="flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-main transition-colors"
               >
                 <LuArrowLeft className="text-base" />
                 Back to Selection
@@ -435,7 +435,7 @@ export default function PrintMedicalRecordPage() {
               
               <button
                 onClick={handlePrint}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-doctor text-white text-sm font-bold shadow hover:opacity-90 active:scale-95 transition-all animate-fade-in"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-doctor text-white text-sm font-bold hover:opacity-90 active:scale-95 transition-all animate-fade-in"
               >
                 <LuPrinter className="text-base animate-pulse" />
                 Print Document
@@ -449,7 +449,7 @@ export default function PrintMedicalRecordPage() {
               max-w-4xl mx-auto px-6 md:px-10 py-10
               print:px-8 print:py-6 print:max-w-none print:mx-0
               print:bg-white print:text-black
-              font-sans text-gray-900
+              font-sans text-main
             "
           >
             {/* ════════════════════════════════════════════
@@ -460,27 +460,27 @@ export default function PrintMedicalRecordPage() {
                 <div>
                   <div className="flex items-center gap-3 mb-1">
                     <div 
-                      className="w-9 h-9 rounded-lg bg-[hsl(var(--color-primary))] flex items-center justify-center text-white font-black text-lg shadow-[0_4px_12px_hsl(var(--color-primary)/0.35)]"
+                      className="w-9 h-9 rounded-lg bg-[hsl(var(--color-primary))] flex items-center justify-center text-white font-black text-lg -[0_4px_12px_hsl(var(--color-primary)/0.35)]"
                       style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}
                     >
                       +
                     </div>
-                    <h1 className="text-2xl font-black tracking-tight text-gray-900">
+                    <h1 className="text-2xl font-black tracking-tight text-main">
                       Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
                     </h1>
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 pl-12">
+                  <p className="text-xs font-bold uppercase tracking-widest text-muted pl-12">
                     Patient Medical Profile
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+                  <p className="text-xs font-bold text-muted uppercase tracking-wider">
                     Document Date
                   </p>
-                  <p className="text-sm font-black text-gray-900 mt-0.5">
+                  <p className="text-sm font-black text-main mt-0.5">
                     {printedAt}
                   </p>
-                  <p className="text-[10px] text-gray-400 mt-1 font-semibold uppercase tracking-wider">
+                  <p className="text-[10px] text-muted mt-1 font-semibold uppercase tracking-wider">
                     HIPAA Compliant · Confidential
                   </p>
                 </div>
@@ -501,11 +501,11 @@ export default function PrintMedicalRecordPage() {
                 <div className="border-2 border-black p-4 print:break-inside-avoid">
                   <SectionTitle icon={<LuActivity />} label="Chronic Diseases" />
                   {profile.chronicDiseases.length === 0 ? (
-                    <p className="text-sm text-gray-400 italic">None recorded</p>
+                    <p className="text-sm text-muted italic">None recorded</p>
                   ) : (
                     <ul className="space-y-1.5 mt-1">
                       {profile.chronicDiseases.map((d) => (
-                        <li key={d} className="flex items-center gap-2 text-sm font-bold text-gray-900">
+                        <li key={d} className="flex items-center gap-2 text-sm font-bold text-main">
                           <span className="w-2 h-2 rounded-full bg-gray-800 shrink-0" />
                           {d}
                         </li>
@@ -517,11 +517,11 @@ export default function PrintMedicalRecordPage() {
                 <div className="border-2 border-black p-4 print:break-inside-avoid">
                   <SectionTitle icon={<LuShieldAlert />} label="Known Allergies" />
                   {profile.allergies.length === 0 ? (
-                    <p className="text-sm text-gray-400 italic">No allergies on file</p>
+                    <p className="text-sm text-muted italic">No allergies on file</p>
                   ) : (
                     <ul className="space-y-1.5 mt-1">
                       {profile.allergies.map((a) => (
-                        <li key={a} className="flex items-center gap-2 text-sm font-bold text-gray-900">
+                        <li key={a} className="flex items-center gap-2 text-sm font-bold text-main">
                           <span className="text-base">⚠</span>
                           {a}
                         </li>
@@ -533,7 +533,7 @@ export default function PrintMedicalRecordPage() {
 
               <footer className="border-t-2 border-black pt-5 flex items-end justify-between mt-12">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">CareHub Medical System · Profile</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted">CareHub Medical System · Profile</p>
                 </div>
               </footer>
             </div>
@@ -550,10 +550,10 @@ export default function PrintMedicalRecordPage() {
                 <div key={enc.id}>
                   <div className={needsBreakAfterEncounter ? "page-break-after" : ""}>
                     <header className="flex items-start justify-between border-b-2 border-black pb-3 mb-6">
-                      <h2 className="text-xl font-black text-gray-900 flex items-center gap-2">
+                      <h2 className="text-xl font-black text-main flex items-center gap-2">
                         <LuFileText className="text-[hsl(var(--color-primary))]" /> Clinical Encounter
                       </h2>
-                      <p className="text-sm font-black text-gray-900 bg-gray-100 px-3 py-1 rounded">
+                      <p className="text-sm font-black text-main bg-soft px-3 py-1 rounded">
                         {enc.date}
                       </p>
                     </header>
@@ -562,11 +562,11 @@ export default function PrintMedicalRecordPage() {
 
                     <footer className="border-t border-black pt-3 flex items-end justify-between mt-10">
                       <div>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">CareHub System · Encounter #{idx + 1}</p>
+                        <p className="text-[9px] font-bold text-muted uppercase tracking-widest">CareHub System · Encounter #{idx + 1}</p>
                       </div>
                       <div className="text-right">
                         <div className="border-b border-gray-400 w-48 mb-1" />
-                        <p className="text-[10px] text-gray-400 uppercase tracking-wider font-bold">Authorized Signature</p>
+                        <p className="text-[10px] text-muted uppercase tracking-wider font-bold">Authorized Signature</p>
                       </div>
                     </footer>
                   </div>
@@ -580,7 +580,7 @@ export default function PrintMedicalRecordPage() {
 
                       return (
                         <div key={`${enc.id}-doc-${docIdx}`} className={`${needsBreakAfterImage ? "page-break-after" : ""} pt-10 flex flex-col items-center`}>
-                          <h2 className="text-lg font-black text-gray-900 mb-4 w-full border-b border-black pb-2 text-center uppercase">
+                          <h2 className="text-lg font-black text-main mb-4 w-full border-b border-black pb-2 text-center uppercase">
                             Attachment: {doc.title || "Scan / Result"}
                           </h2>
                           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -589,10 +589,10 @@ export default function PrintMedicalRecordPage() {
                             alt={doc.title || "Medical Document"} 
                             width={800}
                             height={800}
-                            className="max-w-full h-auto max-h-[800px] object-contain border border-gray-300"
+                            className="max-w-full h-auto max-h-[800px] object-contain border border-soft"
                             unoptimized
                           />
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-4">Attached to Encounter on {enc.date}</p>
+                          <p className="text-[10px] text-muted font-bold uppercase tracking-widest mt-4">Attached to Encounter on {enc.date}</p>
                         </div>
                       );
                     }
@@ -639,7 +639,7 @@ export default function PrintMedicalRecordPage() {
             height: auto !important;
             min-height: 0 !important;
             overflow: visible !important;
-            box-shadow: none !important;
+            : none !important;
           }
 
           #printable-record, #printable-record * {
@@ -661,7 +661,7 @@ export default function PrintMedicalRecordPage() {
 
 function SectionTitle({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-gray-500 mb-3">
+    <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-muted mb-3">
       <span className="text-sm">{icon}</span>
       {label}
     </h2>
@@ -682,21 +682,21 @@ function InfoCell({
   return (
     <div
       className={`
-        p-3 border-r border-b border-gray-300 last:border-r-0
+        p-3 border-r border-b border-soft last:border-r-0
         ${wide ? "col-span-2" : ""}
         ${highlight ? "bg-gray-900 text-white" : "bg-white"}
       `}
     >
       <p
         className={`text-[9px] font-black uppercase tracking-widest mb-0.5 ${
-          highlight ? "text-gray-300" : "text-gray-400"
+          highlight ? "text-gray-300" : "text-muted"
         }`}
       >
         {label}
       </p>
       <p
         className={`text-sm font-bold ${
-          highlight ? "text-white text-xl font-black" : "text-gray-900"
+          highlight ? "text-white text-xl font-black" : "text-main"
         }`}
       >
         {value}
@@ -711,28 +711,28 @@ function EncounterCard({ encounter: enc, index }: { encounter: Encounter; index:
       {/* ── Header ── */}
       <div className="border-b border-gray-400 px-6 py-4 flex items-start justify-between">
         <div>
-          <div className="flex items-center gap-2 text-gray-900">
+          <div className="flex items-center gap-2 text-main">
             <LuStethoscope className="text-xl text-[hsl(var(--color-primary))]" />
             <h3 className="text-lg font-black">{enc.doctorName}</h3>
           </div>
-          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest mt-1 ml-7">
+          <p className="text-[11px] font-bold text-muted uppercase tracking-widest mt-1 ml-7">
             {enc.specialty}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Encounter Date</p>
-          <p className="text-sm font-black text-gray-900">{enc.date}</p>
+          <p className="text-[10px] font-bold text-muted uppercase tracking-widest">Encounter Date</p>
+          <p className="text-sm font-black text-main">{enc.date}</p>
         </div>
       </div>
 
       {/* ── Vitals Strip ── */}
-      <div className="bg-gray-50 border-b border-gray-400 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-[11px]">
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">BP:</span> <span className="font-black text-gray-900">{enc.vitals?.bloodPressure || "____ / ____"}</span></div>
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">Sugar:</span> <span className="font-black text-gray-900">{enc.vitals?.sugarLevel || "______"}</span></div>
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">Pulse:</span> <span className="font-black text-gray-900">{enc.vitals?.pulse || "______"}</span></div>
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">Temp:</span> <span className="font-black text-gray-900">{enc.vitals?.temperature || "______"}</span></div>
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">Wt:</span> <span className="font-black text-gray-900">{enc.vitals?.weight || "______"}</span></div>
-        <div className="flex items-center gap-1.5"><span className="text-gray-500 uppercase tracking-wider font-bold">Ht:</span> <span className="font-black text-gray-900">{enc.vitals?.height || "______"}</span></div>
+      <div className="bg-soft border-b border-gray-400 px-6 py-3 flex flex-wrap items-center justify-between gap-4 text-[11px]">
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">BP:</span> <span className="font-black text-main">{enc.vitals?.bloodPressure || "____ / ____"}</span></div>
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">Sugar:</span> <span className="font-black text-main">{enc.vitals?.sugarLevel || "______"}</span></div>
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">Pulse:</span> <span className="font-black text-main">{enc.vitals?.pulse || "______"}</span></div>
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">Temp:</span> <span className="font-black text-main">{enc.vitals?.temperature || "______"}</span></div>
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">Wt:</span> <span className="font-black text-main">{enc.vitals?.weight || "______"}</span></div>
+        <div className="flex items-center gap-1.5"><span className="text-muted uppercase tracking-wider font-bold">Ht:</span> <span className="font-black text-main">{enc.vitals?.height || "______"}</span></div>
       </div>
 
       <div className="flex flex-col md:flex-row">
@@ -740,10 +740,10 @@ function EncounterCard({ encounter: enc, index }: { encounter: Encounter; index:
         <div className="p-6 md:w-1/2 border-b md:border-b-0 md:border-r border-gray-400 space-y-5">
           
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-1">
               Chief Complaint
             </p>
-            <p className="text-sm font-bold text-gray-900 leading-relaxed">
+            <p className="text-sm font-bold text-main leading-relaxed">
               {enc.chiefComplaint}
             </p>
           </div>
@@ -752,17 +752,17 @@ function EncounterCard({ encounter: enc, index }: { encounter: Encounter; index:
             <p className="text-[10px] font-black uppercase tracking-widest text-[hsl(var(--color-primary))] mb-1">
               Clinical Diagnosis
             </p>
-            <p className="text-sm font-black text-gray-900 border-l-2 border-[hsl(var(--color-primary))] pl-3 py-0.5">
+            <p className="text-sm font-black text-main border-l-2 border-[hsl(var(--color-primary))] pl-3 py-0.5">
               {enc.diagnosis}
             </p>
           </div>
 
           {(enc.clinicalNotes && enc.clinicalNotes !== "—") && (
             <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-1">
                 Consultation Notes
               </p>
-              <p className="text-[11px] text-gray-700 leading-relaxed">
+              <p className="text-[11px] text-main leading-relaxed">
                 {enc.clinicalNotes}
               </p>
             </div>
@@ -774,27 +774,27 @@ function EncounterCard({ encounter: enc, index }: { encounter: Encounter; index:
           <div className="absolute top-4 right-6 text-4xl font-serif text-gray-200 select-none">
             Rx
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mb-4 border-b border-gray-200 pb-2 relative z-10">
+          <p className="text-[10px] font-black uppercase tracking-widest text-muted mb-4 border-b border-soft pb-2 relative z-10">
             Medication Plan
           </p>
           
           {enc.prescriptions.length === 0 ? (
-            <p className="text-[11px] text-gray-400 italic">No medications prescribed.</p>
+            <p className="text-[11px] text-muted italic">No medications prescribed.</p>
           ) : (
             <ul className="space-y-4 relative z-10">
               {enc.prescriptions.map((rx, ri) => (
                 <li key={ri} className="flex flex-col gap-1">
                   <div className="flex items-start justify-between gap-4">
-                    <p className="text-sm font-black text-gray-900 leading-tight">
+                    <p className="text-sm font-black text-main leading-tight">
                       {ri + 1}. {rx.medication}
                     </p>
-                    <span className="text-[10px] font-black whitespace-nowrap bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
+                    <span className="text-[10px] font-black whitespace-nowrap bg-soft text-muted px-2 py-0.5 rounded">
                       {rx.frequency}
                     </span>
                   </div>
                   {rx.dosage && rx.dosage !== "—" && (
-                    <p className="text-[11px] font-semibold text-gray-600 ml-4">
-                      <span className="text-gray-400 mr-1">Dosage:</span> {rx.dosage}
+                    <p className="text-[11px] font-semibold text-muted ml-4">
+                      <span className="text-muted mr-1">Dosage:</span> {rx.dosage}
                     </p>
                   )}
                 </li>

@@ -17,7 +17,7 @@ export default function SectionToggle() {
   const pathname = usePathname();
 
   return (
-    <div className="relative inline-flex items-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] shadow-inner">
+    <div className="relative inline-flex items-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))]">
       {TABS.map((tab) => {
         const isActive = pathname.startsWith(tab.href);
         const Icon = tab.icon;
@@ -28,7 +28,7 @@ export default function SectionToggle() {
             href={tab.href}
             className={`relative z-10 px-4 sm:px-6 py-2 rounded-[9px] text-[13px] font-bold transition-all duration-300 flex items-center gap-2 ${
               isActive
-                ? "bg-[hsl(var(--color-bg-surface))] text-primary shadow-sm"
+                ? "bg-[hsl(var(--color-bg-surface))] text-primary "
                 : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
             }`}
           >

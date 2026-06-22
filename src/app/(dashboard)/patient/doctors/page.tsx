@@ -20,7 +20,7 @@ const GOVERNORATES = ["All Locations", "Cairo", "Alexandria", "Giza", "Dakahlia"
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2.5 px-5 py-3 rounded-xl shadow-2xl text-[13px] font-bold bg-[hsl(var(--color-danger))] text-white">
+    <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2.5 px-5 py-3 rounded-xl text-[13px] font-bold bg-[hsl(var(--color-danger))] text-white">
       <LuTriangleAlert className="text-[15px]" />{message}
       <button onClick={onClose} className="opacity-70 hover:opacity-100 ml-1">✕</button>
     </div>
@@ -87,7 +87,7 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
   const hasSlots = !loadingSlots && slots.length > 0;
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300">
+    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 hover:-translate-y-1 hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 border border-[hsl(var(--color-primary)/0.2)] overflow-hidden">
@@ -142,7 +142,7 @@ function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userI
         disabled={!hasSlots}
         className={`relative w-full py-3 rounded-xl text-[13px] font-black flex items-center justify-center gap-2 transition-all duration-300 overflow-hidden ${
           hasSlots
-            ? "bg-primary text-white shadow-sm hover:bg-[hsl(var(--color-primary-strong))] hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+            ? "bg-primary text-white  hover:bg-[hsl(var(--color-primary-strong))]  hover:scale-[1.02] active:scale-[0.98]"
             : "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] cursor-not-allowed"
         }`}
       >

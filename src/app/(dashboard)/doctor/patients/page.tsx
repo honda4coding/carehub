@@ -100,7 +100,7 @@ function PatientDirectoryContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))] relative">
       {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between shadow-sm z-10">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between z-10">
         <div>
           <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
             <LuUsers className="text-primary" /> Patient Directory
@@ -120,7 +120,7 @@ function PatientDirectoryContent() {
         <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
           
           {/* Advanced Filter Bar */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-6">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-6">
             <div className="flex flex-wrap items-center gap-3">
               {/* Search */}
               <div className="relative flex-1 min-w-[250px]">
@@ -168,7 +168,7 @@ function PatientDirectoryContent() {
               {/* Reset Filter */}
               <button 
                 onClick={handleResetFilters}
-                className="px-4 py-2.5 bg-red-50 text-red-600 font-bold text-[12px] rounded-xl hover:bg-red-100 transition-colors border border-red-100"
+                className="px-4 py-2.5 bg-danger-light text-danger font-bold text-[12px] rounded-xl hover:bg-danger-light transition-colors border border-red-100"
               >
                 Reset Filters
               </button>
@@ -176,7 +176,7 @@ function PatientDirectoryContent() {
           </div>
 
           {/* Database Table */}
-          <div className="flex-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div className="flex-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden flex flex-col">
             <div className="w-full">
               {/* Mobile View: Cards */}
               <div className="lg:hidden flex flex-col p-4 gap-3">
@@ -195,7 +195,7 @@ function PatientDirectoryContent() {
                       const status = p.status || "active";
 
                       return (
-                        <div key={p.id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-xl p-4 flex flex-col gap-3 shadow-sm">
+                        <div key={p.id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-xl p-4 flex flex-col gap-3">
                           <div className="flex items-center gap-3">
                             <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-black ${avatarStyle}`}>
                               {name?.slice(0, 2).toUpperCase()}
@@ -206,7 +206,7 @@ function PatientDirectoryContent() {
                                 <LuPhone className="text-[10px]" /> {phone || "N/A"}
                               </p>
                             </div>
-                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <span className={`text-[10px] font-black uppercase px-2 py-1 rounded-md ${status === 'active' ? 'bg-success-light text-green-700' : 'bg-soft text-muted'}`}>
                               {status}
                             </span>
                           </div>
@@ -313,7 +313,7 @@ function PatientDirectoryContent() {
                             </span>
                           </td>
                           <td className="px-5 py-4">
-                            <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md ${status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                            <span className={`text-[10px] font-black uppercase px-2.5 py-1 rounded-md ${status === 'active' ? 'bg-success-light text-green-700' : 'bg-soft text-muted'}`}>
                               {status}
                             </span>
                           </td>

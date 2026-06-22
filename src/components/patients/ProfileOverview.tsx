@@ -14,7 +14,7 @@ export default function ProfileOverview({ profile }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
         
         {/* Main Bio Card */}
-        <div className="md:col-span-10 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="md:col-span-10 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center shrink-0 border-2 border-[hsl(var(--color-primary))] overflow-hidden relative">
               {profile.profilepicture ? (
@@ -46,7 +46,7 @@ export default function ProfileOverview({ profile }: Props) {
         </div>
 
         {/* Blood Type Card */}
-        <div className="md:col-span-2 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger-bg))] rounded-2xl p-4 shadow-sm flex flex-col items-center justify-center">
+        <div className="md:col-span-2 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger-bg))] rounded-2xl p-4 flex flex-col items-center justify-center">
           <p className="text-[9px] font-black text-[hsl(var(--color-danger))] uppercase tracking-widest mb-1 opacity-80">Blood Type</p>
           <p className="text-2xl font-black text-[hsl(var(--color-danger))] leading-none">{profile.bloodType || "—"}</p>
         </div>

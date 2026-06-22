@@ -74,52 +74,52 @@ export default function PatientRegisterForm() {
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Full Name */}
       <div>
-        <label className={labelClasses}>Full Name <span className="text-red-500">*</span></label>
+        <label className={labelClasses}>Full Name <span className="text-danger">*</span></label>
         <div className="relative">
           <MdPerson className={iconClasses} />
           <input type="text" {...formik.getFieldProps('fullName')} className={inputClasses} placeholder="Enter full name" />
         </div>
         {formik.touched.fullName && formik.errors.fullName && (
-          <p className="text-red-500 text-xs mt-1 ml-1">{formik.errors.fullName}</p>
+          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.fullName}</p>
         )}
       </div>
 
       {/* Email */}
       <div>
-        <label className={labelClasses}>Email <span className="text-red-500">*</span></label>
+        <label className={labelClasses}>Email <span className="text-danger">*</span></label>
         <div className="relative">
           <MdEmail className={iconClasses} />
           <input type="email" {...formik.getFieldProps('email')} className={inputClasses} placeholder="patient@example.com" />
         </div>
         {formik.touched.email && formik.errors.email && (
-          <p className="text-red-500 text-xs mt-1 ml-1">{formik.errors.email}</p>
+          <p className="text-danger text-xs mt-1 ml-1">{formik.errors.email}</p>
         )}
       </div>
 
       {/* Phone & Age */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className={labelClasses}>Phone <span className="text-red-500">*</span></label>
+          <label className={labelClasses}>Phone <span className="text-danger">*</span></label>
           <div className="relative">
             <MdPhone className={iconClasses} />
             <input type="tel" {...formik.getFieldProps('phoneNumber')} className={inputClasses} placeholder="0123..." />
           </div>
-          {formik.touched.phoneNumber && formik.errors.phoneNumber && <p className="text-red-500 text-xs mt-1">{formik.errors.phoneNumber}</p>}
+          {formik.touched.phoneNumber && formik.errors.phoneNumber && <p className="text-danger text-xs mt-1">{formik.errors.phoneNumber}</p>}
         </div>
         <div>
-          <label className={labelClasses}>Age <span className="text-red-500">*</span></label>
+          <label className={labelClasses}>Age <span className="text-danger">*</span></label>
           <div className="relative">
             <MdCake className={iconClasses} />
             <input type="number" {...formik.getFieldProps('age')} className={inputClasses} placeholder="35" />
           </div>
-          {formik.touched.age && formik.errors.age && <p className="text-red-500 text-xs mt-1">{formik.errors.age}</p>}
+          {formik.touched.age && formik.errors.age && <p className="text-danger text-xs mt-1">{formik.errors.age}</p>}
         </div>
       </div>
 
       {/* Gender & Blood Type */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
         <div>
-          <label className={labelClasses}>Gender <span className="text-red-500">*</span></label>
+          <label className={labelClasses}>Gender <span className="text-danger">*</span></label>
           <div className="flex gap-6 py-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input type="radio" {...formik.getFieldProps('gender')} value="male" className="w-4 h-4 accent-[hsl(var(--color-secondary))] cursor-pointer" />
@@ -146,20 +146,20 @@ export default function PatientRegisterForm() {
       {/* Password & Confirm */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className={labelClasses}>Password <span className="text-red-500">*</span></label>
+          <label className={labelClasses}>Password <span className="text-danger">*</span></label>
           <div className="relative">
             <MdLock className={iconClasses} />
             <input type="password" {...formik.getFieldProps('password')} className={inputClasses} placeholder="********" />
           </div>
-          {formik.touched.password && formik.errors.password && <p className="text-red-500 text-xs mt-1">{formik.errors.password}</p>}
+          {formik.touched.password && formik.errors.password && <p className="text-danger text-xs mt-1">{formik.errors.password}</p>}
         </div>
         <div>
-          <label className={labelClasses}>Confirm <span className="text-red-500">*</span></label>
+          <label className={labelClasses}>Confirm <span className="text-danger">*</span></label>
           <div className="relative">
             <MdLock className={iconClasses} />
             <input type="password" {...formik.getFieldProps('confirmPassword')} className={inputClasses} placeholder="********" />
           </div>
-          {formik.touched.confirmPassword && formik.errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{formik.errors.confirmPassword}</p>}
+          {formik.touched.confirmPassword && formik.errors.confirmPassword && <p className="text-danger text-xs mt-1">{formik.errors.confirmPassword}</p>}
         </div>
       </div>
 
@@ -175,7 +175,7 @@ export default function PatientRegisterForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-gradient-patient text-white font-bold py-4 rounded-xl transition-all hover:opacity-95 active:scale-[0.98] shadow-lg shadow-[hsl(var(--color-secondary)/0.3)] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+        className="w-full bg-gradient-patient text-white font-bold py-4 rounded-xl transition-all hover:opacity-95 active:scale-[0.98] -[hsl(var(--color-secondary)/0.3)] disabled:opacity-50 disabled:cursor-not-allowed text-lg"
       >
         {loading ? (
           <span className="flex items-center justify-center gap-2">

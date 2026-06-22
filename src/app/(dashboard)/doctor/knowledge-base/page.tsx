@@ -132,7 +132,7 @@ export default function KnowledgeBasePage() {
   return (
     <div className="max-w-5xl mx-auto w-full p-4 md:p-8 space-y-6">
       
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[hsl(var(--color-bg-surface))] p-6 rounded-2xl border border-[hsl(var(--color-border))] shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-[hsl(var(--color-bg-surface))] p-6 rounded-2xl border border-[hsl(var(--color-border))]">
         <div>
           <h1 className="text-2xl font-black text-[hsl(var(--color-text))] flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
@@ -167,7 +167,7 @@ export default function KnowledgeBasePage() {
                 document.getElementById('folderUploadInput')?.click();
             }} 
             disabled={uploading}
-            className="bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-bold shadow-md transition-colors flex items-center gap-2 justify-center"
+            className="bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl font-bold transition-colors flex items-center gap-2 justify-center"
           >
             {uploading ? <LuLoader className="animate-spin" /> : <LuUpload />}
             Upload Folder
@@ -188,7 +188,7 @@ export default function KnowledgeBasePage() {
         
         <div className="md:col-span-1 space-y-6">
           {/* Storage Info Card */}
-          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-hidden">
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] overflow-hidden">
             <div className="p-4 bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))] font-bold text-[13px] uppercase tracking-wider text-[hsl(var(--color-text-muted))] flex items-center gap-2">
               <LuHardDrive /> Storage Information
             </div>
@@ -230,7 +230,7 @@ export default function KnowledgeBasePage() {
               <div className="pt-2 border-t border-[hsl(var(--color-border-soft))]">
                 <button 
                   onClick={handleClearDB}
-                  className="w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 font-bold text-xs py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full bg-danger/10 hover:bg-danger/20 text-danger font-bold text-xs py-2 rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   <LuTrash2 size={14} /> Clear Database
                 </button>
@@ -241,7 +241,7 @@ export default function KnowledgeBasePage() {
 
         <div className="md:col-span-2">
           {/* Files List */}
-          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] shadow-sm overflow-hidden h-full">
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] overflow-hidden h-full">
             <div className="p-4 bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))] font-bold text-[13px] uppercase tracking-wider text-[hsl(var(--color-text-muted))] flex items-center gap-2">
               <LuFileText /> Uploaded Documents
             </div>
@@ -269,7 +269,7 @@ export default function KnowledgeBasePage() {
                     </div>
                     <button 
                       onClick={() => handleDelete(file)}
-                      className="w-8 h-8 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500/20 flex items-center justify-center shrink-0 transition-colors"
+                      className="w-8 h-8 rounded-lg bg-danger/10 text-danger hover:bg-danger/20 flex items-center justify-center shrink-0 transition-colors"
                       title="Remove from Knowledge Base"
                     >
                       <LuTrash2 size={16} />

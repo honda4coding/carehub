@@ -296,9 +296,9 @@ export default function DoctorSchedulePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 -[0_1px_0_hsl(var(--color-border))]">
         <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0 shadow-inner">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0">
             <LuSettings2 />
           </div>
           <div>
@@ -316,7 +316,7 @@ export default function DoctorSchedulePage() {
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-5xl">
           {/* ── LEFT: Weekly availability setup ── */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 duration-200">
             <div className="flex items-center gap-2 mb-1">
               <LuCalendarDays className="text-primary text-[14px]" />
               <p className="text-[13px] font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
@@ -469,8 +469,8 @@ export default function DoctorSchedulePage() {
                                   }
                                   className={`px-3.5 py-1.5 rounded-xl text-[12px] font-bold border transition-all duration-300 ${
                                     tc?.appointmentDuration === d
-                                      ? "bg-primary text-white border-primary shadow-[0_2px_8px_hsl(var(--color-primary)/0.4)] -translate-y-0.5"
-                                      : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:border-primary hover:text-primary hover:-translate-y-0.5 shadow-sm"
+                                      ? "bg-primary text-white border-primary -[0_2px_8px_hsl(var(--color-primary)/0.4)] -translate-y-0.5"
+                                      : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:border-primary hover:text-primary hover:-translate-y-0.5 "
                                   }`}
                                 >
                                   {d} min
@@ -482,7 +482,7 @@ export default function DoctorSchedulePage() {
                           <button
                             onClick={() => handleSaveDay(day)}
                             disabled={savingDay === day}
-                            className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-[12px] font-bold shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)] hover:opacity-90 disabled:opacity-60 transition-opacity"
+                            className="w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-primary text-white text-[12px] font-bold -[0_2px_8px_hsl(var(--color-primary)/0.3)] hover:opacity-90 disabled:opacity-60 transition-opacity"
                           >
                             {isSaved && <LuPencil className="text-[11px]" />}
                             {savingDay === day
@@ -503,7 +503,7 @@ export default function DoctorSchedulePage() {
           {/* ── RIGHT: Generate + slots ── */}
           <div className="space-y-5">
             {/* Generate slots card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 duration-200">
               <div className="flex items-center gap-2 mb-1">
                 <LuRefreshCw className="text-primary text-[14px]" />
                 <p className="text-[13px] font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
@@ -558,7 +558,7 @@ export default function DoctorSchedulePage() {
               <button
                 onClick={handleGenerate}
                 disabled={generating || selectedDays.size === 0}
-                className="w-full py-3.5 rounded-xl bg-primary text-white text-[14px] font-bold shadow-[0_4px_14px_hsl(var(--color-primary)/0.35)] hover:opacity-90 hover:-translate-y-0.5 disabled:opacity-50 disabled:shadow-none disabled:translate-y-0 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-primary text-white text-[14px] font-bold -[0_4px_14px_hsl(var(--color-primary)/0.35)] hover:opacity-90 hover:-translate-y-0.5 disabled:opacity-50 disabled:translate-y-0 transition-all flex items-center justify-center gap-2"
               >
                 <LuRefreshCw
                   className={`text-[14px] ${generating ? "animate-spin" : ""}`}
@@ -574,7 +574,7 @@ export default function DoctorSchedulePage() {
             </div>
 
             {/* ── Open slots — grouped by day, collapsible ── */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <LuClock className="text-primary text-[14px]" />
@@ -660,7 +660,7 @@ export default function DoctorSchedulePage() {
                               {group.slots.map((slot) => (
                                 <div
                                     key={slot._id}
-                                    className="group flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3.5 py-3 hover:border-primary hover:shadow-[0_2px_8px_hsl(var(--color-primary)/0.15)] hover:-translate-y-0.5 transition-all duration-300"
+                                    className="group flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3.5 py-3 hover:border-primary -[0_2px_8px_hsl(var(--color-primary)/0.15)] hover:-translate-y-0.5 transition-all duration-300"
                                   >
                                     <div className="flex items-center gap-2">
                                       <LuClock className="text-primary text-[13px]" />

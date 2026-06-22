@@ -41,7 +41,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
       trend: "Waiting for verification",
       up: false,
       icon: <LuShieldCheck />,
-      iconStyle: "bg-red-100 text-red-600",
+      iconStyle: "bg-danger-light text-danger",
       onClick: () => {
         if(setStatusFilter) {
           setStatusFilter("pending_otp");
@@ -57,7 +57,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
         const CardContent = (
           <div
             onClick={s.onClick}
-            className={`bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm h-full ${(s.link || s.onClick) ? 'hover:border-primary transition-colors cursor-pointer' : ''}`}
+            className={`bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 h-full ${(s.link || s.onClick) ? 'hover:border-primary transition-colors cursor-pointer' : ''}`}
           >
             <div className="flex items-center justify-between mb-3">
               <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${s.iconStyle}`}>

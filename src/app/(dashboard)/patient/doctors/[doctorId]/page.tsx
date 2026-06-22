@@ -67,13 +67,13 @@ export default function DoctorProfilePage() {
       <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col gap-6">
         
         {/* Main Card mimicking "Eclips" design */}
-        <div className="bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-5 md:p-8 shadow-sm border border-[hsl(var(--color-border-soft))]">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-5 md:p-8 border border-[hsl(var(--color-border-soft))]">
           
           <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-stretch">
             
             {/* Left: Large Photo */}
             <div className="w-[220px] sm:w-[260px] md:w-1/3 shrink-0">
-              <div className="w-full aspect-[4/5] rounded-[2rem] bg-gradient-to-b from-[hsl(var(--color-primary)/0.2)] to-[hsl(var(--color-primary)/0.05)] flex items-center justify-center overflow-hidden border border-[hsl(var(--color-primary)/0.1)] shadow-sm">
+              <div className="w-full aspect-[4/5] rounded-[2rem] bg-gradient-to-b from-[hsl(var(--color-primary)/0.2)] to-[hsl(var(--color-primary)/0.05)] flex items-center justify-center overflow-hidden border border-[hsl(var(--color-primary)/0.1)]">
                 {doctor.profilepicture?.secure_url ? (
                   <img src={doctor.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
                 ) : (
@@ -191,7 +191,7 @@ export default function DoctorProfilePage() {
           {/* Book Button */}
           <button
             onClick={() => router.push(`/patient/doctors/${doctorId}/book`)}
-            className="w-full py-4 rounded-xl bg-[#0ea5e9] hover:bg-[#0284c7] text-white text-[16px] font-bold transition-all shadow-sm"
+            className="w-full py-4 rounded-xl bg-[#0ea5e9] hover:bg-[#0284c7] text-white text-[16px] font-bold transition-all"
           >
             Book Appointment Now
           </button>

@@ -22,7 +22,7 @@ export const DashboardModals = ({
       {/* OTP Verification Modal */}
       {isOTPModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
             <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex justify-between items-center bg-[hsl(var(--color-bg-soft))]">
               <div className="flex items-center gap-2 text-primary">
                 <LuShieldCheck className="text-xl" />
@@ -51,7 +51,7 @@ export const DashboardModals = ({
               <button 
                 onClick={handleVerifyOTP}
                 disabled={currentOtp.length !== 6}
-                className={`w-full text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-opacity shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] ${currentOtp.length === 6 ? 'bg-primary hover:opacity-90' : 'bg-primary/50 cursor-not-allowed'}`}
+                className={`w-full text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-opacity -[0_4px_12px_hsl(var(--color-primary)/0.25)] ${currentOtp.length === 6 ? 'bg-primary hover:opacity-90' : 'bg-primary/50 cursor-not-allowed'}`}
               >
                 Verify & Open File
                 <LuCheck className="text-lg" />
@@ -64,7 +64,7 @@ export const DashboardModals = ({
       {/* Walk-In Registration Modal */}
       {isWalkInModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
             <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex justify-between items-center bg-gradient-doctor">
               <div className="flex items-center gap-2 text-white">
                 <LuUserPlus className="text-xl" />
