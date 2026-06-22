@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LuActivity } from "react-icons/lu";
 
 export default function Footer() {
   const pathname = usePathname();
@@ -15,8 +16,9 @@ export default function Footer() {
           {/* Brand & Description */}
           <div className="flex flex-col items-center md:items-start gap-4">
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-xl font-black text-[hsl(var(--color-text))] tracking-tight">
-                Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
+              <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform" />
+              <span className="text-xl font-bold text-[hsl(var(--color-text))] tracking-tight">
+                CareHub
               </span>
             </Link>
             <p className="text-[hsl(var(--color-text-muted))] text-xs font-semibold leading-relaxed max-w-xs">
