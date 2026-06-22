@@ -47,8 +47,8 @@ export const adminService = {
     return fetchClient.get("/admin/users", { method: "GET" , params: query });
   },
 
-  getDashboard: (): Promise<GetDashboardData> => 
-    fetchClient.get("/admin/dashboard"),
+  getDashboard: (last30Days?: boolean): Promise<GetDashboardData> => 
+    fetchClient.get("/admin/dashboard", { params: last30Days ? { last30Days: "true" } : {} }),
 
   getMonthlyStats: (year?: number): Promise<{ data: MonthlyStats[] }> =>
     fetchClient.get("/admin/stats/monthly", { params: year ? { year: String(year) } : {} }),

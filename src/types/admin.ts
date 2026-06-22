@@ -20,7 +20,8 @@ export interface MonthlyStats {
 
 export interface DailyStats {
   date: string;
-  usersCount: number;
+  patientsCount: number;
+  doctorsCount: number;
   appointmentsCount: number;
 }
 

@@ -20,8 +20,8 @@ import {
   Cell,
   Tooltip as RechartsTooltip,
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -160,20 +160,50 @@ export default function AnalyticsPage() {
               </div>
             </div>
             
-            <div className="h-[300px] w-full">
+            <div className="h-[300px] w-full mt-2">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={analyticsData?.chartData || []} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
+                <AreaChart data={analyticsData?.chartData || []} margin={{ top: 5, right: 20, bottom: 5, left: -20 }}>
+                  <defs>
+                    <linearGradient id="colorUsersAn" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--color-secondary))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--color-secondary))" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorApptsAn" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--color-primary))" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(var(--color-primary))" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--color-border))" vertical={false} />
-                  <XAxis dataKey="label" tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
+                  <XAxis 
+                    dataKey="label" 
+                    tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                    tickFormatter={(val) => {
+                      if (!val) return "";
+                      const d = new Date(val);
+                      return isNaN(d.getTime()) ? val : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+                    }}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} 
+                    axisLine={false} 
+                    tickLine={false} 
+                  />
                   <RechartsTooltip 
                     contentStyle={{ backgroundColor: 'hsl(var(--color-bg-surface))', borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '12px', fontWeight: 'bold' }}
                     itemStyle={{ fontWeight: 'bold' }}
+                    labelStyle={{ color: 'hsl(var(--color-text-muted))', marginBottom: '4px' }}
+                    labelFormatter={(val) => {
+                      if (!val) return "";
+                      const d = new Date(val);
+                      return isNaN(d.getTime()) ? val : d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+                    }}
                   />
                   <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 'bold', marginTop: '10px' }} />
-                  <Line type="monotone" name="Total Users" dataKey="usersCount" stroke="#6C5DD3" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                  <Line type="monotone" name="Total Appointments" dataKey="appointmentsCount" stroke="#00BFA6" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
-                </LineChart>
+                  <Area type="monotone" name="Total Users" dataKey="usersCount" stroke="hsl(var(--color-secondary))" strokeWidth={3} fillOpacity={1} fill="url(#colorUsersAn)" />
+                  <Area type="monotone" name="Total Appointments" dataKey="appointmentsCount" stroke="hsl(var(--color-primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorApptsAn)" />
+                </AreaChart>
               </ResponsiveContainer>
             </div>
           </div>
