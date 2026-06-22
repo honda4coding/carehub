@@ -1,6 +1,6 @@
 import React, { InputHTMLAttributes, forwardRef } from 'react';
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'> {
   error?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;

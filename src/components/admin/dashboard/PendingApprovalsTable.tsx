@@ -1,29 +1,30 @@
 import React from "react";
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
-import { LuSearch, LuClock, LuCheck, LuX } from "react-icons/lu";
+import { LuSearch, LuClock, LuCheck, LuX, LuChevronRight } from "react-icons/lu";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DoctorApprovalStatus, PendingDoctorRequest } from "@/types/doctor";
+import { Badge } from "@/components/ui/Badge";
 
 const statusConfig: Record<
   DoctorApprovalStatus,
-  { style: string; label: string; icon: React.ReactNode }
+  { variant: "warning" | "success" | "danger"; label: string; icon: React.ReactNode }
 > = {
   pending: {
-    style: "bg-[hsl(var(--color-warning)/0.15)] text-[hsl(var(--color-warning))]",
+    variant: "warning",
     label: "Pending",
-    icon: <LuClock className="text-[12px]" />,
+    icon: <LuClock className="text-[14px]" />,
   },
   approved: {
-    style: "bg-[hsl(var(--color-success)/0.15)] text-[hsl(var(--color-success))]",
+    variant: "success",
     label: "Approved",
-    icon: <LuCheck className="text-[12px]" />,
+    icon: <LuCheck className="text-[14px]" />,
   },
   rejected: {
-    style: "bg-[hsl(var(--color-danger)/0.15)] text-[hsl(var(--color-danger))]",
+    variant: "danger",
     label: "Rejected",
-    icon: <LuX className="text-[12px]" />,
+    icon: <LuX className="text-[14px]" />,
   },
 };
 
@@ -37,16 +38,18 @@ const avatarStyles = [
 
 export interface PendingApprovalsTableProps {
   requests: PendingDoctorRequest[];
-  loading: boolean;
+  loading?: boolean;
   filter: string;
-  setFilter: (val: string) => void;
+  setFilter: (f: string) => void;
+  layout?: 'auto' | 'cards';
 }
 
-export function PendingApprovalsTable({
+export default function PendingApprovalsTable({
   requests,
-  loading,
+  loading = false,
   filter,
   setFilter,
+  layout = 'auto',
 }: PendingApprovalsTableProps) {
   const router = useRouter();
   
@@ -59,8 +62,8 @@ export function PendingApprovalsTable({
   return (
     <Card className="p-0 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="p-5 md:p-6 border-b border-[hsl(var(--color-border))] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))]">
+      <div className="p-6 border-b border-[hsl(var(--color-border))] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap shrink-0">
           Pending Doctor Approvals
         </h3>
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -95,69 +98,73 @@ export function PendingApprovalsTable({
         ) : (
           <>
             {/* Desktop Table View */}
-            <table className="w-full min-w-[700px] hidden lg:table">
-              <thead>
-                <tr className="bg-[hsl(var(--color-bg-soft))]">
-                  {["Doctor", "Specialty", "Submitted", "Status"].map((h, i) => (
-                    <th
-                      key={h}
-                      className="px-6 py-3.5 text-[12px] font-bold text-[hsl(var(--color-text-muted))] text-left"
-                      style={{ textAlign: i === 3 ? "right" : "left" }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((req, index) => {
-                  const sc = statusConfig[req.status];
-                  const initials = (req.fullName ?? "??").slice(0, 2).toUpperCase();
-                  const avatarStyle = avatarStyles[index % avatarStyles.length];
-                  return (
-                    <tr
-                      key={req._id}
-                      onClick={() => router.push("/admin/approvals")}
-                      className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 cursor-pointer hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors group"
-                    >
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3.5">
-                          <div
-                            className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[13px] font-black shrink-0 shadow-sm ${avatarStyle}`}
-                          >
-                            {initials}
-                          </div>
-                          <div>
-                            <p className="text-[14px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap group-hover:text-[hsl(var(--color-primary))] transition-colors">
-                              {req.fullName}
-                            </p>
-                            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-                              {req.email}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                        {req.specialty ?? "—"}
-                      </td>
-                      <td className="px-6 py-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                        {new Date(req.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <span
-                          className={`inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-[6px] whitespace-nowrap shadow-sm ${sc.style}`}
+            {layout === 'auto' && (
+              <div className="overflow-x-auto w-full hidden xl:block">
+                <table className="w-full min-w-[1000px]">
+                  <thead>
+                    <tr className="bg-[hsl(var(--color-bg-soft))]">
+                      {["Doctor", "Specialty", "Phone", "Submitted", "Status"].map((h, i) => (
+                        <th
+                          key={h}
+                          className={`py-4 text-[14px] font-black text-[hsl(var(--color-text))] uppercase tracking-wider ${i === 0 ? 'pl-[80px] pr-4 text-left' : i === 4 ? 'px-8 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.5)]' : 'px-4 text-left'}`}
                         >
-                          {sc.icon} {sc.label}
-                        </span>
-                      </td>
+                          {h}
+                        </th>
+                      ))}
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {filtered.map((req, index) => {
+                      const sc = statusConfig[req.status];
+                      const initials = (req.fullName ?? "??").slice(0, 2).toUpperCase();
+                      const avatarStyle = avatarStyles[index % avatarStyles.length];
+                      return (
+                        <tr
+                          key={req._id}
+                          onClick={() => router.push("/admin/approvals")}
+                          className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 cursor-pointer hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors group"
+                        >
+                          <td className="pl-8 pr-4 py-3.5">
+                            <div className="flex items-center gap-3.5">
+                              <div
+                                className={`w-11 h-11 rounded-full flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm ${avatarStyle}`}
+                              >
+                                {initials}
+                              </div>
+                              <div>
+                                <p className="text-[15px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap group-hover:text-[hsl(var(--color-primary))] transition-colors">
+                                  {req.fullName}
+                                </p>
+                                <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                                  {req.email}
+                                </p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                            {req.specialty ?? "—"}
+                          </td>
+                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                            {req.phoneNumber ?? "—"}
+                          </td>
+                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                            {new Date(req.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="px-8 py-3.5 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.2)] group-hover:bg-transparent transition-colors">
+                            <Badge variant={sc.variant} className="gap-1.5 px-3 py-1.5 text-[11px] lowercase capitalize shadow-sm inline-flex">
+                              {sc.icon} {sc.label}
+                            </Badge>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
 
             {/* Mobile Card View */}
-            <div className="lg:hidden flex flex-col gap-3 p-4">
+            <div className={`${layout === 'auto' ? 'xl:hidden ' : ''}flex flex-col gap-3 p-4`}>
               {filtered.map((req, index) => {
                 const sc = statusConfig[req.status];
                 const initials = (req.fullName ?? "??").slice(0, 2).toUpperCase();
@@ -171,23 +178,29 @@ export function PendingApprovalsTable({
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-[10px] flex items-center justify-center text-[13px] font-black shrink-0 ${avatarStyle}`}>
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm ${avatarStyle}`}>
                           {initials}
                         </div>
                         <div>
-                          <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight mb-0.5">{req.fullName}</p>
-                          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{req.email}</p>
+                          <p className="text-[15px] font-bold text-[hsl(var(--color-text))] leading-tight mb-0.5">{req.fullName}</p>
+                          <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">{req.email}</p>
                         </div>
                       </div>
-                      <span className={`inline-flex items-center gap-1.5 text-[10px] font-bold px-2 py-1 rounded-[6px] whitespace-nowrap shrink-0 ${sc.style}`}>
+                      <Badge variant={sc.variant} className="gap-1.5 px-2.5 py-1 text-[10px] lowercase capitalize shadow-sm">
                         {sc.icon} {sc.label}
-                      </span>
+                      </Badge>
                     </div>
                     
                     <div className="flex items-center justify-between mt-2 pt-3 border-t border-[hsl(var(--color-border-soft))] text-[12px]">
-                      <div>
-                        <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mr-1.5">Specialty:</span>
-                        <span className="font-bold text-[hsl(var(--color-text))]">{req.specialty ?? "—"}</span>
+                      <div className="flex flex-col gap-1">
+                        <div>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mr-1.5">Specialty:</span>
+                          <span className="font-bold text-[hsl(var(--color-text))]">{req.specialty ?? "—"}</span>
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mr-1.5">Phone:</span>
+                          <span className="font-bold text-[hsl(var(--color-text))]">{req.phoneNumber ?? "—"}</span>
+                        </div>
                       </div>
                       <span className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">
                         {new Date(req.createdAt).toLocaleDateString()}

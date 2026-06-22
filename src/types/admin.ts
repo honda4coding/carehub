@@ -29,6 +29,7 @@ export interface AnalyticsData {
   chartData: {
     label: string;
     usersCount: number;
+    patientsCount: number;
     appointmentsCount: number;
   }[];
   summary: {

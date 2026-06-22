@@ -14,13 +14,12 @@ import { PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
 import NotificationBell from "@/components/admin/notifications/NotificationBell";
 import { Topbar } from "@/components/global/Topbar";
-import { Card } from "@/components/ui/Card";
 import { fetchClient } from "@/services/fetchClient";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip } from "recharts";
 
 import { StatCard } from "@/components/admin/dashboard/StatCard";
 import { ActivityFeed, Activity } from "@/components/admin/dashboard/ActivityFeed";
-import { PendingApprovalsTable } from "@/components/admin/dashboard/PendingApprovalsTable";
+import PendingApprovalsTable from "@/components/admin/dashboard/PendingApprovalsTable";
+import ActivityOverviewChart from "@/components/admin/dashboard/ActivityOverviewChart";
 
 export default function AdminDashboard() {
   const [requests, setRequests] = useState<PendingDoctorRequest[]>([]);
@@ -39,16 +38,6 @@ export default function AdminDashboard() {
   
   const [recentActivities, setRecentActivities] = useState<Activity[]>([]);
   const [activitiesLoading, setActivitiesLoading] = useState(true);
-
-  const [visibleLines, setVisibleLines] = useState({
-    patients: true,
-    doctors: true,
-    appointments: true
-  });
-
-  const toggleLine = (line: 'patients' | 'doctors' | 'appointments') => {
-    setVisibleLines(prev => ({ ...prev, [line]: !prev[line] }));
-  };
 
   const pendingCount = requests.length;
 
@@ -172,105 +161,15 @@ export default function AdminDashboard() {
         {/* ── Chart & Activity Feed ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
           {/* Chart Section */}
-          <Card className="lg:col-span-2 p-6 flex flex-col h-[400px]">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))]">
-                Activity Overview
-              </h3>
-            </div>
-            
-            <div className="flex-1 w-full min-h-0 mb-6">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={dailyStats} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
-                  <defs>
-                    <linearGradient id="colorPatients" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--color-primary))" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="hsl(var(--color-primary))" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorDoctors" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--color-secondary))" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="hsl(var(--color-secondary))" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorAppts" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(var(--color-success))" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="hsl(var(--color-success))" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} 
-                    axisLine={false} 
-                    tickLine={false} 
-                    tickFormatter={(val) => {
-                      if (!val) return "";
-                      const currentYear = new Date().getFullYear();
-                      const d = new Date(`${val}/${currentYear}`);
-                      return isNaN(d.getTime()) ? val : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-                    }}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 11, fill: "hsl(var(--color-text-muted))" }} 
-                    axisLine={false} 
-                    tickLine={false} 
-                    width={30}
-                  />
-                  <RechartsTooltip 
-                    contentStyle={{ backgroundColor: 'hsl(var(--color-bg-surface))', borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '12px', fontWeight: 'bold' }}
-                    itemStyle={{ fontWeight: 'bold' }}
-                    labelStyle={{ color: 'hsl(var(--color-text-muted))', marginBottom: '4px' }}
-                    labelFormatter={(val) => {
-                      if (!val) return "";
-                      const currentYear = new Date().getFullYear();
-                      const d = new Date(`${val}/${currentYear}`);
-                      return isNaN(d.getTime()) ? val : d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
-                    }}
-                  />
-                  <Area hide={!visibleLines.patients} type="monotone" name="New Patients" dataKey="patientsCount" stroke="hsl(var(--color-primary))" strokeWidth={3} fillOpacity={1} fill="url(#colorPatients)" />
-                  <Area hide={!visibleLines.doctors} type="monotone" name="New Doctors" dataKey="doctorsCount" stroke="hsl(var(--color-secondary))" strokeWidth={3} fillOpacity={1} fill="url(#colorDoctors)" />
-                  <Area hide={!visibleLines.appointments} type="monotone" name="New Appointments" dataKey="appointmentsCount" stroke="hsl(var(--color-success))" strokeWidth={3} fillOpacity={1} fill="url(#colorAppts)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2 md:gap-4 pt-4 border-t border-[hsl(var(--color-border))] shrink-0">
-              <button 
-                onClick={() => toggleLine('patients')}
-                className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.patients ? 'opacity-40 grayscale' : 'opacity-100'}`}
-              >
-                <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
-                  {statsLoading ? "—" : totalPatients?.toLocaleString() ?? "—"}
-                </p>
-                <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-primary))]" />
-                  New Patients
-                </p>
-              </button>
-              <button 
-                onClick={() => toggleLine('doctors')}
-                className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.doctors ? 'opacity-40 grayscale' : 'opacity-100'}`}
-              >
-                <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
-                  {statsLoading ? "—" : totalDoctors?.toLocaleString() ?? "—"}
-                </p>
-                <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-secondary))]" />
-                  New Doctors
-                </p>
-              </button>
-              <button 
-                onClick={() => toggleLine('appointments')}
-                className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.appointments ? 'opacity-40 grayscale' : 'opacity-100'}`}
-              >
-                <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
-                  {statsLoading ? "—" : totalAppointments?.toLocaleString() ?? "—"}
-                </p>
-                <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-success))]" />
-                  New Appointments
-                </p>
-              </button>
-            </div>
-          </Card>
+          <div className="lg:col-span-2 flex flex-col h-[400px]">
+            <ActivityOverviewChart
+              dailyStats={dailyStats}
+              statsLoading={statsLoading}
+              totalPatients={totalPatients || null}
+              totalDoctors={totalDoctors || null}
+              totalAppointments={totalAppointments || null}
+            />
+          </div>
 
           {/* Activity Feed Section */}
           <div className="h-[400px]">
@@ -285,7 +184,6 @@ export default function AdminDashboard() {
           filter={filter}
           setFilter={setFilter}
         />
-        
       </main>
     </div>
   );

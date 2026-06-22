@@ -29,6 +29,10 @@
     --color-danger: 0 84% 60%;
     --color-danger-bg: 0 100% 95%;
 
+    /* Indigo (Users) */
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+
     /* Borders */
     --color-border: 215 16% 47% / 0.12;
     --color-border-soft: 215 16% 47% / 0.07;

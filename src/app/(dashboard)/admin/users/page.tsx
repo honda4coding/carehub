@@ -16,7 +16,9 @@ import {
 import { ImSpinner2 } from "react-icons/im";
 
 import { adminService } from "@/services/adminService";
+import { Button } from "@/components/ui/Button";
 import { AdminUser, UserRole, UserStatus, UsersPagination } from "@/types/user";
+import Pagination from "@/components/ui/Pagination";
 
 // Constants
 const PAGE_SIZE = 20;
@@ -42,7 +44,7 @@ const STATUS_OPTIONS: { label: string; value: UserStatus | "" }[] = [
 const statusConfig: Record<UserStatus, { style: string; label: string }> = {
   active: {
     style:
-      "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]",
+      "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
     label: "Active",
   },
   pending: {
@@ -54,24 +56,22 @@ const statusConfig: Record<UserStatus, { style: string; label: string }> = {
     label: "Blocked",
   },
   rejected: {
-    style: "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]",
+    style: "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text))]",
     label: "Rejected",
   },
 };
 
 const roleConfig: Record<UserRole, { style: string; label: string }> = {
   doctor: {
-    style:
-      "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]",
+    style: "text-[hsl(var(--color-primary))]",
     label: "Doctor",
   },
   patient: {
-    style:
-      "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]",
+    style: "text-[hsl(var(--color-secondary-strong))]",
     label: "Patient",
   },
   admin: {
-    style: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
+    style: "text-[hsl(var(--color-warning))]",
     label: "Admin",
   },
 };
@@ -134,62 +134,41 @@ interface RowActionsProps {
 
 function RowActions({ user, busy, onActivate, onDeactivate }: RowActionsProps) {
   if (user.role === "admin") {
-    return (
-      <span className="text-[10px] font-bold italic text-[hsl(var(--color-text-muted))]">
-        Protected
-      </span>
-    );
+    return null;
   }
 
   const canActivate = user.status === "blocked";
   const canDeactivate = user.status === "active";
 
   return (
-    <div className="flex items-center gap-1.5 justify-end">
+    <div className="flex items-center gap-1.5 justify-start">
       {canActivate && (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onActivate(user._id)}
           disabled={busy}
           title="Activate user"
-          className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-[7px]
-            border border-[hsl(var(--color-primary)/0.4)]
-            bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]
-            hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(--color-success)]
-            hover:border-[hsl(var(--color-success)/0.3)]
-            disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap"
+          isLoading={busy}
+          icon={LuShieldCheck}
+          className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)]"
         >
-          {busy ? (
-            <ImSpinner2 className="animate-spin text-[10px]" />
-          ) : (
-            <LuShieldCheck className="text-[11px]" />
-          )}
           Activate
-        </button>
+        </Button>
       )}
       {canDeactivate && (
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => onDeactivate(user._id)}
           disabled={busy}
           title="Suspend user"
-          className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-[7px]
-            border border-[hsl(var(--color-border))]
-            text-[hsl(var(--color-text-muted))]
-            hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))]
-            hover:border-[hsl(var(--color-danger)/0.3)]
-            disabled:opacity-40 disabled:cursor-not-allowed transition-all whitespace-nowrap"
+          isLoading={busy}
+          icon={LuShieldOff}
+          className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-danger))] border-[hsl(var(--color-danger)/0.3)] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.5)]"
         >
-          {busy ? (
-            <ImSpinner2 className="animate-spin text-[10px]" />
-          ) : (
-            <LuShieldOff className="text-[11px]" />
-          )}
           Deactivate
-        </button>
-      )}
-      {!canActivate && !canDeactivate && (
-        <span className="text-[10px] font-bold italic text-[hsl(var(--color-text-muted))]">
-          ————
-        </span>
+        </Button>
       )}
     </div>
   );
@@ -301,34 +280,39 @@ export default function AdminUserManagementPage() {
   // Render 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      {/* ── Topbar — identical structure to admin/page.tsx ── */}
+      {/* ── Topbar ── */}
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
-        <div className="md:block">
-          <h1 className="text-[15px] md:text-[17px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-            User Directory
-          </h1>
-          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-            Manage all registered accounts and suspension statuses
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* Search — desktop */}
-          <div className="relative items-center hidden sm:flex">
-            <LuSearch className="absolute left-2.5 text-[13px] text-[hsl(var(--color-text-muted))]" />
-            <input
-              type="text"
-              placeholder="Search name or email…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-[12px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-[190px] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-white))] transition-colors"
-            />
+        <div className="flex items-center gap-4">
+          <div>
+            <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+              User Directory
+            </h1>
+            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+              Manage all registered accounts and suspension statuses
+            </p>
           </div>
+          
+          {/* Stat strip inside header */}
+          {pagination && !isLoading && (
+            <div className="hidden md:flex items-center gap-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-1.5 shadow-sm ml-4">
+              <LuUsers className="text-[14px] text-[hsl(var(--color-primary))]" />
+              <span className="text-[13px] font-black text-[hsl(var(--color-text))]">
+                {pagination.totalCount}
+              </span>
+              <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
+                total users
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
           {/* Refresh */}
           <button
             onClick={fetchUsers}
             disabled={isLoading}
             title="Refresh"
-            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors disabled:opacity-50"
+            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all disabled:opacity-50 cursor-pointer shadow-sm"
           >
             <LuRefreshCw
               className={`text-[14px] ${isLoading ? "animate-spin" : ""}`}
@@ -339,11 +323,11 @@ export default function AdminUserManagementPage() {
 
       {/* ── Main content ── */}
       <main className="flex-1 p-4 md:p-6 overflow-auto">
-        {/* Stat strip */}
+        {/* Stat strip (mobile or small tablet only if needed) */}
         {pagination && !isLoading && (
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
-            <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-2">
-              <LuUsers className="text-[14px] text-primary" />
+          <div className="md:hidden flex items-center gap-3 mb-4 flex-wrap">
+            <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 shadow-sm">
+              <LuUsers className="text-[14px] text-[hsl(var(--color-primary))]" />
               <span className="text-[12px] font-black text-[hsl(var(--color-text))]">
                 {pagination.totalCount}
               </span>
@@ -352,68 +336,67 @@ export default function AdminUserManagementPage() {
               </span>
             </div>
             {roleFilter && (
-              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]">
-                Filtered: {roleFilter}
+              <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary-strong))]">
+                {roleFilter}
               </span>
             )}
             {statusFilter && (
               <span className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))]">
-                Status: {statusFilter}
+                {statusFilter}
               </span>
             )}
           </div>
         )}
 
         {/* Card */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           {/* Card header */}
-          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
-            <p className="text-[13px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.04em]">
-              All Users
-            </p>
-            <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto mt-2 sm:mt-0">
-              {/* Mobile search */}
-              <div className="relative flex items-center sm:hidden flex-1 sm:flex-none">
-                <LuSearch className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
+          <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+            <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
+              <div className="relative flex items-center w-full max-w-[300px]">
+                <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
                 <input
                   type="text"
-                  placeholder="Search…"
+                  placeholder="Search name or email…"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] transition-colors"
+                  className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
                 />
               </div>
+            </div>
+
+            <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto shrink-0">
               {/* Role & Status filters */}
               <div className="flex items-center gap-2 flex-1 sm:flex-none">
                 <div className="relative flex items-center w-full sm:w-auto">
-                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
                   <select
                     value={roleFilter}
                     onChange={(e) =>
                       setRoleFilter(e.target.value as UserRole | "")
                     }
-                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                    className="pl-7 pr-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
                   >
                     {ROLE_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>
-                        {o.label}
+                         {o.label}
                       </option>
                     ))}
                   </select>
-                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                  <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
                     ▾
                   </span>
                 </div>
                 
                 {/* Status filter */}
                 <div className="relative flex items-center w-full sm:w-auto">
-                  <LuFilter className="absolute left-2 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+                  <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
                   <select
                     value={statusFilter}
                     onChange={(e) =>
                       setStatusFilter(e.target.value as UserStatus | "")
                     }
-                    className="pl-6 pr-6 py-1.5 text-[11px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] appearance-none cursor-pointer transition-colors w-full sm:w-auto"
+                    className="pl-7 pr-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
                   >
                     {STATUS_OPTIONS.map((o) => (
                       <option key={o.value} value={o.value}>
@@ -421,7 +404,7 @@ export default function AdminUserManagementPage() {
                       </option>
                     ))}
                   </select>
-                  <span className="absolute right-2 text-[10px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+                  <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
                     ▾
                   </span>
                 </div>
@@ -451,12 +434,11 @@ export default function AdminUserManagementPage() {
                 <table className="w-full min-w-[600px] hidden lg:table">
                   <thead>
                     <tr className="border-b border-[hsl(var(--color-border))]">
-                      {["User", "Email", "Role", "Status", "Joined", "Actions"].map(
+                      {["User", "Email", "Role", "Joined", "Status", "Actions"].map(
                         (h, i) => (
                           <th
                             key={h}
-                            className="pb-3 text-[10px] font-black text-[hsl(var(--color-text-muted))] uppercase tracking-[.07em] text-left pr-4"
-                            style={{ textAlign: i === 5 ? "right" : "left" }}
+                            className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-4"
                           >
                             {h}
                           </th>
@@ -504,52 +486,61 @@ export default function AdminUserManagementPage() {
                             className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
                           >
                             {/* Name */}
-                            <td className="py-3.5 pr-4">
+                            <td className="py-3.5 pr-4 text-left">
                               <div className="flex items-center gap-3">
                                 <div
-                                  className={`w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-black shrink-0 ${pickAvatar(user._id)}`}
+                                  className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${pickAvatar(user._id)}`}
                                 >
                                   {getAvatarChars(user.fullName)}
                                 </div>
-                                <p className="text-[13px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap">
-                                  {user.fullName}
-                                </p>
+                                <div className="text-left">
+                                  <p className="text-[14px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap leading-tight">
+                                    {user.fullName}
+                                  </p>
+                                  {user.role === "admin" && (
+                                    <p className="text-[11px] font-bold italic text-[hsl(var(--color-text-muted))] mt-0.5">
+                                      Protected Account
+                                    </p>
+                                  )}
+                                </div>
                               </div>
                             </td>
                             {/* Email */}
-                            <td className="py-3.5 pr-4 max-w-[170px]">
-                              <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
+                            <td className="py-3.5 pr-4 max-w-[170px] text-left">
+                              <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
                                 {user.email}
                               </p>
                             </td>
-                            {/* Role badge */}
-                            <td className="py-3.5 pr-4">
+                            {/* Role */}
+                            <td className="py-3.5 pr-4 text-left">
                               <span
-                                className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${rc.style}`}
+                                className={`text-[13px] font-bold whitespace-nowrap ${rc.style}`}
                               >
                                 {rc.label}
                               </span>
                             </td>
+                            {/* Joined */}
+                            <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                              {fmtDate(user.createdAt)}
+                            </td>
                             {/* Status badge */}
-                            <td className="py-3.5 pr-4">
+                            <td className="py-3.5 pr-4 text-left">
                               <span
-                                className={`inline-flex items-center text-[10px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${sc.style}`}
+                                className={`inline-flex items-center text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                               >
                                 {sc.label}
                               </span>
                             </td>
-                            {/* Joined */}
-                            <td className="py-3.5 pr-4 text-[12px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                              {fmtDate(user.createdAt)}
-                            </td>
                             {/* Actions */}
-                            <td className="py-3.5">
-                              <RowActions
-                                user={user}
-                                busy={!!actionBusy[user._id]}
-                                onActivate={handleActivate}
-                                onDeactivate={handleDeactivate}
-                              />
+                            <td className="py-3.5 pr-4">
+                              <div className="flex justify-start">
+                                <RowActions
+                                  user={user}
+                                  busy={!!actionBusy[user._id]}
+                                  onActivate={handleActivate}
+                                  onDeactivate={handleDeactivate}
+                                />
+                              </div>
                             </td>
                           </tr>
                         );
@@ -627,70 +618,12 @@ export default function AdminUserManagementPage() {
           </div>
 
           {/* Pagination */}
-          {pagination && pagination.totalPages > 1 && !isLoading && (
-            <div className="flex items-center justify-between mt-4 pt-3 border-t border-[hsl(var(--color-border))]">
-              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
-                Page {pagination.currentPage} of {pagination.totalPages} ·{" "}
-                {pagination.totalCount} users
-              </p>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page <= 1 || isLoading}
-                  className="w-[28px] h-[28px] flex items-center justify-center rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  <LuChevronLeft className="text-[13px]" />
-                </button>
-
-                {/* Windowed page pills */}
-                {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-                  .filter(
-                    (p) =>
-                      p === 1 ||
-                      p === pagination.totalPages ||
-                      Math.abs(p - page) <= 1,
-                  )
-                  .reduce<(number | "…")[]>((acc, p, i, arr) => {
-                    if (i > 0 && (p as number) - (arr[i - 1] as number) > 1)
-                      acc.push("…");
-                    acc.push(p);
-                    return acc;
-                  }, [])
-                  .map((p, i) =>
-                    p === "…" ? (
-                      <span
-                        key={`ellipsis-${i}`}
-                        className="text-[11px] text-[hsl(var(--color-text-muted))] px-0.5"
-                      >
-                        …
-                      </span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => setPage(p as number)}
-                        disabled={isLoading}
-                        className={`w-[28px] h-[28px] flex items-center justify-center rounded-[7px] text-[11px] font-bold border transition-colors ${
-                          page === p
-                            ? "bg-primary text-white border-primary"
-                            : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))]"
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    ),
-                  )}
-
-                <button
-                  onClick={() =>
-                    setPage((p) => Math.min(pagination.totalPages, p + 1))
-                  }
-                  disabled={page >= pagination.totalPages || isLoading}
-                  className="w-[28px] h-[28px] flex items-center justify-center rounded-[7px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-                >
-                  <LuChevronRight className="text-[13px]" />
-                </button>
-              </div>
-            </div>
+          {pagination && !isLoading && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={(page) => setPage(page)}
+            />
           )}
         </div>
       </main>
