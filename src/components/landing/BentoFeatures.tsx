@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { LuBrainCircuit, LuGamepad2, LuFileDigit, LuActivity, LuSparkles, LuCircleCheck, LuBot } from "react-icons/lu";
+import { Badge } from "@/components/ui/Badge";
 
 export default function BentoFeatures() {
   return (
@@ -8,11 +9,11 @@ export default function BentoFeatures() {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-[10px] font-black uppercase tracking-[0.2em] text-[hsl(var(--color-primary))] bg-[hsl(var(--color-primary)/0.1)] rounded-full border border-[hsl(var(--color-primary)/0.2)]">
+          <Badge variant="primary" className="mb-6 gap-2">
             <LuSparkles className="w-4 h-4" />
             <span>Omnipotent Ecosystem</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[hsl(var(--color-text))] tracking-tight">
+          </Badge>
+          <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight">
             Every tool you need, <br className="hidden sm:block" />
             <span className="text-[hsl(var(--color-primary))]">perfectly synchronized.</span>
           </h2>
@@ -27,6 +28,10 @@ export default function BentoFeatures() {
           {/* Large Card: AI Safety */}
           <div className="md:col-span-2 row-span-1 md:row-span-2 rounded-[2.5rem] p-8 lg:p-12 bg-linear-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] relative overflow-hidden group flex flex-col justify-between h-full">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[hsl(var(--color-primary)/0.1)] blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-[hsl(var(--color-primary)/0.15)] transition-colors duration-700" />
+            
+            <div className="relative z-10 mb-6">
+              <LuBrainCircuit className="w-10 h-10 text-[hsl(var(--color-primary))]" />
+            </div>
             
             {/* CSS Visual: AI Radar/Scan with Image */}
             <div className="relative w-full h-48 sm:h-64 mb-8 rounded-3xl bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] overflow-hidden flex items-center justify-center">
@@ -54,8 +59,7 @@ export default function BentoFeatures() {
             </div>
 
             <div className="relative z-10">
-              <LuBrainCircuit className="w-10 h-10 text-[hsl(var(--color-primary))] mb-6" />
-              <h3 className="text-3xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-4 leading-tight">AI Safety<br/>Intelligence</h3>
+              <h3 className="text-xl lg:text-2xl font-black text-[hsl(var(--color-text))] tracking-tight mb-4 leading-tight">AI Safety<br/>Intelligence</h3>
               <p className="text-lg text-[hsl(var(--color-text-muted))] leading-relaxed max-w-md">
                 Prescribe with absolute confidence. Our engine analyzes real-time drug interactions and patient allergies before the prescription is even finalized.
               </p>
