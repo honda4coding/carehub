@@ -57,8 +57,8 @@ const Hero = () => {
             <div className="absolute -inset-6 bg-linear-to-tr from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-secondary)/0.15)] blur-3xl rounded-full opacity-60 pointer-events-none" />
             
             <Image
-              src="/Hero.png"
-              alt="Doctor consulting with patients"
+              src="/Hero-v4.png"
+              alt="Medical Dashboard Interface"
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 600px"
