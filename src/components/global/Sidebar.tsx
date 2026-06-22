@@ -81,13 +81,23 @@ const doctorNav: NavSection[] = [
     items: [
       { label: "Workspace", href: "/doctor", icon: <LuLayoutDashboard /> },
       {
+        label: "Reports",
+        href: "/doctor/reports",
+        icon: <FaSquarePollVertical />,
+      },
+    ],
+  },
+  {
+    title: "Management",
+    items: [
+      {
         label: "Appointments",
         href: "/doctor/appointments",
         icon: <LuCalendarDays />,
         subItems: [
           {
             label: "Appointments",
-            href: "/doctor/appointments/appointments",
+            href: "/doctor/appointments",
             icon: <LuCalendarDays className="text-sm" />,
           },
           {
@@ -102,11 +112,11 @@ const doctorNav: NavSection[] = [
         href: "/doctor/patients",
         icon: <LuUsers />,
       },
-      {
-        label: "Reports",
-        href: "/doctor/reports",
-        icon: <FaSquarePollVertical />,
-      },
+    ],
+  },
+  {
+    title: "Resources",
+    items: [
       {
         label: "My Knowledge Base",
         href: "/doctor/knowledge-base",

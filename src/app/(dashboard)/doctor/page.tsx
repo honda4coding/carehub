@@ -356,9 +356,6 @@ const [sessions, setSessions] = useState<Session[]>([]);
           <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 truncate">
             Doctor Workspace
           </h1>
-          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0 truncate">
-            Welcome back, Dr. {user?.name || (user as any)?.fullName || "Doctor"}
-          </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
@@ -383,6 +380,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
           realSearchResults={realSearchResults}
           handleRequestAccess={handleRequestAccess}
           setWalkInModalOpen={setWalkInModalOpen}
+          user={user}
         />
 
         <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />

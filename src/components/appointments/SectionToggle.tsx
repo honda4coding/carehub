@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { LuSettings2, LuUsers } from "react-icons/lu";
 
 const TABS = [
-  { href: "/doctor/appointments/appointments", label: "Appointments", icon: LuUsers },
+  { href: "/doctor/appointments", label: "Appointments", icon: LuUsers },
   {
     href: "/doctor/appointments/schedule",
     label: "My Schedule",
@@ -19,7 +19,9 @@ export default function SectionToggle() {
   return (
     <div className="relative inline-flex items-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))]">
       {TABS.map((tab) => {
-        const isActive = pathname.startsWith(tab.href);
+        const isActive = tab.href === "/doctor/appointments" 
+          ? pathname === "/doctor/appointments" 
+          : pathname.startsWith(tab.href);
         const Icon = tab.icon;
 
         return (
