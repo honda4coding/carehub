@@ -49,6 +49,24 @@ export const fetchClient = {
     }
 
     const response = await fetch(url, config);
+
+    if (response.status === 401) {
+      try {
+        const refreshRes = await fetch(`${BASE_URL}/users/refresh-token`, {
+          method: "GET",
+          credentials: "include"
+        });
+        
+        if (refreshRes.ok) {
+          // Retry original request if refresh succeeded
+          const retryResponse = await fetch(url, config);
+          return handleResponse(retryResponse);
+        }
+      } catch (err) {
+        console.error("Auto-refresh token failed", err);
+      }
+    }
+
     return handleResponse(response);
   },
 

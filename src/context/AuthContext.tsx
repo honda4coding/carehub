@@ -10,6 +10,33 @@ axios.defaults.withCredentials = true;
 import { User, AuthContextType } from '@/types/auth';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
 
+// Add a response interceptor for automatic token refresh
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+      try {
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        await axios.get(`${BASE_URL}/users/refresh-token`);
+        // If refresh succeeds, retry the original request
+        return axios(originalRequest);
+      } catch (refreshError) {
+        // If refresh fails, the user needs to log in again
+        if (typeof window !== 'undefined') {
+          Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
+          Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
+          localStorage.removeItem(USER_STORAGE_KEY);
+          window.location.href = '/login';
+        }
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
