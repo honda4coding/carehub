@@ -8,6 +8,8 @@ import { ImSpinner2 } from "react-icons/im";
 import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
+import { FaFingerprint } from "react-icons/fa";
+import { registerBiometrics } from "@/services/webAuthnService";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -30,6 +32,21 @@ type UpdatePasswordValues = {
 export default function UpdatePasswordForm() {
   const { token } = useAuth();
   const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
+  const [isRegisteringBio, setIsRegisteringBio] = React.useState(false);
+  const [bioToast, setBioToast] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
+
+  const handleRegisterBiometrics = async () => {
+    try {
+      setIsRegisteringBio(true);
+      setBioToast(null);
+      await registerBiometrics();
+      setBioToast({ msg: "FaceID / TouchID registered successfully!", variant: "success" });
+    } catch (err: any) {
+      setBioToast({ msg: err.message || "Failed to enable biometric login.", variant: "error" });
+    } finally {
+      setIsRegisteringBio(false);
+    }
+  };
 
   const handleSubmit = async (
     values: UpdatePasswordValues,
@@ -70,6 +87,7 @@ export default function UpdatePasswordForm() {
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 md:p-10 w-full max-w-[600px] shadow-sm">
       {toastMsg && <AppointmentToast message={toastMsg.msg} variant={toastMsg.variant} onClose={() => setToastMsg(null)} />}
+      {bioToast && <AppointmentToast message={bioToast.msg} variant={bioToast.variant} onClose={() => setBioToast(null)} />}
       
       {/* Header */}
 
@@ -150,6 +168,33 @@ export default function UpdatePasswordForm() {
           </Form>
         )}
       </Formik>
+
+      {/* Divider */}
+      <hr className="my-6 border-[hsl(var(--color-border))]" />
+
+      {/* Biometrics Setup */}
+      <div className="space-y-4">
+        <div>
+          <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
+            <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" /> Biometric Login
+          </h3>
+          <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-1 font-semibold">
+            Use your device's fingerprint scanner or facial recognition (FaceID/TouchID) to log in instantly next time.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleRegisterBiometrics}
+          disabled={isRegisteringBio}
+          className="w-full py-3 px-4 border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+        >
+          {isRegisteringBio ? (
+            <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
+          ) : (
+            <>Enable Biometric Login</>
+          )}
+        </button>
+      </div>
     </div>
   );
 }

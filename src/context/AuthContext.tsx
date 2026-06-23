@@ -6,6 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 
 import { User, AuthContextType } from '@/types/auth';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
+import { subscribeToPushNotifications } from '@/services/pushNotificationService';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -27,6 +28,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setToken(savedToken);
         setRole(savedRole);
         setUser(JSON.parse(savedUser));
+        // Subscribe to push notifications on mount if authenticated
+        subscribeToPushNotifications().catch(err => console.error("Push subscribe error on mount:", err));
       }
     } catch (error) {
       console.error("Auth hydration error:", error);
@@ -47,6 +50,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.set(AUTH_COOKIE_NAME, newToken, { expires: 7, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/' });
     Cookies.set(ROLE_COOKIE_NAME, newRole, { expires: 7, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/' });
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
+
+    // Request push notification subscription upon login
+    subscribeToPushNotifications().catch(err => console.error("Push subscribe error on login:", err));
 
     router.replace(`/${newRole}`);
   };

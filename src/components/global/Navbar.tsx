@@ -1,4 +1,5 @@
 "use client";
+import InstallButton from "@/components/pwa/InstallButton";
 import Link from "next/link";
 import { useState } from "react";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -80,11 +81,10 @@ export default function Navbar() {
 
           <div className="flex items-center gap-4">
             {isLoading ? (
-              // Pulse skeleton during hydration
               <div className="w-20 h-8 bg-soft animate-pulse rounded-full" />
             ) : !isAuthenticated ? (
-              // Guest Navigation
               <>
+                <InstallButton />
                 <div className="hidden sm:flex items-center gap-2 border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
                   <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors">
                     Sign In
@@ -95,8 +95,8 @@ export default function Navbar() {
                 </Button>
               </>
             ) : (
-              // Authenticated User Navigation
               <div className="flex items-center gap-4">
+                <InstallButton />
                 <div className="hidden sm:flex flex-col items-end mr-2">
                   <span className="text-xs font-black text-[hsl(var(--color-text))]">{user?.name}</span>
                   <span className="text-[10px] uppercase font-bold text-[hsl(var(--color-primary))] tracking-widest">{role}</span>
