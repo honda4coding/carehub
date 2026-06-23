@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import RoleSelector from "@/components/auth/RoleSelector";
 import DoctorRegisterForm from "@/components/auth/DoctorRegisterForm";
 import PatientRegisterForm from "@/components/auth/PatientRegisterForm";
+import { AuthCard } from "@/components/auth/AuthCard";
 
 function RegisterContent() {
   const searchParams = useSearchParams();
@@ -24,7 +25,7 @@ function RegisterContent() {
   };
 
   return (
-    <div className="max-w-2xl w-full bg-white rounded-[2.5rem] shadow-xl p-8 md:p-12 self-start border border-white/40 backdrop-blur-3xl">
+    <AuthCard className="max-w-2xl w-full">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-[hsl(var(--color-text))]">
           Create New Account
@@ -44,7 +45,7 @@ function RegisterContent() {
         )}
       </div>
 
-      <div className="text-center mt-10 pt-8 border-t border-slate-200/50">
+      <div className="text-center mt-10 pt-8 border-t border-soft/50">
         <p className="text-[hsl(var(--color-text-muted))]">
           Already have an account?{" "}
           <a
@@ -56,16 +57,24 @@ function RegisterContent() {
           </a>
         </p>
       </div>
-    </div>
+    </AuthCard>
   );
 }
 
 
 export default function RegisterPage() {
   return (
-   
-    <div className="min-h-screen flex justify-center p-4 bg-gradient-bg pt-28">
-      <Suspense fallback={<div className="mt-20 font-medium text-primary">Loading CareHub...</div>}>
+    <div
+      className="min-h-screen flex items-start justify-center p-6 pt-28" 
+      style={{
+        background: `
+          radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
+          radial-gradient(circle at bottom left, hsl(var(--color-primary) / 0.15) 0%, transparent 40%),
+          hsl(var(--color-bg))
+        `,
+      }}
+    >
+      <Suspense fallback={<div className="mt-20 font-medium text-[hsl(var(--color-primary))] text-center">Loading Registration...</div>}>
         <RegisterContent />
       </Suspense>
     </div>

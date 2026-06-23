@@ -14,29 +14,29 @@ export default function TimelineCard({ entry }: Props) {
   return (
     <div className="relative group w-full">
       {/* Timeline Node (Glowing Dot) */}
-      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] shadow-[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
+      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] -[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
 
       {/* Card Content */}
       <div 
         onClick={() => setExpanded(!expanded)}
-        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 shadow-sm group-hover:border-[hsl(var(--color-primary)/0.3)] group-hover:shadow-[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
+        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 group-hover:border-[hsl(var(--color-primary)/0.3)] -[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
       >
         
         {/* Compact Header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <span className="inline-block bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-2">
+            <span className="inline-block bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-2">
               {entry.date}
             </span>
-            <h3 className="text-[14px] font-black text-[hsl(var(--color-text))] flex items-center gap-1.5">
+            <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-1.5">
               <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> Encounter with {entry.doctorName}
             </h3>
-            <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase mt-1 tracking-wider">{entry.specialty} • {entry.diagnosis || "No diagnosis recorded"}</p>
+            <p className="text-sm font-bold text-[hsl(var(--color-text-muted))] uppercase mt-1 tracking-wider">{entry.specialty} • {entry.diagnosis || "No diagnosis recorded"}</p>
           </div>
           
           <div className="flex flex-col items-end gap-2 shrink-0">
-            <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors self-end mt-1">
-              {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
+            <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors self-end mt-1 cursor-pointer">
+              {expanded ? <LuChevronUp className="text-2xl" /> : <LuChevronDown className="text-2xl" />}
             </button>
           </div>
         </div>

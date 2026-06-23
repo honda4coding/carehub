@@ -49,7 +49,7 @@ function EditField({ name, label, icon, placeholder, type = "text", errors, touc
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>
   );
 }
@@ -96,7 +96,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+    <div className="overflow-hidden">
       <div className="px-6 pt-5 pb-2">
         <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Basic Information</h3>
         <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">Update your personal details</p>
@@ -105,8 +105,8 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
       {(serverError || serverSuccess) && (
         <div className={`mx-6 mb-3 px-4 py-3 text-sm font-medium rounded-xl flex items-center gap-2 ${
           serverError
-            ? "bg-red-50 border border-red-200 text-red-600"
-            : "bg-green-50 border border-green-200 text-green-600"
+            ? "bg-danger-light border border-red-200 text-danger"
+            : "bg-success-light border border-green-200 text-success"
         }`}>
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
           {serverError || serverSuccess}
@@ -114,7 +114,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
       )}
 
       <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit} enableReinitialize>
-        {({ errors, touched, isSubmitting }) => (
+        {({ errors, touched, isSubmitting, values, setFieldValue }) => (
           <Form>
             <div className="px-6 pb-5 space-y-4">
 
@@ -159,7 +159,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                     </Field>
                     <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
                   </div>
-                  <ErrorMessage name="gender" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                  <ErrorMessage name="gender" component="p" className="text-danger text-xs pl-1 font-medium" />
                 </div>
               </div>
 
@@ -167,27 +167,37 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
               <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St, Cairo" errors={errors} touched={touched} />
 
               {/* Privacy Setting */}
-              <div className="space-y-1.5">
-                <label htmlFor="sharingSetting" className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
+              <div className="space-y-2">
+                <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
                   <span className="w-4 h-4"><LuShield /></span> Medical Record Privacy
                 </label>
-                <div className="relative">
-                  <Field
-                    as="select" id="sharingSetting" name="sharingSetting"
-                    className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer"
-                    style={{
-                      backgroundColor: errors.sharingSetting && touched.sharingSetting ? "#fff5f5" : "white",
-                      border: errors.sharingSetting && touched.sharingSetting ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
-                      color: "hsl(var(--color-text))",
-                    }}
-                  >
-                    <option value="all"> Public — All doctors can view instantly</option>
-                    <option value="own_only"> Restricted — Current doctor only</option>
-                    <option value="otp"> Protected — Requires OTP verification</option>
-                  </Field>
-                  <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+                
+                <div className="flex bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl p-1.5 gap-1">
+                  {[
+                    { val: "all", label: "Public" },
+                    { val: "own_only", label: "Restricted" },
+                    { val: "otp", label: "Protected (OTP)" },
+                  ].map((opt) => {
+                    const isActive = values.sharingSetting === opt.val;
+                    return (
+                      <button
+                        key={opt.val}
+                        type="button"
+                        onClick={() => setFieldValue("sharingSetting", opt.val)}
+                        className={`flex-1 py-2 text-[12.5px] font-bold rounded-lg transition-all cursor-pointer ${
+                          isActive 
+                            ? "bg-white shadow-sm border border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))]" 
+                            : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-black/5"
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
                 </div>
-                <ErrorMessage name="sharingSetting" component="p" className="text-red-500 text-xs pl-1 font-medium" />
+                {errors.sharingSetting && touched.sharingSetting && (
+                  <p className="text-danger text-xs pl-1 font-medium">{errors.sharingSetting}</p>
+                )}
                 <p className="text-[11px] text-[hsl(var(--color-text-muted))] pl-1">
                   Controls how doctors access your medical records.
                 </p>
@@ -195,11 +205,10 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
             </div>
 
             {/* Save button */}
-            <div className="px-6 pb-6">
+            <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit" disabled={isSubmitting}
-                className="w-full py-3.5 text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
-                style={{ background: "hsl(var(--color-primary))" }}
+                className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
                   ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>

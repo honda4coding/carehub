@@ -1,5 +1,6 @@
 "use client";
 import { LuShieldAlert, LuActivity } from "react-icons/lu";
+import { Card } from "@/components/ui/Card";
 
 interface Props {
   allergies: string[];
@@ -13,37 +14,37 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
     <div className="flex flex-col gap-4">
       {/* Allergies */}
       {allergies.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-danger-bg))] rounded-2xl p-4 shadow-sm">
+        <Card className="p-4 border-[hsl(var(--color-danger-bg))]">
           <div className="flex items-center gap-2 mb-3">
             <LuShieldAlert className="text-[hsl(var(--color-danger))]" />
-            <h3 className="text-[12px] font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">Allergies</h3>
+            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">Allergies</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {allergies.map((a, idx) => (
-              <span key={idx} className="bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] px-2.5 py-1 rounded-lg text-[11px] font-bold">
+              <span key={idx} className="bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] px-3 py-1.5 rounded-lg text-xs font-bold">
                 ⚠️ {a}
               </span>
             ))}
           </div>
-        </div>
+        </Card>
       )}
 
       {/* Chronic Diseases */}
       {chronicDiseases.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-warning-bg))] rounded-2xl p-4 shadow-sm">
+        <Card className="p-4 border-[hsl(var(--color-warning-bg))]">
           <div className="flex items-center gap-2 mb-3">
             <LuActivity className="text-[hsl(var(--color-warning))]" />
-            <h3 className="text-[12px] font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">Chronic Conditions</h3>
+            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">Chronic Conditions</h3>
           </div>
           <div className="flex flex-col gap-2">
             {chronicDiseases.map((c, idx) => (
-              <span key={idx} className="flex items-center gap-2 text-[11px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-warning-bg))] px-3 py-1.5 rounded-lg w-fit">
-                <span className="w-1.5 h-1.5 rounded-full bg-[hsl(var(--color-warning))] shrink-0" />
+              <span key={idx} className="flex items-center gap-2 text-xs font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-warning-bg))] px-3 py-1.5 rounded-lg w-fit">
+                <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-warning))] shrink-0" />
                 {c}
               </span>
             ))}
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );

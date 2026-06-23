@@ -102,8 +102,8 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
 
   // Icon color per notification type
   const typeDot: Record<string, string> = {
-    appointment: "bg-blue-500",
-    prescription: "bg-green-500",
+    appointment: "bg-primary",
+    prescription: "bg-success",
     medical_history: "bg-purple-500",
     doctor_registration: "bg-orange-500",
     session: "bg-yellow-500",
@@ -127,7 +127,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
 
       {/* ── Dropdown ── */}
       {open && (
-        <div className="absolute right-0 mt-2 w-[340px] max-h-[420px] flex flex-col rounded-[12px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] shadow-lg z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-[340px] max-h-[420px] flex flex-col rounded-[12px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] z-50 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--color-border))] shrink-0">
             <Link

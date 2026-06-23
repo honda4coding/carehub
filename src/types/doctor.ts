@@ -25,6 +25,7 @@ export interface PendingDoctorRequest  {
   createdAt: string;
   specialty?: string;
   licenseUrl?: string;
+  phoneNumber?: string;
 }
 
 export interface GetPendingDoctorsResponse {

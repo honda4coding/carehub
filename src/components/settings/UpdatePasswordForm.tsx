@@ -7,6 +7,7 @@ import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
 import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
+import AppointmentToast from "@/components/appointments/AppointmentToast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -28,16 +29,14 @@ type UpdatePasswordValues = {
 
 export default function UpdatePasswordForm() {
   const { token } = useAuth();
-  const [serverError, setServerError] = React.useState("");
-  const [serverSuccess, setServerSuccess] = React.useState("");
+  const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
 
   const handleSubmit = async (
     values: UpdatePasswordValues,
     { setSubmitting, resetForm }: FormikHelpers<UpdatePasswordValues>
   ) => {
     try {
-      setServerError("");
-      setServerSuccess("");
+      setToastMsg(null);
 
       const res = await fetch(`${BASE_URL}/users/update-password`, {
         method: "PATCH",
@@ -55,42 +54,24 @@ export default function UpdatePasswordForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        setServerError(data.message || "Something went wrong.");
+        setToastMsg({ msg: data.message || "Something went wrong.", variant: "error" });
         return;
       }
 
-      setServerSuccess("Password updated successfully!");
+      setToastMsg({ msg: "Password updated successfully!", variant: "success" });
       resetForm();
     } catch {
-      setServerError("Something went wrong. Please check your connection.");
+      setToastMsg({ msg: "Something went wrong. Please check your connection.", variant: "error" });
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-<div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 w-5xl shadow-lg">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 md:p-10 w-full max-w-[600px] shadow-sm">
+      {toastMsg && <AppointmentToast message={toastMsg.msg} variant={toastMsg.variant} onClose={() => setToastMsg(null)} />}
+      
       {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-lg font-black text-[hsl(var(--color-text))]">
-          Update Password
-        </h2>
-        <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-1">
-          Enter your current password and choose a new one.
-        </p>
-      </div>
-
-      {/* Server Messages */}
-      {serverError && (
-        <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
-          {serverError}
-        </div>
-      )}
-      {serverSuccess && (
-        <div className="bg-green-50 border border-green-200 text-green-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
-          {serverSuccess}
-        </div>
-      )}
 
       <Formik
         initialValues={{ oldpassword: "", newpassword: "", cpassword: "" }}
@@ -102,70 +83,69 @@ export default function UpdatePasswordForm() {
 
             {/* Old Password */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
-                style={{ color: "hsl(var(--color-text-muted))" }}>
+              <label className="block text-[12px] font-bold pl-4 tracking-wide uppercase text-[hsl(var(--color-text-muted))]">
                 Current Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="oldpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.oldpassword && touched.oldpassword ? "#fff5f5" : "white",
-                    border: errors.oldpassword && touched.oldpassword ? "1.5px solid #fc8181" : "1.5px solid transparent",
+                    borderColor: errors.oldpassword && touched.oldpassword ? "#fc8181" : "hsl(var(--color-border))",
                     color: "hsl(var(--color-text))",
                   }} />
               </div>
-              <ErrorMessage name="oldpassword" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+              <ErrorMessage name="oldpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>
 
             {/* New Password */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
-                style={{ color: "hsl(var(--color-text-muted))" }}>
+              <label className="block text-[12px] font-bold pl-4 tracking-wide uppercase text-[hsl(var(--color-text-muted))]">
                 New Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="newpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
-                    border: errors.newpassword && touched.newpassword ? "1.5px solid #fc8181" : "1.5px solid transparent",
+                    borderColor: errors.newpassword && touched.newpassword ? "#fc8181" : "hsl(var(--color-border))",
                     color: "hsl(var(--color-text))",
                   }} />
               </div>
-              <ErrorMessage name="newpassword" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+              <ErrorMessage name="newpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>
 
             {/* Confirm Password */}
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
-                style={{ color: "hsl(var(--color-text-muted))" }}>
+              <label className="block text-[12px] font-bold pl-4 tracking-wide uppercase text-[hsl(var(--color-text-muted))]">
                 Confirm New Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="cpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
-                    border: errors.cpassword && touched.cpassword ? "1.5px solid #fc8181" : "1.5px solid transparent",
+                    borderColor: errors.cpassword && touched.cpassword ? "#fc8181" : "hsl(var(--color-border))",
                     color: "hsl(var(--color-text))",
                   }} />
               </div>
-              <ErrorMessage name="cpassword" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+              <ErrorMessage name="cpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>
 
             {/* Submit */}
-            <button type="submit" disabled={isSubmitting}
-              className="w-full py-4 bg-gradient-doctor text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
-              {isSubmitting ? (
-                <><ImSpinner2 className="w-5 h-5 animate-spin" /> Updating...</>
-              ) : (
-                <>Update Password <HiOutlineArrowRight className="w-5 h-5" /></>
-              )}
-            </button>
+            <div className="pt-2 flex justify-end">
+              <button type="submit" disabled={isSubmitting}
+                className="py-3 px-6 bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white font-black text-[14px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+                {isSubmitting ? (
+                  <><ImSpinner2 className="w-5 h-5 animate-spin" /> Updating...</>
+                ) : (
+                  <>Update Password <HiOutlineArrowRight className="w-5 h-5" /></>
+                )}
+              </button>
+            </div>
 
           </Form>
         )}

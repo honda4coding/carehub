@@ -54,7 +54,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
           {tags.map((tag, i) => (
             <span key={i} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]">
               {tag}
-              <button type="button" onClick={() => onRemove(i)} className="hover:text-red-500 transition-colors ml-0.5">
+              <button type="button" onClick={() => onRemove(i)} className="hover:text-danger transition-colors ml-0.5">
                 <LuX className="w-3 h-3" />
               </button>
             </span>
@@ -116,7 +116,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
             <Field name={`surgeries.${index}.operationName`} placeholder="e.g. Appendectomy"
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-            <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-red-500 text-[11px] pl-1" />
+            <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-danger text-[11px] pl-1" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
@@ -124,14 +124,14 @@ function SurgeryCard({ index, surgery, onRemove }: {
               <Field name={`surgeries.${index}.surgeonName`} placeholder="Dr. Ahmed Ali"
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-              <ErrorMessage name={`surgeries.${index}.surgeonName`} component="p" className="text-red-500 text-[11px] pl-1" />
+              <ErrorMessage name={`surgeries.${index}.surgeonName`} component="p" className="text-danger text-[11px] pl-1" />
             </div>
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Date *</label>
               <Field type="date" name={`surgeries.${index}.date`}
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-              <ErrorMessage name={`surgeries.${index}.date`} component="p" className="text-red-500 text-[11px] pl-1" />
+              <ErrorMessage name={`surgeries.${index}.date`} component="p" className="text-danger text-[11px] pl-1" />
             </div>
           </div>
           <div className="space-y-1">
@@ -140,7 +140,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
               placeholder="Brief description..."
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-            <ErrorMessage name={`surgeries.${index}.report`} component="p" className="text-red-500 text-[11px] pl-1" />
+            <ErrorMessage name={`surgeries.${index}.report`} component="p" className="text-danger text-[11px] pl-1" />
           </div>
         </div>
       )}
@@ -201,7 +201,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
           {/* Status */}
           {(serverError || serverSuccess) && (
             <div className={`px-4 py-3 text-[13px] font-medium rounded-xl flex items-center gap-2 ${
-              serverError ? "bg-red-50 border border-red-200 text-red-600" : "bg-green-50 border border-green-200 text-green-600"
+              serverError ? "bg-danger-light border border-red-200 text-danger" : "bg-success-light border border-green-200 text-success"
             }`}>
               {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
               {serverError || serverSuccess}

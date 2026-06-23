@@ -52,7 +52,7 @@ function PrescriptionsContent() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between shadow-sm z-10">
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between z-10">
         <div>
           <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
             <LuPill className="text-primary" /> My Prescriptions
@@ -66,7 +66,7 @@ function PrescriptionsContent() {
       <main className="flex-1 p-4 md:p-6 overflow-hidden flex">
         <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
           
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-6">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-6">
             <div className="relative flex-1 max-w-md">
               <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
@@ -79,7 +79,7 @@ function PrescriptionsContent() {
             </div>
           </div>
 
-          <div className="flex-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden flex flex-col">
+          <div className="flex-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden flex flex-col">
             <div className="w-full">
               {/* Mobile View: Cards */}
               <div className="lg:hidden flex flex-col p-4 gap-3">
@@ -107,7 +107,7 @@ function PrescriptionsContent() {
                     }
 
                     return (
-                      <div key={p._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-xl p-4 flex flex-col gap-3 shadow-sm">
+                      <div key={p._id} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-xl p-4 flex flex-col gap-3">
                         <div className="flex items-center gap-3">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-black ${avatarStyle}`}>
                             {patientName?.slice(0, 2).toUpperCase()}

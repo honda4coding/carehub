@@ -110,7 +110,7 @@ const handleSendOtp = async (email: string) => {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center p-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full shadow-lg">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
 
         {/* Header */}
         <div className="text-center mb-6">
@@ -124,12 +124,12 @@ const handleSendOtp = async (email: string) => {
 
         {/* Server Messages */}
         {serverError && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
+          <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
             {serverError}
           </div>
         )}
         {serverSuccess && (
-          <div className="bg-green-50 border border-green-200 text-green-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
+          <div className="bg-success-light border border-green-200 text-success text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
             {serverSuccess}
           </div>
         )}
@@ -149,14 +149,14 @@ const handleSendOtp = async (email: string) => {
                 <div className="relative">
                   <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field name="email" type="email" placeholder="name@example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
                       border: errors.email && touched.email ? "1.5px solid #fc8181" : "1.5px solid transparent",
                       color: "hsl(var(--color-text))",
                     }} />
                 </div>
-                <ErrorMessage name="email" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="email" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               <button
@@ -170,7 +170,7 @@ const handleSendOtp = async (email: string) => {
 </button>
 
 {otpSent && (
-  <p className="text-green-500 text-xs text-center font-medium">OTP sent! Check your email.</p>
+  <p className="text-success text-xs text-center font-medium">OTP sent! Check your email.</p>
 )}
 
               {/* OTP */}
@@ -178,13 +178,13 @@ const handleSendOtp = async (email: string) => {
                 <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
                   style={{ color: "hsl(var(--color-text-muted))" }}>OTP Code</label>
                 <Field name="code" type="text" placeholder="123456" maxLength={6}
-                  className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm text-center tracking-widest font-bold text-lg"
+                  className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                   style={{
                     backgroundColor: errors.code && touched.code ? "#fff5f5" : "white",
                     border: errors.code && touched.code ? "1.5px solid #fc8181" : "1.5px solid transparent",
                     color: "hsl(var(--color-text))",
                   }} />
-                <ErrorMessage name="code" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="code" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               {/* New Password */}
@@ -194,14 +194,14 @@ const handleSendOtp = async (email: string) => {
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field name="newpassword" type="password" placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
                       border: errors.newpassword && touched.newpassword ? "1.5px solid #fc8181" : "1.5px solid transparent",
                       color: "hsl(var(--color-text))",
                     }} />
                 </div>
-                <ErrorMessage name="newpassword" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="newpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               {/* Confirm Password */}
@@ -211,19 +211,19 @@ const handleSendOtp = async (email: string) => {
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field name="cpassword" type="password" placeholder="••••••••"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
                       border: errors.cpassword && touched.cpassword ? "1.5px solid #fc8181" : "1.5px solid transparent",
                       color: "hsl(var(--color-text))",
                     }} />
                 </div>
-                <ErrorMessage name="cpassword" component="p" className="text-red-500 text-xs pl-4 font-medium" />
+                <ErrorMessage name="cpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
               </div>
 
               {/* Submit */}
               <button type="submit" disabled={isSubmitting}
-                className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}>
                 {isSubmitting ? (
                   <><ImSpinner2 className="w-5 h-5 animate-spin" /> Resetting...</>

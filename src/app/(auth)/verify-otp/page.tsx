@@ -165,7 +165,7 @@ React.useEffect(() => {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center p-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full shadow-lg">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-black text-[hsl(var(--color-text))]">
@@ -182,12 +182,12 @@ React.useEffect(() => {
 
         {/* Server Messages */}
         {serverError && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
+          <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
             {serverError}
           </div>
         )}
         {serverSuccess && (
-          <div className="bg-green-50 border border-green-200 text-green-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
+          <div className="bg-success-light border border-green-200 text-success text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
             {serverSuccess}
           </div>
         )}
@@ -215,7 +215,7 @@ React.useEffect(() => {
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
                       placeholder="your@email.com"
-                      className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         border: "1.5px solid transparent",
                         backgroundColor: "white",
@@ -238,7 +238,7 @@ React.useEffect(() => {
                     type="text"
                     placeholder="123456"
                     maxLength={6}
-                    className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm text-center tracking-widest font-bold text-lg"
+                    className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                     style={{
                       backgroundColor:
                         errors.code && touched.code ? "#fff5f5" : "white",
@@ -252,13 +252,13 @@ React.useEffect(() => {
                   <ErrorMessage
                     name="code"
                     component="p"
-                    className="text-red-500 text-xs pl-4 font-medium"
+                    className="text-danger text-xs pl-4 font-medium"
                   />
                 </div>
 
                 {/* Resend OTP */}
                   {resendSuccess && (
-                    <p className="text-green-500 text-xs text-center font-medium">{resendSuccess}</p>
+                    <p className="text-success text-xs text-center font-medium">{resendSuccess}</p>
                   )}
                   <button
                     type="button"
@@ -273,7 +273,7 @@ React.useEffect(() => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     backgroundImage:
                       "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))",
@@ -318,7 +318,7 @@ React.useEffect(() => {
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
                       placeholder="your@email.com"
-                      className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         border: "1.5px solid transparent",
                         backgroundColor: "white",
@@ -341,7 +341,7 @@ React.useEffect(() => {
                     type="text"
                     placeholder="123456"
                     maxLength={6}
-                    className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm text-center tracking-widest font-bold text-lg"
+                    className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                     style={{
                       backgroundColor:
                         errors.code && touched.code ? "#fff5f5" : "white",
@@ -355,7 +355,7 @@ React.useEffect(() => {
                   <ErrorMessage
                     name="code"
                     component="p"
-                    className="text-red-500 text-xs pl-4 font-medium"
+                    className="text-danger text-xs pl-4 font-medium"
                   />
                 </div>
 
@@ -373,7 +373,7 @@ React.useEffect(() => {
                       name="newpassword"
                       type="password"
                       placeholder="••••••••"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
                           errors.newpassword && touched.newpassword
@@ -390,7 +390,7 @@ React.useEffect(() => {
                   <ErrorMessage
                     name="newpassword"
                     component="p"
-                    className="text-red-500 text-xs pl-4 font-medium"
+                    className="text-danger text-xs pl-4 font-medium"
                   />
                 </div>
 
@@ -408,7 +408,7 @@ React.useEffect(() => {
                       name="cpassword"
                       type="password"
                       placeholder="••••••••"
-                      className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                      className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
                           errors.cpassword && touched.cpassword
@@ -425,13 +425,13 @@ React.useEffect(() => {
                   <ErrorMessage
                     name="cpassword"
                     component="p"
-                    className="text-red-500 text-xs pl-4 font-medium"
+                    className="text-danger text-xs pl-4 font-medium"
                   />
                 </div>
                 
                 {/* Resend OTP */}
                 {resendSuccess && (
-                  <p className="text-green-500 text-xs text-center font-medium">{resendSuccess}</p>
+                  <p className="text-success text-xs text-center font-medium">{resendSuccess}</p>
                 )}
                 <button
                   type="button"
@@ -446,7 +446,7 @@ React.useEffect(() => {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                   style={{
                     backgroundImage:
                       "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))",

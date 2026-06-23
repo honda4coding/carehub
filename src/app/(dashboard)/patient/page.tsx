@@ -12,7 +12,6 @@ import PatientHeader from "@/components/patients/PatientHeader";
 import ProfileOverview from "@/components/patients/ProfileOverview";
 import MedicalAlerts from "@/components/patients/MedicalAlerts";
 import MedicalTimeline from "@/components/patients/MedicalTimeline";
-import TrackerBanner from "@/components/patients/TrackerBanner";
 import QuickActions from "@/components/patients/QuickActions";
 import ProfileSkeleton from "@/components/patients/skeletons/ProfileSkeleton";
 import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
@@ -153,14 +152,13 @@ export default function PatientDashboard() {
         ) : profile ? (
           <ProfileOverview profile={profile} />
         ) : (
-          <div className="bg-red-50 border border-red-200 rounded-2xl p-6 text-center text-[13px] text-red-600 font-bold mb-6 shadow-sm">
+          <div className="bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] rounded-2xl p-6 text-center text-[13px] text-[hsl(var(--color-danger))] font-bold mb-6">
             Could not load profile data.
           </div>
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <div className="xl:col-span-2 flex flex-col">
-            <TrackerBanner />
             <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
           </div>
           

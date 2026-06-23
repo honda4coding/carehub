@@ -10,6 +10,7 @@ import {
 } from "react-icons/lu";
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { Card } from "@/components/ui/Card";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -123,87 +124,87 @@ export default function MedicationTrackingPage() {
     }
 
     return (
-        <div className="flex flex-col flex-1 min-h-screen bg-gray-50/50 p-4 md:p-8">
+        <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))] p-4 md:p-8">
             <div className="max-w-5xl w-full mx-auto">
                 <button 
                     onClick={() => router.push("/patient")}
-                    className="flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors mb-6"
+                    className="flex items-center text-sm font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors mb-6 cursor-pointer"
                 >
                     <LuChevronLeft size={16} className="mr-1" />
                     Back to Dashboard
                 </button>
 
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">Medication Organizer</h1>
-                    <p className="text-gray-500 text-sm">Track your doses, monitor your adherence, and stay healthy.</p>
+                    <h1 className="text-2xl font-bold text-[hsl(var(--color-text))] mb-2">Medication Organizer</h1>
+                    <p className="text-[hsl(var(--color-text-muted))] text-sm">Track your doses, monitor your adherence, and stay healthy.</p>
                 </div>
 
                 {summary && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <div className="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+                        <Card className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Adherence Rate</p>
-                                <div className="text-3xl font-black text-gray-900">{summary.adherencePercentage}%</div>
+                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">Adherence Rate</p>
+                                <div className="text-3xl font-black text-[hsl(var(--color-text))]">{summary.adherencePercentage}%</div>
                             </div>
-                            <div className="w-12 h-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] flex items-center justify-center">
                                 <LuActivity size={24} />
                             </div>
-                        </div>
+                        </Card>
                         
-                        <div className="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+                        <Card className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-gray-500 mb-1">Current Streak</p>
-                                <div className="text-3xl font-black text-gray-900">{summary.currentStreak} Days</div>
+                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">Current Streak</p>
+                                <div className="text-3xl font-black text-[hsl(var(--color-text))]">{summary.currentStreak} Days</div>
                             </div>
-                            <div className="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))] flex items-center justify-center">
                                 <LuFlame size={24} />
                             </div>
-                        </div>
+                        </Card>
 
-                        <div className="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100 flex flex-col justify-center">
+                        <Card className="p-6 flex flex-col justify-center">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-gray-500">Taken Doses</span>
-                                <span className="text-sm font-bold text-green-600">{summary.totalTaken}</span>
+                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">Taken Doses</span>
+                                <span className="text-sm font-bold text-[hsl(var(--color-success))]">{summary.totalTaken}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-gray-500">Missed Doses</span>
-                                <span className="text-sm font-bold text-red-600">{summary.totalMissed}</span>
+                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">Missed Doses</span>
+                                <span className="text-sm font-bold text-[hsl(var(--color-danger))]">{summary.totalMissed}</span>
                             </div>
-                        </div>
+                        </Card>
                     </div>
                 )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Active Medications */}
                     <div className="lg:col-span-2 space-y-6">
-                        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                            <LuPill className="text-blue-500" size={20} />
+                        <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
+                            <LuPill className="text-[hsl(var(--color-primary))]" size={20} />
                             Active Medications
                         </h2>
                         
                         {medications.length === 0 ? (
-                            <div className="bg-white rounded-[20px] p-10 text-center border border-gray-100 shadow-sm text-gray-500">
+                            <Card className="p-10 text-center text-[hsl(var(--color-text-muted))]">
                                 You currently have no active medications.
-                            </div>
+                            </Card>
                         ) : (
                             medications.map((med) => (
-                                <div key={med.medicationId} className="bg-white rounded-[20px] p-6 shadow-sm border border-gray-100">
+                                <Card key={med.medicationId} className="p-6">
                                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
                                         <div>
-                                            <h3 className="text-lg font-bold text-gray-900 mb-1">{med.medicineName}</h3>
-                                            <div className="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                                                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md">
-                                                    <LuPill size={14} className="text-gray-400" /> {med.dosage}
+                                            <h3 className="text-lg font-bold text-[hsl(var(--color-text))] mb-1">{med.medicineName}</h3>
+                                            <div className="flex flex-wrap items-center gap-3 text-sm text-[hsl(var(--color-text-muted))]">
+                                                <span className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-2 py-1 rounded-md">
+                                                    <LuPill size={14} className="text-[hsl(var(--color-text-muted))]" /> {med.dosage}
                                                 </span>
-                                                <span className="flex items-center gap-1 bg-gray-50 px-2 py-1 rounded-md">
-                                                    <LuClock size={14} className="text-gray-400" /> {med.frequency}
+                                                <span className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-2 py-1 rounded-md">
+                                                    <LuClock size={14} className="text-[hsl(var(--color-text-muted))]" /> {med.frequency}
                                                 </span>
                                             </div>
                                         </div>
                                         
                                         <div className="flex items-center gap-2">
                                             {med.hasTrackedToday ? (
-                                                <div className="flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-500 font-medium rounded-xl border border-gray-100">
+                                                <div className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] font-medium rounded-xl border border-[hsl(var(--color-border))]">
                                                     <FiCheckCircle size={18} /> Tracked Today
                                                 </div>
                                             ) : (
@@ -211,14 +212,14 @@ export default function MedicationTrackingPage() {
                                                     <button 
                                                         onClick={() => handleTrack(med, 'taken')}
                                                         disabled={actionLoading === med.medicationId}
-                                                        className="flex items-center gap-1.5 px-4 py-2 bg-green-50 hover:bg-green-100 text-green-700 font-medium rounded-xl transition-colors disabled:opacity-50"
+                                                        className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
                                                     >
                                                         <FiCheckCircle size={18} /> Taken
                                                     </button>
                                                     <button 
                                                         onClick={() => handleTrack(med, 'missed')}
                                                         disabled={actionLoading === med.medicationId}
-                                                        className="flex items-center gap-1.5 px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 font-medium rounded-xl transition-colors disabled:opacity-50"
+                                                        className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
                                                     >
                                                         <FiXCircle size={18} /> Missed
                                                     </button>
@@ -230,16 +231,16 @@ export default function MedicationTrackingPage() {
                                     {/* Progress Bar */}
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="font-medium text-gray-700">Treatment Progress</span>
-                                            <span className="font-bold text-blue-600">{med.progress}%</span>
+                                            <span className="font-medium text-[hsl(var(--color-text))]">Treatment Progress</span>
+                                            <span className="font-bold text-[hsl(var(--color-primary))]">{med.progress}%</span>
                                         </div>
-                                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                                        <div className="h-2 w-full bg-[hsl(var(--color-bg-soft))] rounded-full overflow-hidden">
                                             <div 
-                                                className="h-full bg-blue-500 rounded-full transition-all duration-500" 
+                                                className="h-full bg-[hsl(var(--color-primary))] rounded-full transition-all duration-500" 
                                                 style={{ width: `${med.progress}%` }}
                                             />
                                         </div>
-                                        <div className="flex justify-between text-xs text-gray-500 mt-1">
+                                        <div className="flex justify-between text-xs text-[hsl(var(--color-text-muted))] mt-1">
                                             <span>Started: {new Date(med.startDate).toLocaleDateString()}</span>
                                             <span>
                                                 {med.isLifelong 
@@ -248,49 +249,49 @@ export default function MedicationTrackingPage() {
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </Card>
                             ))
                         )}
                     </div>
 
                     {/* History */}
                     <div>
-                        <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2 mb-6">
-                            <LuCalendar className="text-blue-500" size={20} />
+                        <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+                            <LuCalendar className="text-[hsl(var(--color-primary))]" size={20} />
                             Recent Activity
                         </h2>
                         
-                        <div className="bg-white rounded-[20px] shadow-sm border border-gray-100 overflow-hidden">
+                        <Card className="overflow-hidden">
                             {history.length === 0 ? (
-                                <div className="p-6 text-center text-sm text-gray-500">
+                                <div className="p-6 text-center text-sm text-[hsl(var(--color-text-muted))]">
                                     No tracking history yet.
                                 </div>
                             ) : (
-                                <div className="divide-y divide-gray-50">
-                                    {history.slice(0, 10).map((record) => {
+                                <div className="divide-y divide-[hsl(var(--color-border))]">
+                                    {history.map((record) => {
                                         const med = medications.find(m => m.medicationId === record.medicationId);
                                         const medName = med ? med.medicineName : "Unknown Medication";
                                         
                                         return (
                                             <div key={record._id} className="p-4 flex items-start gap-3">
                                                 {record.status === 'taken' ? (
-                                                    <div className="w-8 h-8 rounded-full bg-green-50 text-green-500 flex flex-shrink-0 items-center justify-center mt-1">
+                                                    <div className="w-8 h-8 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-success))] flex flex-shrink-0 items-center justify-center mt-1 border border-[hsl(var(--color-border))]">
                                                         <FiCheckCircle size={16} />
                                                     </div>
                                                 ) : (
-                                                    <div className="w-8 h-8 rounded-full bg-red-50 text-red-500 flex flex-shrink-0 items-center justify-center mt-1">
+                                                    <div className="w-8 h-8 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-danger))] flex flex-shrink-0 items-center justify-center mt-1 border border-[hsl(var(--color-border))]">
                                                         <FiXCircle size={16} />
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <p className="text-sm font-bold text-gray-900">{medName}</p>
-                                                    <p className="text-xs text-gray-500 mb-1">
+                                                    <p className="text-sm font-bold text-[hsl(var(--color-text))]">{medName}</p>
+                                                    <p className="text-xs text-[hsl(var(--color-text-muted))] mb-1">
                                                         {new Date(record.scheduledDoseDateTime).toLocaleString()}
                                                     </p>
-                                                    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider ${
+                                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] ${
                                                         record.status === 'taken' 
-                                                            ? 'bg-green-100 text-green-700' 
-                                                            : 'bg-red-100 text-red-700'
+                                                            ? 'text-[hsl(var(--color-success))]' 
+                                                            : 'text-[hsl(var(--color-danger))]'
                                                     }`}>
                                                         {record.status}
                                                     </span>
@@ -300,7 +301,7 @@ export default function MedicationTrackingPage() {
                                     })}
                                 </div>
                             )}
-                        </div>
+                        </Card>
                     </div>
                 </div>
             </div>
