@@ -16,7 +16,7 @@ interface Notification {
 }
 
 // ── NotificationBell ───────────────────────────────────────────────────────────
-export default function NotificationBell() {
+export default function NotificationBell({ basePath }: { basePath: string }) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -41,7 +41,11 @@ export default function NotificationBell() {
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30_000);
-    return () => clearInterval(interval);
+    window.addEventListener("notifications-changed", fetchNotifications);
+    return () => {
+        clearInterval(interval);
+        window.removeEventListener("notifications-changed", fetchNotifications);
+    }
   }, []);
 
   const fetchNotifications = async () => {
@@ -127,7 +131,7 @@ export default function NotificationBell() {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--color-border))] shrink-0">
             <Link
-              href="/admin/notifications"
+              href={basePath}
               className="text-[13px] font-bold text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))]"
             >
               Notifications

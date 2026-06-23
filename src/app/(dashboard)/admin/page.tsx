@@ -20,7 +20,7 @@ import { DoctorApprovalStatus, PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
 import { fetchClient } from "@/services/fetchClient";
 import Link from "next/link";
-import NotificationBell from "@/components/admin/notifications/NotificationBell";
+import NotificationBell from "@/components/global/NotificationBell";
 import { ResponsiveContainer, LineChart, Line, XAxis, Tooltip as RechartsTooltip } from "recharts";
 
 // Max years logic
@@ -236,7 +236,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <NotificationBell />
+            <NotificationBell basePath="/admin/notifications" />
           </div>
         </header>
 
