@@ -26,12 +26,12 @@ export default function DoctorsPage() {
   const router = useRouter();
   const [doctors, setDoctors] = useState<DoctorListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastMsg, setToastMsg] = useState<{ msg: string; variant?: "success" | "error" | "warning" | "info" } | null>(null);
+  const [toastMsg, setToastMsg] = useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [search, setSearch] = useState("");
   const [specialty, setSpecialty] = useState("All Specialties");
   const [governorate, setGovernorate] = useState("All Locations");
 
-  const showToast = useCallback((msg: string, variant: "success" | "error" | "warning" | "info" = "error") => setToastMsg({ msg, variant }), []);
+  const showToast = useCallback((msg: string, variant: "success" | "error" = "error") => setToastMsg({ msg, variant }), []);
 
   useEffect(() => {
     getApprovedDoctors()
