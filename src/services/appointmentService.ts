@@ -78,6 +78,7 @@ export function getDisplayStatus(appt: Appointment): DisplayStatus {
 export interface Availability {
   _id: string;
   doctorId: string;
+  clinicId: string | { _id: string; name: string; address?: string } | null;
   day: string;
   startTime: string;
   endTime: string;
@@ -104,14 +105,25 @@ export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
   return res.data ?? res;
 }
 
-export async function getAvailableSlots(doctorId: string): Promise<Slot[]> {
+/** Backend requires clinicId now (every clinic must have its own schedule).
+ *  Kept as the 2nd param optional only so older call sites still type-check;
+ *  always pass it for the new clinic-scoped flow. */
+export async function getAvailableSlots(
+  doctorId: string,
+  clinicId?: string
+): Promise<Slot[]> {
   const res = await fetchClient.get(
-    `${APPOINTMENTS_BASE}/available-slots/${doctorId}`
+    `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
+    clinicId ? { params: { clinicId } } : undefined
   );
   return res.data ?? res;
 }
 
+/** Backend's addAvailability/generateMonthlySlots now require clinicId.
+ *  Param kept optional here only so legacy (pre-clinics) call sites still
+ *  type-check — always pass clinicId for the new clinic-scoped flow. */
 export async function setAvailability(payload: {
+  clinicId?: string;
   day: string;
   startTime: string;
   endTime: string;
@@ -124,9 +136,18 @@ export async function setAvailability(payload: {
   return res.data ?? res;
 }
 
+/** GET /appointmens/availability — returns ALL of the doctor's availability (all clinics).
+ *  Filter client-side by clinicId since the backend doesn't support a query filter here. */
 export async function getMyAvailability(): Promise<Availability[]> {
   const res = await fetchClient.get(`${APPOINTMENTS_BASE}/availability`);
   return res.data ?? res;
+}
+
+export async function getClinicAvailability(clinicId: string): Promise<Availability[]> {
+  const all = await getMyAvailability();
+  return all.filter(
+    (a) => (a as any).clinicId === clinicId || (a as any).clinicId?._id === clinicId
+  );
 }
 
 export async function deleteAvailability(availabilityId: string): Promise<void> {
@@ -137,9 +158,10 @@ export async function deleteAvailability(availabilityId: string): Promise<void> 
 }
 
 export async function generateSlots(payload: {
+  clinicId?: string;
   startDate: string;
   endDate: string;
-}): Promise<{ message: string; count: number }> {
+}): Promise<{ message: string; totalSlots?: number; count?: number }> {
   const res = await fetchClient.post(
     `${APPOINTMENTS_BASE}/generate-slots`,
     payload

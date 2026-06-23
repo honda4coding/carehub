@@ -27,7 +27,8 @@ import {
   LuActivity,
   LuHeart,
   LuBell,
-  LuBrainCircuit
+  LuBrainCircuit,
+  LuBuilding2,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -111,6 +112,11 @@ const doctorNav: NavSection[] = [
         label: "Patient Directory",
         href: "/doctor/patients",
         icon: <LuUsers />,
+      },
+     {
+        label: "Clinics",
+        href: "/doctor/clinics",
+        icon: <LuBuilding2 />,
       },
     ],
   },
