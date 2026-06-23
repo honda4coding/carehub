@@ -11,7 +11,7 @@ export default function TimelineSkeleton() {
               <div className="h-3 bg-gray-200 rounded w-full" />
               <div className="h-3 bg-gray-200 rounded w-4/5" />
             </div>
-            <div className="bg-gray-100 rounded-xl p-3 space-y-2">
+            <div className="bg-soft rounded-xl p-3 space-y-2">
               <div className="h-3 bg-gray-200 rounded w-2/3" />
               <div className="h-8 bg-gray-200 rounded" />
             </div>

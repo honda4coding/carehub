@@ -39,9 +39,12 @@ export default function PatientProfilePage() {
           <div className="w-6 h-6 border-2 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        <main className="flex-1 p-6 space-y-5">
-          <AvatarSection profile={profile} onUpdate={updateAvatar} />
-          <BasicInfoForm profile={profile} onSaveSuccess={updateProfile} />
+        <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+            <AvatarSection profile={profile} onUpdate={updateAvatar} />
+            <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6"></div>
+            <BasicInfoForm profile={profile} onSaveSuccess={updateProfile} />
+          </div>
         </main>
       )}
     </div>

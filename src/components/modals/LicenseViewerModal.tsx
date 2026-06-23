@@ -18,7 +18,7 @@ export default function LicenseViewerModal({ isOpen, onClose, fileUrl }: License
       onClick={onClose}
     >
       <div
-        className="bg-[hsl(var(--color-bg-surface))] rounded-2xl shadow-xl w-[90vw] max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
+        className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-[90vw] max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

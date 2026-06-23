@@ -19,14 +19,9 @@ export default function ProfileHeader({ profile }: ProfileHeaderProps) {
     : "DR";
 
   return (
-    <div
-      className="rounded-2xl p-6 flex items-center gap-5 mb-6"
-      style={{
-        background: "linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(195 75% 38%) 100%)",
-      }}
-    >
+    <div className="p-6 flex items-center gap-5 bg-[hsl(var(--color-bg-surface))]">
       {/* Avatar */}
-      <div className="relative w-16 h-16 rounded-full bg-white/20 flex items-center justify-center shrink-0 overflow-hidden border-2 border-white/40">
+      <div className="relative w-16 h-16 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 overflow-hidden border-2 border-[hsl(var(--color-border))]">
         {profile?.profilepicture?.secure_url ? (
           <Image
             src={profile.profilepicture.secure_url}
@@ -35,20 +30,20 @@ export default function ProfileHeader({ profile }: ProfileHeaderProps) {
             className="object-cover"
           />
         ) : (
-          <span className="text-white text-xl font-black">{initials}</span>
+          <span className="text-[hsl(var(--color-primary-strong))] text-xl font-black">{initials}</span>
         )}
       </div>
 
       {/* Info */}
       <div>
-        <h2 className="text-white text-lg font-black">
+        <h2 className="text-[hsl(var(--color-text))] text-lg font-black">
           {profile?.fullName ?? "Loading..."}
         </h2>
-        <p className="text-white/75 text-sm font-semibold">
+        <p className="text-[hsl(var(--color-text-muted))] text-[14px] font-semibold mt-0.5">
           {profile?.specialization ?? "General Practitioner"}
         </p>
         {profile?.email && (
-          <p className="text-white/60 text-xs mt-0.5">{profile.email}</p>
+          <p className="text-[hsl(var(--color-text-muted))] text-xs mt-0.5">{profile.email}</p>
         )}
       </div>
     </div>

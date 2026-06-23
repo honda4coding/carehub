@@ -29,13 +29,13 @@ export default function MedicalAlertsPanel({
 
   return (
     <>
-      <div className="bg-[hsl(var(--color-danger)/0.05)] border border-[hsl(var(--color-danger)/0.1)] rounded-2xl p-5 shadow-sm relative group">
+      <div className="bg-[hsl(var(--color-danger)/0.05)] border border-[hsl(var(--color-danger)/0.1)] rounded-2xl p-5 relative group">
         <h3 className="text-sm font-black text-[hsl(var(--color-danger))] flex items-center gap-2 mb-4 uppercase tracking-wider">
           <LuTriangleAlert /> Medical Alerts
         </h3>
         <button 
           onClick={() => setIsEditAlertsOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-danger)/0.1)] border border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))] opacity-100 transition-colors hover:bg-[hsl(var(--color-danger)/0.2)] shadow-sm"
+          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-danger)/0.1)] border border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))] opacity-100 transition-colors hover:bg-[hsl(var(--color-danger)/0.2)]"
         >
           <LuPen />
         </button>
@@ -61,7 +61,7 @@ export default function MedicalAlertsPanel({
 
       {isEditAlertsOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-[hsl(var(--color-border))] animate-in zoom-in-95 duration-200">
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-[hsl(var(--color-border))] animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-[hsl(var(--color-bg-surface))] pb-2 border-b border-[hsl(var(--color-border))] z-10">
               <h3 className="text-lg font-black text-[hsl(var(--color-text))] flex items-center gap-2">
                 <LuTriangleAlert className="text-primary" /> Edit Medical Alerts
@@ -104,7 +104,7 @@ export default function MedicalAlertsPanel({
               <button 
                 onClick={saveAlerts}
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
               >
                 <LuSave /> {isSaving ? "Saving..." : "Update Alerts"}
               </button>

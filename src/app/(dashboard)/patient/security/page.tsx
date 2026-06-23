@@ -15,7 +15,7 @@ export default function PatientSecurityPage() {
         </p>
       </header>
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 flex justify-center items-start pt-12">
         <UpdatePasswordForm />
       </main>
     </div>

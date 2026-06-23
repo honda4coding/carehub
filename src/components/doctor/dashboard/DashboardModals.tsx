@@ -1,5 +1,6 @@
 import { LuShieldCheck, LuX, LuSmartphone, LuUserPlus, LuCheck } from "react-icons/lu";
 import { OTPInput } from "./OTPComponents";
+import { Button } from "@/components/ui/Button";
 
 export const DashboardModals = ({
   isOTPModalOpen,
@@ -22,7 +23,7 @@ export const DashboardModals = ({
       {/* OTP Verification Modal */}
       {isOTPModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
             <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex justify-between items-center bg-[hsl(var(--color-bg-soft))]">
               <div className="flex items-center gap-2 text-primary">
                 <LuShieldCheck className="text-xl" />
@@ -48,14 +49,15 @@ export const DashboardModals = ({
                 onComplete={(val) => setCurrentOtp(val)} 
               />
 
-              <button 
+              <Button 
                 onClick={handleVerifyOTP}
                 disabled={currentOtp.length !== 6}
-                className={`w-full text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-opacity shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] ${currentOtp.length === 6 ? 'bg-primary hover:opacity-90' : 'bg-primary/50 cursor-not-allowed'}`}
+                className="w-full !rounded-xl !py-3.5 mt-2"
+                icon={LuCheck}
+                iconPosition="right"
               >
                 Verify & Open File
-                <LuCheck className="text-lg" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -64,14 +66,14 @@ export const DashboardModals = ({
       {/* Walk-In Registration Modal */}
       {isWalkInModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95">
-            <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex justify-between items-center bg-gradient-doctor">
-              <div className="flex items-center gap-2 text-white">
-                <LuUserPlus className="text-xl" />
-                <h3 className="font-black">Walk-in Patient</h3>
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95">
+            <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex justify-between items-center bg-[hsl(var(--color-bg-soft))]">
+              <div className="flex items-center gap-2 text-[hsl(var(--color-primary))]">
+                <LuUserPlus className="text-[18px]" />
+                <h3 className="font-black text-[hsl(var(--color-text))] text-[15px]">Walk-in Patient</h3>
               </div>
-              <button onClick={() => setWalkInModalOpen(false)} className="text-white/80 hover:text-white transition-colors">
-                <LuX className="text-xl" />
+              <button onClick={() => setWalkInModalOpen(false)} className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors cursor-pointer">
+                <LuX className="text-[18px]" />
               </button>
             </div>
             <div className="p-6">
@@ -116,14 +118,15 @@ export const DashboardModals = ({
                 </div>
               </div>
 
-              <button 
+              <Button 
                 onClick={handleWalkInRegister}
                 disabled={!walkInName.trim() || !walkInPhone.trim()}
-                className={`w-full text-[hsl(var(--color-bg-surface))] font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-opacity ${walkInName.trim() && walkInPhone.trim() ? 'bg-[hsl(var(--color-text))] hover:opacity-90' : 'bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] cursor-not-allowed'}`}
+                className="w-full !rounded-xl !py-3.5 mt-2"
+                icon={LuCheck}
+                iconPosition="right"
               >
                 Start Consultation Session
-                <LuCheck className="text-lg" />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

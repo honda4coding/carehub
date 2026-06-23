@@ -55,7 +55,7 @@ function VitalCard({
 
       <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{label}</p>
 
-      {error && <p className="text-red-500 text-[10px]">{error}</p>}
+      {error && <p className="text-danger text-[10px]">{error}</p>}
     </div>
   );
 }
@@ -112,8 +112,8 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
           {(serverError || serverSuccess) && (
             <div className={`px-4 py-3 text-[13px] font-medium rounded-xl flex items-center gap-2 ${
               serverError
-                ? "bg-red-50 border border-red-200 text-red-600"
-                : "bg-green-50 border border-green-200 text-green-600"
+                ? "bg-danger-light border border-red-200 text-danger"
+                : "bg-success-light border border-green-200 text-success"
             }`}>
               {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
               {serverError || serverSuccess}

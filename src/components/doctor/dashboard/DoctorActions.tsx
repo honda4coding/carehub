@@ -1,4 +1,5 @@
 import { LuSearch, LuShieldCheck, LuUserPlus } from "react-icons/lu";
+import { Button } from "@/components/ui/Button";
 
 export const DoctorActions = ({
   searchQuery,
@@ -11,40 +12,56 @@ export const DoctorActions = ({
   realSearchResults,
   handleRequestAccess,
   setWalkInModalOpen,
+  user,
 }: any) => {
   return (
-    <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="mb-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+      {/* Welcome Card - Left, larger */}
+      <div className="md:col-span-2">
+        <div className="bg-gradient-doctor rounded-xl p-5 h-full flex items-center gap-4 text-white relative overflow-hidden">
+          <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-2xl"></div>
+          <div className="absolute right-12 top-2 w-16 h-16 bg-white/5 rounded-full blur-xl"></div>
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-[22px] font-black border-2 border-white/25 shrink-0">
+            {user?.name?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || "D"}
+          </div>
+          <div className="flex-1 relative z-10">
+            <p className="text-[13px] font-semibold text-white/70 mb-0.5">Welcome back,</p>
+            <h2 className="text-[20px] font-black text-white leading-tight">Dr. {user?.name || user?.fullName || "Doctor"}</h2>
+            <p className="text-[12px] font-medium text-white/60 mt-1">Have a productive day ahead ✨</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Start Consultation - Larger Card */}
       <div className="md:col-span-2 relative">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 h-full flex flex-col justify-center relative shadow-sm">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[hsl(var(--color-primary)/0.05)] rounded-bl-full rounded-tr-2xl -z-10" />
-          <h2 className="text-lg font-black text-[hsl(var(--color-text))] mb-1">Start New Consultation</h2>
-          <p className="text-xs text-[hsl(var(--color-text-muted))] font-medium mb-4">Search for an online patient by name, phone, or ID to request access.</p>
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-center relative">
+          <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] mb-2 leading-tight">Start Consultation</h2>
           
-          <div className="relative">
-            <div className="flex items-center border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-bg-surface))] rounded-xl p-1 focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.2)] transition-all min-w-0">
-              <LuSearch className="ml-2 sm:ml-3 mr-2 text-[hsl(var(--color-primary))] text-base sm:text-lg shrink-0" />
+          <div className="relative w-full">
+            <div className="flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all min-w-0">
+              <LuSearch className="ml-2.5 mr-2 text-[hsl(var(--color-text-muted))] text-[14px] shrink-0" />
               <input 
                 type="text" 
-                placeholder="e.g. 01012345678 or Mahmoud..." 
-                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] sm:text-sm py-2 font-medium"
+                placeholder="Search patient phone or name..." 
+                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] font-medium py-1.5"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
-              <button 
+              <Button 
                 onClick={handleSearch}
                 disabled={isSearching}
-                className="bg-primary text-white text-[11px] sm:text-xs font-bold px-3 sm:px-4 py-2 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 shrink-0 ml-1"
+                className="!text-[12px] !px-4 !py-1.5 !h-auto !rounded-[6px] ml-0.5 shrink-0"
               >
-                {isSearching ? "Searching..." : "Search"}
-              </button>
+                {isSearching ? "..." : "Search"}
+              </Button>
             </div>
 
             {showSearchResults && (
-              <div className="absolute top-full left-0 right-0 mt-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl shadow-lg overflow-hidden z-20 animate-in fade-in slide-in-from-top-2">
+              <div className="absolute top-full right-0 mt-2 w-full md:w-[400px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
                 <div className="p-2 border-b border-[hsl(var(--color-border-soft))] bg-[hsl(var(--color-bg-soft))] flex justify-between items-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Search Results</span>
-                  <button onClick={() => setShowSearchResults(false)} className="text-[10px] text-[hsl(var(--color-danger))] font-bold">Close</button>
+                  <button onClick={() => setShowSearchResults(false)} className="text-[10px] text-[hsl(var(--color-danger))] font-bold hover:underline cursor-pointer">Close</button>
                 </div>
                 
                 {isSearching ? (
@@ -63,23 +80,26 @@ export const DoctorActions = ({
                   realSearchResults.map((patient: any) => (
                     <div 
                       key={patient._id} 
-                      className="flex items-center justify-between p-3 hover:bg-[hsl(var(--color-bg-soft))] transition-colors border-b border-[hsl(var(--color-border-soft))]"
+                      className="flex items-center justify-between p-3 hover:bg-[hsl(var(--color-bg-soft))] transition-colors border-b border-[hsl(var(--color-border-soft))] last:border-0"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))] flex items-center justify-center text-xs font-black uppercase">
+                         <div className="w-8 h-8 rounded-full bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))] flex items-center justify-center text-[11px] font-black uppercase shrink-0">
                           {patient.fullName ? patient.fullName.slice(0, 2) : "PT"}
                         </div>
                         <div>
-                          <p className="text-sm font-bold text-[hsl(var(--color-text))]">{patient.fullName}</p>
-                          <p className="text-xs font-medium text-[hsl(var(--color-text-muted))]">{patient.phoneNumber}</p>
+                          <p className="text-[13px] font-bold text-[hsl(var(--color-text))] leading-tight">{patient.fullName}</p>
+                          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{patient.phoneNumber}</p>
                         </div>
                       </div>
-                      <button className="text-[11px] font-bold bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary)/0.2)] text-primary px-3 py-1.5 rounded-lg flex items-center gap-1 cursor-pointer transition-colors"
-                      onClick={() => handleRequestAccess(patient)}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleRequestAccess(patient)}
+                        icon={LuShieldCheck}
+                        className="!text-[10px] !px-2 !py-1 !h-auto !rounded-[7px] text-[hsl(var(--color-primary))] border-[hsl(var(--color-primary)/0.3)] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary-strong))] hover:border-[hsl(var(--color-primary)/0.5)] shrink-0"
                       >
-                        <LuShieldCheck className="text-[13px]" />
-                        Request Access
-                      </button>
+                        Access
+                      </Button>
                     </div>
                   ))
                 )}
@@ -89,20 +109,25 @@ export const DoctorActions = ({
         </div>
       </div>
 
+      {/* Walk-In Patient - Compact & Narrow */}
       <div className="md:col-span-1">
-        <div className="bg-gradient-doctor rounded-2xl p-6 h-full flex flex-col justify-center items-center text-center shadow-md relative overflow-hidden group">
-          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors" />
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center text-white text-2xl mb-3 backdrop-blur-sm">
-            <LuUserPlus />
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-between relative">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.1)] rounded-xl flex items-center justify-center text-[hsl(var(--color-primary))] text-[24px] shrink-0">
+              <LuUserPlus />
+            </div>
+            <div>
+              <h2 className="text-[hsl(var(--color-text))] text-[16px] font-black leading-tight">Walk-In</h2>
+              <p className="text-[hsl(var(--color-text-muted))] text-[12px] font-semibold">Offline patients</p>
+            </div>
           </div>
-          <h2 className="text-white text-lg font-black mb-1 relative z-10">Walk-In Patient</h2>
-          <p className="text-white/80 text-xs font-medium mb-4 relative z-10">For patients without the app</p>
-          <button 
+          <Button 
+            size="sm"
             onClick={() => setWalkInModalOpen(true)}
-            className="w-full bg-white text-primary text-sm font-bold py-2.5 rounded-xl shadow-sm hover:scale-[1.02] transition-transform relative z-10"
+            className="!text-[11px] !py-1 !px-3 !h-[32px] !rounded-lg w-fit self-end"
           >
-            Register Offline Patient
-          </button>
+            Register
+          </Button>
         </div>
       </div>
     </div>

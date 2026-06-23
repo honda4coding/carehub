@@ -41,13 +41,13 @@ export default function PastSurgeriesPanel({
 
   return (
     <>
-      <div className="bg-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] rounded-2xl p-5 shadow-sm relative group mt-6">
+      <div className="bg-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] rounded-2xl p-5 relative group mt-6">
         <h3 className="text-sm font-black text-[hsl(var(--color-primary))] flex items-center gap-2 mb-4 uppercase tracking-wider">
           <LuScissors /> Surgeries
         </h3>
         <button 
           onClick={() => setIsEditSurgeriesOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] text-[hsl(var(--color-primary))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.2)] shadow-sm"
+          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] text-[hsl(var(--color-primary))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.2)]"
         >
           <LuPen />
         </button>
@@ -62,7 +62,7 @@ export default function PastSurgeriesPanel({
                   </span>
                   {/* Tooltip */}
                   {(s.date || s.report || s.surgeonName) && (
-                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg shadow-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50">
+                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50">
                       {s.surgeonName && <p className="text-[10px] font-bold text-[hsl(var(--color-text))] mb-1">Surgeon: {s.surgeonName}</p>}
                       {s.date && <p className="text-[10px] font-bold text-[hsl(var(--color-primary))] mb-1">{s.date}</p>}
                       {s.report && <p className="text-[10px] text-[hsl(var(--color-text-muted))] whitespace-pre-wrap">{s.report}</p>}
@@ -77,7 +77,7 @@ export default function PastSurgeriesPanel({
 
       {isEditSurgeriesOpen && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-[hsl(var(--color-border))] animate-in zoom-in-95 duration-200">
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 border border-[hsl(var(--color-border))] animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-6 sticky top-0 bg-[hsl(var(--color-bg-surface))] pb-2 border-b border-[hsl(var(--color-border))] z-10">
               <h3 className="text-lg font-black text-[hsl(var(--color-text))] flex items-center gap-2">
                 <LuScissors className="text-primary" /> Edit Surgeries
@@ -142,7 +142,7 @@ export default function PastSurgeriesPanel({
               <button 
                 onClick={saveSurgeries}
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
               >
                 <LuSave /> {isSaving ? "Saving..." : "Update Surgeries"}
               </button>

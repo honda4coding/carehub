@@ -73,7 +73,7 @@ export default function WebcamCapture({ onCapture, onClose, title = "Take Photo"
 
   return (
     <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl overflow-hidden shadow-2xl border border-[hsl(var(--color-border))] flex flex-col">
+      <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl w-full max-w-2xl overflow-hidden border border-[hsl(var(--color-border))] flex flex-col">
         <div className="flex justify-between items-center p-4 border-b border-[hsl(var(--color-border))]">
           <h3 className="text-lg font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <LuCamera className="text-primary" /> {title}
@@ -107,7 +107,7 @@ export default function WebcamCapture({ onCapture, onClose, title = "Take Photo"
             onClick={capturePhoto}
             className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center shadow-lg group-hover:scale-95 transition-transform">
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center group-hover:scale-95 transition-transform">
               <LuCamera className="text-white text-xl" />
             </div>
           </button>

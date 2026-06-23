@@ -43,7 +43,7 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-red-500 text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>
   );
 }
@@ -84,7 +84,7 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+    <div className="overflow-hidden">
       <div className="px-6 pt-5 pb-2">
         <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Basic Information</h3>
         <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">Update your personal details</p>
@@ -93,8 +93,8 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
       {(serverError || serverSuccess) && (
         <div className={`mx-6 mb-3 px-4 py-3 text-sm font-medium rounded-xl flex items-center gap-2 ${
           serverError
-            ? "bg-red-50 border border-red-200 text-red-600"
-            : "bg-green-50 border border-green-200 text-green-600"
+            ? "bg-danger-light border border-red-200 text-danger"
+            : "bg-success-light border border-green-200 text-success"
         }`}>
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
           {serverError || serverSuccess}
@@ -127,11 +127,10 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
             </div>
 
             {/* Save button */}
-            <div className="px-6 pb-6">
+            <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit" disabled={isSubmitting}
-                className="w-full py-3.5 text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
-                style={{ background: "hsl(var(--color-primary))" }}
+                className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
                   ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>

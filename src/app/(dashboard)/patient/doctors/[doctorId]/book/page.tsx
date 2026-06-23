@@ -569,7 +569,7 @@ export default function BookAppointmentPage() {
         ) : step === "confirm" ? (
           /* ── Step 3: confirm ── */
           <div className="p-4 md:p-6 max-w-md mx-auto">
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-lg">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
               {/* Ticket header */}
               <div className="bg-gradient-to-r from-sky-800 to-sky-600 px-6 py-7 text-center text-white">
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] opacity-80 mb-2">Your Appointment</p>
@@ -612,7 +612,7 @@ export default function BookAppointmentPage() {
                 </div>
 
                 {confirmError && (
-                  <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-[12px] font-semibold">
+                  <div className="flex items-start gap-2.5 bg-danger-light border border-red-200 text-danger rounded-xl p-3 text-[12px] font-semibold">
                     <LuCircleAlert className="text-[14px] mt-0.5 shrink-0" />{confirmError}
                   </div>
                 )}
@@ -620,7 +620,7 @@ export default function BookAppointmentPage() {
                 <button
                   onClick={handleConfirm}
                   disabled={confirming}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[14px] font-black shadow-[0_4px_15px_rgba(2,132,199,0.4)] hover:shadow-[0_6px_20px_rgba(2,132,199,0.5)] hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[14px] font-black -[0_4px_15px_rgba(2,132,199,0.4)] -[0_6px_20px_rgba(2,132,199,0.5)] hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all"
                 >
                   {confirming ? "Booking…" : "Confirm Booking ✓"}
                 </button>
@@ -638,7 +638,7 @@ export default function BookAppointmentPage() {
           /* ── Step 4: success ── */
           <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
             <div className="relative mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center mx-auto shadow-[0_8px_25px_rgba(2,132,199,0.4)] animate-bounce">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center mx-auto -[0_8px_25px_rgba(2,132,199,0.4)] animate-bounce">
                 <LuCheck className="text-[36px] text-white" />
               </div>
               <div className="absolute inset-0 rounded-full bg-sky-600/20 animate-ping" />
@@ -656,7 +656,7 @@ export default function BookAppointmentPage() {
             <div className="flex gap-3 flex-wrap justify-center">
               <button
                 onClick={() => router.push("/patient/appointments")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white shadow-[0_4px_15px_rgba(2,132,199,0.4)] hover:scale-105 transition-all"
+                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white -[0_4px_15px_rgba(2,132,199,0.4)] hover:scale-105 transition-all"
               >
                 View my appointments
               </button>
