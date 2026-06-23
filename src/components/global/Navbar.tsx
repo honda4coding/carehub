@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { FaBriefcaseMedical, FaSignOutAlt } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
+import { LuActivity } from "react-icons/lu";
+import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
 
@@ -14,7 +16,7 @@ export default function Navbar() {
   const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient");
   if (isDashboard) return null;
 
-  const navLinkClasses = "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-all duration-300";
+  const navLinkClasses = "text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-all duration-300";
 
   // --- Role-Based Links Definition ---
   const getLinks = () => {
@@ -61,11 +63,9 @@ export default function Navbar() {
 
           {/* Logo Area */}
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
-            <div className="w-9 h-9 bg-[hsl(var(--color-primary))] rounded-xl flex items-center justify-center shadow-lg shadow-[hsl(var(--color-primary)/0.2)] group-hover:scale-110 transition-transform">
-              <FaBriefcaseMedical className="text-white text-lg" />
-            </div>
-            <span className="text-xl font-black text-[hsl(var(--color-text))] tracking-tight">
-              Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
+            <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform" />
+            <span className="text-xl font-bold text-[hsl(var(--color-text))] tracking-tight">
+              CareHub
             </span>
           </Link>
 
@@ -81,21 +81,18 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {isLoading ? (
               // Pulse skeleton during hydration
-              <div className="w-20 h-8 bg-slate-100 animate-pulse rounded-full" />
+              <div className="w-20 h-8 bg-soft animate-pulse rounded-full" />
             ) : !isAuthenticated ? (
               // Guest Navigation
               <>
                 <div className="hidden sm:flex items-center gap-2 border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
-                  <Link href="/login" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] font-bold text-xs transition-colors">
+                  <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors">
                     Sign In
                   </Link>
                 </div>
-                <Link
-                  href="/register"
-                  className="text-[hsl(var(--color-primary))] font-bold text-sm px-5 py-2 rounded-full border-2 border-[hsl(var(--color-primary)/0.2)] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all duration-300 shadow-sm active:scale-95"
-                >
+                <Button variant="primary" size="sm" href="/register">
                   Sign up
-                </Link>
+                </Button>
               </>
             ) : (
               // Authenticated User Navigation
@@ -104,13 +101,9 @@ export default function Navbar() {
                   <span className="text-xs font-black text-[hsl(var(--color-text))]">{user?.name}</span>
                   <span className="text-[10px] uppercase font-bold text-[hsl(var(--color-primary))] tracking-widest">{role}</span>
                 </div>
-                <button
-                  onClick={logout}
-                  className="flex items-center gap-2 bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all duration-300 shadow-sm"
-                >
-                  <FaSignOutAlt />
+                <Button variant="danger" size="sm" onClick={logout} icon={FaSignOutAlt}>
                   <span className="hidden sm:inline">Sign Out</span>
-                </button>
+                </Button>
               </div>
             )}
 
@@ -151,22 +144,24 @@ export default function Navbar() {
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
-                  className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl shadow-sm hover:opacity-90 active:scale-95 transition-all"
+                  className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all"
                 >
                   Sign up
                 </Link>
               </div>
             )}
             {isAuthenticated && (
-              <button
+              <Button
+                variant="danger"
                 onClick={() => {
                   logout();
                   setIsOpen(false);
                 }}
-                className="w-full mt-4 flex items-center justify-center gap-2 bg-red-50 text-red-600 py-3 rounded-xl font-bold hover:bg-red-600 hover:text-white transition-colors"
+                className="w-full mt-4"
+                icon={FaSignOutAlt}
               >
-                <FaSignOutAlt /> Sign Out
-              </button>
+                Sign Out
+              </Button>
             )}
           </div>
         </div>

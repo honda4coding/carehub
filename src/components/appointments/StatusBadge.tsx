@@ -2,9 +2,9 @@ import type { DisplayStatus } from "@/services/appointmentService";
 
 const STYLES: Record<DisplayStatus, string> = {
   upcoming:
-    "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
+    "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
   completed:
-    "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]",
+    "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
   cancelled:
     "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]",
 };

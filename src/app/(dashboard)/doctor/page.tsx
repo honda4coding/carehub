@@ -356,15 +356,12 @@ const [sessions, setSessions] = useState<Session[]>([]);
           <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 truncate">
             Doctor Workspace
           </h1>
-          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0 truncate">
-            Welcome back, Dr. {user?.name || (user as any)?.fullName || "Doctor"}
-          </p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
           <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
             <LuBell className="text-[15px]" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-red-500" />
+            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger" />
           </button>
         </div>
       </header>
@@ -383,6 +380,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
           realSearchResults={realSearchResults}
           handleRequestAccess={handleRequestAccess}
           setWalkInModalOpen={setWalkInModalOpen}
+          user={user}
         />
 
         <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />

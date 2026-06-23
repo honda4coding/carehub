@@ -60,7 +60,7 @@ export default function DoctorProfilePage() {
 
         {/* Error */}
         {!loading && error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-5 py-4 rounded-2xl">
+          <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-5 py-4 rounded-2xl">
             {error}
             <button
               onClick={fetchProfile}
@@ -73,12 +73,15 @@ export default function DoctorProfilePage() {
 
         {/* Content */}
         {!loading && !error && (
-          <div className="space-y-5">
-            <ProfileHeader profile={profile} />
-            <ProfessionalInfoForm
-              profile={profile}
-              onSaveSuccess={handleProfileSaved}
-            />
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+              <ProfileHeader profile={profile} />
+              <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6"></div>
+              <ProfessionalInfoForm
+                profile={profile}
+                onSaveSuccess={handleProfileSaved}
+              />
+            </div>
           </div>
         )}
       </main>

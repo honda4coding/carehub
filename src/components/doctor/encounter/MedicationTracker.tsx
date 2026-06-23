@@ -8,7 +8,7 @@ interface MedicationTrackerProps {
 // Shows a quick summary of the patient's active and past medications
 export default function MedicationTracker({ activeMeds, pastMeds }: MedicationTrackerProps) {
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm relative group space-y-5">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 relative group space-y-5">
       <div>
         <h3 className="text-sm font-black text-[hsl(var(--color-success))] flex items-center gap-2 mb-3 uppercase tracking-wider">
           <LuPill /> Active Medications

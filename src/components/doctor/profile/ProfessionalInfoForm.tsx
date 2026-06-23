@@ -122,7 +122,7 @@ function EditField({
       <ErrorMessage
         name={name}
         component="p"
-        className="text-red-500 text-xs pl-1 font-medium"
+        className="text-danger text-xs pl-1 font-medium"
       />
     </div>
   );
@@ -179,14 +179,14 @@ export default function ProfessionalInfoForm({
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+    <div className="overflow-hidden">
       {/* Server messages */}
       {(serverError || serverSuccess) && (
         <div
           className={`px-6 py-3 text-sm font-medium flex items-center gap-2 ${
             serverError
-              ? "bg-red-50 border-b border-red-200 text-red-600"
-              : "bg-green-50 border-b border-green-200 text-green-600"
+              ? "bg-danger-light border-b border-red-200 text-danger"
+              : "bg-success-light border-b border-green-200 text-success"
           }`}
         >
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
@@ -273,7 +273,7 @@ export default function ProfessionalInfoForm({
                   <ErrorMessage
                     name="specialization"
                     component="p"
-                    className="text-red-500 text-xs pl-1 font-medium"
+                    className="text-danger text-xs pl-1 font-medium"
                   />
                 </div>
 
@@ -318,20 +318,17 @@ export default function ProfessionalInfoForm({
                 <ErrorMessage
                   name="bio"
                   component="p"
-                  className="text-red-500 text-xs pl-1 font-medium"
+                  className="text-danger text-xs pl-1 font-medium"
                 />
               </div>
             </div>
 
             {/* Save button — full width, attached to bottom */}
-            <div className="px-6 pb-6">
+            <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
-                style={{
-                  background: "hsl(var(--color-primary))",
-                }}
+                className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting ? (
                   <>

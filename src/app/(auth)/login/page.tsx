@@ -4,7 +4,7 @@ import { Suspense } from "react";
 export default function LoginPage() {
   return (
 <div
-      className="min-h-screen flex items-start justify-center p-6 pt-28" 
+      className="min-h-screen flex items-center justify-center p-6" 
       style={{
         background: `
           radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
@@ -13,7 +13,7 @@ export default function LoginPage() {
         `,
       }}
     >
-      <main className="w-full max-w-2xl pt-20">
+      <main className="w-full max-w-md">
         <Suspense fallback={<div className="mt-20 font-medium text-primary text-center">Loading Login...</div>}>
           <LoginForm />
         </Suspense>

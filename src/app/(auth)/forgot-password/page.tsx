@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center p-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full shadow-lg">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
 
         {/* Header */}
         <div className="text-center mb-6">
@@ -85,7 +85,7 @@ export default function ForgotPasswordPage() {
 
         {/* Server Error */}
         {serverError && (
-          <div className="bg-red-50 border border-red-200 text-red-600 text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
+          <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-4 py-3 rounded-2xl text-center mb-4">
             {serverError}
           </div>
         )}
@@ -112,7 +112,7 @@ export default function ForgotPasswordPage() {
                     name="email"
                     type="email"
                     placeholder="name@example.com"
-                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 shadow-sm"
+                    className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
                       border: errors.email && touched.email
@@ -125,7 +125,7 @@ export default function ForgotPasswordPage() {
                 <ErrorMessage
                   name="email"
                   component="p"
-                  className="text-red-500 text-xs pl-4 font-medium"
+                  className="text-danger text-xs pl-4 font-medium"
                 />
               </div>
 
@@ -133,7 +133,7 @@ export default function ForgotPasswordPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 text-white font-bold rounded-xl shadow-lg active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{
                   backgroundImage:
                     "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))",

@@ -47,28 +47,34 @@ export const adminService = {
     return fetchClient.get("/admin/users", { method: "GET" , params: query });
   },
 
-  getDashboard: (): Promise<GetDashboardData> => 
-    fetchClient.get("/admin/dashboard"),
+  getDashboard: (last30Days?: boolean): Promise<GetDashboardData> => 
+    fetchClient.get("/admin/dashboard", { params: last30Days ? { last30Days: "true" } : {} }),
 
   getMonthlyStats: (year?: number): Promise<{ data: MonthlyStats[] }> =>
     fetchClient.get("/admin/stats/monthly", { params: year ? { year: String(year) } : {} }),
 
-  getDailyStats: (): Promise<{ data: DailyStats[] }> =>
-    fetchClient.get("/admin/stats/daily"),
+  getDailyStats: (startDate?: string, endDate?: string, defaultAllTime?: boolean): Promise<{ data: DailyStats[] }> => {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+    if (defaultAllTime) params.append("defaultAllTime", "true");
+    const qs = params.toString();
+    return fetchClient.get(`/admin/stats/daily${qs ? `?${qs}` : ""}`);
+  },
 
-  getAnalyticsData: (startDate?: string, endDate?: string): Promise<{ data: AnalyticsData }> => {
+  getAnalyticsData: (startDate?: string, endDate?: string, interval: string = 'week'): Promise<{ data: AnalyticsData }> => {
     const params: Record<string, string> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (interval) params.interval = interval;
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
-  
   /** GET /admin/doctors?status=...Returns a flat (non-paginated) array of merged user+doctorDetails objects.*/
   getDoctors: (status?:DoctorApprovalStatus | ""): Promise<GetDoctorsResponse> =>{
     const params : Record<string,string> = {};
     if(status) params.status = status;
-    return fetchClient.get("/admin/doctors")
+    return fetchClient.get("/admin/doctors", { params });
   },
 
   /** PATCH /admin/:id/activate  → sets status: "active"  */
@@ -80,7 +86,12 @@ export const adminService = {
     fetchClient.request(`/admin/${id}/deactivate`, { method: "PATCH" }),
 
   /** GET /admin/doctors/pending → doctor registrations awaiting review */
-  getPendingDoctors: (): Promise<GetPendingDoctorsResponse>=>
-    fetchClient.get("/admin/doctors/pending"),
+  getPendingDoctors: (startDate?: string, endDate?: string) => {
+    const params = new URLSearchParams();
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+    const qs = params.toString();
+    return fetchClient.get(`/admin/doctors/pending${qs ? `?${qs}` : ""}`);
+  },
 
 };

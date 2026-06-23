@@ -24,7 +24,7 @@ function AccordionItem({
 }) {
   return (
     <div
-      className="border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden transition-shadow duration-200"
+      className="border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden duration-200"
       style={{ boxShadow: isOpen ? "0 4px 24px hsl(var(--color-primary)/0.08)" : "none" }}
     >
       {/* Header */}

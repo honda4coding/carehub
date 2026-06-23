@@ -78,7 +78,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
 
   if (!history || history.length === 0) {
     return (
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full shadow-sm mt-6">
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full mt-6">
         <LuTrendingUp className="text-4xl text-[hsl(var(--color-text-muted))] opacity-40 mx-auto mb-3" />
         <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">No Vitals History</h3>
         <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-1">
@@ -92,7 +92,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
     <div className="flex flex-col gap-6 mt-6 col-span-full">
       
       {/* Filters Toolbar */}
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm gap-4">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 gap-4">
         <h3 className="text-[13px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto uppercase tracking-wider">
           <LuFilter className="text-[hsl(var(--color-primary))]" /> Filter Charts
         </h3>
@@ -117,7 +117,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
           {(startDate || endDate) && (
             <button 
               onClick={() => { setStartDate(""); setEndDate(""); }} 
-              className="px-4 py-2 rounded-xl text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors shrink-0"
+              className="px-4 py-2 rounded-xl text-xs font-bold text-danger bg-danger-light hover:bg-danger-light border border-red-200 transition-colors shrink-0"
             >
               Reset
             </button>
@@ -126,7 +126,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
       </div>
 
       {chartData.length === 0 ? (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full shadow-sm">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full">
           <LuCalendar className="text-4xl text-[hsl(var(--color-text-muted))] opacity-40 mx-auto mb-3" />
           <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">No data in this period</h3>
           <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-1">
@@ -136,7 +136,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Weight & BMI Trends */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
               <LuScale className="text-[hsl(var(--color-primary))]" /> Weight & BMI Trends
             </h3>
@@ -156,9 +156,9 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
           </div>
 
           {/* Blood Pressure History */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-              <LuHeart className="text-red-500" /> Blood Pressure History
+              <LuHeart className="text-danger" /> Blood Pressure History
             </h3>
             <div className="flex-1 min-h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
@@ -176,9 +176,9 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
           </div>
 
           {/* Sugar, Pulse & Temp Trends */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm flex flex-col lg:col-span-2">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col lg:col-span-2">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-              <LuDroplets className="text-blue-500" /> Sugar, Pulse & Temp Trends
+              <LuDroplets className="text-primary" /> Sugar, Pulse & Temp Trends
             </h3>
             <div className="flex-1 min-h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">

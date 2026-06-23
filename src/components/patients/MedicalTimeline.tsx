@@ -16,15 +16,15 @@ export default function MedicalTimeline({ entries, loading, searchTerm }: Props)
 
   return (
     <div className="xl:col-span-2">
-      <h2 className="text-[13px] font-black uppercase tracking-wider text-[hsl(var(--color-text))] mb-5 flex items-center gap-1.5">
-        <LuClock className="text-[14px] text-[hsl(var(--color-primary))]" /> Medical Timeline
+      <h2 className="text-sm font-black uppercase tracking-wider text-[hsl(var(--color-text))] mb-5 flex items-center gap-1.5">
+        <LuClock className="text-lg text-[hsl(var(--color-primary))]" /> Medical Timeline
       </h2>
 
       {loading ? (
         <TimelineSkeleton />
       ) : entries.length === 0 ? (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center shadow-sm">
-          <p className="text-[13px] text-[hsl(var(--color-text-muted))] font-bold">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center">
+          <p className="text-sm text-[hsl(var(--color-text-muted))] font-bold">
             {searchTerm ? "No encounters matched your search filters." : "No medical records found."}
           </p>
         </div>
@@ -39,9 +39,9 @@ export default function MedicalTimeline({ entries, loading, searchTerm }: Props)
           {entries.length > 3 && (
             <Link
               href="/patient/history"
-              className="mt-2 w-full max-w-[220px] mx-auto flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] text-[11px] font-bold hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors group"
+              className="mt-2 w-full max-w-[220px] mx-auto flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] text-sm font-bold hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors group cursor-pointer"
             >
-              View Full History ({entries.length}) <LuChevronRight className="transition-transform group-hover:translate-x-1" />
+              View Full History ({entries.length}) <LuChevronRight className="text-base transition-transform group-hover:translate-x-1" />
             </Link>
           )}
         </div>

@@ -1,4 +1,5 @@
 import { LuBrainCircuit, LuTriangleAlert, LuCircleCheck } from "react-icons/lu";
+import { Badge } from "@/components/ui/Badge";
 
 export default function AIIntelligence() {
   return (
@@ -11,12 +12,12 @@ export default function AIIntelligence() {
         
         {/* Left Text */}
         <div>
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 text-[10px] font-black uppercase tracking-[0.2em] text-[hsl(var(--color-primary))] bg-[hsl(var(--color-primary)/0.1)] rounded-full border border-[hsl(var(--color-primary)/0.2)]">
+          <Badge variant="primary" className="mb-6 gap-2">
             <LuBrainCircuit className="w-4 h-4" />
             <span>Core Intelligence</span>
-          </div>
+          </Badge>
           
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[hsl(var(--color-text))] tracking-tight mb-6">
+          <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-6">
             Preventing medical errors before they happen.
           </h2>
           
@@ -49,14 +50,17 @@ export default function AIIntelligence() {
         {/* Right Visual: Mock AI Interface */}
         <div className="relative">
           {/* Subtle glow behind the card */}
-          <div className="absolute inset-0 bg-linear-to-tr from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] rounded-3xl blur-2xl opacity-10 animate-pulse" />
+          <div className="absolute inset-0 bg-[hsl(var(--color-danger))] rounded-3xl blur-3xl opacity-20 animate-pulse" />
           
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] rounded-3xl p-6 lg:p-8 shadow-2xl relative z-10">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] rounded-3xl p-6 lg:p-8 relative z-10">
             
             <div className="flex items-center justify-between mb-8 pb-6 border-b border-[hsl(var(--color-text-muted)/0.1)]">
               <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500 animate-ping" />
-                <span className="text-red-500 font-black tracking-widest text-xs uppercase">Interaction Alert</span>
+                <div className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-danger opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-danger"></span>
+                </div>
+                <span className="text-danger font-black tracking-widest text-xs uppercase">Interaction Alert</span>
               </div>
               <span className="text-[hsl(var(--color-text-muted))] font-mono text-xs font-bold">AI Confidence: 99.8%</span>
             </div>
@@ -74,13 +78,13 @@ export default function AIIntelligence() {
                </div>
 
                {/* Mock Patient History Conflict */}
-               <div className="bg-red-500/10 rounded-xl p-4 border border-red-500/20">
+               <div className="bg-[hsl(var(--color-danger)/0.15)] rounded-xl p-4 border border-[hsl(var(--color-danger)/0.4)] shadow-lg shadow-[hsl(var(--color-danger)/0.1)]">
                   <div className="flex items-start gap-3">
-                    <LuTriangleAlert className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                    <LuTriangleAlert className="w-5 h-5 text-danger shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-xs text-red-600 font-black uppercase tracking-wider mb-1 block">Critical Conflict Detected</span>
+                      <span className="text-xs text-danger font-black uppercase tracking-wider mb-1 block">Critical Conflict Detected</span>
                       <p className="text-[hsl(var(--color-text))] text-sm leading-relaxed">
-                        Patient is currently active on <span className="font-black text-red-600">Tamsulosin 0.4mg</span>. Co-administration may result in severe symptomatic hypotension.
+                        Patient is currently active on <span className="font-black text-danger">Tamsulosin 0.4mg</span>. Co-administration may result in severe symptomatic hypotension.
                       </p>
                     </div>
                   </div>

@@ -66,14 +66,14 @@ export default function ClinicalAssessment({
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6 shadow-sm">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
           <LuClipboardList className="text-primary text-xl shrink-0" /> Clinical Assessment
         </h2>
         <button 
           onClick={() => setIsAssessmentMode(false)} 
-          className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 no-print border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-soft))] transition-colors w-fit"
+          className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 no-print border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-soft))] transition-colors w-fit cursor-pointer"
         >
           <LuX /> Cancel Assessment
         </button>
@@ -85,9 +85,9 @@ export default function ClinicalAssessment({
             <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Chief Complaints / Symptoms</label>
             <button 
               onClick={() => startListening("symptoms")}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all w-fit ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all w-fit cursor-pointer ${
                 listeningTo === "symptoms" 
-                  ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
+                  ? "bg-danger-light text-danger border border-red-200 animate-pulse" 
                   : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
               }`}
             >
@@ -109,15 +109,15 @@ export default function ClinicalAssessment({
             <div className="flex flex-wrap items-center gap-2">
               <button 
                 onClick={() => setIsModalOpen(true)}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[hsl(var(--color-primary)/0.1)] text-primary hover:bg-primary hover:text-white border border-transparent hover:border-primary/20"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] cursor-pointer"
               >
                 <LuWand className="shrink-0" /> AI Suggest
               </button>
               <button 
                 onClick={() => startListening("diagnosis")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${
                   listeningTo === "diagnosis" 
-                    ? "bg-red-50 text-red-600 border border-red-200 animate-pulse" 
+                    ? "bg-danger-light text-danger border border-red-200 animate-pulse" 
                     : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
                 }`}
               >
