@@ -21,7 +21,7 @@ export interface PrescriptionTabProps {
   setAttachments: (val: File[]) => void;
   attachmentsMetadata: { type: string; title: string }[];
   setAttachmentsMetadata: (val: { type: string; title: string }[]) => void;
-  attachmentsInputRef: React.RefObject<HTMLInputElement>;
+  attachmentsInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 export default function PrescriptionTab({
