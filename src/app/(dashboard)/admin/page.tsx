@@ -12,9 +12,9 @@ import {
 import { adminService } from "@/services/adminService";
 import { PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
-import NotificationBell from "@/components/admin/notifications/NotificationBell";
-import { Topbar } from "@/components/global/Topbar";
 import { fetchClient } from "@/services/fetchClient";
+import NotificationBell from "@/components/global/NotificationBell";
+import { Topbar } from "@/components/global/Topbar";
 
 import { StatCard } from "@/components/admin/dashboard/StatCard";
 import { ActivityFeed, Activity } from "@/components/admin/dashboard/ActivityFeed";
@@ -112,7 +112,7 @@ export default function AdminDashboard() {
       <Topbar 
         title="Dashboard Overview" 
         subtitle="Welcome back. Here is what's happening today."
-        rightElement={<NotificationBell />}
+        rightElement={<NotificationBell basePath="/admin/notifications" />}
       />
 
       <main className="flex-1 p-5 md:p-8 overflow-auto flex flex-col gap-6 md:gap-8 max-w-[1600px] mx-auto w-full">

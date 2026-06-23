@@ -162,6 +162,36 @@ export default function RxBuilder({
     }
   }, [debouncedDrugSearch]);
 
+  const [durNum, setDurNum] = useState("");
+  const [durUnit, setDurUnit] = useState("Days");
+  
+  useEffect(() => {
+    if (duration.toLowerCase() === "lifelong") {
+      // Handled by checkbox
+    } else if (duration) {
+      const parts = duration.split(" ");
+      if (parts.length >= 2) {
+        setDurNum(parts[0]);
+        setDurUnit(parts.slice(1).join(" "));
+      } else {
+        setDurNum(duration);
+      }
+    } else {
+      setDurNum("");
+      setDurUnit("Days");
+    }
+  }, [duration]);
+
+  const updateDuration = (num: string, unit: string) => {
+    setDurNum(num);
+    setDurUnit(unit);
+    if (num) {
+      setDuration(`${num} ${unit}`);
+    } else {
+      setDuration("");
+    }
+  };
+
   const handleDrugNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDrugName(e.target.value);
     if (!showSuggestions) setShowSuggestions(true);
@@ -293,7 +323,19 @@ export default function RxBuilder({
           </div>
           <div>
             <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Frequency</label>
-            <input value={frequency} onChange={e=>setFrequency(e.target.value)} type="text" placeholder="1x3" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <select
+              value={frequency}
+              onChange={e => setFrequency(e.target.value)}
+              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
+            >
+              <option value="">Select Frequency</option>
+              <option value="1 time daily">1 time daily</option>
+              <option value="2 times daily">2 times daily</option>
+              <option value="3 times daily">3 times daily</option>
+              <option value="4 times daily">4 times daily</option>
+              <option value="Every 8 hours">Every 8 hours</option>
+              <option value="Every 12 hours">Every 12 hours</option>
+            </select>
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
@@ -303,7 +345,14 @@ export default function RxBuilder({
                 Lifelong
               </label>
             </div>
-            <input disabled={duration.toLowerCase() === "lifelong"} value={duration} onChange={e=>setDuration(e.target.value)} type="text" placeholder="5 days" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
+            <div className="flex gap-2">
+              <input disabled={duration.toLowerCase() === "lifelong"} value={durNum} onChange={e=>updateDuration(e.target.value, durUnit)} type="number" min="1" placeholder="e.g. 5" className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
+              <select disabled={duration.toLowerCase() === "lifelong"} value={durUnit} onChange={e=>updateDuration(durNum, e.target.value)} className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50">
+                <option value="Days">Days</option>
+                <option value="Weeks">Weeks</option>
+                <option value="Months">Months</option>
+              </select>
+            </div>
           </div>
           <div className="md:col-span-5 mt-2">
             <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Instructions (Optional)</label>
