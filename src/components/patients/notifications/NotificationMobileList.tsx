@@ -2,6 +2,8 @@
 
 import { LuCheck, LuBell } from "react-icons/lu";
 import { Notification } from "./types";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   loading: boolean;
@@ -26,15 +28,9 @@ export default function NotificationMobileList({
           className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm"
         >
           <div className="flex justify-between items-start mb-3">
-            <span
-              className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                notification.isRead
-                  ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
-                  : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
-              }`}
-            >
+            <Badge variant={notification.isRead ? "info" : "warning"}>
               {notification.isRead ? "Read" : "Unread"}
-            </span>
+            </Badge>
             <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
               {notification.type}
             </span>
@@ -48,12 +44,15 @@ export default function NotificationMobileList({
               {new Date(notification.createdAt).toLocaleString()}
             </p>
             {!notification.isRead && (
-              <button
+              <Button
+                size="sm"
+                variant="outline"
+                icon={LuCheck}
                 onClick={() => handleMarkAsRead(notification._id)}
-                className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all border border-[hsl(var(--color-primary)/0.2)] cursor-pointer"
+                className="text-[11px] px-3 py-1.5 min-h-0 h-auto"
               >
-                <LuCheck className="text-[12px]" /> Mark Read
-              </button>
+                Mark Read
+              </Button>
             )}
           </div>
         </div>

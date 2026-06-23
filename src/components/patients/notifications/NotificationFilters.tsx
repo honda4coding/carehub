@@ -2,6 +2,7 @@
 
 import { LuCheckCheck, LuSearch } from "react-icons/lu";
 import { TABS, TabValue } from "./types";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   activeTab: TabValue;
@@ -40,13 +41,14 @@ export default function NotificationFilters({
 
       <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto mt-2 sm:mt-0">
         {unreadCount > 0 && (
-          <button
+          <Button
+            size="sm"
             onClick={handleMarkAllAsRead}
-            className="flex items-center justify-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] bg-[hsl(var(--color-primary))] text-white hover:opacity-90 transition-all flex-1 sm:flex-none whitespace-nowrap cursor-pointer"
+            icon={LuCheckCheck}
+            className="text-[11px] px-3 py-1.5 flex-1 sm:flex-none whitespace-nowrap min-h-0 h-auto"
           >
-            <LuCheckCheck />
             Mark All Read
-          </button>
+          </Button>
         )}
 
         <div className="relative flex items-center flex-1 sm:flex-none">

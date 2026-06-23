@@ -2,6 +2,8 @@
 
 import { LuCheck, LuBell } from "react-icons/lu";
 import { Notification } from "./types";
+import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 interface Props {
   loading: boolean;
@@ -72,26 +74,22 @@ export default function NotificationDesktopTable({
               {new Date(notification.createdAt).toLocaleString()}
             </td>
             <td className="py-3.5 pr-4">
-              <span
-                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${
-                  notification.isRead
-                    ? "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]"
-                    : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
-                }`}
-              >
+              <Badge variant={notification.isRead ? "info" : "warning"}>
                 {notification.isRead ? "Read" : "Unread"}
-              </span>
+              </Badge>
             </td>
             <td className="py-3.5">
               <div className="flex justify-center">
                 {!notification.isRead && (
-                  <button
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    icon={LuCheck}
                     onClick={() => handleMarkAsRead(notification._id)}
-                    className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-[7px] border border-[hsl(var(--color-primary)/0.4)] bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all cursor-pointer"
+                    className="text-[10px] px-2.5 py-1 min-h-0 h-auto"
                   >
-                    <LuCheck className="text-[11px]" />
                     Mark Read
-                  </button>
+                  </Button>
                 )}
               </div>
             </td>
