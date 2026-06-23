@@ -29,7 +29,7 @@ type UpdatePasswordValues = {
 
 export default function UpdatePasswordForm() {
   const { token } = useAuth();
-  const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" | "warning" | "info" } | null>(null);
+  const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
 
   const handleSubmit = async (
     values: UpdatePasswordValues,
