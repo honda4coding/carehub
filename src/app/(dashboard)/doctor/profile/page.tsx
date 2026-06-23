@@ -73,12 +73,15 @@ export default function DoctorProfilePage() {
 
         {/* Content */}
         {!loading && !error && (
-          <div className="space-y-5">
-            <ProfileHeader profile={profile} />
-            <ProfessionalInfoForm
-              profile={profile}
-              onSaveSuccess={handleProfileSaved}
-            />
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+              <ProfileHeader profile={profile} />
+              <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6"></div>
+              <ProfessionalInfoForm
+                profile={profile}
+                onSaveSuccess={handleProfileSaved}
+              />
+            </div>
           </div>
         )}
       </main>

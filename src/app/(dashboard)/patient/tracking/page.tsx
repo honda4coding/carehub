@@ -13,6 +13,8 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
 } from "recharts";
 import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
+import { Card } from "@/components/ui/Card";
+import DateRangeFilter from "@/components/ui/DateRangeFilter";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -24,8 +26,10 @@ function authHeaders() {
 function Toast({ message, type = "error", onClose }: { message: string; type?: "error" | "success"; onClose: () => void }) {
   useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
   return (
-    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 border text-[12px] font-bold px-4 py-3 rounded-xl  ${
-      type === "error" ? "bg-danger-light border-red-200 text-red-700" : "bg-success-light border-green-200 text-green-700"
+    <div className={`fixed bottom-4 right-4 z-50 flex items-center gap-2 border text-[13px] font-bold px-4 py-3 rounded-xl  ${
+      type === "error" 
+        ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]" 
+        : "bg-[hsl(var(--color-success-bg))] border-[hsl(var(--color-success)/0.2)] text-[hsl(var(--color-success))]"
     }`}>
       {message}
       <button onClick={onClose} className="ml-2 hover:opacity-70">✕</button>
@@ -117,10 +121,10 @@ export default function TrackingPage() {
   if (latestRecord && latestRecord.weight && latestRecord.height) {
     const hM = latestRecord.height / 100;
     currentBMI = Number((latestRecord.weight / (hM * hM)).toFixed(1));
-    if (currentBMI < 18.5) { bmiStatus = "Underweight"; bmiColor = "text-primary"; }
-    else if (currentBMI >= 18.5 && currentBMI <= 24.9) { bmiStatus = "Normal"; bmiColor = "text-success"; }
-    else if (currentBMI >= 25 && currentBMI <= 29.9) { bmiStatus = "Overweight"; bmiColor = "text-orange-500"; }
-    else { bmiStatus = "Obese"; bmiColor = "text-danger"; }
+    if (currentBMI < 18.5) { bmiStatus = "Underweight"; bmiColor = "text-[hsl(var(--color-primary))]"; }
+    else if (currentBMI >= 18.5 && currentBMI <= 24.9) { bmiStatus = "Normal"; bmiColor = "text-[hsl(var(--color-success))]"; }
+    else if (currentBMI >= 25 && currentBMI <= 29.9) { bmiStatus = "Overweight"; bmiColor = "text-[hsl(var(--color-warning))]"; }
+    else { bmiStatus = "Obese"; bmiColor = "text-[hsl(var(--color-danger))]"; }
   }
 
   // XP and Streak Math
@@ -195,70 +199,71 @@ export default function TrackingPage() {
         </p>
       </header>
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto space-y-6">
+      <main className="flex-1 p-4 md:p-6 overflow-auto">
+        <div className="max-w-5xl mx-auto space-y-6">
         
         {/* GAMIFICATION BANNER */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             
             {/* XP & Level Card */}
-            <div className="md:col-span-4 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center gap-4">
+            <Card className="md:col-span-4 p-4 flex items-center gap-4">
               <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center border-2 border-[hsl(var(--color-primary))] shrink-0">
                 <span className="font-black text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
               </div>
               <div className="flex-1">
                 <div className="flex justify-between items-end mb-1">
-                  <h3 className="text-sm font-black text-[hsl(var(--color-text))]">Level {currentLevel} Tracker</h3>
-                  <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))]">{xpInCurrentLevel} / 50 XP</span>
+                  <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Level {currentLevel} Tracker</h3>
+                  <span className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">{xpInCurrentLevel} / 50 XP</span>
                 </div>
                 <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-2 overflow-hidden">
                   <div className="bg-[hsl(var(--color-primary))] h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Streak Card */}
-            <div className="md:col-span-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex items-center justify-between">
+            <Card className="md:col-span-3 p-4 flex items-center justify-between">
               <div>
-                <h3 className="text-sm font-black text-[hsl(var(--color-text))]">Current Streak</h3>
-                <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5">Log daily to keep the fire alive!</p>
+                <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Current Streak</h3>
+                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5">Log daily to keep the fire alive!</p>
               </div>
-              <div className="flex items-center gap-1 bg-orange-50 dark:bg-orange-500/10 px-3 py-1.5 rounded-xl border border-orange-200 dark:border-orange-500/20">
-                <LuFlame className={`text-2xl ${currentStreak > 0 ? "text-orange-500 animate-pulse" : "text-[hsl(var(--color-text-muted))]"}`} />
-                <span className={`text-xl font-black ${currentStreak > 0 ? "text-orange-600 dark:text-orange-400" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
+              <div className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-3 py-1.5 rounded-xl border border-[hsl(var(--color-border))]">
+                <LuFlame className={`text-2xl ${currentStreak > 0 ? "text-[hsl(var(--color-warning))] animate-pulse" : "text-[hsl(var(--color-text-muted))]"}`} />
+                <span className={`text-xl font-black ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
               </div>
-            </div>
+            </Card>
 
             {/* Badges Card */}
-            <div className="md:col-span-5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col justify-center">
-              <h3 className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
+            <Card className="md:col-span-5 p-4 flex flex-col justify-center">
+              <h3 className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
               <div className="flex items-center justify-around">
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasBeginner ? "bg-blue-100 text-primary border-2 border-blue-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasBeginner ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuMedal className="text-xl" />
                   </div>
-                  <span className="text-[9px] font-bold text-center w-16">First Log</span>
+                  <span className="text-xs font-bold text-center w-16">First Log</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasConsistent ? "bg-orange-100 text-orange-500 border-2 border-orange-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasConsistent ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuFlame className="text-xl" />
                   </div>
-                  <span className="text-[9px] font-bold text-center w-16">3-Day Streak</span>
+                  <span className="text-xs font-bold text-center w-16">3-Day Streak</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasHealthy ? "bg-success-light text-success border-2 border-green-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasHealthy ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuHeart className="text-xl" />
                   </div>
-                  <span className="text-[9px] font-bold text-center w-16">Normal BMI</span>
+                  <span className="text-xs font-bold text-center w-16">Normal BMI</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasWizard ? "bg-purple-100 text-purple-500 border-2 border-purple-200" : "bg-soft text-muted dark:bg-gray-800"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasWizard ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-danger))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuStar className="text-xl" />
                   </div>
-                  <span className="text-[9px] font-bold text-center w-16">10 Logs</span>
+                  <span className="text-xs font-bold text-center w-16">10 Logs</span>
                 </div>
               </div>
-            </div>
+            </Card>
 
             {/* Medications Tracking Widget (Second Row) */}
             <div className="md:col-span-12 mt-2">
@@ -268,21 +273,21 @@ export default function TrackingPage() {
         )}
 
         {/* Quick Log Form */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
-          <h2 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
+        <Card className="p-6">
+          <h2 className="text-[16px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
           <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
               <input type="number" step="0.1" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 75" />
             </div>
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
               <input type="number" step="1" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 175" />
             </div>
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
               <input 
                 type="text" 
                 value={formData.bloodPressure} 
@@ -298,11 +303,11 @@ export default function TrackingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
               <input type="number" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="mg/dL" />
             </div>
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
               <input 
                 type="text" 
                 value={formData.temperature} 
@@ -317,39 +322,31 @@ export default function TrackingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-[10px] font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
+              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
               <input type="number" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 72" />
             </div>
-            <div className="flex flex-col justify-end md:col-span-2">
-              <button disabled={isSubmitting} type="submit" className="w-full bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-4 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+            <div className="flex flex-col justify-end md:col-span-2 items-end mt-2">
+              <button disabled={isSubmitting} type="submit" className="cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
                 {isSubmitting ? "Saving..." : <><LuPlus /> Log & Earn XP</>}
               </button>
             </div>
           </form>
-        </div>
+        </Card>
 
         {/* Filters Section */}
-        <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 gap-4">
-          <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto">
+        <Card className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">
+          <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto">
             <LuFilter className="text-[hsl(var(--color-primary))]" /> Compare Periods
           </h3>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <div className="flex flex-col flex-1">
-              <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">Start Date</label>
-              <input type="date" value={startDate} onChange={e => setStartDate(e.target.value)} className="w-full sm:w-36 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none" />
-            </div>
-            <span className="text-[hsl(var(--color-border))] mt-4">-</span>
-            <div className="flex flex-col flex-1">
-              <label className="text-[9px] font-bold uppercase text-[hsl(var(--color-text-muted))] ml-1 mb-0.5">End Date</label>
-              <input type="date" value={endDate} onChange={e => setEndDate(e.target.value)} className="w-full sm:w-36 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-3 py-2 text-xs font-medium focus:border-[hsl(var(--color-primary))] outline-none" />
-            </div>
-            {(startDate || endDate) && (
-              <button onClick={() => { setStartDate(""); setEndDate(""); }} className="mt-4 px-3 py-2 rounded-xl text-xs font-bold text-danger bg-danger-light hover:bg-danger-light transition-colors shrink-0">
-                Clear
-              </button>
-            )}
-          </div>
-        </div>
+          <DateRangeFilter
+            startDate={startDate}
+            endDate={endDate}
+            onStartDateChange={setStartDate}
+            onEndDateChange={setEndDate}
+            onReset={(startDate || endDate) ? () => { setStartDate(""); setEndDate(""); } : undefined}
+            className="!mt-0 w-full sm:w-auto flex-1 justify-end"
+          />
+        </Card>
 
         {loading ? <Skeleton /> : chartData.length === 0 ? (
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-16 text-center">
@@ -363,15 +360,15 @@ export default function TrackingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* BMI & Weight Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
+            <Card className="p-5 flex flex-col">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
+                <h3 className="text-[15px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
                   <LuScale className="text-[hsl(var(--color-primary))]" /> Weight & BMI Trends
                 </h3>
                 {currentBMI && (
                   <div className="text-right">
-                    <p className="text-[20px] font-black text-[hsl(var(--color-text))]">{currentBMI}</p>
-                    <p className={`text-[11px] font-bold uppercase ${bmiColor}`}>{bmiStatus}</p>
+                    <p className="text-xl font-black text-[hsl(var(--color-text))]">{currentBMI}</p>
+                    <p className={`text-[12px] font-bold uppercase ${bmiColor}`}>{bmiStatus}</p>
                   </div>
                 )}
               </div>
@@ -384,16 +381,16 @@ export default function TrackingPage() {
                     <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '12px', fontWeight: 'bold' }} />
                     <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
                     <Line yAxisId="left" type="monotone" name="Weight (kg)" dataKey="weight" stroke="hsl(var(--color-primary))" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} connectNulls />
-                    <Line yAxisId="left" type="monotone" name="BMI" dataKey="bmi" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} connectNulls />
+                    <Line yAxisId="left" type="monotone" name="BMI" dataKey="bmi" stroke="hsl(var(--color-success))" strokeWidth={3} dot={{ r: 4 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+            </Card>
 
             {/* Blood Pressure Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
-              <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuHeart className="text-danger" /> Blood Pressure History
+            <Card className="p-5 flex flex-col">
+              <h3 className="text-base font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+                <LuHeart className="text-[hsl(var(--color-danger))]" /> Blood Pressure History
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -403,17 +400,17 @@ export default function TrackingPage() {
                     <YAxis tick={{ fontSize: 10, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} domain={['dataMin - 10', 'dataMax + 10']} />
                     <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '12px', fontWeight: 'bold' }} />
                     <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
-                    <Line type="monotone" name="Systolic" dataKey="bloodPressureSystolic" stroke="#ef4444" strokeWidth={3} dot={{ r: 4 }} connectNulls />
-                    <Line type="monotone" name="Diastolic" dataKey="bloodPressureDiastolic" stroke="#3b82f6" strokeWidth={3} dot={{ r: 4 }} connectNulls />
+                    <Line type="monotone" name="Systolic" dataKey="bloodPressureSystolic" stroke="hsl(var(--color-danger))" strokeWidth={3} dot={{ r: 4 }} connectNulls />
+                    <Line type="monotone" name="Diastolic" dataKey="bloodPressureDiastolic" stroke="hsl(var(--color-primary))" strokeWidth={3} dot={{ r: 4 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+            </Card>
 
             {/* Blood Sugar & Temp Card */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col lg:col-span-2">
-              <h3 className="text-[14px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuDroplets className="text-primary" /> Sugar & Pulse Trends
+            <Card className="p-5 flex flex-col lg:col-span-2">
+              <h3 className="text-base font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+                <LuDroplets className="text-[hsl(var(--color-primary))]" /> Sugar & Pulse Trends
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -422,17 +419,18 @@ export default function TrackingPage() {
                     <XAxis dataKey="displayDate" tick={{ fontSize: 10, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
                     <YAxis yAxisId="left" tick={{ fontSize: 10, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
                     <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: "hsl(var(--color-text-muted))" }} axisLine={false} tickLine={false} />
-                    <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '12px', fontWeight: 'bold' }} />
-                    <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
-                    <Line yAxisId="left" type="monotone" name="Blood Sugar (mg/dL)" dataKey="bloodSugar" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 4 }} connectNulls />
-                    <Line yAxisId="right" type="monotone" name="Pulse (bpm)" dataKey="pulse" stroke="#f59e0b" strokeWidth={3} dot={{ r: 4 }} connectNulls />
+                    <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid hsl(var(--color-border))', fontSize: '13px', fontWeight: 'bold' }} />
+                    <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 'bold' }} />
+                    <Line yAxisId="left" type="monotone" name="Blood Sugar (mg/dL)" dataKey="bloodSugar" stroke="hsl(var(--color-primary))" strokeWidth={3} dot={{ r: 4 }} connectNulls />
+                    <Line yAxisId="right" type="monotone" name="Pulse (bpm)" dataKey="pulse" stroke="hsl(var(--color-warning))" strokeWidth={3} dot={{ r: 4 }} connectNulls />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-            </div>
+            </Card>
 
           </div>
         )}
+        </div>
       </main>
     </div>
   );

@@ -132,6 +132,16 @@ const patientNav: NavSection[] = [
     items: [
       { label: "Dashboard", href: "/patient", icon: <LuLayoutDashboard /> },
       {
+        label: "Personal Tracking",
+        href: "/patient/tracking",
+        icon: <LuActivity />,
+      },
+    ],
+  },
+  {
+    title: "Medical",
+    items: [
+      {
         label: "Appointments",
         href: "/patient/appointments",
         icon: <LuCalendarDays />,
@@ -141,21 +151,14 @@ const patientNav: NavSection[] = [
         href: "/patient/history",
         icon: <LuClipboardList />,
       },
-      {
-        label: "Personal Tracking",
-        href: "/patient/tracking",
-        icon: <LuActivity />,
-      },
+    ],
+  },
+  {
+    title: "Directory",
+    items: [
       { label: "Doctors", href: "/patient/doctors", icon: <LuStethoscope /> },
     ],
   },
-  // {
-  //   title: "Account",
-  //   items: [
-  //     { label: "Profile", href: "/patient/profile", icon: <LuUser /> },
-  //     { label: "Settings", href: "/patient/settings", icon: <LuSettings /> },
-  //   ],
-  // },
 ];
 
 const navMap: Record<string, NavSection[]> = {

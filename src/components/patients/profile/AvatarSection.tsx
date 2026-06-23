@@ -50,7 +50,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
   const hasImage = !!profile?.profilepicture?.secure_url;
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
+    <div className="p-6">
       <div className="flex items-center gap-5">
         {/* Avatar */}
         <div className="relative shrink-0">

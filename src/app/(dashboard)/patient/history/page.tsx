@@ -7,9 +7,12 @@ import Cookies from "js-cookie";
 import { useAuth } from "@/context/AuthContext";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
-  LuClipboardList, LuStethoscope, LuCalendar, LuChevronDown, LuChevronUp, LuFileText, LuHistory, LuPill
+  LuClipboardList, LuStethoscope, LuCalendar, LuChevronDown, LuChevronUp, LuFileText, LuHistory, LuPill, LuSearch, LuShieldAlert, LuActivity, LuScissors
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
+import AppointmentToast from "@/components/appointments/AppointmentToast";
+import EmptyState from "@/components/appointments/EmptyState";
+import DateRangeFilter from "@/components/ui/DateRangeFilter";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -18,25 +21,15 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-function Toast({ message, onClose }: { message: string; onClose: () => void }) {
-  useEffect(() => { const t = setTimeout(onClose, 4000); return () => clearTimeout(t); }, [onClose]);
-  return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-danger-light border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl">
-      {message}
-      <button onClick={onClose} className="ml-2 text-red-400 hover:text-danger">✕</button>
-    </div>
-  );
-}
-
 function Skeleton() {
   return (
     <div className="flex flex-col gap-4 animate-pulse">
       {[...Array(2)].map((_, i) => (
         <div key={i} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="h-4 bg-gray-200 rounded w-1/3 mb-3" />
-          <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
-          <div className="h-3 bg-gray-200 rounded w-full mb-1" />
-          <div className="h-3 bg-gray-200 rounded w-4/5" />
+          <div className="h-4 bg-[hsl(var(--color-border))] rounded w-1/3 mb-3" />
+          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-1/2 mb-2" />
+          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-full mb-1" />
+          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-4/5" />
         </div>
       ))}
     </div>
@@ -55,19 +48,19 @@ function TimelineAccordionCard({ record }: { record: any }) {
     >
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-colors">
+          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-surface-hover))] text-[hsl(var(--color-text-muted))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-colors">
             <LuCalendar className="text-lg" />
           </span>
           <div>
-            <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{dateStr} <span className="text-[11px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
-            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-               <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> 
+            <p className="text-[15px] font-black text-[hsl(var(--color-text))]"> {dateStr} <span className="text-[13px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
+            <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
+               <LuStethoscope className="text-[hsl(var(--color-text-muted))] flex-shrink-0" /> 
                {record.doctorId?.fullName ?? record.doctorId?.userName ?? "Doctor"} • {record.diagnosis || "No diagnosis recorded"}
             </p>
           </div>
         </div>
         
-        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors cursor-pointer">
           {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
         </button>
       </div>
@@ -81,18 +74,220 @@ function TimelineAccordionCard({ record }: { record: any }) {
   );
 }
 
+// ─── Medications & Medical Info Sidebar ─────────────────────────────────────────
+function MedicalInfoSidebar({ medications, loading, allergies, chronicDiseases, surgeries }: {
+  medications: any[];
+  loading: boolean;
+  allergies: string[];
+  chronicDiseases: string[];
+  surgeries: string[];
+}) {
+  const [medSearch, setMedSearch] = useState("");
+  const [medStartDate, setMedStartDate] = useState("");
+  const [medEndDate, setMedEndDate] = useState("");
+  const [showAll, setShowAll] = useState(false);
+  const LIMIT = 5;
+
+  const activeMeds = medications.filter(m => m.status === 'active');
+  const pastMeds = medications.filter(m => m.status !== 'active');
+
+  // Filter only past medications
+  const filteredPast = pastMeds.filter(m => {
+    const nameMatch = !medSearch || m.medicineName.toLowerCase().includes(medSearch.toLowerCase());
+    let dateMatch = true;
+    if (medStartDate) {
+      const start = new Date(medStartDate);
+      start.setHours(0, 0, 0, 0);
+      dateMatch = m.date >= start;
+    }
+    if (medEndDate && dateMatch) {
+      const end = new Date(medEndDate);
+      end.setHours(23, 59, 59, 999);
+      dateMatch = m.date <= end;
+    }
+    return nameMatch && dateMatch;
+  });
+
+  const displayedPast = showAll ? filteredPast : filteredPast.slice(0, LIMIT);
+  const hasMore = filteredPast.length > LIMIT;
+
+  const handleReset = () => {
+    setMedSearch("");
+    setMedStartDate("");
+    setMedEndDate("");
+  };
+
+  const MedCard = ({ med, isActive }: { med: any; isActive: boolean }) => (
+    <div className={`bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl p-3 flex flex-col transition-colors ${isActive ? 'hover:border-[hsl(var(--color-success)/0.4)]' : 'opacity-80'}`}>
+      <div className="flex justify-between items-start mb-1">
+        <h5 className="text-[14px] font-bold text-[hsl(var(--color-text))]">{med.medicineName}</h5>
+        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+          isActive
+            ? 'text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))]'
+            : 'text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-border))]'
+        }`}>
+          {isActive ? 'Active' : 'Past'}
+        </span>
+      </div>
+      <div className="text-[13px] text-[hsl(var(--color-text-muted))] flex flex-wrap gap-x-2 gap-y-1 mb-2">
+        <span>{med.dosage}</span>
+        <span>•</span>
+        <span>{med.frequency}</span>
+      </div>
+      <div className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
+        {isActive ? 'Since' : 'Date'}: {med.date.toLocaleDateString()}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-5">
+      {/* ── Allergies ── */}
+      {allergies.length > 0 && (
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <LuShieldAlert className="text-[hsl(var(--color-danger))] text-lg" />
+            <h3 className="text-[15px] font-black text-[hsl(var(--color-danger))]">Allergies</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {allergies.map((a, idx) => (
+              <span key={idx} className="bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] px-3 py-1.5 rounded-full text-[12px] font-bold">
+                ⚠️ {a}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Chronic Diseases ── */}
+      {chronicDiseases.length > 0 && (
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <LuActivity className="text-[hsl(var(--color-warning))] text-lg" />
+            <h3 className="text-[15px] font-black text-[hsl(var(--color-warning))]">Chronic Conditions</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {chronicDiseases.map((c, idx) => (
+              <span key={idx} className="flex items-center gap-2 text-[12px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-warning-bg))] px-3 py-1.5 rounded-full">
+                <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-warning))] shrink-0" />
+                {c}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Surgeries ── */}
+      {surgeries.length > 0 && (
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <LuScissors className="text-[hsl(var(--color-primary))] text-lg" />
+            <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Surgeries</h3>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {surgeries.map((s, idx) => (
+              <span key={idx} className="flex items-center gap-2 text-[12px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-full">
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Medications ── */}
+      {!loading && (
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+          <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-4">
+            <LuPill className="text-[hsl(var(--color-primary))] text-lg" /> Patient Medications
+          </h3>
+
+          {medications.length === 0 ? (
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4">No medications on record.</p>
+          ) : (
+            <>
+              {/* Active Medications — always show all */}
+              {activeMeds.length > 0 && (
+                <div className="mb-5">
+                  <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-success))]"></span> Active ({activeMeds.length})
+                  </h4>
+                  <div className="space-y-3">
+                    {activeMeds.map((med, idx) => <MedCard key={idx} med={med} isActive={true} />)}
+                  </div>
+                </div>
+              )}
+
+              {/* Past Medications — with search + date filter + limit */}
+              <div className="mt-8 border-t border-[hsl(var(--color-border))] pt-6">
+                <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-3 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-text-muted))]"></span> Past Medications ({pastMeds.length})
+                </h4>
+
+                {/* Search */}
+                <div className="relative mb-3">
+                  <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[hsl(var(--color-text-muted))]" />
+                  <input
+                    type="text"
+                    placeholder="Search past medication..."
+                    value={medSearch}
+                    onChange={(e) => setMedSearch(e.target.value)}
+                    className="w-full pl-9 pr-3 py-2 text-[13px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface-hover))] outline-none text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] transition-colors placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                  />
+                </div>
+
+                {/* Date Range Filter */}
+                <DateRangeFilter
+                  startDate={medStartDate}
+                  endDate={medEndDate}
+                  onStartDateChange={setMedStartDate}
+                  onEndDateChange={setMedEndDate}
+                  onReset={(medStartDate || medEndDate) ? handleReset : undefined}
+                  className="mb-3 !mt-0"
+                />
+
+                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-3">
+                  Showing {displayedPast.length} of {filteredPast.length} past medication{filteredPast.length !== 1 ? "s" : ""}
+                </p>
+
+                {filteredPast.length === 0 ? (
+                  <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4 bg-[hsl(var(--color-bg-surface-hover))] rounded-xl border border-[hsl(var(--color-border))]">No past medications match your search.</p>
+                ) : (
+                  <div className="space-y-3">
+                    {displayedPast.map((med, idx) => <MedCard key={idx} med={med} isActive={false} />)}
+                    {hasMore && (
+                      <button
+                        onClick={() => setShowAll(!showAll)}
+                        className="w-full text-center text-[13px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer py-2"
+                      >
+                        {showAll ? 'Show less' : `Show all ${filteredPast.length} past medications`}
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MedicalHistoryPage() {
   const { user } = useAuth();
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
+
+  // Patient profile data
+  const [allergies, setAllergies] = useState<string[]>([]);
+  const [chronicDiseases, setChronicDiseases] = useState<string[]>([]);
+  const [surgeries, setSurgeries] = useState<string[]>([]);
 
   // Filters State
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filterText, setFilterText] = useState("");
-
-  const showToast = useCallback((msg: string) => setToastMsg(msg), []);
 
   // Infinite Scroll State
   const [visibleCount, setVisibleCount] = useState(10);
@@ -102,25 +297,36 @@ export default function MedicalHistoryPage() {
     if (!user) return;
     const patientId = (user as any)._id ?? user.id;
 
-    async function fetchHistory() {
+    async function fetchAll() {
       setLoading(true);
 
+      // Fetch profile (allergies, chronic diseases, surgeries)
+      try {
+        const { data } = await axios.get(`${BASE_URL}/patient/profile`, {
+          headers: authHeaders(),
+        });
+        const p = data.data ?? data;
+        setAllergies(p.allergies ?? []);
+        setChronicDiseases(p.chronic ?? p.chronicDiseases ?? []);
+        setSurgeries((p.surgeries ?? []).map((s: any) => typeof s === 'string' ? s : s.operationName || ""));
+      } catch {}
+
+      // Fetch medical history
       try {
         const { data } = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
           headers: authHeaders(),
         });
         const result = data.data ?? data;
         const fetchedRecords = Array.isArray(result) ? result : result ? [result] : [];
-        // Sort descending by date
         setRecords(fetchedRecords.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
       } catch (err: any) {
-        showToast("Failed to load medical history");
+        setToast({ msg: "Failed to load medical history", variant: "error" });
       } finally {
         setLoading(false);
       }
     }
-    fetchHistory();
-  }, [user, showToast]);
+    fetchAll();
+  }, [user]);
 
   // Apply filters
   const filteredRecords = records.filter(r => {
@@ -182,6 +388,7 @@ export default function MedicalHistoryPage() {
       }
     };
   }, [hasMoreRecords]);
+
   // Extract all medications
   const allMedications = useMemo(() => {
     const meds = new Map();
@@ -211,16 +418,23 @@ export default function MedicalHistoryPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      {toastMsg && <Toast message={toastMsg} onClose={() => setToastMsg(null)} />}
+      {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
 
       {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3">
-        <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-          <LuClipboardList className="text-[18px]" /> Medical History
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Your complete clinical encounter records
-        </p>
+      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4">
+        <div className="flex items-center gap-4">
+          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] items-center justify-center text-[20px] shrink-0">
+            <LuClipboardList />
+          </div>
+          <div>
+            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+              Medical History
+            </h1>
+            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+              Your complete clinical encounter records
+            </p>
+          </div>
+        </div>
       </header>
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
@@ -229,77 +443,72 @@ export default function MedicalHistoryPage() {
           {/* Filters Section */}
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
             <h3 className="text-[17px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
-              <LuHistory className="text-sky-600 text-[20px]" /> Full Medical History
+              <LuHistory className="text-[hsl(var(--color-text-muted))] text-[20px]" /> Full Medical History
             </h3>
             
             <div className="flex flex-col sm:flex-row flex-wrap items-end sm:items-center gap-3 w-full xl:w-auto">
-              <div className="flex items-center gap-2 w-full sm:w-auto bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] p-1 rounded-xl">
-                <div className="flex flex-col w-full sm:w-auto">
-                  <input 
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full sm:w-32 bg-transparent border-none rounded-lg px-2 py-1.5 text-[12px] font-medium outline-none text-[hsl(var(--color-text-muted))]"
-                    title="Start Date"
-                  />
-                </div>
-                <span className="text-[hsl(var(--color-text-muted))] font-bold text-[10px] uppercase">-</span>
-                <div className="flex flex-col w-full sm:w-auto">
-                  <input 
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full sm:w-32 bg-transparent border-none rounded-lg px-2 py-1.5 text-[12px] font-medium outline-none text-[hsl(var(--color-text-muted))]"
-                    title="End Date"
-                  />
-                </div>
-              </div>
+              <DateRangeFilter
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                onReset={(startDate || endDate) ? () => { setStartDate(""); setEndDate(""); } : undefined}
+                className="!mt-0"
+              />
               <div className="relative w-full sm:flex-1 sm:min-w-[200px] xl:w-auto xl:flex-none">
                 <input 
                   type="text"
                   placeholder="Search doctor, diagnosis, medication..."
                   value={filterText}
                   onChange={(e) => setFilterText(e.target.value)}
-                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[12px] font-medium focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[13px] font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
                 />
               </div>
             </div>
           </div>
 
-<div className="flex flex-col lg:flex-row gap-8">
-            {/* Timeline Column */}
+          {/* Swapped: Medications Sidebar FIRST, then Timeline */}
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Medical Info Sidebar (LEFT) */}
+            <div className="w-full lg:w-1/3 xl:w-1/4 shrink-0">
+              <MedicalInfoSidebar
+                medications={allMedications}
+                loading={loading}
+                allergies={allergies}
+                chronicDiseases={chronicDiseases}
+                surgeries={surgeries}
+              />
+            </div>
+
+            {/* Timeline Column (RIGHT) */}
             <div className="flex-1">
-              <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuHistory className="text-[hsl(var(--color-primary))] text-xl" /> Clinical Visits
+              <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+                <LuHistory className="text-[hsl(var(--color-text-muted))] text-xl" /> Clinical Visits
               </h3>
               {loading ? (
                 <Skeleton />
               ) : records.length === 0 ? (
-                <div className="text-center py-16 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl bg-[hsl(var(--color-bg-soft)/0.5)]">
-                  <div className="w-16 h-16 rounded-2xl bg-sky-50 text-sky-500 flex items-center justify-center mx-auto mb-4">
-                     <LuHistory className="text-[32px]" />
-                  </div>
-                  <p className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">No Medical History</p>
-                  <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] max-w-xs mx-auto leading-relaxed">
-                     You have no recorded visits or diagnoses yet.
-                  </p>
-                </div>
+                <EmptyState
+                  icon={<LuHistory />}
+                  title="No Medical History"
+                  description="You have no recorded visits or diagnoses yet."
+                />
               ) : filteredRecords.length === 0 ? (
-                 <div className="text-center py-16 bg-[hsl(var(--color-bg-soft))] rounded-2xl">
-                  <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mb-2">No records match your filters.</p>
+                 <div className="text-center py-16 bg-[hsl(var(--color-bg-surface-hover))] rounded-2xl border border-[hsl(var(--color-border))]">
+                  <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))] mb-2">No records match your filters.</p>
                   <button 
                     onClick={() => { setStartDate(""); setEndDate(""); setFilterText(""); }}
-                    className="text-[12px] text-sky-600 font-black hover:underline"
+                    className="text-[13px] text-[hsl(var(--color-primary))] font-black hover:underline cursor-pointer"
                   >
                     Clear all filters
                   </button>
                 </div>
               ) : (
-                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-[hsl(var(--color-border))] before:to-transparent">
+                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-[hsl(var(--color-border))]">
                   {displayedRecords.map((r, index) => (
                     <div key={r._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      {/* Timeline dot */}
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
+                      {/* Timeline dot — NEUTRAL/GRAY */}
+                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-bg-surface-hover))] text-[hsl(var(--color-text-muted))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                         <LuFileText />
                       </div>
                       {/* Timeline Card */}
@@ -312,85 +521,14 @@ export default function MedicalHistoryPage() {
                   {/* Infinite Scroll Trigger */}
                   {hasMoreRecords && (
                     <div ref={observerTarget} className="flex justify-center py-6 relative z-10">
-                      <div className="w-6 h-6 border-2 border-sky-500 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 border-2 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                   {!hasMoreRecords && filteredRecords.length > 0 && (
-                    <div className="text-center py-4 text-xs font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border-soft))]">
+                    <div className="text-center py-4 text-[13px] font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border))]">
                       End of history ({filteredRecords.length} records)
                     </div>
                   )}
-                </div>
-              )}
-            </div>
-
-            {/* Medications Sidebar */}
-            <div className="w-full lg:w-1/3 xl:w-1/4 shrink-0">
-              {/* Medications Section */}
-              {!loading && allMedications.length > 0 && (
-                <div className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-                  <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                    <LuPill className="text-primary text-lg" /> Patient Medications
-                  </h3>
-                  <div className="flex flex-col gap-8">
-                    {/* Active Medications */}
-                    <div>
-                      <h4 className="text-[13px] font-bold text-main mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-success"></span> Active
-                      </h4>
-                      {allMedications.filter(m => m.status === 'active').length === 0 ? (
-                        <p className="text-[11px] text-muted italic">No active medications.</p>
-                      ) : (
-                        <div className="space-y-3">
-                          {allMedications.filter(m => m.status === 'active').map((med: any, idx) => (
-                            <div key={idx} className="bg-white border border-soft rounded-xl p-3 flex flex-col hover:border-green-300 transition-colors">
-                              <div className="flex justify-between items-start mb-1">
-                                <h5 className="text-[13px] font-bold text-main">{med.medicineName}</h5>
-                                <span className="text-[9px] font-bold text-green-700 bg-success-light px-2 py-0.5 rounded-md">Active</span>
-                              </div>
-                              <div className="text-[11px] text-muted flex flex-wrap gap-x-2 gap-y-1 mb-2">
-                                <span>{med.dosage}</span>
-                                <span>•</span>
-                                <span>{med.frequency}</span>
-                              </div>
-                              <div className="text-[9px] font-medium text-muted">
-                                Since: {med.date.toLocaleDateString()}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Past Medications */}
-                    <div>
-                      <h4 className="text-[13px] font-bold text-main mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-gray-400"></span> Past
-                      </h4>
-                      {allMedications.filter(m => m.status !== 'active').length === 0 ? (
-                        <p className="text-[11px] text-muted italic">No past medications.</p>
-                      ) : (
-                        <div className="space-y-3">
-                          {allMedications.filter(m => m.status !== 'active').map((med: any, idx) => (
-                            <div key={idx} className="bg-soft border border-soft rounded-xl p-3 flex flex-col hover:border-soft transition-colors opacity-80">
-                              <div className="flex justify-between items-start mb-1">
-                                <h5 className="text-[13px] font-bold text-main">{med.medicineName}</h5>
-                                <span className="text-[9px] font-bold text-muted bg-gray-200 px-2 py-0.5 rounded-md">Past</span>
-                              </div>
-                              <div className="text-[11px] text-muted flex flex-wrap gap-x-2 gap-y-1 mb-2">
-                                <span>{med.dosage}</span>
-                                <span>•</span>
-                                <span>{med.frequency}</span>
-                              </div>
-                              <div className="text-[9px] font-medium text-muted">
-                                Date: {med.date.toLocaleDateString()}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
                 </div>
               )}
             </div>

@@ -179,7 +179,7 @@ export default function ProfessionalInfoForm({
   };
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+    <div className="overflow-hidden">
       {/* Server messages */}
       {(serverError || serverSuccess) && (
         <div
@@ -324,14 +324,11 @@ export default function ProfessionalInfoForm({
             </div>
 
             {/* Save button — full width, attached to bottom */}
-            <div className="px-6 pb-6">
+            <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-3.5 text-white text-[14px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
-                style={{
-                  background: "hsl(var(--color-primary))",
-                }}
+                className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting ? (
                   <>

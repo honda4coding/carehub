@@ -52,7 +52,7 @@ export default function ApptRow({ appt }: { appt: Appointment }) {
       </div>
 
       {/* Body */}
-      <div className="flex-1 p-4 sm:p-5 flex items-center justify-between gap-4 flex-wrap bg-gradient-to-r from-[hsl(var(--color-bg-surface))] to-transparent">
+      <div className="flex-1 p-4 sm:p-5 flex items-center justify-between gap-4 flex-wrap bg-[hsl(var(--color-bg-surface))]">
         <div className="flex items-center gap-4 min-w-0">
           <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] flex items-center justify-center text-[14px] font-black shrink-0">
             {initialsOf(patient?.fullName)}

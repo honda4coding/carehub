@@ -66,33 +66,33 @@ export default function AdminProfilePage() {
 
         {/* Content */}
         {!loading && !error && (
-          <div className="space-y-5">
-
-            {/* Header card */}
-            <div
-              className="rounded-2xl p-6 flex items-center gap-4"
-              style={{ background: "linear-gradient(135deg, hsl(var(--color-primary)) 0%, hsl(195 75% 38%) 100%)" }}
-            >
-              <div className="relative w-16 h-16 rounded-full border-2 border-white/50 overflow-hidden bg-white/20 flex items-center justify-center shrink-0">
-                {profile?.profilepicture?.secure_url ? (
-                  <Image src={profile.profilepicture.secure_url} alt={profile.fullName} fill className="object-cover" />
-                ) : (
-                  <span className="text-white text-xl font-black">{initials}</span>
-                )}
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-white text-lg font-black">{profile?.fullName ?? "—"}</h2>
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/20 text-white text-[10px] font-bold">
-                    <LuShieldCheck className="w-3 h-3" /> Admin
-                  </span>
+          <div className="max-w-4xl mx-auto w-full">
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+              {/* Header card */}
+              <div className="p-6 flex items-center gap-4">
+                <div className="relative w-16 h-16 rounded-full border-2 border-[hsl(var(--color-border))] overflow-hidden bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0">
+                  {profile?.profilepicture?.secure_url ? (
+                    <Image src={profile.profilepicture.secure_url} alt={profile.fullName} fill className="object-cover" />
+                  ) : (
+                    <span className="text-[hsl(var(--color-primary-strong))] text-xl font-black">{initials}</span>
+                  )}
                 </div>
-                <p className="text-white/70 text-sm mt-0.5">{profile?.email ?? ""}</p>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-[hsl(var(--color-text))] text-lg font-black">{profile?.fullName ?? "—"}</h2>
+                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[10px] font-bold">
+                      <LuShieldCheck className="w-3 h-3" /> Admin
+                    </span>
+                  </div>
+                  <p className="text-[hsl(var(--color-text-muted))] text-sm mt-0.5">{profile?.email ?? ""}</p>
+                </div>
               </div>
-            </div>
 
-            {/* Basic info form */}
-            <AdminInfoForm profile={profile} onSaveSuccess={handleSaved} />
+              <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6"></div>
+
+              {/* Basic info form */}
+              <AdminInfoForm profile={profile} onSaveSuccess={handleSaved} />
+            </div>
           </div>
         )}
       </main>
