@@ -12,7 +12,7 @@ export interface HistoryTabProps {
   page: number;
   fullMedicalHistory: any[];
   hasMore: boolean;
-  observerTarget: React.RefObject<HTMLDivElement>;
+  observerTarget: React.RefObject<HTMLDivElement | null>;
   setIsAssessmentMode: () => void;
 }
 

@@ -13,7 +13,7 @@ export interface PrescriptionTabProps {
   handleAddDrug: () => void;
   removeDrug: (id: string) => void;
   prescriptionText: string; setPrescriptionText: (val: string) => void;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   handleFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   previewUrl: string | null;
   removeFile: () => void;
