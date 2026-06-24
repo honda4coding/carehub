@@ -1,173 +1,30 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { adminService } from "@/services/adminService";
-import { AnalyticsData, DailyStats } from "@/types/admin";
-import {
-  LuChevronLeft,
-  LuUsers,
-  LuStethoscope,
-  LuUser,
-} from "react-icons/lu";
+import AnalyticsClient from "./AnalyticsClient";
 
-import { PendingDoctorRequest } from "@/types/doctor";
-import ActivityOverviewChart from "@/components/admin/dashboard/ActivityOverviewChart";
-import SummaryCard from "@/components/admin/dashboard/SummaryCard";
-import UserActivityGrowthChart from "@/components/admin/dashboard/UserActivityGrowthChart";
-import SpecialtyPieChart from "@/components/admin/dashboard/SpecialtyPieChart";
-import SystemActivityBarChart from "@/components/admin/dashboard/SystemActivityBarChart";
-import DateRangeFilter from "@/components/ui/DateRangeFilter";
+export default async function AnalyticsPage() {
+  let initialAnalyticsData: any = null;
+  let initialDailyStats: any[] = [];
+  let initialPendingRequests: any[] = [];
 
-const COLORS = [
-  "hsl(var(--color-primary))", 
-  "hsl(var(--color-indigo))", 
-  "hsl(var(--color-warning))", 
-  "hsl(var(--color-danger))", 
-  "hsl(var(--color-secondary))", 
-  "hsl(var(--color-success))"
-];
-
-export default function AnalyticsPage() {
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
-  
-  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
-  const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
-  const [pendingRequests, setPendingRequests] = useState<PendingDoctorRequest[]>([]);
-  const [pendingLoading, setPendingLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      setPendingLoading(true);
-      try {
-        const [res, pendingRes, dailyRes] = await Promise.all([
-          adminService.getAnalyticsData(startDate, endDate),
-          adminService.getPendingDoctors(startDate, endDate),
-          adminService.getDailyStats(startDate, endDate, true)
-        ]);
-        setAnalyticsData(res.data);
-        setPendingRequests(pendingRes.data);
-        setDailyStats(dailyRes.data);
-      } catch (error) {
-        console.error("Failed to load analytics data", error);
-      } finally {
-        setLoading(false);
-        setPendingLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [startDate, endDate]);
-
-  const activityArray = analyticsData?.summary ? [
-    { name: "Appointments", value: analyticsData.summary.totalAppointments },
-    { name: "Prescriptions", value: analyticsData.summary.totalPrescriptions },
-    { name: "Med Histories", value: analyticsData.summary.totalMedicalHistories },
-  ] : [];
+  try {
+    const [res, pendingRes, dailyRes] = await Promise.all([
+      adminService.getAnalyticsData("", "").catch(() => ({ data: null })),
+      adminService.getPendingDoctors("", "").catch(() => ({ data: [] })),
+      adminService.getDailyStats("", "", true).catch(() => ({ data: [] }))
+    ]);
+    
+    initialAnalyticsData = res?.data || null;
+    initialPendingRequests = pendingRes?.data || [];
+    initialDailyStats = dailyRes?.data || [];
+  } catch (error) {
+    console.error("Failed to load initial analytics data", error);
+  }
 
   return (
-    <div className="flex-1 p-4 md:p-6 overflow-auto bg-[hsl(var(--color-bg))]">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.back()}
-            className="w-8 h-8 rounded-[9px] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-surface-hover))] hover:text-[hsl(var(--color-text))] transition-all cursor-pointer"
-          >
-            <LuChevronLeft className="text-[15px]" />
-          </button>
-
-          <div>
-            <h1 className="text-[17px] font-black text-[hsl(var(--color-text))] tracking-tight">
-              Detailed Analytics
-            </h1>
-            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-              Deep dive into platform metrics and statistics
-            </p>
-          </div>
-        </div>
-
-        <DateRangeFilter 
-          startDate={startDate}
-          endDate={endDate}
-          onStartDateChange={setStartDate}
-          onEndDateChange={setEndDate}
-          onReset={() => { setStartDate(""); setEndDate(""); }}
-        />
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center py-20">
-          <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">Loading Analytics Data...</p>
-        </div>
-      ) : (
-        <>
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <SummaryCard
-              title="Total Users"
-              value={analyticsData?.summary?.totalUsers || 0}
-              icon={LuUsers}
-              colorTheme="indigo"
-            />
-            <SummaryCard
-              title="Total Doctors"
-              value={analyticsData?.summary?.totalDoctors || 0}
-              icon={LuStethoscope}
-              colorTheme="success"
-            />
-            <SummaryCard
-              title="Total Patients"
-              value={analyticsData?.summary?.totalPatients || 0}
-              icon={LuUser}
-              colorTheme="warning"
-            />
-          </div>
-
-          <div className="flex flex-col gap-4">
-            
-            {/* Top Row: Main Trend Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* User & Activity Growth Chart */}
-              <UserActivityGrowthChart
-                startDate={startDate}
-                endDate={endDate}
-              />
-
-              {/* Activity Overview */}
-              <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col overflow-hidden">
-                <ActivityOverviewChart
-                  dailyStats={dailyStats}
-                  statsLoading={loading}
-                  totalPatients={analyticsData?.summary?.totalPatients || 0}
-                  totalDoctors={analyticsData?.summary?.totalDoctors || 0}
-                  totalAppointments={analyticsData?.summary?.totalAppointments || 0}
-                />
-              </div>
-            </div>
-
-            {/* Bottom Row: Distribution & System Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {/* Specialty Distribution */}
-              <SpecialtyPieChart
-                data={analyticsData?.doctorsBySpecialty || []}
-                colors={COLORS}
-              />
-
-              {/* System Activity Total */}
-              <SystemActivityBarChart
-                data={activityArray}
-                colors={COLORS}
-              />
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+    <AnalyticsClient
+      initialAnalyticsData={initialAnalyticsData}
+      initialDailyStats={initialDailyStats}
+      initialPendingRequests={initialPendingRequests}
+    />
   );
 }

@@ -29,7 +29,17 @@ async function handleResponse(response: Response) {
 
 export const fetchClient = {
   async request(endpoint: string, options: FetchOptions = {}) {
-    const token = Cookies.get(AUTH_COOKIE_NAME);
+    let token: string | undefined;
+    if (typeof window !== "undefined") {
+      token = Cookies.get(AUTH_COOKIE_NAME);
+    } else {
+      try {
+        const { cookies } = require("next/headers");
+        token = cookies().get(AUTH_COOKIE_NAME)?.value;
+      } catch (e) {
+        console.warn("Could not retrieve cookies on the server");
+      }
+    }
     
     const headers = new Headers(options.headers);
     headers.set("Content-Type", "application/json");
