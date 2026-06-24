@@ -9,7 +9,7 @@ import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import { FaFingerprint } from "react-icons/fa";
-import { registerBiometrics } from "@/services/webAuthnService";
+import { registerBiometrics, checkBiometricsStatus, disableBiometrics } from "@/services/webAuthnService";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -33,18 +33,51 @@ export default function UpdatePasswordForm() {
   const { token } = useAuth();
   const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [isRegisteringBio, setIsRegisteringBio] = React.useState(false);
+  const [isDisablingBio, setIsDisablingBio] = React.useState(false);
+  const [isCheckingBio, setIsCheckingBio] = React.useState(true);
+  const [hasBiometrics, setHasBiometrics] = React.useState(false);
   const [bioToast, setBioToast] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    const fetchStatus = async () => {
+      const active = await checkBiometricsStatus();
+      if (isMounted) {
+        setHasBiometrics(active);
+        setIsCheckingBio(false);
+      }
+    };
+    fetchStatus();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleRegisterBiometrics = async () => {
     try {
       setIsRegisteringBio(true);
       setBioToast(null);
       await registerBiometrics();
+      setHasBiometrics(true);
       setBioToast({ msg: "FaceID / TouchID registered successfully!", variant: "success" });
     } catch (err: any) {
       setBioToast({ msg: err.message || "Failed to enable biometric login.", variant: "error" });
     } finally {
       setIsRegisteringBio(false);
+    }
+  };
+
+  const handleDisableBiometrics = async () => {
+    try {
+      setIsDisablingBio(true);
+      setBioToast(null);
+      await disableBiometrics();
+      setHasBiometrics(false);
+      setBioToast({ msg: "Biometric login disabled successfully.", variant: "success" });
+    } catch (err: any) {
+      setBioToast({ msg: err.message || "Failed to disable biometric login.", variant: "error" });
+    } finally {
+      setIsDisablingBio(false);
     }
   };
 
@@ -182,18 +215,44 @@ export default function UpdatePasswordForm() {
             Use your device's fingerprint scanner or facial recognition (FaceID/TouchID) to log in instantly next time.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleRegisterBiometrics}
-          disabled={isRegisteringBio}
-          className="w-full py-3 px-4 border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        >
-          {isRegisteringBio ? (
-            <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
-          ) : (
-            <>Enable Biometric Login</>
-          )}
-        </button>
+        
+        {isCheckingBio ? (
+          <div className="text-xs text-[hsl(var(--color-text-muted))] font-semibold animate-pulse">
+            Checking status...
+          </div>
+        ) : hasBiometrics ? (
+          <div className="space-y-3">
+            <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              Biometric Login is currently: <span className="underline">Enabled</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleDisableBiometrics}
+              disabled={isDisablingBio}
+              className="w-full py-3 px-4 border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isDisablingBio ? (
+                <><ImSpinner2 className="w-4 h-4 animate-spin" /> Disabling...</>
+              ) : (
+                <>Disable Biometric Login</>
+              )}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleRegisterBiometrics}
+            disabled={isRegisteringBio}
+            className="w-full py-3 px-4 border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isRegisteringBio ? (
+              <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
+            ) : (
+              <>Enable Biometric Login</>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
