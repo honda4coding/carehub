@@ -21,6 +21,16 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
+    // 0. Bypass caching for Next.js prefetch requests to prevent caching unvisited pages
+    {
+      matcher({ request }) {
+        return (
+          request.headers.get("Purpose") === "prefetch" ||
+          request.headers.get("Sec-Purpose") === "prefetch"
+        );
+      },
+      handler: new NetworkOnly(),
+    },
     // 1. Transactional Write APIs (POST, PUT, DELETE, PATCH) -> NetworkOnly
     {
       matcher({ request }) {

@@ -49,3 +49,29 @@ export async function authenticateBiometrics(email: string): Promise<any> {
     throw new Error(error.message || "Biometrics login failed.");
   }
 }
+
+/**
+ * Check if the currently logged-in user has registered biometric credentials
+ */
+export async function checkBiometricsStatus(): Promise<boolean> {
+  try {
+    const res = await fetchClient.get("/webauthn/status");
+    return !!res?.data?.hasBiometrics;
+  } catch (error) {
+    console.error("Failed to fetch biometrics status:", error);
+    return false;
+  }
+}
+
+/**
+ * Disable/remove biometric authentication for the current user
+ */
+export async function disableBiometrics(): Promise<void> {
+  try {
+    await fetchClient.delete("/webauthn/remove");
+    console.log("Biometric credentials removed successfully.");
+  } catch (error: any) {
+    console.error("Failed to remove biometrics:", error);
+    throw new Error(error.message || "Failed to disable biometrics.");
+  }
+}

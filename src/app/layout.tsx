@@ -37,6 +37,9 @@ export const metadata: Metadata = {
   formatDetection: {
     telephone: false,
   },
+  other: {
+    google: "notranslate",
+  },
 };
 
 export default function RootLayout({
