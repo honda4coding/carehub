@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
 
 const isDev = process.env.NODE_ENV === "development";
 
-// Dynamic revision ensures every new deploy invalidates stale precache entries
+// Dynamic revision ensures every new deploy invalidates the stale precached offline page
 const buildRevision = `${Date.now()}`;
 
 const finalConfig = isDev
@@ -23,14 +23,12 @@ const finalConfig = isDev
       swSrc: "src/app/sw.ts",
       swDest: "public/sw.js",
       disable: false,
+      reloadOnOnline: true,
+      // Only precache /~offline — dashboard pages are auth-protected so they
+      // can't be precached at build time. They get cached via defaultCache
+      // when the user visits them.
       additionalPrecacheEntries: [
         { url: "/~offline", revision: buildRevision },
-        { url: "/admin", revision: buildRevision },
-        { url: "/admin/profile", revision: buildRevision },
-        { url: "/doctor", revision: buildRevision },
-        { url: "/doctor/profile", revision: buildRevision },
-        { url: "/patient", revision: buildRevision },
-        { url: "/patient/profile", revision: buildRevision },
       ],
     })(nextConfig);
 
