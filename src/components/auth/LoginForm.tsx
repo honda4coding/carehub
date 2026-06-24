@@ -13,6 +13,8 @@ import {
 } from "react-icons/hi";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
+import { FaFingerprint } from "react-icons/fa";
+import { authenticateBiometrics } from "@/services/webAuthnService";
 import {
   loginSchema,
   loginInitialValues,
@@ -24,6 +26,39 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 export const LoginForm = () => {
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [isBioSubmitting, setIsBioSubmitting] = useState(false);
+  const [bioError, setBioError] = useState<string | null>(null);
+
+  const handleBiometricLogin = async (email: string) => {
+    if (!email) {
+      setBioError("Please enter your email to sign in with biometrics.");
+      return;
+    }
+
+    try {
+      setIsBioSubmitting(true);
+      setBioError(null);
+
+      const res = await authenticateBiometrics(email);
+      const data = res.data;
+      const actualRole = data.role?.toLowerCase();
+
+      if (!actualRole) {
+        setBioError("Unable to determine account role. Please contact support.");
+        return;
+      }
+
+      login(data.access_token, actualRole, {
+        id: data.id,
+        email: email,
+        name: data.fullName || data.name || email,
+      });
+    } catch (err: any) {
+      setBioError(err.message || "Biometrics login failed.");
+    } finally {
+      setIsBioSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (
     values: LoginValues,
@@ -85,7 +120,7 @@ export const LoginForm = () => {
           validationSchema={loginSchema}
           onSubmit={handleSubmit}
         >
-          {({ errors, touched, isSubmitting, status }) => (
+          {({ values, errors, touched, isSubmitting, status }) => (
             <Form className="space-y-5">
               {status && (
                 <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-4 py-3 rounded-2xl text-center">
@@ -164,6 +199,31 @@ export const LoginForm = () => {
                   iconPosition="right"
                 >
                   Enter Sanctuary
+                </Button>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center my-4">
+                <div className="flex-grow border-t border-[hsl(var(--color-border))]"></div>
+                <span className="px-3 text-xs text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-widest">or</span>
+                <div className="flex-grow border-t border-[hsl(var(--color-border))]"></div>
+              </div>
+
+              {/* Biometrics Login */}
+              <div>
+                {bioError && (
+                  <div className="bg-danger-light border border-red-200 text-danger text-xs font-semibold px-4 py-2 rounded-xl text-center mb-3">
+                    {bioError}
+                  </div>
+                )}
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full flex items-center justify-center gap-2 border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.03)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white"
+                  isLoading={isBioSubmitting}
+                  onClick={() => handleBiometricLogin(values.email)}
+                >
+                  <FaFingerprint className="w-5 h-5" /> Sign in with Biometrics
                 </Button>
               </div>
             </Form>

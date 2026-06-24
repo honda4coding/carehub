@@ -1,0 +1,51 @@
+import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
+import { fetchClient } from "./fetchClient";
+
+/**
+ * Register a new biometric credential (TouchID/FaceID) for the currently logged-in user
+ */
+export async function registerBiometrics(): Promise<void> {
+  try {
+    // 1. Fetch registration options from backend
+    const res = await fetchClient.post("/webauthn/register/options", {});
+    const options = res.data;
+
+    // 2. Start simplewebauthn browser registration flow
+    const credentialResponse = await startRegistration({ optionsJSON: options });
+
+    // 3. Verify response with backend
+    await fetchClient.post("/webauthn/register/verify", { credential: credentialResponse });
+    console.log("Biometric credential registered successfully!");
+  } catch (error: any) {
+    console.error("Biometrics registration error:", error);
+    throw new Error(error.message || "Failed to register biometrics.");
+  }
+}
+
+/**
+ * Authenticate/Log in a user using their registered biometric credential (TouchID/FaceID)
+ * @param email User's email address
+ * @returns Object containing user details and tokens (same as standard login)
+ */
+export async function authenticateBiometrics(email: string): Promise<any> {
+  try {
+    // 1. Fetch authentication options from backend
+    const res = await fetchClient.post("/webauthn/login/options", { email });
+    const options = res.data;
+
+    // 2. Start simplewebauthn browser authentication flow
+    const credentialResponse = await startAuthentication({ optionsJSON: options });
+
+    // 3. Verify response with backend to complete login
+    const loginResult = await fetchClient.post("/webauthn/login/verify", {
+      email,
+      credential: credentialResponse,
+    });
+
+    console.log("Biometrics authenticated successfully!");
+    return loginResult; // Returns token, role, etc.
+  } catch (error: any) {
+    console.error("Biometrics authentication error:", error);
+    throw new Error(error.message || "Biometrics login failed.");
+  }
+}
