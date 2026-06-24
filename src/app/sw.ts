@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, NetworkOnly, StaleWhileRevalidate, ExpirationPlugin } from "serwist";
+import { Serwist, NetworkOnly, StaleWhileRevalidate, NetworkFirst, ExpirationPlugin } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -15,11 +15,67 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
-  // IMPORTANT: navigationPreload must be false for the offline fallback to work reliably.
   navigationPreload: false,
   runtimeCaching: [
-    // 1. Cache static assets (JS, CSS, Images, Fonts) to ensure the offline page renders correctly.
-    // Safe to use StaleWhileRevalidate here as these do not contain sensitive medical data.
+    // 1. Bypass caching for Next.js prefetch requests to prevent filling the cache with unvisited links.
+    {
+      matcher({ request }) {
+        return (
+          request.headers.get("Next-Router-Prefetch") === "1" ||
+          request.headers.get("Purpose") === "prefetch" ||
+          request.headers.get("Sec-Purpose") === "prefetch"
+        );
+      },
+      handler: new NetworkOnly(),
+    },
+    // 2. Handle CORS preflight requests (OPTIONS).
+    // If offline, the browser will still send OPTIONS requests for API calls with headers (like Authorization).
+    // We must mock a successful response offline so the browser proceeds to the GET request.
+    {
+      matcher({ request }) {
+        return request.method === "OPTIONS";
+      },
+      handler: async ({ request }) => {
+        try {
+          return await fetch(request);
+        } catch (err) {
+          return new Response(null, {
+            status: 204,
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            },
+          });
+        }
+      },
+    },
+    // 2.5. Bypass caching for other non-GET requests (POST, PUT, DELETE, PATCH).
+    {
+      matcher({ request }) {
+        return request.method !== "GET" && request.method !== "OPTIONS";
+      },
+      handler: new NetworkOnly(),
+    },
+    // 3. Cache backend API GET requests (Cross-origin fetch/XHR).
+    // This solves the "Failed to fetch" issue by caching the data requested by the page components.
+    {
+      matcher({ request, sameOrigin }) {
+        return !sameOrigin && request.method === "GET" && request.destination === "";
+      },
+      handler: new NetworkFirst({
+        cacheName: "api-cache",
+        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
+      }),
+    },
+    // 4. Bypass caching for ANY OTHER cross-origin requests.
+    {
+      matcher({ sameOrigin }) {
+        return !sameOrigin;
+      },
+      handler: new NetworkOnly(),
+    },
+    // 5. Cache static assets (JS, CSS, Images, Fonts).
     {
       matcher({ request, sameOrigin }) {
         return sameOrigin && (
@@ -34,18 +90,26 @@ const serwist = new Serwist({
         plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
       }),
     },
-    // 2. Strict NetworkOnly for EVERYTHING else (API, HTML, RSC, Cross-origin, Prefetch).
-    // This guarantees absolute data security (no medical data cached) and prevents SPA hydration issues.
+    // 6. Cache explicitly visited HTML pages and RSC payloads.
+    // We use NetworkFirst so the user always gets fresh data when online,
+    // but can view the cached page when offline.
     {
-      matcher: () => true,
-      handler: new NetworkOnly(),
-    }
+      matcher({ request, sameOrigin }) {
+        return sameOrigin && (
+          request.mode === "navigate" || 
+          request.headers.get("RSC") === "1" ||
+          request.headers.get("Accept")?.includes("text/html")
+        );
+      },
+      handler: new NetworkFirst({
+        cacheName: "visited-pages",
+        plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
+      }),
+    },
   ],
   fallbacks: {
     entries: [
       {
-        // When a navigation request fails (offline and page isn't cached),
-        // serve the precached /~offline page instead of a browser error.
         url: "/~offline",
         matcher({ request }) {
           return request.mode === "navigate";
@@ -57,15 +121,14 @@ const serwist = new Serwist({
 
 serwist.addEventListeners();
 
-// --- Cache Cleanup on Activation ---
-// This ensures that old data caches are strictly deleted when this new security policy takes effect.
+// Remove old cache cleanup so we don't accidentally wipe valid visited pages when SW updates
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      // Just clean up old Next.js default caches if any exist, but keep our custom caches
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName.includes("api-cache") || cacheName.includes("visited-pages")) {
-            console.log(`[Service Worker] Deleting outdated cache: ${cacheName}`);
+          if (cacheName.includes("next-rsc") || cacheName.includes("next-data")) {
             return caches.delete(cacheName);
           }
         })
