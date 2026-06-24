@@ -36,15 +36,25 @@ const serwist = new Serwist({
       },
       handler: new NetworkOnly(),
     },
-    // 3. Bypass caching for cross-origin requests (e.g., Cloudinary images, external APIs).
-    // This keeps the cache clean and focused only on the app's own assets and data.
+    // 3. Cache backend API GET requests (Cross-origin fetch/XHR).
+    // This solves the "Failed to fetch" issue by caching the data requested by the page components.
+    {
+      matcher({ request, sameOrigin }) {
+        return !sameOrigin && request.method === "GET" && (request.destination === "" || request.destination === "empty");
+      },
+      handler: new NetworkFirst({
+        cacheName: "api-cache",
+        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
+      }),
+    },
+    // 4. Bypass caching for ANY OTHER cross-origin requests (e.g., Cloudinary images, external tracking scripts).
     {
       matcher({ sameOrigin }) {
         return !sameOrigin;
       },
       handler: new NetworkOnly(),
     },
-    // 4. Cache static assets (JS, CSS, Images, Fonts) from the same origin to improve load performance.
+    // 5. Cache static assets (JS, CSS, Images, Fonts).
     {
       matcher({ request, sameOrigin }) {
         return sameOrigin && (
@@ -56,10 +66,10 @@ const serwist = new Serwist({
       },
       handler: new StaleWhileRevalidate({
         cacheName: "static-assets",
-        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
+        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
       }),
     },
-    // 5. Cache explicitly visited HTML pages and RSC payloads.
+    // 6. Cache explicitly visited HTML pages and RSC payloads.
     // We use NetworkFirst so the user always gets fresh data when online,
     // but can view the cached page when offline.
     {
