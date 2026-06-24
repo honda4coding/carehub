@@ -20,6 +20,7 @@ const finalConfig = isDev
       swSrc: "src/app/sw.ts",
       swDest: "public/sw.js",
       disable: false,
+      additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
     })(nextConfig);
 
 export default finalConfig;
