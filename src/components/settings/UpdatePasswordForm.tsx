@@ -34,9 +34,20 @@ export default function UpdatePasswordForm() {
   const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [isRegisteringBio, setIsRegisteringBio] = React.useState(false);
   const [isDisablingBio, setIsDisablingBio] = React.useState(false);
+<<<<<<< HEAD
   const [isCheckingBio, setIsCheckingBio] = React.useState(true);
   const [hasBiometrics, setHasBiometrics] = React.useState(false);
+=======
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
   const [bioToast, setBioToast] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
+  const [hasBiometrics, setHasBiometrics] = React.useState<boolean | null>(null); // null = loading
+
+  // Fetch biometrics status on mount
+  React.useEffect(() => {
+    checkBiometricsStatus()
+      .then((status) => setHasBiometrics(status))
+      .catch(() => setHasBiometrics(false));
+  }, []);
 
   React.useEffect(() => {
     let isMounted = true;
@@ -59,7 +70,11 @@ export default function UpdatePasswordForm() {
       setBioToast(null);
       await registerBiometrics();
       setHasBiometrics(true);
+<<<<<<< HEAD
       setBioToast({ msg: "FaceID / TouchID registered successfully!", variant: "success" });
+=======
+      setBioToast({ msg: "Biometric login enabled successfully!", variant: "success" });
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
     } catch (err: any) {
       setBioToast({ msg: err.message || "Failed to enable biometric login.", variant: "error" });
     } finally {
@@ -121,8 +136,6 @@ export default function UpdatePasswordForm() {
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 md:p-10 w-full max-w-[600px] shadow-sm">
       {toastMsg && <AppointmentToast message={toastMsg.msg} variant={toastMsg.variant} onClose={() => setToastMsg(null)} />}
       {bioToast && <AppointmentToast message={bioToast.msg} variant={bioToast.variant} onClose={() => setBioToast(null)} />}
-      
-      {/* Header */}
 
       <Formik
         initialValues={{ oldpassword: "", newpassword: "", cpassword: "" }}
@@ -207,6 +220,7 @@ export default function UpdatePasswordForm() {
 
       {/* Biometrics Setup */}
       <div className="space-y-4">
+<<<<<<< HEAD
         <div>
           <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" /> Biometric Login
@@ -239,6 +253,48 @@ export default function UpdatePasswordForm() {
               )}
             </button>
           </div>
+=======
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
+              <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" /> Biometric Login
+            </h3>
+            <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-1 font-semibold">
+              Use your fingerprint, FaceID, TouchID, or Windows Hello to sign in instantly.
+            </p>
+          </div>
+
+          {/* Status Badge */}
+          {hasBiometrics === null ? (
+            <span className="shrink-0 flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-border)/0.4)] px-3 py-1 rounded-full">
+              <ImSpinner2 className="w-3 h-3 animate-spin" /> Checking...
+            </span>
+          ) : hasBiometrics ? (
+            <span className="shrink-0 flex items-center gap-1.5 text-[11px] font-bold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" /> Active
+            </span>
+          ) : (
+            <span className="shrink-0 flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-border)/0.4)] px-3 py-1 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-gray-400" /> Not Set
+            </span>
+          )}
+        </div>
+
+        {/* Action Button — shown only after status is loaded */}
+        {hasBiometrics === null ? null : hasBiometrics ? (
+          <button
+            type="button"
+            onClick={handleDisableBiometrics}
+            disabled={isDisablingBio}
+            className="w-full py-3 px-4 border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isDisablingBio ? (
+              <><ImSpinner2 className="w-4 h-4 animate-spin" /> Removing...</>
+            ) : (
+              <><FaFingerprint className="w-4 h-4" /> Disable Biometric Login</>
+            )}
+          </button>
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
         ) : (
           <button
             type="button"
@@ -249,7 +305,11 @@ export default function UpdatePasswordForm() {
             {isRegisteringBio ? (
               <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
             ) : (
+<<<<<<< HEAD
               <>Enable Biometric Login</>
+=======
+              <><FaFingerprint className="w-4 h-4" /> Enable Biometric Login</>
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
             )}
           </button>
         )}

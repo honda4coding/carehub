@@ -1,12 +1,12 @@
 /// <reference lib="webworker" />
 
-import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
+<<<<<<< HEAD
 import { Serwist, NetworkFirst, CacheFirst, NetworkOnly, ExpirationPlugin } from "serwist";
+=======
+import { Serwist, NetworkOnly, StaleWhileRevalidate, NetworkFirst, ExpirationPlugin } from "serwist";
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
 
-// This declares the value of `injectionPoint` to TypeScript.
-// `injectionPoint` is the string that points to where the precache manifest should be injected.
-// By default, that string is `"self.__SW_MANIFEST"`.
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
     __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
@@ -19,6 +19,7 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
+<<<<<<< HEAD
   navigationPreload: true,
   runtimeCaching: [
     // 0. Bypass caching for Next.js prefetch requests to prevent caching unvisited pages
@@ -113,10 +114,42 @@ const serwist = new Serwist({
     },
     // Fallback to standard Next.js service worker cache settings
     ...defaultCache,
+=======
+  // IMPORTANT: navigationPreload must be false for the offline fallback to work reliably.
+  navigationPreload: false,
+  runtimeCaching: [
+    // 1. Cache static assets (JS, CSS, Images, Fonts) to ensure the offline page renders correctly.
+    // Safe to use StaleWhileRevalidate here as these do not contain sensitive medical data.
+    {
+      matcher({ request, sameOrigin }) {
+        return sameOrigin && (
+          request.destination === "image" ||
+          request.destination === "script" ||
+          request.destination === "style" ||
+          request.destination === "font"
+        );
+      },
+      handler: new StaleWhileRevalidate({
+        cacheName: "static-assets",
+        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
+      }),
+    },
+    // 2. Strict NetworkOnly for EVERYTHING else (API, HTML, RSC, Cross-origin, Prefetch).
+    // This guarantees absolute data security (no medical data cached) and prevents SPA hydration issues.
+    {
+      matcher: () => true,
+      handler: new NetworkOnly(),
+    }
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
   ],
   fallbacks: {
     entries: [
       {
+<<<<<<< HEAD
+=======
+        // When a navigation request fails (offline and page isn't cached),
+        // serve the precached /~offline page instead of a browser error.
+>>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
         url: "/~offline",
         matcher({ request }) {
           return request.mode === "navigate";
@@ -127,6 +160,8 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// --- Push Notification Handling ---
 
 self.addEventListener("push", (event) => {
   let data = { title: "CareHub Alert", body: "You have a new update", url: "/" };
@@ -177,4 +212,3 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
-

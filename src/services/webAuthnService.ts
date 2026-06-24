@@ -2,7 +2,35 @@ import { startRegistration, startAuthentication } from "@simplewebauthn/browser"
 import { fetchClient } from "./fetchClient";
 
 /**
- * Register a new biometric credential (TouchID/FaceID) for the currently logged-in user
+ * @simplewebauthn/server v10+ returns user.id as a Uint8Array internally.
+ * When Node.js serializes it via res.json(), it may become a plain object like
+ * {"0": 54, "1": 98, ...} instead of a base64url string.
+ * The browser library's base64URLStringToBuffer() calls .replace() and crashes.
+ * This helper ensures it's always a proper base64url string.
+ */
+function toBase64url(value: string | Record<string, number> | Uint8Array | null | undefined): string {
+  if (typeof value === "string") return value;
+  if (!value) return "";
+  const bytes = value instanceof Uint8Array
+    ? value
+    : new Uint8Array(Object.values(value as Record<string, number>));
+  let binary = "";
+  bytes.forEach((b) => (binary += String.fromCharCode(b)));
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+}
+
+function sanitizeRegistrationOptions(options: any) {
+  return {
+    ...options,
+    user: {
+      ...options.user,
+      id: toBase64url(options.user?.id),
+    },
+  };
+}
+
+/**
+ * Register a new biometric credential (TouchID/FaceID/Windows Hello) for the currently logged-in user
  */
 export async function registerBiometrics(): Promise<void> {
   try {
@@ -10,10 +38,13 @@ export async function registerBiometrics(): Promise<void> {
     const res = await fetchClient.post("/webauthn/register/options", {});
     const options = res.data;
 
-    // 2. Start simplewebauthn browser registration flow
-    const credentialResponse = await startRegistration({ optionsJSON: options });
+    // 2. Sanitize options: ensure user.id is a base64url string (not a serialized Uint8Array)
+    const sanitizedOptions = sanitizeRegistrationOptions(options);
 
-    // 3. Verify response with backend
+    // 3. Start simplewebauthn browser registration flow
+    const credentialResponse = await startRegistration({ optionsJSON: sanitizedOptions });
+
+    // 4. Verify response with backend
     await fetchClient.post("/webauthn/register/verify", { credential: credentialResponse });
     console.log("Biometric credential registered successfully!");
   } catch (error: any) {
@@ -23,7 +54,7 @@ export async function registerBiometrics(): Promise<void> {
 }
 
 /**
- * Authenticate/Log in a user using their registered biometric credential (TouchID/FaceID)
+ * Authenticate/Log in a user using their registered biometric credential (TouchID/FaceID/Windows Hello)
  * @param email User's email address
  * @returns Object containing user details and tokens (same as standard login)
  */
