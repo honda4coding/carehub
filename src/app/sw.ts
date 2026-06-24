@@ -1,8 +1,7 @@
 /// <reference lib="webworker" />
 
-import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, NetworkOnly } from "serwist";
+import { Serwist, NetworkOnly, StaleWhileRevalidate, NetworkFirst, ExpirationPlugin } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -16,16 +15,14 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
-  // IMPORTANT: navigationPreload must be false for the offline fallback to work.
-  // When true, the browser makes a parallel network request that fails offline,
-  // and the SW never gets the chance to serve the cached /~offline fallback page.
+  // IMPORTANT: navigationPreload must be false for the offline fallback to work reliably.
   navigationPreload: false,
   runtimeCaching: [
-    // 1. Bypass caching for Next.js prefetch requests.
-    //    This prevents pages the user hasn't actually visited from being cached.
+    // 1. Bypass caching for Next.js prefetch requests to prevent filling the cache with unvisited links.
     {
       matcher({ request }) {
         return (
+          request.headers.get("Next-Router-Prefetch") === "1" ||
           request.headers.get("Purpose") === "prefetch" ||
           request.headers.get("Sec-Purpose") === "prefetch"
         );
@@ -33,29 +30,56 @@ const serwist = new Serwist({
       handler: new NetworkOnly(),
     },
     // 2. Bypass caching for non-GET requests (POST, PUT, DELETE, PATCH).
-    //    Mutations must always go to the network.
     {
       matcher({ request }) {
         return request.method !== "GET";
       },
       handler: new NetworkOnly(),
     },
-    // 3. Everything else is handled by serwist's built-in defaultCache which provides:
-    //    - Google Fonts → CacheFirst
-    //    - Static assets (fonts, images, JS, CSS) → CacheFirst / StaleWhileRevalidate
-    //    - Next.js static JS → CacheFirst
-    //    - Next.js data → NetworkFirst
-    //    - RSC prefetch / RSC payloads → NetworkFirst (pages-rsc-prefetch / pages-rsc)
-    //    - HTML pages → NetworkFirst (pages cache)
-    //    - Same-origin APIs → NetworkFirst
-    //    - Cross-origin requests → NetworkFirst
-    //    - Catch-all → NetworkOnly
-    ...defaultCache,
+    // 3. Bypass caching for cross-origin requests (e.g., Cloudinary images, external APIs).
+    // This keeps the cache clean and focused only on the app's own assets and data.
+    {
+      matcher({ sameOrigin }) {
+        return !sameOrigin;
+      },
+      handler: new NetworkOnly(),
+    },
+    // 4. Cache static assets (JS, CSS, Images, Fonts) from the same origin to improve load performance.
+    {
+      matcher({ request, sameOrigin }) {
+        return sameOrigin && (
+          request.destination === "image" ||
+          request.destination === "script" ||
+          request.destination === "style" ||
+          request.destination === "font"
+        );
+      },
+      handler: new StaleWhileRevalidate({
+        cacheName: "static-assets",
+        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
+      }),
+    },
+    // 5. Cache explicitly visited HTML pages and RSC payloads.
+    // We use NetworkFirst so the user always gets fresh data when online,
+    // but can view the cached page when offline.
+    {
+      matcher({ request, sameOrigin }) {
+        return sameOrigin && (
+          request.mode === "navigate" || 
+          request.headers.get("RSC") === "1" ||
+          request.headers.get("Accept")?.includes("text/html")
+        );
+      },
+      handler: new NetworkFirst({
+        cacheName: "visited-pages",
+        plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
+      }),
+    },
   ],
   fallbacks: {
     entries: [
       {
-        // When any navigation request fails (user is offline and page isn't cached),
+        // When a navigation request fails (offline and page isn't cached),
         // serve the precached /~offline page instead of a browser error.
         url: "/~offline",
         matcher({ request }) {
