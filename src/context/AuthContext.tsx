@@ -66,6 +66,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
     localStorage.removeItem(USER_STORAGE_KEY);
 
+    // Clear Service Worker caches
+    if ('caches' in window) {
+      caches.keys().then((names) => {
+        names.forEach((name) => {
+          caches.delete(name);
+        });
+      });
+    }
+
+    // Clear IndexedDB for offline tracking
+    if ('indexedDB' in window) {
+      indexedDB.deleteDatabase('carehub-db');
+    }
+
     router.replace('/login');
   };
 

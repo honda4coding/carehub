@@ -1,8 +1,7 @@
 /// <reference lib="webworker" />
 
-import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { Serwist, NetworkFirst, ExpirationPlugin } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that points to where the precache manifest should be injected.
@@ -20,7 +19,17 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [],
+  fallbacks: {
+    entries: [
+      {
+        url: "/~offline",
+        matcher({ request }) {
+          return request.mode === "navigate";
+        },
+      },
+    ],
+  },
 });
 
 serwist.addEventListeners();
