@@ -82,7 +82,7 @@ export default function DoctorManagementClient({
       <DoctorsHeader
         totalCount={doctors.length}
         isLoading={false}
-        error={error}
+        error={error ?? null}
         onRefresh={handleRefresh}
       />
 
@@ -94,13 +94,18 @@ export default function DoctorManagementClient({
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             tabCounts={tabCounts}
+            isLoading={false}
+            totalDoctors={initialDoctors.length}
           />
 
           <DoctorsList
             doctors={paginatedVisible}
             isLoading={false}
-            error={error}
-            onViewLicense={(url) => setModal({ open: true, url })}
+            error={error ?? null}
+            debouncedSearch={debouncedSearch}
+            statusFilter={statusFilter}
+            setSearch={setSearch}
+            setModal={setModal}
           />
 
           <div className="mt-6 flex justify-between items-center border-t border-[hsl(var(--color-border))] pt-4">
@@ -120,7 +125,7 @@ export default function DoctorManagementClient({
 
       <LicenseViewerModal
         isOpen={modal.open}
-        url={modal.url}
+        fileUrl={modal.url}
         onClose={() => setModal({ open: false, url: null })}
       />
     </div>
