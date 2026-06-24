@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, NetworkOnly, StaleWhileRevalidate, NetworkFirst, ExpirationPlugin } from "serwist";
+import { Serwist, NetworkOnly, StaleWhileRevalidate, ExpirationPlugin } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -17,20 +17,7 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: false,
   runtimeCaching: [
-    // 1. Bypass caching for Next.js prefetch requests to prevent filling the cache with unvisited links.
-    {
-      matcher({ request }) {
-        return (
-          request.headers.get("Next-Router-Prefetch") === "1" ||
-          request.headers.get("Purpose") === "prefetch" ||
-          request.headers.get("Sec-Purpose") === "prefetch"
-        );
-      },
-      handler: new NetworkOnly(),
-    },
-    // 2. Handle CORS preflight requests (OPTIONS).
-    // If offline, the browser will still send OPTIONS requests for API calls with headers (like Authorization).
-    // We must mock a successful response offline so the browser proceeds to the GET request.
+    // 1. Handle CORS preflight requests (OPTIONS).
     {
       matcher({ request }) {
         return request.method === "OPTIONS";
@@ -50,32 +37,7 @@ const serwist = new Serwist({
         }
       },
     },
-    // 2.5. Bypass caching for other non-GET requests (POST, PUT, DELETE, PATCH).
-    {
-      matcher({ request }) {
-        return request.method !== "GET" && request.method !== "OPTIONS";
-      },
-      handler: new NetworkOnly(),
-    },
-    // 3. Cache backend API GET requests (Cross-origin fetch/XHR).
-    // This solves the "Failed to fetch" issue by caching the data requested by the page components.
-    {
-      matcher({ request, sameOrigin }) {
-        return !sameOrigin && request.method === "GET" && request.destination === "";
-      },
-      handler: new NetworkFirst({
-        cacheName: "api-cache",
-        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
-      }),
-    },
-    // 4. Bypass caching for ANY OTHER cross-origin requests.
-    {
-      matcher({ sameOrigin }) {
-        return !sameOrigin;
-      },
-      handler: new NetworkOnly(),
-    },
-    // 5. Cache static assets (JS, CSS, Images, Fonts).
+    // 2. Cache static assets (JS, CSS, Images, Fonts).
     {
       matcher({ request, sameOrigin }) {
         return sameOrigin && (
@@ -90,22 +52,11 @@ const serwist = new Serwist({
         plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
       }),
     },
-    // 6. Cache explicitly visited HTML pages and RSC payloads.
-    // We use NetworkFirst so the user always gets fresh data when online,
-    // but can view the cached page when offline.
+    // 3. Network Only for EVERYTHING ELSE (No PWA caching for pages or API data)
     {
-      matcher({ request, sameOrigin }) {
-        return sameOrigin && (
-          request.mode === "navigate" || 
-          request.headers.get("RSC") === "1" ||
-          request.headers.get("Accept")?.includes("text/html")
-        );
-      },
-      handler: new NetworkFirst({
-        cacheName: "visited-pages",
-        plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
-      }),
-    },
+      matcher: () => true,
+      handler: new NetworkOnly(),
+    }
   ],
   fallbacks: {
     entries: [
@@ -121,14 +72,13 @@ const serwist = new Serwist({
 
 serwist.addEventListeners();
 
-// Remove old cache cleanup so we don't accidentally wipe valid visited pages when SW updates
+// Cleanup any old caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
-      // Just clean up old Next.js default caches if any exist, but keep our custom caches
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (cacheName.includes("next-rsc") || cacheName.includes("next-data")) {
+          if (cacheName.includes("api-cache") || cacheName.includes("visited-pages") || cacheName.includes("next-rsc")) {
             return caches.delete(cacheName);
           }
         })
