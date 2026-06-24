@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
+  LuBuilding2,
   LuCalendarDays,
   LuCheck,
   LuChevronDown,
@@ -25,6 +26,7 @@ import {
   getDisplayStatus,
   setAvailability,
 } from "@/services/appointmentService";
+import { getMyClinics, Clinic } from "@/services/clinicService";
 import {
   dayLabel,
   formatFullDate,
@@ -40,8 +42,6 @@ import { Button } from "@/components/ui/Button";
 import TodayCard from "@/components/appointments/TodayCard";
 import ApptRow from "@/components/appointments/ApptRow";
 import ApptTab, { TabType as Tab } from "@/components/appointments/ApptTab";
-import ScheduleSetup from "@/components/appointments/ScheduleSetup";
-import GenerateSlotsCard from "@/components/appointments/GenerateSlotsCard";
 
 import SectionToggle from "@/components/appointments/SectionToggle";
 
@@ -64,6 +64,24 @@ export default function DoctorAppointmentsPage() {
   const [tab, setTab] = useState<Tab>("today");
   const [completing, setCompleting] = useState<string | null>(null);
 
+  // ── Clinics sidebar filter ───────────────────────────────────
+  const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [clinicsLoading, setClinicsLoading] = useState(true);
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null); // null = All Clinics
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await getMyClinics();
+        setClinics(data);
+      } catch {
+        // sidebar fails silently — appointments still load below
+      } finally {
+        setClinicsLoading(false);
+      }
+    })();
+  }, []);
+
   useEffect(() => {
     (async () => {
       try {
@@ -76,6 +94,27 @@ export default function DoctorAppointmentsPage() {
       }
     })();
   }, []);
+
+  // Appointments filtered to the selected clinic (or all, if none selected)
+  const filteredAppointments = useMemo(() => {
+    if (!selectedClinicId) return appointments;
+    return appointments.filter((a) => {
+      const cid =
+        typeof a.clinicId === "string" ? a.clinicId : a.clinicId?._id;
+      return cid === selectedClinicId;
+    });
+  }, [appointments, selectedClinicId]);
+
+  // Count appointments per clinic, for the sidebar badges
+  const countByClinic = useMemo(() => {
+    const map: Record<string, number> = {};
+    appointments.forEach((a) => {
+      const cid = typeof a.clinicId === "string" ? a.clinicId : a.clinicId?._id;
+      if (!cid) return;
+      map[cid] = (map[cid] || 0) + 1;
+    });
+    return map;
+  }, [appointments]);
 
   // Group appointments
   const grouped = useMemo(() => {
@@ -91,7 +130,7 @@ export default function DoctorAppointmentsPage() {
       cancelled: [],
     };
 
-    appointments.forEach((a) => {
+    filteredAppointments.forEach((a) => {
       const status = getDisplayStatus(a);
       const apptDate = new Date(a.appointmentDate);
       apptDate.setHours(0, 0, 0, 0);
@@ -124,7 +163,7 @@ export default function DoctorAppointmentsPage() {
     );
 
     return result;
-  }, [appointments]);
+  }, [filteredAppointments]);
 
   // Group upcoming by day
   const upcomingByDay = useMemo(() => {
@@ -183,11 +222,76 @@ export default function DoctorAppointmentsPage() {
         <SectionToggle />
       </header>
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 p-4 md:p-6 overflow-auto flex flex-col lg:flex-row gap-5">
 
         {/* ══════════════════════════════════════════════════════
-            SECTION A — APPOINTMENTS
+            LEFT — Clinics sidebar
         ══════════════════════════════════════════════════════ */}
+        <aside className="w-full lg:w-60 shrink-0">
+          <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
+            Clinics
+          </p>
+          <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
+            <button
+              onClick={() => setSelectedClinicId(null)}
+              className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
+                selectedClinicId === null
+                  ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
+                  : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
+              }`}
+            >
+              <LuUsers className="text-[15px] shrink-0" />
+              <span className="flex-1 text-left">All Clinics</span>
+              <span
+                className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                  selectedClinicId === null
+                    ? "bg-white/20"
+                    : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
+                }`}
+              >
+                {appointments.length}
+              </span>
+            </button>
+
+            {clinicsLoading ? (
+              [1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="h-12 rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse shrink-0 lg:w-full w-40"
+                />
+              ))
+            ) : (
+              clinics.map((clinic) => (
+                <button
+                  key={clinic._id}
+                  onClick={() => setSelectedClinicId(clinic._id)}
+                  className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
+                    selectedClinicId === clinic._id
+                      ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
+                      : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
+                  }`}
+                >
+                  <LuBuilding2 className="text-[15px] shrink-0" />
+                  <span className="flex-1 text-left truncate">{clinic.name}</span>
+                  <span
+                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                      selectedClinicId === clinic._id
+                        ? "bg-white/20"
+                        : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
+                    }`}
+                  >
+                    {countByClinic[clinic._id] || 0}
+                  </span>
+                </button>
+              ))
+            )}
+          </div>
+        </aside>
+
+        {/* ══════════════════════════════════════════════════════
+            RIGHT — APPOINTMENTS for the selected clinic
+        ══════════════════════════════════════════════════════ */}
+        <div className="flex-1 min-w-0">
           <>
             {/* Tab bar */}
             <div className="mb-6 w-full flex justify-center">
@@ -273,6 +377,7 @@ export default function DoctorAppointmentsPage() {
               )
             )}
           </>
+        </div>
       </main>
 
       {toast && (

@@ -1,7 +1,13 @@
-import { useState } from "react";
-import { LuCalendarDays, LuCheck, LuChevronDown, LuClock } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import { LuCalendarDays, LuCheck, LuChevronDown, LuClock, LuPencil, LuTrash2 } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
-import { setAvailability } from "@/services/appointmentService";
+import {
+  Availability,
+  deleteAvailability,
+  getClinicAvailability,
+  setAvailability,
+  updateAvailability,
+} from "@/services/appointmentService";
 
 const DAYS = [
   "sunday", "monday", "tuesday", "wednesday",
@@ -17,18 +23,58 @@ const DAY_LABELS: Record<Day, string> = {
 const DURATIONS = [15, 20, 30, 45, 60] as const;
 
 interface ScheduleSetupProps {
+  clinicName?: string;
+  clinicId?: string;
   onToast: (msg: string, variant: "success" | "error") => void;
   onSelectedDaysChange?: (hasDays: boolean) => void;
 }
 
-export default function ScheduleSetup({ onToast, onSelectedDaysChange }: ScheduleSetupProps) {
+type DayConfig = {
+  startTime: string;
+  endTime: string;
+  appointmentDuration: number;
+};
+
+export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelectedDaysChange }: ScheduleSetupProps) {
+  const [loadingAvailability, setLoadingAvailability] = useState(!!clinicId);
   const [selectedDays, setSelectedDays] = useState<Set<Day>>(new Set());
-  const [timeConfig, setTimeConfig] = useState<
-    Partial<Record<Day, { startTime: string; endTime: string }>>
-  >({});
-  const [duration, setDuration] = useState<number>(30);
+  const [timeConfig, setTimeConfig] = useState<Partial<Record<Day, DayConfig>>>({});
+  const [savedIds, setSavedIds] = useState<Partial<Record<Day, string>>>({});
   const [expandedDay, setExpandedDay] = useState<Day | null>(null);
   const [savingDay, setSavingDay] = useState<Day | null>(null);
+  const [deletingDay, setDeletingDay] = useState<Day | null>(null);
+
+  // Load existing availability for this clinic on mount
+  useEffect(() => {
+    if (!clinicId) return;
+    (async () => {
+      try {
+        const data: Availability[] = await getClinicAvailability(clinicId);
+        const days = new Set<Day>();
+        const config: Partial<Record<Day, DayConfig>> = {};
+        const ids: Partial<Record<Day, string>> = {};
+        data.forEach((a) => {
+          const day = a.day?.toLowerCase() as Day;
+          if (!DAYS.includes(day)) return;
+          days.add(day);
+          config[day] = {
+            startTime: a.startTime,
+            endTime: a.endTime,
+            appointmentDuration: a.appointmentDuration,
+          };
+          ids[day] = a._id;
+        });
+        setSelectedDays(days);
+        setTimeConfig(config);
+        setSavedIds(ids);
+        if (onSelectedDaysChange) onSelectedDaysChange(days.size > 0);
+      } catch {
+        // silently fail — toast not needed for background load
+      } finally {
+        setLoadingAvailability(false);
+      }
+    })();
+  }, [clinicId]);
 
   function toggleDay(day: Day) {
     setSelectedDays((prev) => {
@@ -40,7 +86,7 @@ export default function ScheduleSetup({ onToast, onSelectedDaysChange }: Schedul
         if (!timeConfig[day]) {
           setTimeConfig((tc) => ({
             ...tc,
-            [day]: { startTime: "09:00", endTime: "17:00" },
+            [day]: { startTime: "09:00", endTime: "17:00", appointmentDuration: 30 },
           }));
         }
       }
@@ -54,19 +100,71 @@ export default function ScheduleSetup({ onToast, onSelectedDaysChange }: Schedul
     if (!tc?.startTime || !tc?.endTime) return;
     setSavingDay(day);
     try {
-      await setAvailability({
-        day,
-        startTime: tc.startTime,
-        endTime: tc.endTime,
-        appointmentDuration: duration,
-      });
-      onToast(`${DAY_LABELS[day]} availability saved`, "success");
+      const existingId = savedIds[day];
+      if (existingId) {
+        // editing an already-saved day must PATCH that exact record —
+        // calling setAvailability here would create a second, overlapping
+        // entry for the same day instead of changing this one.
+        await updateAvailability(existingId, {
+          day,
+          startTime: tc.startTime,
+          endTime: tc.endTime,
+          appointmentDuration: tc.appointmentDuration,
+        });
+        onToast(`${DAY_LABELS[day]} availability updated`, "success");
+      } else {
+        const saved = await setAvailability({
+          ...(clinicId ? { clinicId } : {}),
+          day,
+          startTime: tc.startTime,
+          endTime: tc.endTime,
+          appointmentDuration: tc.appointmentDuration,
+        });
+        setSavedIds((prev) => ({ ...prev, [day]: saved._id }));
+        onToast(`${DAY_LABELS[day]} availability saved`, "success");
+      }
       setExpandedDay(null);
     } catch (err: any) {
       onToast(err.message || "Failed to save availability", "error");
     } finally {
       setSavingDay(null);
     }
+  }
+
+  async function handleDeleteDay(day: Day) {
+    const id = savedIds[day];
+    if (!id) {
+      setSelectedDays((prev) => { const n = new Set(prev); n.delete(day); return n; });
+      return;
+    }
+    setDeletingDay(day);
+    try {
+      await deleteAvailability(id);
+      setSelectedDays((prev) => { const n = new Set(prev); n.delete(day); return n; });
+      setTimeConfig((prev) => { const n = { ...prev }; delete n[day]; return n; });
+      setSavedIds((prev) => { const n = { ...prev }; delete n[day]; return n; });
+      if (onSelectedDaysChange) {
+        setSelectedDays((prev) => {
+          if (onSelectedDaysChange) onSelectedDaysChange((prev.size - 1) > 0);
+          return prev;
+        });
+      }
+      onToast(`${DAY_LABELS[day]} availability removed`, "success");
+    } catch (err: any) {
+      onToast(err.message || "Could not remove this day", "error");
+    } finally {
+      setDeletingDay(null);
+    }
+  }
+
+  if (loadingAvailability) {
+    return (
+      <div className="space-y-2">
+        {[1, 2, 3].map((i) => (
+          <div key={i} className="h-[46px] rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse" />
+        ))}
+      </div>
+    );
   }
 
   return (
@@ -78,59 +176,31 @@ export default function ScheduleSetup({ onToast, onSelectedDaysChange }: Schedul
         </p>
       </div>
       <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mb-5">
-        Pick your working days and hours
+        Pick your working days and hours{clinicName ? ` for ${clinicName}` : clinicId ? " for this clinic" : ""}
       </p>
 
-      {/* Appointment duration */}
-      <div className="mb-6">
-        <label className="block text-base font-bold text-[hsl(var(--color-text))] mb-2">
-          Appointment duration
-        </label>
-        <div className="flex gap-2 flex-wrap">
-          {DURATIONS.map((d) => (
-            <button
-              key={d}
-              onClick={() => setDuration(d)}
-              className={`px-4 py-2 rounded-xl text-base font-bold border-2 transition-all duration-300 active:scale-95 cursor-pointer ${
-                duration === d
-                  ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))]"
-                  : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))]"
-              }`}
-            >
-              {d} mins
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Days */}
       <div className="space-y-2">
         {DAYS.map((day) => {
           const isSelected = selectedDays.has(day);
           const isExpanded = expandedDay === day;
           const tc = timeConfig[day];
+          const isSaved = !!savedIds[day];
 
           return (
             <div
               key={day}
-              className={`border-2 rounded-2xl overflow-hidden transition-all duration-300 ${
+              className={`border rounded-xl overflow-hidden transition-all duration-150 ${
                 isSelected
-                  ? "border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-surface))]"
-                  : "border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-text-muted))]"
+                  ? "border-primary bg-[hsl(var(--color-primary)/0.04)]"
+                  : "border-[hsl(var(--color-border))]"
               }`}
             >
-              {/* Day row */}
-              <div className="flex items-center gap-4 px-5 py-4 cursor-pointer" onClick={(e) => {
-                  if ((e.target as HTMLElement).tagName !== 'BUTTON' && (e.target as HTMLElement).tagName !== 'svg' && (e.target as HTMLElement).tagName !== 'path') {
-                    toggleDay(day);
-                  }
-              }}>
-                {/* Checkbox */}
+              <div className="flex items-center gap-3 px-4 py-3">
                 <button
                   onClick={() => toggleDay(day)}
                   className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer ${
                     isSelected
-                      ? "bg-[hsl(var(--color-primary))] border-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))]"
+                      ? "bg-[hsl(var(--color-primary)/0.15)] border-primary text-primary"
                       : "border-[hsl(var(--color-border))] bg-transparent"
                   }`}
                 >
@@ -138,74 +208,119 @@ export default function ScheduleSetup({ onToast, onSelectedDaysChange }: Schedul
                 </button>
 
                 <span
-                  className={`text-base font-black flex-1 transition-colors duration-300 ${
-                    isSelected
-                      ? "text-[hsl(var(--color-text))]"
-                      : "text-[hsl(var(--color-text-muted))]"
+                  className={`text-base font-bold flex-1 flex items-center gap-1.5 ${
+                    isSelected ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"
                   }`}
                 >
                   {DAY_LABELS[day]}
+                  {isSaved && (
+                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]">
+                      Saved
+                    </span>
+                  )}
                 </span>
 
-                {/* Time summary + expand */}
                 {isSelected && tc && (
                   <button
-                    onClick={(e) => { e.stopPropagation(); setExpandedDay(isExpanded ? null : day); }}
-                    className="flex items-center gap-1.5 text-base font-bold text-[hsl(var(--color-text-inverse))] hover:opacity-90 transition-opacity bg-[hsl(var(--color-primary))] px-3 py-1.5 rounded-lg cursor-pointer"
+                    onClick={() => setExpandedDay(isExpanded ? null : day)}
+                    className="flex items-center gap-1.5 text-sm font-bold text-[hsl(var(--color-text))] hover:opacity-70 transition-opacity cursor-pointer"
                   >
-                    <LuClock className="text-base" />
                     {tc.startTime} – {tc.endTime}
-                    <LuChevronDown className={`text-base transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`} />
+                    <LuChevronDown className={`text-base transition-transform duration-200 ${isExpanded ? "rotate-180" : ""}`} />
+                  </button>
+                )}
+
+                {isSaved && (
+                  <button
+                    onClick={() => handleDeleteDay(day)}
+                    disabled={deletingDay === day}
+                    className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors disabled:opacity-40 shrink-0 cursor-pointer"
+                  >
+                    <LuTrash2 className="text-base" />
                   </button>
                 )}
               </div>
 
-              {/* Expanded time picker */}
-              <div className={`grid transition-all duration-300 ${isExpanded && isSelected ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className="overflow-hidden">
-                  <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] px-5 py-4 flex flex-wrap sm:flex-nowrap items-end gap-3">
-                    <div className="flex-1 min-w-[120px]">
-                      <label className="block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5">
+              {isSelected && isExpanded && (
+                <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] p-5 space-y-5">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
                         Start Time
                       </label>
-                      <input
-                        type="time"
-                        value={tc?.startTime ?? "09:00"}
-                        onChange={(e) =>
-                          setTimeConfig((prev) => ({
-                            ...prev,
-                            [day]: { ...prev[day]!, startTime: e.target.value },
-                          }))
-                        }
-                        className="w-full px-4 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-base font-bold text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] transition-all"
-                      />
+                      <div className="relative group">
+                        <input
+                          type="time"
+                          value={tc?.startTime ?? "09:00"}
+                          onChange={(e) =>
+                            setTimeConfig((prev) => ({
+                              ...prev,
+                              [day]: { ...prev[day]!, startTime: e.target.value },
+                            }))
+                          }
+                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
+                        />
+                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-[120px]">
-                      <label className="block text-sm font-bold text-[hsl(var(--color-text))] mb-1.5">
+                    <div className="flex-1">
+                      <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
                         End Time
                       </label>
-                      <input
-                        type="time"
-                        value={tc?.endTime ?? "17:00"}
-                        onChange={(e) =>
-                          setTimeConfig((prev) => ({
-                            ...prev,
-                            [day]: { ...prev[day]!, endTime: e.target.value },
-                          }))
-                        }
-                        className="w-full px-4 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-base font-bold text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] transition-all"
-                      />
+                      <div className="relative group">
+                        <input
+                          type="time"
+                          value={tc?.endTime ?? "17:00"}
+                          onChange={(e) =>
+                            setTimeConfig((prev) => ({
+                              ...prev,
+                              [day]: { ...prev[day]!, endTime: e.target.value },
+                            }))
+                          }
+                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
+                        />
+                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
+                      </div>
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2.5">
+                      Appointment Duration
+                    </label>
+                    <div className="flex gap-2 flex-wrap">
+                      {DURATIONS.map((d) => (
+                        <button
+                          key={d}
+                          onClick={() =>
+                            setTimeConfig((prev) => ({
+                              ...prev,
+                              [day]: { ...prev[day]!, appointmentDuration: d },
+                            }))
+                          }
+                          className={`px-4 py-2 rounded-xl text-base font-bold border transition-all duration-300 cursor-pointer ${
+                            tc?.appointmentDuration === d
+                              ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-md -translate-y-0.5"
+                              : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] hover:-translate-y-0.5"
+                          }`}
+                        >
+                          {d} min
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="pt-2">
                     <Button
                       onClick={() => handleSaveDay(day)}
                       isLoading={savingDay === day}
-                      className="w-full sm:w-auto !px-6 !py-2.5 !h-[42px] !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-text-inverse))] hover:!bg-[hsl(var(--color-primary-strong))]"
+                      className="w-full !py-3.5 !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-text-inverse))] hover:!bg-[hsl(var(--color-primary-strong))]"
                     >
-                      Save Day
+                      {isSaved ? <><LuPencil className="inline mr-1.5" />Update Schedule</> : "Save Schedule"}
                     </Button>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           );
         })}

@@ -27,7 +27,8 @@ import {
   LuActivity,
   LuHeart,
   LuBell,
-  LuBrainCircuit
+  LuBrainCircuit,
+  LuBuilding2,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -48,7 +49,11 @@ const adminNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Dashboard", href: "/admin", icon: <LuLayoutDashboard /> },
-      { label: "Analytics", href: "/admin/analytics", icon: <FaSquarePollVertical /> },
+      {
+        label: "Analytics",
+        href: "/admin/analytics",
+        icon: <FaSquarePollVertical />,
+      },
     ],
   },
   {
@@ -105,12 +110,17 @@ const doctorNav: NavSection[] = [
             href: "/doctor/appointments/schedule",
             icon: <LuSettings2 className="text-sm" />,
           },
-        ]
+        ],
       },
       {
         label: "Patient Directory",
         href: "/doctor/patients",
         icon: <LuUsers />,
+      },
+      {
+        label: "Clinics",
+        href: "/doctor/clinics",
+        icon: <LuBuilding2 />,
       },
     ],
   },
@@ -304,7 +314,9 @@ function SettingsGroup({
 function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
   const pathname = usePathname();
   const subItems = item.subItems ?? [];
-  const anyActive = subItems.some((i) => pathname.startsWith(i.href));
+  const anyActive = subItems.some((i) =>
+    i.href === item.href ? pathname === i.href : pathname.startsWith(i.href),
+  );
 
   const [open, setOpen] = useState(anyActive);
 
@@ -332,7 +344,10 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
       {open && (
         <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
           {subItems.map((sub) => {
-            const isActive = pathname.startsWith(sub.href);
+            const isActive =
+              sub.href === item.href
+                ? pathname === sub.href
+                : pathname.startsWith(sub.href);
             return (
               <Link
                 key={sub.href}
@@ -388,14 +403,18 @@ function SidebarContent({
         .slice(0, 2)
     : role.slice(0, 2).toUpperCase();
 
-  const [avatarUrl, setAvatarUrl] = useState<string | null>((user as any)?.profilepicture?.secure_url || null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(
+    (user as any)?.profilepicture?.secure_url || null,
+  );
 
   useEffect(() => {
     if (!avatarUrl) {
       const fetchAvatar = async () => {
         try {
           const res = await fetchClient.get(`/${role}/profile`);
-          const pic = res?.data?.profilepicture?.secure_url || res?.data?.user?.profilepicture?.secure_url;
+          const pic =
+            res?.data?.profilepicture?.secure_url ||
+            res?.data?.user?.profilepicture?.secure_url;
           if (pic) setAvatarUrl(pic);
         } catch {
           // ignore
@@ -409,7 +428,10 @@ function SidebarContent({
     <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="h-[73px] shrink-0 flex items-center justify-between gap-3 px-5 border-b border-[hsl(var(--color-border))]">
-        <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity group">
+        <Link
+          href="/"
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+        >
           <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform shrink-0" />
           <div className="flex flex-col justify-center mt-0.5">
             <span className="text-[19px] font-bold text-[hsl(var(--color-text))] tracking-tight leading-none mb-[3px]">
@@ -440,7 +462,9 @@ function SidebarContent({
             </p>
             {section.items.map((item) => {
               if (item.subItems && item.subItems.length > 0) {
-                return <NavGroup key={item.href} item={item} onClose={onClose} />;
+                return (
+                  <NavGroup key={item.href} item={item} onClose={onClose} />
+                );
               }
 
               const isActive =
@@ -495,7 +519,12 @@ function SidebarContent({
         <div className="flex items-center gap-3 p-2.5 rounded-[12px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] hover:border-[hsl(var(--color-border))] transition-colors group cursor-pointer">
           <div className="relative w-10 h-10 rounded-[8px] bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] text-[14px] font-black shrink-0 overflow-hidden">
             {avatarUrl ? (
-              <Image src={avatarUrl} alt="Avatar" fill className="object-cover" />
+              <Image
+                src={avatarUrl}
+                alt="Avatar"
+                fill
+                className="object-cover"
+              />
             ) : (
               initials
             )}

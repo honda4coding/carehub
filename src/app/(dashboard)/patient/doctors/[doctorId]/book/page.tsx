@@ -13,6 +13,7 @@ import {
   DoctorListItem, Slot,
   bookAppointment, getApprovedDoctors, getAvailableSlots, getMyAppointments,
 } from "@/services/appointmentService";
+import { getDoctorClinics, Clinic } from "@/services/clinicService";
 import {
   formatFullDate, groupSlotsByDate, initialsOf, slotTimeRangeLabel,
 } from "@/components/appointments/format";
@@ -23,34 +24,6 @@ import EmptyState from "@/components/appointments/EmptyState";
 type Step = "clinic" | "calendar" | "confirm" | "success";
 type BookingMode = "online" | "contact" | null;
 type DoctorContact = { phone?: string; whatsapp?: string; landline?: string };
-
-// Static clinic data — replace with a real API call when the backend is ready.
-// Each clinic can eventually carry its own slotFilter (e.g. by clinicId) so the
-// calendar only shows slots for the chosen location.
-type Clinic = {
-  id: string;
-  name: string;
-  address: string;
-  days: string;
-  hours: string;
-};
-
-const STATIC_CLINICS: Clinic[] = [
-  {
-    id: "clinic-main",
-    name: "Main Clinic",
-    address: "Cairo Medical Center, Tahrir Square",
-    days: "Sun – Thu",
-    hours: "9:00 AM – 3:00 PM",
-  },
-  {
-    id: "clinic-branch",
-    name: "Branch Clinic",
-    address: "Damietta Health Center, Corniche St.",
-    days: "Mon, Wed, Fri",
-    hours: "4:00 PM – 9:00 PM",
-  },
-];
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -77,7 +50,6 @@ function buildMonthCells(monthStart: Date) {
   return cells;
 }
 
-// Returns "9:00 AM – 5:30 PM" using the earliest start and latest end of the day.
 function dayHoursLabel(slotsForDay: Slot[]): string {
   if (slotsForDay.length === 0) return "—";
   const sorted = [...slotsForDay].sort(
@@ -85,14 +57,11 @@ function dayHoursLabel(slotsForDay: Slot[]): string {
   );
   const first = sorted[0];
   const last = sorted[sorted.length - 1];
-
   const fmt = (iso: string) =>
     new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-
   return `${fmt(first.startDateTime)} – ${fmt(last.endDateTime)}`;
 }
 
-// Earliest-first sort, reused for both the auto-pick and the dropdown order.
 function byStartTime(a: Slot, b: Slot) {
   return new Date(a.startDateTime).getTime() - new Date(b.startDateTime).getTime();
 }
@@ -104,11 +73,11 @@ export default function BookAppointmentPage() {
   const router = useRouter();
 
   const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  // Dates the patient already has a non-cancelled appointment on
   const [bookedDates, setBookedDates] = useState<Set<string>>(new Set());
 
   const [step, setStep] = useState<Step>("clinic");
@@ -125,28 +94,45 @@ export default function BookAppointmentPage() {
   useEffect(() => {
     (async () => {
       try {
-        const [doctors, availableSlots, myAppts] = await Promise.all([
+        const [doctors, doctorClinics, myAppts] = await Promise.all([
           getApprovedDoctors(),
-          getAvailableSlots(doctorId),
+          getDoctorClinics(doctorId),
           getMyAppointments(),
         ]);
         setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
-        setSlots(availableSlots);
+        setClinics(doctorClinics);
 
-        // Build set of date keys the patient is already booked on
+        // Only block days where the patient already has a non-cancelled
+        // appointment with THIS SAME doctor — other doctors are unaffected.
         const booked = new Set(
           (myAppts as any[])
-            .filter((a) => a.status !== "cancelled")
+            .filter((a) => {
+              const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
+              return apptDoctorId === doctorId && a.status !== "cancelled";
+            })
             .map((a) => localDateKey(new Date(a.startDateTime)))
         );
         setBookedDates(booked);
       } catch (err: any) {
-        setLoadError(err.message || "Failed to load available slots");
+        setLoadError(err.message || "Failed to load doctor information");
       } finally {
         setLoading(false);
       }
     })();
   }, [doctorId]);
+
+  // When a clinic is selected, load its slots
+  useEffect(() => {
+    if (!selectedClinic) return;
+    (async () => {
+      try {
+        const data = await getAvailableSlots(doctorId, selectedClinic._id);
+        setSlots(data);
+      } catch (err: any) {
+        setLoadError(err.message || "Failed to load slots for this clinic");
+      }
+    })();
+  }, [selectedClinic, doctorId]);
 
   // ── Derived state ──────────────────────────────────────────────────────────
 
@@ -168,13 +154,22 @@ export default function BookAppointmentPage() {
   const monthCells = useMemo(() => (viewMonth ? buildMonthCells(viewMonth) : []), [viewMonth]);
   const selectedGroup = selectedDateKey ? groupsByLocalKey.get(selectedDateKey) ?? null : null;
 
-  // Slots for the selected day, soonest first — this is what backs the dropdown.
   const sortedDaySlots = useMemo(
     () => (selectedGroup ? [...selectedGroup.slots].sort(byStartTime) : []),
     [selectedGroup]
   );
 
   // ── Handlers ───────────────────────────────────────────────────────────────
+
+  function handleSelectClinic(clinic: Clinic) {
+    setSelectedClinic(clinic);
+    setSlots([]);
+    setViewMonth(null);
+    setSelectedDateKey(null);
+    setBookingMode(null);
+    setSelectedSlot(null);
+    setStep("calendar");
+  }
 
   function goToMonth(offset: number) {
     setViewMonth((prev) => (prev ? new Date(prev.getFullYear(), prev.getMonth() + offset, 1) : prev));
@@ -186,15 +181,12 @@ export default function BookAppointmentPage() {
   function handlePickDay(date: Date) {
     const key = localDateKey(date);
     if (!groupsByLocalKey.has(key)) return;
-    if (bookedDates.has(key)) return; // already booked on this day
+    if (bookedDates.has(key)) return;
     setSelectedDateKey(key);
     setBookingMode(null);
     setSelectedSlot(null);
   }
 
-  // Opens the online-booking panel and pre-fills the dropdown with the next
-  // slot in line. If the patient never touches the dropdown, this is exactly
-  // what gets booked when they hit Continue.
   function handleBookOnline() {
     if (!selectedGroup || selectedGroup.slots.length === 0) return;
     const nextInLine = [...selectedGroup.slots].sort(byStartTime)[0];
@@ -224,8 +216,6 @@ export default function BookAppointmentPage() {
   const contact: DoctorContact =
     (doctor as (DoctorListItem & { contact?: DoctorContact }) | null)?.contact ?? {};
   const hasContact = Boolean(contact.phone || contact.whatsapp || contact.landline);
-
-  // ── Step count (clinic + calendar + confirm) ───────────────────────────────
 
   const ALL_STEPS: Step[] = ["clinic", "calendar", "confirm"];
   const stepIndex = ALL_STEPS.indexOf(step);
@@ -292,38 +282,54 @@ export default function BookAppointmentPage() {
         ) : step === "clinic" ? (
           /* ── Step 1: clinic selector ── */
           <div className="p-4 md:p-6 max-w-xl mx-auto w-full">
-            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mb-5">
-              {doctorName} operates from multiple clinics. Choose one to see its availability.
-            </p>
-            <div className="space-y-3">
-              {STATIC_CLINICS.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => { setSelectedClinic(c); setStep("calendar"); }}
-                  className="w-full text-left p-4 rounded-2xl border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-sky-500 hover:bg-sky-50/50 transition-all group"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-sky-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <LuBuilding2 className="text-white text-[17px]" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-black text-[hsl(var(--color-text))] group-hover:text-sky-700 transition-colors">
-                        {c.name}
-                      </p>
-                      <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))]">
-                        <LuMapPin className="text-[12px] shrink-0" /> {c.address}
+            {clinics.length === 0 ? (
+              <EmptyState
+                icon={<LuBuilding2 />}
+                title="No clinics available"
+                description="This doctor hasn't added any clinics yet."
+              />
+            ) : (
+              <>
+                <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mb-5">
+                  {doctorName} operates from {clinics.length > 1 ? "multiple clinics" : "the following clinic"}. Choose one to see its availability.
+                </p>
+                <div className="space-y-3">
+                  {clinics.map((c) => (
+                    <button
+                      key={c._id}
+                      onClick={() => handleSelectClinic(c)}
+                      className="w-full text-left p-4 rounded-2xl border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-sky-500 hover:bg-sky-50/50 transition-all group"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-sky-700 flex items-center justify-center shrink-0 mt-0.5">
+                          <LuBuilding2 className="text-white text-[17px]" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-[14px] font-black text-[hsl(var(--color-text))] group-hover:text-sky-700 transition-colors">
+                            {c.name}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))]">
+                            <LuMapPin className="text-[12px] shrink-0" /> {c.address} — {c.governorate}
+                          </div>
+                          {(c.phone || c.whatsapp || c.landline) && (
+                            <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-sky-700">
+                              <LuPhone className="text-[12px] shrink-0" />
+                              {c.phone || c.whatsapp || c.landline}
+                            </div>
+                          )}
+                          {c.services && c.services.length > 0 && (
+                            <div className="mt-1.5 text-[11px] font-bold text-sky-700">
+                              {c.services.length} service{c.services.length !== 1 ? "s" : ""} available
+                            </div>
+                          )}
+                        </div>
+                        <LuChevronRight className="text-[hsl(var(--color-text-muted))] group-hover:text-sky-600 transition-colors mt-1 shrink-0" />
                       </div>
-                      <div className="flex items-center gap-3 mt-2 text-[11.5px] font-bold text-sky-700">
-                        <span>{c.days}</span>
-                        <span className="opacity-40">·</span>
-                        <span>{c.hours}</span>
-                      </div>
-                    </div>
-                    <LuChevronRight className="text-[hsl(var(--color-text-muted))] group-hover:text-sky-600 transition-colors mt-1 shrink-0" />
-                  </div>
-                </button>
-              ))}
-            </div>
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
 
         ) : step === "calendar" ? (
@@ -350,7 +356,7 @@ export default function BookAppointmentPage() {
 
             {dateGroups.length === 0 ? (
               <div className="p-6">
-                <EmptyState icon={<LuCircleAlert />} title="No open slots" description="This doctor hasn't published any availability yet." />
+                <EmptyState icon={<LuCircleAlert />} title="No open slots" description="This clinic doesn't have any available slots yet." />
               </div>
             ) : (
               <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 w-full justify-center items-start">
@@ -396,7 +402,7 @@ export default function BookAppointmentPage() {
                           <button
                             disabled={!isAvailable || isAlreadyBooked}
                             onClick={() => handlePickDay(date)}
-                            title={isAlreadyBooked ? "You already have an appointment this day" : undefined}
+                            title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : undefined}
                             className={`w-11 h-11 rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
                               isSelected
                                 ? "bg-sky-700 border-sky-800 text-white"
@@ -521,24 +527,24 @@ export default function BookAppointmentPage() {
 
                         {bookingMode === "contact" && (
                           <div>
-                            {hasContact ? (
+                            {selectedClinic && (selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline) ? (
                               <div className="flex flex-col gap-2 mb-4">
-                                {contact.phone && (
-                                  <a href={`tel:${contact.phone}`}
+                                {selectedClinic.phone && (
+                                  <a href={`tel:${selectedClinic.phone}`}
                                     className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
-                                    <LuPhone className="text-[15px]" /> Call: {contact.phone}
+                                    <LuPhone className="text-[15px]" /> Call: {selectedClinic.phone}
                                   </a>
                                 )}
-                                {contact.whatsapp && (
-                                  <a href={`https://wa.me/${contact.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
+                                {selectedClinic.whatsapp && (
+                                  <a href={`https://wa.me/${selectedClinic.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
                                     className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
-                                    <FaWhatsapp className="text-[15px]" /> WhatsApp: {contact.whatsapp}
+                                    <FaWhatsapp className="text-[15px]" /> WhatsApp: {selectedClinic.whatsapp}
                                   </a>
                                 )}
-                                {contact.landline && (
-                                  <a href={`tel:${contact.landline}`}
+                                {selectedClinic.landline && (
+                                  <a href={`tel:${selectedClinic.landline}`}
                                     className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
-                                    <LuPhoneCall className="text-[15px]" /> Landline: {contact.landline}
+                                    <LuPhoneCall className="text-[15px]" /> Landline: {selectedClinic.landline}
                                   </a>
                                 )}
                               </div>
@@ -546,7 +552,7 @@ export default function BookAppointmentPage() {
                               <div className="flex items-start gap-2.5 bg-sky-50 border border-sky-300 rounded-xl p-3 mb-4">
                                 <LuInfo className="text-sky-600 text-[14px] mt-0.5 shrink-0" />
                                 <p className="text-[12px] font-medium text-sky-700 leading-relaxed">
-                                  Contact details aren't available for this doctor yet.
+                                  Contact details aren't available for this clinic yet.
                                 </p>
                               </div>
                             )}
@@ -600,7 +606,7 @@ export default function BookAppointmentPage() {
                 {selectedClinic && (
                   <div className="flex items-center gap-2.5 text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
                     <LuMapPin className="text-sky-600 text-[14px] shrink-0" />
-                    {selectedClinic.name} — {selectedClinic.address}
+                    {selectedClinic.name} — {selectedClinic.address}, {selectedClinic.governorate}
                   </div>
                 )}
 
@@ -620,7 +626,7 @@ export default function BookAppointmentPage() {
                 <button
                   onClick={handleConfirm}
                   disabled={confirming}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[14px] font-black -[0_4px_15px_rgba(2,132,199,0.4)] -[0_6px_20px_rgba(2,132,199,0.5)] hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all"
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[14px] font-black hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all"
                 >
                   {confirming ? "Booking…" : "Confirm Booking ✓"}
                 </button>
@@ -638,7 +644,7 @@ export default function BookAppointmentPage() {
           /* ── Step 4: success ── */
           <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center">
             <div className="relative mb-6">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center mx-auto -[0_8px_25px_rgba(2,132,199,0.4)] animate-bounce">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center mx-auto animate-bounce">
                 <LuCheck className="text-[36px] text-white" />
               </div>
               <div className="absolute inset-0 rounded-full bg-sky-600/20 animate-ping" />
@@ -656,7 +662,7 @@ export default function BookAppointmentPage() {
             <div className="flex gap-3 flex-wrap justify-center">
               <button
                 onClick={() => router.push("/patient/appointments")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white -[0_4px_15px_rgba(2,132,199,0.4)] hover:scale-105 transition-all"
+                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white hover:scale-105 transition-all"
               >
                 View my appointments
               </button>
