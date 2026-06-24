@@ -39,6 +39,7 @@ interface BookingGroup {
   key: string;
   doctorName: string;
   clinicName: string;
+  clinicAddress?: string;
   items: Appointment[];
 }
 
@@ -78,6 +79,7 @@ export default function PatientAppointmentsPage() {
           key,
           doctorName: doctorNameOf(a),
           clinicName: a.clinicId?.name ?? "Clinic",
+          clinicAddress: a.clinicId?.address,
           items: [],
         });
       }
@@ -205,7 +207,7 @@ export default function PatientAppointmentsPage() {
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-bold truncate">{group.clinicName}</p>
                       <p className={`text-[10.5px] font-medium truncate ${isActive ? "text-white/80" : "text-[hsl(var(--color-text-muted))]"}`}>
-                        {group.doctorName}
+                        {group.clinicAddress || group.doctorName}
                       </p>
                     </div>
                     <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${isActive ? "bg-white/20" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
