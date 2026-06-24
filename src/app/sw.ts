@@ -53,10 +53,21 @@ const serwist = new Serwist({
       matcher({ request, url }) {
         const path = url.pathname;
         const isGet = request.method === "GET";
+        
+        let backendOrigin = "";
+        if (process.env.NEXT_PUBLIC_API_URL) {
+          try {
+            backendOrigin = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
+          } catch {
+            backendOrigin = process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
+          }
+        }
+        
         const isBackendApi =
           url.origin === "http://localhost:3000" ||
           url.origin === "http://localhost:5000" ||
-          (process.env.NEXT_PUBLIC_API_URL && url.origin === process.env.NEXT_PUBLIC_API_URL);
+          (backendOrigin && url.origin === backendOrigin);
+          
         return isGet && (isBackendApi || path.startsWith("/api/"));
       },
       handler: new NetworkFirst({
