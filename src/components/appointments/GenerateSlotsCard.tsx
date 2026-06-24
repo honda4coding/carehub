@@ -1,20 +1,51 @@
-import { useState, useMemo } from "react";
-import { LuClock, LuRefreshCw } from "react-icons/lu";
+import { useEffect, useMemo, useState } from "react";
+import { LuClock, LuRefreshCw, LuCalendarDays, LuTrash2, LuChevronDown } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
-import { generateSlots, deleteSlot, Slot } from "@/services/appointmentService";
-import { formatFullDate, groupSlotsByDate } from "@/components/appointments/format";
-import SlotChip from "./SlotChip";
+import {
+  generateSlots,
+  deleteSlot,
+  getAvailableSlots,
+  Slot,
+} from "@/services/appointmentService";
+import { formatFullDate, groupSlotsByDate, slotTimeRangeLabel } from "@/components/appointments/format";
+import DateRangeFilter from "@/components/ui/DateRangeFilter";
 
 interface GenerateSlotsCardProps {
+  clinicId?: string;
+  doctorId?: string;
   hasSelectedDays: boolean;
   onToast: (msg: string, variant: "success" | "error") => void;
 }
 
-export default function GenerateSlotsCard({ hasSelectedDays, onToast }: GenerateSlotsCardProps) {
+export default function GenerateSlotsCard({
+  clinicId,
+  doctorId,
+  hasSelectedDays,
+  onToast,
+}: GenerateSlotsCardProps) {
   const [generateRange, setGenerateRange] = useState({ startDate: "", endDate: "" });
   const [generating, setGenerating] = useState(false);
-  const [generatedSlots, setGeneratedSlots] = useState<Slot[]>([]);
+  const [mySlots, setMySlots] = useState<Slot[]>([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
   const [deletingSlot, setDeletingSlot] = useState<string | null>(null);
+  const [openSlotDay, setOpenSlotDay] = useState<string | null>(null);
+
+  async function loadSlots() {
+    if (!doctorId) return;
+    setSlotsLoading(true);
+    try {
+      const data = await getAvailableSlots(doctorId, clinicId);
+      setMySlots(data);
+    } catch (err: any) {
+      onToast(err.message || "Failed to load open slots", "error");
+    } finally {
+      setSlotsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (doctorId) loadSlots();
+  }, [doctorId, clinicId]);
 
   async function handleGenerate() {
     if (!generateRange.startDate || !generateRange.endDate) {
@@ -23,16 +54,13 @@ export default function GenerateSlotsCard({ hasSelectedDays, onToast }: Generate
     }
     setGenerating(true);
     try {
-      const res = await generateSlots(generateRange);
-      // Wait, we need to show the generated slots. generateSlots returns a count but we also need the actual slots.
-      // If the backend returns count, where do we get the generatedSlots from?
-      // In page.tsx:
-      // setGeneratedSlots(...) wasn't being done after generateSlots!
-      // Oh wait, looking at page.tsx line 296, the user didn't even set generated slots there! 
-      // It just showed a success toast. Let's keep it similar.
-      // Wait, there IS a generatedSlots state in page.tsx that was empty. Let's just keep the API call.
-      onToast(`Generated ${res.count ?? "your"} slots successfully`, "success");
-      // Optionally fetch slots here if we wanted to display them
+      const res = await generateSlots({
+        ...(clinicId ? { clinicId } : {}),
+        startDate: generateRange.startDate,
+        endDate: generateRange.endDate,
+      });
+      onToast(`Generated ${res.totalSlots ?? res.count ?? "your"} slots successfully`, "success");
+      loadSlots();
     } catch (err: any) {
       onToast(err.message || "Failed to generate slots", "error");
     } finally {
@@ -44,7 +72,7 @@ export default function GenerateSlotsCard({ hasSelectedDays, onToast }: Generate
     setDeletingSlot(slotId);
     try {
       await deleteSlot(slotId);
-      setGeneratedSlots((prev) => prev.filter((s) => s._id !== slotId));
+      setMySlots((prev) => prev.filter((s) => s._id !== slotId));
       onToast("Slot removed", "success");
     } catch (err: any) {
       onToast(err.message || "Could not delete slot", "error");
@@ -53,50 +81,43 @@ export default function GenerateSlotsCard({ hasSelectedDays, onToast }: Generate
     }
   }
 
-  const slotGroups = useMemo(() => groupSlotsByDate(generatedSlots), [generatedSlots]);
+  async function handleDeleteDaySlots(slots: Slot[]) {
+    try {
+      await Promise.all(slots.map((s) => deleteSlot(s._id)));
+      const deletedIds = new Set(slots.map((s) => s._id));
+      setMySlots((prev) => prev.filter((s) => !deletedIds.has(s._id)));
+      onToast("All slots for this day removed", "success");
+    } catch (err: any) {
+      onToast(err.message || "Could not delete some slots", "error");
+    }
+  }
+
+  const slotGroups = useMemo(() => groupSlotsByDate(mySlots), [mySlots]);
 
   return (
     <div className="space-y-5">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 duration-200">
+      {/* Generate card */}
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-1">
-          <LuRefreshCw className="text-[hsl(var(--color-primary))] text-[14px]" />
-          <p className="text-[13px] font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
+          <LuRefreshCw className="text-[hsl(var(--color-primary))] text-base" />
+          <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
             Generate slots
           </p>
         </div>
-        <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mb-4">
-          Pick a date range and we'll create all slots from your weekly schedule
+        <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mb-4">
+          Pick a date range and we'll create all slots from your saved weekly schedule
+          {clinicId ? " for this clinic" : ""}
         </p>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
-          <div>
-            <label className="block text-[12px] font-bold text-[hsl(var(--color-text))] mb-1.5">
-              From
-            </label>
-            <input
-              type="date"
-              min={new Date().toISOString().split("T")[0]}
-              value={generateRange.startDate}
-              onChange={(e) =>
-                setGenerateRange((r) => ({ ...r, startDate: e.target.value }))
-              }
-              className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[13px] font-bold text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all cursor-pointer"
-            />
-          </div>
-          <div>
-            <label className="block text-[12px] font-bold text-[hsl(var(--color-text))] mb-1.5">
-              To
-            </label>
-            <input
-              type="date"
-              min={generateRange.startDate || new Date().toISOString().split("T")[0]}
-              value={generateRange.endDate}
-              onChange={(e) =>
-                setGenerateRange((r) => ({ ...r, endDate: e.target.value }))
-              }
-              className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[13px] font-bold text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.15)] transition-all cursor-pointer"
-            />
-          </div>
+        <div className="mb-4">
+          <DateRangeFilter
+            startDate={generateRange.startDate}
+            endDate={generateRange.endDate}
+            minStartDate={new Date().toISOString().split("T")[0]}
+            minEndDate={generateRange.startDate || new Date().toISOString().split("T")[0]}
+            onStartDateChange={(val) => setGenerateRange((r) => ({ ...r, startDate: val }))}
+            onEndDateChange={(val) => setGenerateRange((r) => ({ ...r, endDate: val }))}
+          />
         </div>
 
         <Button
@@ -110,42 +131,109 @@ export default function GenerateSlotsCard({ hasSelectedDays, onToast }: Generate
         </Button>
 
         {!hasSelectedDays && (
-          <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] text-center mt-2">
+          <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] text-center mt-2">
             Select at least one working day first
           </p>
         )}
       </div>
 
-      {/* Generated slots preview */}
-      {slotGroups.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <LuClock className="text-[hsl(var(--color-primary))] text-[14px]" />
-            <p className="text-[13px] font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
-              Generated slots
+      {/* Open slots */}
+      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <LuClock className="text-[hsl(var(--color-primary))] text-base" />
+            <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
+              Open slots
             </p>
           </div>
-          <div className="space-y-4 max-h-[340px] overflow-y-auto pr-1">
-            {slotGroups.map((group) => (
-              <div key={group.dateKey}>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">
-                  {formatFullDate(group.dateObj)}
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {group.slots.map((slot) => (
-                    <SlotChip
-                      key={slot._id}
-                      slot={slot}
-                      onDelete={handleDeleteSlot}
-                      deleting={deletingSlot === slot._id}
-                    />
-                  ))}
-                </div>
-              </div>
+          {!slotsLoading && mySlots.length > 0 && (
+            <span className="text-sm font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-primary">
+              {mySlots.length} total
+            </span>
+          )}
+        </div>
+
+        {slotsLoading ? (
+          <div className="space-y-2.5">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[48px] rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse" />
             ))}
           </div>
-        </div>
-      )}
+        ) : slotGroups.length === 0 ? (
+          <p className="text-base font-semibold text-[hsl(var(--color-text-muted))] text-center py-6">
+            No open slots yet — generate some above.
+          </p>
+        ) : (
+          <div className="space-y-2">
+            {slotGroups.map((group) => {
+              const isOpen = openSlotDay === group.dateKey;
+              return (
+                <div key={group.dateKey} className="border border-[hsl(var(--color-border))] rounded-xl overflow-hidden">
+                  <div className="w-full flex items-center justify-between px-4 py-3">
+                    <button
+                      onClick={() => setOpenSlotDay(isOpen ? null : group.dateKey)}
+                      className="flex items-center gap-3 flex-1 text-left hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
+                    >
+                      <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center shrink-0">
+                        <LuCalendarDays className="text-base" />
+                      </div>
+                      <div>
+                        <p className="text-base font-black text-[hsl(var(--color-text))]">
+                          {formatFullDate(group.dateObj)}
+                        </p>
+                        <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">
+                          {group.slots.length} slot{group.slots.length !== 1 ? "s" : ""} available
+                        </p>
+                      </div>
+                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleDeleteDaySlots(group.slots)}
+                        className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors p-1 cursor-pointer"
+                        title="Delete all slots for this day"
+                      >
+                        <LuTrash2 className="text-base" />
+                      </button>
+                      <LuChevronDown
+                        onClick={() => setOpenSlotDay(isOpen ? null : group.dateKey)}
+                        className={`text-[hsl(var(--color-text-muted))] text-base transition-transform duration-200 cursor-pointer ${isOpen ? "rotate-180" : ""}`}
+                      />
+                    </div>
+                  </div>
+
+                  {isOpen && (
+                    <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] px-4 py-3">
+                      <div className="grid grid-cols-1 gap-2">
+                        {group.slots.map((slot) => (
+                          <div
+                            key={slot._id}
+                            className="flex items-center justify-between gap-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl px-3.5 py-3 hover:border-primary transition-all duration-300"
+                          >
+                            <div className="flex items-center gap-2">
+                              <LuClock className="text-primary text-base" />
+                              <span className="text-base font-bold text-[hsl(var(--color-text))]">
+                                {slotTimeRangeLabel(slot)}
+                              </span>
+                            </div>
+                            <button
+                              onClick={() => handleDeleteSlot(slot._id)}
+                              disabled={deletingSlot === slot._id}
+                              className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] p-1.5 rounded-md transition-all duration-300 disabled:opacity-40 shrink-0 cursor-pointer"
+                              title="Delete this slot"
+                            >
+                              <LuTrash2 className="text-base" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

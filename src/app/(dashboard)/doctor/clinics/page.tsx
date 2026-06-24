@@ -1,17 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import {
   LuBuilding2,
   LuPlus,
   LuPencil,
   LuTrash2,
-  LuPhone,
-  LuMapPin,
   LuX,
   LuTriangleAlert,
-  LuArrowRight,
 } from "react-icons/lu";
 
 import {
@@ -23,6 +19,7 @@ import {
   updateClinic,
   deleteClinic,
 } from "@/services/clinicService";
+import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
 
 // ─── Empty form state ──────────────────────────────────────────────────────────
 
@@ -39,6 +36,7 @@ export default function DoctorClinicsPage() {
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
 
   // modal state
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,12 +49,13 @@ export default function DoctorClinicsPage() {
   const [deleteTarget, setDeleteTarget] = useState<Clinic | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  async function loadClinics() {
+  async function loadClinics(selectFirst = false) {
     setLoading(true);
     setError(null);
     try {
       const data = await getMyClinics();
       setClinics(data);
+      if (selectFirst && data.length > 0) setSelectedClinicId(data[0]._id);
     } catch (err: any) {
       setError(err.message || "Failed to load clinics");
     } finally {
@@ -65,7 +64,7 @@ export default function DoctorClinicsPage() {
   }
 
   useEffect(() => {
-    loadClinics();
+    loadClinics(true);
   }, []);
 
   function openAddModal() {
@@ -126,6 +125,7 @@ export default function DoctorClinicsPage() {
       } else {
         const created = await addClinic(payload);
         setClinics((prev) => [created, ...prev]);
+        setSelectedClinicId(created._id);
       }
       setModalOpen(false);
     } catch (err: any) {
@@ -141,6 +141,10 @@ export default function DoctorClinicsPage() {
     try {
       await deleteClinic(deleteTarget._id);
       setClinics((prev) => prev.filter((c) => c._id !== deleteTarget._id));
+      if (selectedClinicId === deleteTarget._id) {
+        const remaining = clinics.filter((c) => c._id !== deleteTarget._id);
+        setSelectedClinicId(remaining.length > 0 ? remaining[0]._id : null);
+      }
       setDeleteTarget(null);
     } catch (err: any) {
       setError(err.message || "Failed to delete clinic");
@@ -158,7 +162,7 @@ export default function DoctorClinicsPage() {
             <LuBuilding2 className="text-[hsl(var(--color-primary))]" /> My Clinics
           </h1>
           <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-1 pl-11 md:pl-0">
-            Manage your clinic locations, services and availability
+            Pick a clinic on the left to manage its services and schedule
           </p>
         </div>
         <button
@@ -181,7 +185,7 @@ export default function DoctorClinicsPage() {
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-44 rounded-2xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] animate-pulse"
+                className="h-24 rounded-2xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] animate-pulse"
               />
             ))}
           </div>
@@ -196,65 +200,93 @@ export default function DoctorClinicsPage() {
             </p>
             <button
               onClick={openAddModal}
-              className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl flex items-center gap-2"
+              className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer"
             >
               <LuPlus /> Add Clinic
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {clinics.map((clinic) => (
-              <div
-                key={clinic._id}
-                className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-3 hover:shadow-md transition-shadow"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] leading-snug">
-                    {clinic.name}
-                  </h3>
-                  <span className="shrink-0 text-[10px] font-bold px-2 py-1 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]">
-                    {clinic.services?.length || 0} services
-                  </span>
-                </div>
-
-                <div className="flex items-start gap-2 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-                  <LuMapPin className="mt-0.5 shrink-0" />
-                  <span>
-                    {clinic.address} — {clinic.governorate}
-                  </span>
-                </div>
-
-                {(clinic.phone || clinic.whatsapp || clinic.landline) && (
-                  <div className="flex items-center gap-2 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-                    <LuPhone className="shrink-0" />
-                    <span>{clinic.phone || clinic.whatsapp || clinic.landline}</span>
-                  </div>
-                )}
-
-                <div className="mt-auto pt-3 border-t border-[hsl(var(--color-border))] flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() => openEditModal(clinic)}
-                      className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] flex items-center gap-1 cursor-pointer"
+          <div className="flex flex-col lg:flex-row gap-5">
+            {/* ── LEFT: Clinics list ── */}
+            <aside className="w-full lg:w-64 shrink-0">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
+                Clinics
+              </p>
+              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
+                {clinics.map((clinic) => {
+                  const isActive = selectedClinicId === clinic._id;
+                  return (
+                    <div
+                      key={clinic._id}
+                      onClick={() => setSelectedClinicId(clinic._id)}
+                      className={`group flex items-center gap-2.5 px-3.5 py-3 rounded-xl border transition-all shrink-0 lg:w-full cursor-pointer ${
+                        isActive
+                          ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
+                          : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
+                      }`}
                     >
-                      <LuPencil /> Edit
-                    </button>
-                    <button
-                      onClick={() => setDeleteTarget(clinic)}
-                      className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] flex items-center gap-1 cursor-pointer"
-                    >
-                      <LuTrash2 /> Delete
-                    </button>
-                  </div>
-                  <Link
-                    href={`/doctor/clinics/${clinic._id}`}
-                    className="text-[12px] font-bold text-[hsl(var(--color-primary))] flex items-center gap-1"
-                  >
-                    Manage <LuArrowRight />
-                  </Link>
-                </div>
+                      <LuBuilding2 className="text-[15px] shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[13px] font-bold truncate">{clinic.name}</p>
+                        <p
+                          className={`text-[10.5px] font-medium truncate ${
+                            isActive
+                              ? "text-white/80"
+                              : "text-[hsl(var(--color-text-muted))]"
+                          }`}
+                        >
+                          {clinic.governorate}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openEditModal(clinic);
+                          }}
+                          className={`p-1 rounded-md cursor-pointer transition-colors ${
+                            isActive
+                              ? "text-white/80 hover:text-white"
+                              : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))]"
+                          }`}
+                          title="Edit clinic info"
+                        >
+                          <LuPencil className="text-[13px]" />
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteTarget(clinic);
+                          }}
+                          className={`p-1 rounded-md cursor-pointer transition-colors ${
+                            isActive
+                              ? "text-white/80 hover:text-white"
+                              : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))]"
+                          }`}
+                          title="Delete clinic"
+                        >
+                          <LuTrash2 className="text-[13px]" />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-            ))}
+            </aside>
+
+            {/* ── RIGHT: Selected clinic's editable data ── */}
+            <div className="flex-1 min-w-0">
+              {selectedClinicId ? (
+                <ClinicDetailsPanel clinicId={selectedClinicId} />
+              ) : (
+                <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
+                  <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
+                  <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
+                    Select a clinic to manage it
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
