@@ -54,7 +54,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Request push notification subscription upon login
     subscribeToPushNotifications().catch(err => console.error("Push subscribe error on login:", err));
 
-    router.replace(`/${newRole}`);
+    if (typeof window !== "undefined") {
+      window.location.href = `/${newRole}`;
+    } else {
+      router.replace(`/${newRole}`);
+    }
   };
 
   const logout = () => {
@@ -66,16 +70,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
     localStorage.removeItem(USER_STORAGE_KEY);
 
+    const performRedirect = () => {
+      if (typeof window !== "undefined") {
+        window.location.href = "/login";
+      } else {
+        router.replace("/login");
+      }
+    };
+
     // Clear service worker caches to prevent data leakage between users/roles offline
     if (typeof window !== "undefined" && "caches" in window) {
       caches.keys().then((names) => {
-        for (const name of names) {
-          caches.delete(name);
-        }
-      }).catch(err => console.error("Error clearing sw cache on logout:", err));
+        return Promise.all(names.map((name) => caches.delete(name)));
+      }).then(() => {
+        performRedirect();
+      }).catch(err => {
+        console.error("Error clearing sw cache on logout:", err);
+        performRedirect();
+      });
+    } else {
+      performRedirect();
     }
-
-    router.replace('/login');
   };
 
   // Client-side route guard for cached back-navigations
