@@ -161,7 +161,7 @@ export default function AnalyticsClient({
         {/* Pie Chart: Doctor Specialties */}
         <div className="flex flex-col h-[350px]">
            <SpecialtyPieChart 
-             data={analyticsData?.doctorSpecialties ?? []} 
+             data={analyticsData?.doctorsBySpecialty ?? []} 
              loading={loading} 
              colors={COLORS} 
            />
