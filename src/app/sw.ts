@@ -18,65 +18,8 @@ const serwist = new Serwist({
   // IMPORTANT: navigationPreload must be false for the offline fallback to work reliably.
   navigationPreload: false,
   runtimeCaching: [
-    // 1. Bypass caching for Next.js prefetch requests to prevent filling the cache with unvisited links.
-    {
-      matcher({ request }) {
-        return (
-          request.headers.get("Next-Router-Prefetch") === "1" ||
-          request.headers.get("Purpose") === "prefetch" ||
-          request.headers.get("Sec-Purpose") === "prefetch"
-        );
-      },
-      handler: new NetworkOnly(),
-    },
-    // 2. Handle CORS preflight requests (OPTIONS).
-    // If offline, the browser will still send OPTIONS requests for API calls with headers (like Authorization).
-    // We must mock a successful response offline so the browser proceeds to the GET request.
-    {
-      matcher({ request }) {
-        return request.method === "OPTIONS";
-      },
-      handler: async ({ request }) => {
-        try {
-          return await fetch(request);
-        } catch (err) {
-          return new Response(null, {
-            status: 204,
-            headers: {
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-              "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            },
-          });
-        }
-      },
-    },
-    // 2.5. Bypass caching for other non-GET requests (POST, PUT, DELETE, PATCH).
-    {
-      matcher({ request }) {
-        return request.method !== "GET" && request.method !== "OPTIONS";
-      },
-      handler: new NetworkOnly(),
-    },
-    // 3. Cache backend API GET requests (Cross-origin fetch/XHR).
-    // This solves the "Failed to fetch" issue by caching the data requested by the page components.
-    {
-      matcher({ request, sameOrigin }) {
-        return !sameOrigin && request.method === "GET" && request.destination === "";
-      },
-      handler: new NetworkFirst({
-        cacheName: "api-cache",
-        plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
-      }),
-    },
-    // 4. Bypass caching for ANY OTHER cross-origin requests (e.g., Cloudinary images, external tracking scripts).
-    {
-      matcher({ sameOrigin }) {
-        return !sameOrigin;
-      },
-      handler: new NetworkOnly(),
-    },
-    // 5. Cache static assets (JS, CSS, Images, Fonts).
+    // 1. Cache static assets (JS, CSS, Images, Fonts) to ensure the offline page renders correctly.
+    // Safe to use StaleWhileRevalidate here as these do not contain sensitive medical data.
     {
       matcher({ request, sameOrigin }) {
         return sameOrigin && (
@@ -91,22 +34,12 @@ const serwist = new Serwist({
         plugins: [new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 24 * 60 * 60 })],
       }),
     },
-    // 6. Cache explicitly visited HTML pages and RSC payloads.
-    // We use NetworkFirst so the user always gets fresh data when online,
-    // but can view the cached page when offline.
+    // 2. Strict NetworkOnly for EVERYTHING else (API, HTML, RSC, Cross-origin, Prefetch).
+    // This guarantees absolute data security (no medical data cached) and prevents SPA hydration issues.
     {
-      matcher({ request, sameOrigin }) {
-        return sameOrigin && (
-          request.mode === "navigate" || 
-          request.headers.get("RSC") === "1" ||
-          request.headers.get("Accept")?.includes("text/html")
-        );
-      },
-      handler: new NetworkFirst({
-        cacheName: "visited-pages",
-        plugins: [new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 24 * 60 * 60 })], // 1 day
-      }),
-    },
+      matcher: () => true,
+      handler: new NetworkOnly(),
+    }
   ],
   fallbacks: {
     entries: [
