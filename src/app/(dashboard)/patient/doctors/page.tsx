@@ -12,6 +12,7 @@ import {
   DoctorListItem, Slot,
   getApprovedDoctors, getAvailableSlots,
 } from "@/services/appointmentService";
+import { getDoctorClinics, egyptianGovernorates } from "@/services/clinicService";
 import { nextAvailableLabel, initialsOf } from "@/components/appointments/format";
 
 import AppointmentToast from "@/components/appointments/AppointmentToast";
@@ -20,7 +21,8 @@ import DoctorsSkeleton from "@/components/patients/doctors/DoctorsSkeleton";
 import SelectDropdown from "@/components/patients/doctors/SelectDropdown";
 
 const SPECIALTIES = ["All Specialties", "Cardiology", "General Practice", "Dermatology", "Orthopedics", "Neurology", "Pediatrics"];
-const GOVERNORATES = ["All Locations", "Cairo", "Alexandria", "Giza", "Dakahlia", "Damietta", "Port Said", "Suez", "Sharqia", "Gharbia", "Menoufia"];
+// Must match the backend's canonical spelling exactly (clinic_model.js), or the filter silently matches nothing.
+const GOVERNORATES = ["All Locations", ...egyptianGovernorates];
 
 export default function DoctorsPage() {
   const router = useRouter();
@@ -40,15 +42,42 @@ export default function DoctorsPage() {
       .finally(() => setLoading(false));
   }, [showToast]);
 
+  // Doctors don't carry a governorate directly — it lives on their clinics.
+  // When a governorate filter is active, check each doctor's clinics for a match.
+  const [matchingGovDoctorIds, setMatchingGovDoctorIds] = useState<Set<string> | null>(null);
+  const [govFilterLoading, setGovFilterLoading] = useState(false);
+
+  useEffect(() => {
+    if (governorate === "All Locations" || doctors.length === 0) {
+      setMatchingGovDoctorIds(null);
+      return;
+    }
+    let cancelled = false;
+    setGovFilterLoading(true);
+    Promise.all(
+      doctors.map((d) =>
+        getDoctorClinics(d.userId._id, governorate)
+          .then((clinics) => ({ id: d.userId._id, match: clinics.length > 0 }))
+          .catch(() => ({ id: d.userId._id, match: false }))
+      )
+    ).then((results) => {
+      if (cancelled) return;
+      setMatchingGovDoctorIds(new Set(results.filter((r) => r.match).map((r) => r.id)));
+      setGovFilterLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [governorate, doctors]);
+
   const filtered = useMemo(() =>
     doctors.filter((d) => {
       const name = d.userId.fullName.toLowerCase();
       const spec = (d.specialization ?? "").toLowerCase();
       const matchSearch = name.includes(search.toLowerCase()) || spec.includes(search.toLowerCase());
       const matchSpec = specialty === "All Specialties" || d.specialization === specialty;
-      return matchSearch && matchSpec;
+      const matchGov = !matchingGovDoctorIds || matchingGovDoctorIds.has(d.userId._id);
+      return matchSearch && matchSpec && matchGov;
     }),
-    [doctors, search, specialty]
+    [doctors, search, specialty, matchingGovDoctorIds]
   );
 
   return (
@@ -76,7 +105,9 @@ export default function DoctorsPage() {
 
         {!loading && (
           <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mb-4">
-            {filtered.length} doctor{filtered.length !== 1 ? "s" : ""} found
+            {govFilterLoading
+              ? "Filtering by location…"
+              : `${filtered.length} doctor${filtered.length !== 1 ? "s" : ""} found`}
           </p>
         )}
 

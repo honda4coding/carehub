@@ -102,9 +102,14 @@ export default function BookAppointmentPage() {
         setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
         setClinics(doctorClinics);
 
+        // Only block days where the patient already has a non-cancelled
+        // appointment with THIS SAME doctor — other doctors are unaffected.
         const booked = new Set(
           (myAppts as any[])
-            .filter((a) => a.status !== "cancelled")
+            .filter((a) => {
+              const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
+              return apptDoctorId === doctorId && a.status !== "cancelled";
+            })
             .map((a) => localDateKey(new Date(a.startDateTime)))
         );
         setBookedDates(booked);
@@ -397,7 +402,7 @@ export default function BookAppointmentPage() {
                           <button
                             disabled={!isAvailable || isAlreadyBooked}
                             onClick={() => handlePickDay(date)}
-                            title={isAlreadyBooked ? "You already have an appointment this day" : undefined}
+                            title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : undefined}
                             className={`w-11 h-11 rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
                               isSelected
                                 ? "bg-sky-700 border-sky-800 text-white"

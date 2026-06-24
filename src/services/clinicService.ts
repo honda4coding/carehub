@@ -25,11 +25,11 @@ export interface Clinic {
 }
 
 export const egyptianGovernorates = [
-  "Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira",
-  "Fayoum", "Gharbia", "Ismailia", "Menofia", "Minya", "Qaliubiya",
-  "New Valley", "North Sinai", "Port Said", "Qalyubia", "Qena",
-  "Sharqia", "South Sinai", "Suez", "Aswan", "Asyut", "Beni Suef",
-  "Damietta", "Kafr El Sheikh", "Matruh", "Luxor", "Sohag",
+    "Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira",
+    "Fayoum", "Gharbia", "Ismailia", "Menofia", "Minya", "Qaliubiya",
+    "New Valley", "North Sinai", "Port Said", "Qalyubia", "Qena",
+    "Sharqia", "South Sinai", "Suez", "Aswan", "Asyut", "Beni Suef",
+    "Damietta", "Kafr El Sheikh", "Matruh", "Luxor", "Sohag"
 ];
 
 export interface ClinicPayload {
