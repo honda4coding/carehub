@@ -22,7 +22,7 @@ export default function AdminLoginPage() {
   try {
     const res = await fetch(`${BASE_URL}/users/signin`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      credentials: "include", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: values.email,
         password: values.password,
@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    login(data.data.access_token, "admin", {
+    login("http-only-cookie", "admin", {
       id: data.data.id,
       email: values.email,
       name: "System Admin",

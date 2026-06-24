@@ -76,7 +76,7 @@ export async function uploadPatientAvatar(file: File): Promise<{ secure_url: str
 
   const res = await fetch(`${BASE_URL}/patient/profile-image`, {
     method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include", headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
 
@@ -94,7 +94,7 @@ export async function deletePatientAvatar(): Promise<void> {
   const token = Cookies.get(AUTH_COOKIE_NAME);
   const res = await fetch(`${BASE_URL}/patient/profile-image`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    credentials: "include", headers: { Authorization: `Bearer ${token}` },
   });
 
   if (!res.ok) {

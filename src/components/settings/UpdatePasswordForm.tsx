@@ -57,7 +57,7 @@ export default function UpdatePasswordForm() {
 
       const res = await fetch(`${BASE_URL}/users/update-password`, {
         method: "PATCH",
-        headers: {
+        credentials: "include", headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },

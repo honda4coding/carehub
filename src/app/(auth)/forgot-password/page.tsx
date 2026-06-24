@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
       setServerError("");
       const response = await fetch(`${BASE_URL}/users/forget-password`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: values.email }),
       });
 

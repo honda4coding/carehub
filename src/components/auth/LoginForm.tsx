@@ -68,7 +68,7 @@ export const LoginForm = () => {
       // 1. signin
       const response = await fetch(`${BASE_URL}/users/signin`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        credentials: "include", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: values.email, password: values.password }),
       });
 
@@ -86,7 +86,7 @@ export const LoginForm = () => {
         return;
       }
 
-      login(data.data.access_token, actualRole, {
+      login("http-only-cookie", actualRole, {
         id: data.data.id,
         email: values.email,
         name: data.data.fullName || data.data.name || values.email,
