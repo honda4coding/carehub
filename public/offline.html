@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google" content="notranslate">
+  <title>Offline - CareHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-primary: #0891b2;
+      --color-primary-strong: #0e7490;
+      --color-bg-surface: #ffffff;
+      --color-text: #0f172a;
+      --color-text-muted: #64748b;
+      --color-border: #e2e8f0;
+      --color-bg: #f8fafc;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --color-bg-surface: #0f172a;
+        --color-text: #f8fafc;
+        --color-text-muted: #94a3b8;
+        --color-border: #334155;
+        --color-bg: #020617;
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .card {
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      padding: 32px;
+      border-radius: 24px;
+      border: 1px solid var(--color-border);
+      background-color: var(--color-bg-surface);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .icon-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+
+    .icon-circle {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background-color: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+    }
+
+    .pulse-dot {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      height: 16px;
+      width: 16px;
+    }
+
+    .pulse-ping {
+      position: absolute;
+      display: inline-flex;
+      height: 100%;
+      width: 100%;
+      border-radius: 50%;
+      background-color: #ef4444;
+      opacity: 0.75;
+      animation: ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+    }
+
+    .pulse-core {
+      position: relative;
+      display: inline-flex;
+      border-radius: 50%;
+      height: 16px;
+      width: 16px;
+      background-color: #ef4444;
+    }
+
+    @keyframes ping {
+      75%, 100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.025em;
+    }
+
+    p {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      background-color: var(--color-bg);
+      color: var(--color-text-muted);
+      display: inline-block;
+      margin-bottom: 24px;
+      border: 1px solid var(--color-border);
+    }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    @media (min-width: 480px) {
+      .button-group {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
+    .btn {
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      width: 100%;
+    }
+
+    @media (min-width: 480px) {
+      .btn {
+        width: auto;
+      }
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px 0 rgba(8, 145, 178, 0.3);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-primary-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-bg-surface);
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-bg);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary:active {
+      transform: translateY(0);
+    }
+
+    /* SVG Wifi Off Icon */
+    .wifi-icon {
+      width: 44px;
+      height: 44px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-container">
+      <div class="icon-circle">
+        <!-- SVG Wifi Off -->
+        <svg class="wifi-icon" viewBox="0 0 24 24">
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.5"></path>
+          <path d="M5 12.5a10.94 10.94 0 0 1 5.17-2.39"></path>
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9"></path>
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"></path>
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+          <line x1="12" y1="20" x2="12.01" y2="20"></line>
+        </svg>
+        <span class="pulse-dot">
+          <span class="pulse-ping"></span>
+          <span class="pulse-core"></span>
+        </span>
+      </div>
+    </div>
+
+    <h1>You are offline</h1>
+    <p>We couldn't connect to the server. Please check your internet connection and try again.</p>
+
+    <div class="badge" id="status-badge">Status: Offline Mode</div>
+
+    <div class="button-group">
+      <button class="btn btn-primary" onclick="handleRetry()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" id="spinner">
+          <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+        </svg>
+        Retry Connection
+      </button>
+      <button class="btn btn-secondary" onclick="handleGoBack()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        Go Back
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function handleRetry() {
+      const spinner = document.getElementById('spinner');
+      if (spinner) {
+        spinner.style.transition = 'transform 1s linear';
+        spinner.style.transform = 'rotate(360deg)';
+      }
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+    }
+
+    function handleGoBack() {
+      window.history.back();
+    }
+
+    // Auto-reload when online
+    window.addEventListener('online', () => {
+      const badge = document.getElementById('status-badge');
+      if (badge) {
+        badge.innerText = 'Reconnecting...';
+        badge.style.borderColor = 'var(--color-primary)';
+        badge.style.color = 'var(--color-primary)';
+      }
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

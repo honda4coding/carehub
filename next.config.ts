@@ -20,7 +20,15 @@ const finalConfig = isDev
       swSrc: "src/app/sw.ts",
       swDest: "public/sw.js",
       disable: false,
-      additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
+      additionalPrecacheEntries: [
+        { url: "/offline.html", revision: "1" },
+        { url: "/admin", revision: "1" },
+        { url: "/admin/profile", revision: "1" },
+        { url: "/doctor", revision: "1" },
+        { url: "/doctor/profile", revision: "1" },
+        { url: "/patient", revision: "1" },
+        { url: "/patient/profile", revision: "1" },
+      ],
     })(nextConfig);
 
 export default finalConfig;
