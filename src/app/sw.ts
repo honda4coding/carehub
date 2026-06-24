@@ -38,12 +38,13 @@ const serwist = new Serwist({
       },
       handler: new NetworkOnly(),
     },
-    // 2. Dynamic Portal Page Navigations (/patient, /doctor, /admin) -> NetworkFirst
+    // 2. Dynamic Portal Pages and RSC data (/patient, /doctor, /admin) -> NetworkFirst
     {
       matcher({ request, url }) {
         const path = url.pathname;
+        const isGet = request.method === "GET";
         return (
-          request.mode === "navigate" &&
+          isGet &&
           (path.startsWith("/patient") || path.startsWith("/doctor") || path.startsWith("/admin"))
         );
       },
@@ -52,7 +53,7 @@ const serwist = new Serwist({
         networkTimeoutSeconds: 3, // fallback to cache quickly if connection is slow
         plugins: [
           new ExpirationPlugin({
-            maxEntries: 20, // Limit to 20 portal pages
+            maxEntries: 100, // Limit to 100 entries to cover HTML and RSC payloads
             maxAgeSeconds: 24 * 60 * 60 * 7, // Keep pages up to 7 days
           }),
         ],
@@ -117,7 +118,7 @@ const serwist = new Serwist({
   fallbacks: {
     entries: [
       {
-        url: "/~offline",
+        url: "/offline.html",
         matcher({ request }) {
           return request.mode === "navigate";
         },
