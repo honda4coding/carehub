@@ -162,7 +162,6 @@ export default function AnalyticsClient({
         <div className="flex flex-col h-[350px]">
            <SpecialtyPieChart 
              data={analyticsData?.doctorsBySpecialty ?? []} 
-             loading={loading} 
              colors={COLORS} 
            />
         </div>
@@ -170,9 +169,8 @@ export default function AnalyticsClient({
         {/* Line Chart: User Growth */}
         <div className="flex flex-col h-[350px]">
            <UserActivityGrowthChart 
-             data={dailyStats} 
-             loading={loading} 
-             color="hsl(var(--color-primary-strong))" 
+             startDate={startDate} 
+             endDate={endDate} 
            />
         </div>
 
@@ -180,7 +178,6 @@ export default function AnalyticsClient({
         <div className="flex flex-col h-[350px]">
            <SystemActivityBarChart 
              data={activityArray} 
-             loading={loading} 
              colors={COLORS} 
            />
         </div>
