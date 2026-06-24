@@ -40,7 +40,7 @@ const serwist = new Serwist({
     // This solves the "Failed to fetch" issue by caching the data requested by the page components.
     {
       matcher({ request, sameOrigin }) {
-        return !sameOrigin && request.method === "GET" && (request.destination === "" || request.destination === "empty");
+        return !sameOrigin && request.method === "GET" && request.destination === "";
       },
       handler: new NetworkFirst({
         cacheName: "api-cache",
