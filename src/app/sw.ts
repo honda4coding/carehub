@@ -29,10 +29,32 @@ const serwist = new Serwist({
       },
       handler: new NetworkOnly(),
     },
-    // 2. Bypass caching for non-GET requests (POST, PUT, DELETE, PATCH).
+    // 2. Handle CORS preflight requests (OPTIONS).
+    // If offline, the browser will still send OPTIONS requests for API calls with headers (like Authorization).
+    // We must mock a successful response offline so the browser proceeds to the GET request.
     {
       matcher({ request }) {
-        return request.method !== "GET";
+        return request.method === "OPTIONS";
+      },
+      handler: async ({ request }) => {
+        try {
+          return await fetch(request);
+        } catch (err) {
+          return new Response(null, {
+            status: 204,
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+              "Access-Control-Allow-Headers": "Content-Type, Authorization",
+            },
+          });
+        }
+      },
+    },
+    // 2.5. Bypass caching for other non-GET requests (POST, PUT, DELETE, PATCH).
+    {
+      matcher({ request }) {
+        return request.method !== "GET" && request.method !== "OPTIONS";
       },
       handler: new NetworkOnly(),
     },
