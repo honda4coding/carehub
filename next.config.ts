@@ -28,7 +28,7 @@ const finalConfig = isDev
       // can't be precached at build time. They get cached via defaultCache
       // when the user visits them.
       additionalPrecacheEntries: [
-        { url: "~offline", revision: buildRevision },
+        { url: "/~offline", revision: buildRevision },
       ],
     })(nextConfig);
 
