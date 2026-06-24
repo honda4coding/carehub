@@ -2,7 +2,7 @@
 
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { Serwist, NetworkFirst, CacheFirst, NetworkOnly, ExpirationPlugin } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that points to where the precache manifest should be injected.
@@ -20,7 +20,79 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    // 1. Transactional Write APIs (POST, PUT, DELETE, PATCH) -> NetworkOnly
+    {
+      matcher({ request }) {
+        return request.method !== "GET";
+      },
+      handler: new NetworkOnly(),
+    },
+    // 2. Dynamic Portal Page Navigations (/patient, /doctor, /admin) -> NetworkFirst
+    {
+      matcher({ request, url }) {
+        const path = url.pathname;
+        return (
+          request.mode === "navigate" &&
+          (path.startsWith("/patient") || path.startsWith("/doctor") || path.startsWith("/admin"))
+        );
+      },
+      handler: new NetworkFirst({
+        cacheName: "portal-pages",
+        networkTimeoutSeconds: 3, // fallback to cache quickly if connection is slow
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 20, // Limit to 20 portal pages
+            maxAgeSeconds: 24 * 60 * 60 * 7, // Keep pages up to 7 days
+          }),
+        ],
+      }),
+    },
+    // 3. Dynamic GET APIs (Appointments, History, Notifications) -> NetworkFirst
+    {
+      matcher({ request, url }) {
+        const path = url.pathname;
+        const isGet = request.method === "GET";
+        const isBackendApi =
+          url.origin === "http://localhost:3000" ||
+          url.origin === "http://localhost:5000" ||
+          (process.env.NEXT_PUBLIC_API_URL && url.origin === process.env.NEXT_PUBLIC_API_URL);
+        return isGet && (isBackendApi || path.startsWith("/api/"));
+      },
+      handler: new NetworkFirst({
+        cacheName: "dynamic-api-data",
+        networkTimeoutSeconds: 3,
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 50, // Limit to 50 dynamic API responses (LRU)
+            maxAgeSeconds: 24 * 60 * 60 * 3, // Keep API data up to 3 days
+          }),
+        ],
+      }),
+    },
+    // 4. Static Public Assets and Media -> CacheFirst
+    {
+      matcher({ url }) {
+        return (
+          url.pathname.startsWith("/icons/") ||
+          url.pathname.endsWith(".png") ||
+          url.pathname.endsWith(".jpg") ||
+          url.pathname.endsWith(".ico")
+        );
+      },
+      handler: new CacheFirst({
+        cacheName: "static-media",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 30, // Limit to 30 static images/assets
+            maxAgeSeconds: 24 * 60 * 60 * 30, // Keep static assets up to 30 days
+          }),
+        ],
+      }),
+    },
+    // Fallback to standard Next.js service worker cache settings
+    ...defaultCache,
+  ],
   fallbacks: {
     entries: [
       {
