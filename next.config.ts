@@ -20,6 +20,10 @@ const finalConfig = isDev
       swSrc: "src/app/sw.ts",
       swDest: "public/sw.js",
       disable: false,
+      additionalPrecacheEntries: [
+        "/patient/tracking",
+        "/patient/tracking/medications"
+      ]
     })(nextConfig);
 
 export default finalConfig;
