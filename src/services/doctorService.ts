@@ -17,6 +17,8 @@ export interface DoctorProfile {
   experience?: number;
   bio?: string;
   licenseimage?: { secure_url: string; public_id: string };
+  pendingLicenseImage?: { secure_url: string; public_id: string };
+  previousLicenseImage?: { secure_url: string; public_id: string };
 }
 
 export interface UpdateDoctorProfilePayload {
@@ -63,3 +65,18 @@ export async function uploadDoctorLicense(file: File): Promise<void> {
     throw new Error(err.message || "Failed to upload license");
   }
 }
+
+/** DELETE /doctor/license/pending — cancel pending license */
+export async function cancelPendingLicense(): Promise<void> {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  const res = await fetch(`${BASE_URL}/doctor/license/pending`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to cancel pending license");
+  }
+}
+
