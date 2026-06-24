@@ -141,23 +141,20 @@ export default function AnalyticsClient({
           <SummaryCard 
             title="Registered Patients"
             value={analyticsData?.summary?.totalPatients ?? 0}
-            icon={<LuUsers className="text-[hsl(var(--color-primary-strong))]" />}
-            iconBg="bg-[hsl(var(--color-primary)/0.15)]"
-            loading={loading}
+            icon={LuUsers}
+            colorTheme="primary"
           />
           <SummaryCard 
             title="Total Doctors"
             value={analyticsData?.summary?.totalDoctors ?? 0}
-            icon={<LuStethoscope className="text-[hsl(var(--color-secondary-strong))]" />}
-            iconBg="bg-[hsl(var(--color-secondary)/0.15)]"
-            loading={loading}
+            icon={LuStethoscope}
+            colorTheme="secondary"
           />
           <SummaryCard 
             title="Total Users"
             value={analyticsData?.summary?.totalUsers ?? 0}
-            icon={<LuUser className="text-[hsl(var(--color-warning))]" />}
-            iconBg="bg-[hsl(var(--color-warning)/0.15)]"
-            loading={loading}
+            icon={LuUser}
+            colorTheme="warning"
           />
         </div>
 
