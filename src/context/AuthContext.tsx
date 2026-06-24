@@ -66,6 +66,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
     localStorage.removeItem(USER_STORAGE_KEY);
 
+    // Clear service worker caches to prevent data leakage between users/roles offline
+    if (typeof window !== "undefined" && "caches" in window) {
+      caches.keys().then((names) => {
+        for (const name of names) {
+          caches.delete(name);
+        }
+      }).catch(err => console.error("Error clearing sw cache on logout:", err));
+    }
+
     router.replace('/login');
   };
 
