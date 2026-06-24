@@ -130,7 +130,7 @@ export default function UpdatePasswordForm() {
         onSubmit={handleSubmit}
       >
         {({ errors, touched, isSubmitting }) => (
-          <Form className="space-y-4">
+          <Form className="space-y-4" autoComplete="off">
 
             {/* Old Password */}
             <div className="space-y-1.5">
@@ -139,7 +139,7 @@ export default function UpdatePasswordForm() {
               </label>
               <div className="relative">
                 <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="oldpassword" type="password" placeholder="••••••••"
+                <Field name="oldpassword" type="password" placeholder="••••••••" autoComplete="current-password"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.oldpassword && touched.oldpassword ? "#fff5f5" : "white",
@@ -157,7 +157,7 @@ export default function UpdatePasswordForm() {
               </label>
               <div className="relative">
                 <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="newpassword" type="password" placeholder="••••••••"
+                <Field name="newpassword" type="password" placeholder="••••••••" autoComplete="new-password"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
@@ -175,7 +175,7 @@ export default function UpdatePasswordForm() {
               </label>
               <div className="relative">
                 <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="cpassword" type="password" placeholder="••••••••"
+                <Field name="cpassword" type="password" placeholder="••••••••" autoComplete="new-password"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
