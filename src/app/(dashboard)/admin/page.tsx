@@ -3,11 +3,11 @@ import { fetchClient } from "@/services/fetchClient";
 import DashboardClient from "./DashboardClient";
 
 export default async function AdminDashboard() {
-  let initialRequests = [];
-  let dashboardStats = null;
-  let initialDailyStats = [];
-  let initialActivities = [];
-  let error = null;
+  let initialRequests: any[] = [];
+  let dashboardStats: any = null;
+  let initialDailyStats: any[] = [];
+  let initialActivities: any[] = [];
+  let error: any = null;
 
   try {
     const [requestsRes, dashboardRes, dailyStatsRes, notificationsRes] = await Promise.all([

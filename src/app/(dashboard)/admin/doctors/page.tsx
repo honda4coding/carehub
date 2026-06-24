@@ -2,8 +2,8 @@ import { adminService } from "@/services/adminService";
 import DoctorManagementClient from "./DoctorManagementClient";
 
 export default async function AdminDoctorsPage() {
-  let initialDoctors = [];
-  let error = null;
+  let initialDoctors: any[] = [];
+  let error: any = null;
 
   try {
     const res = await adminService.getDoctors("");

@@ -2,9 +2,9 @@ import { adminService } from "@/services/adminService";
 import AnalyticsClient from "./AnalyticsClient";
 
 export default async function AnalyticsPage() {
-  let initialAnalyticsData = null;
-  let initialDailyStats = [];
-  let initialPendingRequests = [];
+  let initialAnalyticsData: any = null;
+  let initialDailyStats: any[] = [];
+  let initialPendingRequests: any[] = [];
 
   try {
     const [res, pendingRes, dailyRes] = await Promise.all([
