@@ -2,11 +2,8 @@
 
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { Serwist, NetworkFirst, NetworkOnly, CacheFirst, ExpirationPlugin } from "serwist";
 
-// This declares the value of `injectionPoint` to TypeScript.
-// `injectionPoint` is the string that points to where the precache manifest should be injected.
-// By default, that string is `"self.__SW_MANIFEST"`.
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
     __SW_MANIFEST: (PrecacheEntry | string)[] | undefined;
@@ -20,7 +17,111 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    // 0. Bypass caching for Next.js prefetch requests to prevent caching unvisited pages
+    {
+      matcher({ request }) {
+        return (
+          request.headers.get("Purpose") === "prefetch" ||
+          request.headers.get("Sec-Purpose") === "prefetch"
+        );
+      },
+      handler: new NetworkOnly(),
+    },
+    // 1. Transactional Write APIs (POST, PUT, DELETE, PATCH) -> NetworkOnly
+    {
+      matcher({ request }) {
+        return request.method !== "GET";
+      },
+      handler: new NetworkOnly(),
+    },
+    // 2. Portal Page Navigations (/patient, /doctor, /admin) -> NetworkFirst
+    //    Only caches full page navigations, NOT RSC payloads or API calls
+    {
+      matcher({ request, url }) {
+        const path = url.pathname;
+        return (
+          request.mode === "navigate" &&
+          (path.startsWith("/patient") || path.startsWith("/doctor") || path.startsWith("/admin"))
+        );
+      },
+      handler: new NetworkFirst({
+        cacheName: "portal-pages",
+        networkTimeoutSeconds: 3,
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 20,
+            maxAgeSeconds: 24 * 60 * 60 * 7, // 7 days
+          }),
+        ],
+      }),
+    },
+    // 3. Dynamic GET APIs -> NetworkFirst
+    {
+      matcher({ request, url }) {
+        const path = url.pathname;
+        const isGet = request.method === "GET";
+
+        let backendOrigin = "";
+        if (process.env.NEXT_PUBLIC_API_URL) {
+          try {
+            backendOrigin = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
+          } catch {
+            backendOrigin = process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
+          }
+        }
+
+        const isBackendApi =
+          url.origin === "http://localhost:3000" ||
+          url.origin === "http://localhost:5000" ||
+          (backendOrigin && url.origin === backendOrigin);
+
+        return isGet && (isBackendApi || path.startsWith("/api/"));
+      },
+      handler: new NetworkFirst({
+        cacheName: "dynamic-api-data",
+        networkTimeoutSeconds: 3,
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 50,
+            maxAgeSeconds: 24 * 60 * 60 * 3, // 3 days
+          }),
+        ],
+      }),
+    },
+    // 4. Static Public Assets and Media -> CacheFirst
+    {
+      matcher({ url }) {
+        return (
+          url.pathname.startsWith("/icons/") ||
+          url.pathname.endsWith(".png") ||
+          url.pathname.endsWith(".jpg") ||
+          url.pathname.endsWith(".ico")
+        );
+      },
+      handler: new CacheFirst({
+        cacheName: "static-media",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 30,
+            maxAgeSeconds: 24 * 60 * 60 * 30, // 30 days
+          }),
+        ],
+      }),
+    },
+    // Fallback to standard Next.js service worker cache settings
+    ...defaultCache,
+  ],
+  fallbacks: {
+    entries: [
+      {
+        url: "/~offline",
+        matcher({ request }) {
+          return request.mode === "navigate";
+        },
+      },
+    ],
+  },
 });
 
 serwist.addEventListeners();
@@ -74,4 +175,3 @@ self.addEventListener("notificationclick", (event) => {
     })
   );
 });
-
