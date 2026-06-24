@@ -34,11 +34,7 @@ export default function UpdatePasswordForm() {
   const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [isRegisteringBio, setIsRegisteringBio] = React.useState(false);
   const [isDisablingBio, setIsDisablingBio] = React.useState(false);
-<<<<<<< HEAD
   const [isCheckingBio, setIsCheckingBio] = React.useState(true);
-  const [hasBiometrics, setHasBiometrics] = React.useState(false);
-=======
->>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
   const [bioToast, setBioToast] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [hasBiometrics, setHasBiometrics] = React.useState<boolean | null>(null); // null = loading
 
@@ -70,11 +66,7 @@ export default function UpdatePasswordForm() {
       setBioToast(null);
       await registerBiometrics();
       setHasBiometrics(true);
-<<<<<<< HEAD
-      setBioToast({ msg: "FaceID / TouchID registered successfully!", variant: "success" });
-=======
       setBioToast({ msg: "Biometric login enabled successfully!", variant: "success" });
->>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
     } catch (err: any) {
       setBioToast({ msg: err.message || "Failed to enable biometric login.", variant: "error" });
     } finally {
@@ -220,40 +212,6 @@ export default function UpdatePasswordForm() {
 
       {/* Biometrics Setup */}
       <div className="space-y-4">
-<<<<<<< HEAD
-        <div>
-          <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" /> Biometric Login
-          </h3>
-          <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-1 font-semibold">
-            Use your device's fingerprint scanner or facial recognition (FaceID/TouchID) to log in instantly next time.
-          </p>
-        </div>
-        
-        {isCheckingBio ? (
-          <div className="text-xs text-[hsl(var(--color-text-muted))] font-semibold animate-pulse">
-            Checking status...
-          </div>
-        ) : hasBiometrics ? (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2 p-3 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-xl border border-emerald-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
-              Biometric Login is currently: <span className="underline">Enabled</span>
-            </div>
-            <button
-              type="button"
-              onClick={handleDisableBiometrics}
-              disabled={isDisablingBio}
-              className="w-full py-3 px-4 border border-red-200 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-            >
-              {isDisablingBio ? (
-                <><ImSpinner2 className="w-4 h-4 animate-spin" /> Disabling...</>
-              ) : (
-                <>Disable Biometric Login</>
-              )}
-            </button>
-          </div>
-=======
         <div className="flex items-start justify-between gap-4">
           <div>
             <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
@@ -294,7 +252,6 @@ export default function UpdatePasswordForm() {
               <><FaFingerprint className="w-4 h-4" /> Disable Biometric Login</>
             )}
           </button>
->>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
         ) : (
           <button
             type="button"
@@ -305,11 +262,7 @@ export default function UpdatePasswordForm() {
             {isRegisteringBio ? (
               <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
             ) : (
-<<<<<<< HEAD
-              <>Enable Biometric Login</>
-=======
               <><FaFingerprint className="w-4 h-4" /> Enable Biometric Login</>
->>>>>>> c51e3111e9e4f8b5fa33ab76766acdf19c6fdaeb
             )}
           </button>
         )}
