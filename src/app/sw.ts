@@ -2,7 +2,7 @@
 
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, NetworkFirst, NetworkOnly, CacheFirst, ExpirationPlugin } from "serwist";
+import { Serwist, NetworkOnly } from "serwist";
 
 declare global {
   interface WorkerGlobalScope extends SerwistGlobalConfig {
@@ -16,9 +16,13 @@ const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
-  navigationPreload: true,
+  // IMPORTANT: navigationPreload must be false for the offline fallback to work.
+  // When true, the browser makes a parallel network request that fails offline,
+  // and the SW never gets the chance to serve the cached /~offline fallback page.
+  navigationPreload: false,
   runtimeCaching: [
-    // 0. Bypass caching for Next.js prefetch requests to prevent caching unvisited pages
+    // 1. Bypass caching for Next.js prefetch requests.
+    //    This prevents pages the user hasn't actually visited from being cached.
     {
       matcher({ request }) {
         return (
@@ -28,93 +32,31 @@ const serwist = new Serwist({
       },
       handler: new NetworkOnly(),
     },
-    // 1. Transactional Write APIs (POST, PUT, DELETE, PATCH) -> NetworkOnly
+    // 2. Bypass caching for non-GET requests (POST, PUT, DELETE, PATCH).
+    //    Mutations must always go to the network.
     {
       matcher({ request }) {
         return request.method !== "GET";
       },
       handler: new NetworkOnly(),
     },
-    // 2. Portal Page Navigations (/patient, /doctor, /admin) -> NetworkFirst
-    //    Only caches full page navigations, NOT RSC payloads or API calls
-    {
-      matcher({ request, url }) {
-        const path = url.pathname;
-        return (
-          request.mode === "navigate" &&
-          (path.startsWith("/patient") || path.startsWith("/doctor") || path.startsWith("/admin"))
-        );
-      },
-      handler: new NetworkFirst({
-        cacheName: "portal-pages",
-        networkTimeoutSeconds: 3,
-        plugins: [
-          new ExpirationPlugin({
-            maxEntries: 20,
-            maxAgeSeconds: 24 * 60 * 60 * 7, // 7 days
-          }),
-        ],
-      }),
-    },
-    // 3. Dynamic GET APIs -> NetworkFirst
-    {
-      matcher({ request, url }) {
-        const path = url.pathname;
-        const isGet = request.method === "GET";
-
-        let backendOrigin = "";
-        if (process.env.NEXT_PUBLIC_API_URL) {
-          try {
-            backendOrigin = new URL(process.env.NEXT_PUBLIC_API_URL).origin;
-          } catch {
-            backendOrigin = process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
-          }
-        }
-
-        const isBackendApi =
-          url.origin === "http://localhost:3000" ||
-          url.origin === "http://localhost:5000" ||
-          (backendOrigin && url.origin === backendOrigin);
-
-        return isGet && (isBackendApi || path.startsWith("/api/"));
-      },
-      handler: new NetworkFirst({
-        cacheName: "dynamic-api-data",
-        networkTimeoutSeconds: 3,
-        plugins: [
-          new ExpirationPlugin({
-            maxEntries: 50,
-            maxAgeSeconds: 24 * 60 * 60 * 3, // 3 days
-          }),
-        ],
-      }),
-    },
-    // 4. Static Public Assets and Media -> CacheFirst
-    {
-      matcher({ url }) {
-        return (
-          url.pathname.startsWith("/icons/") ||
-          url.pathname.endsWith(".png") ||
-          url.pathname.endsWith(".jpg") ||
-          url.pathname.endsWith(".ico")
-        );
-      },
-      handler: new CacheFirst({
-        cacheName: "static-media",
-        plugins: [
-          new ExpirationPlugin({
-            maxEntries: 30,
-            maxAgeSeconds: 24 * 60 * 60 * 30, // 30 days
-          }),
-        ],
-      }),
-    },
-    // Fallback to standard Next.js service worker cache settings
+    // 3. Everything else is handled by serwist's built-in defaultCache which provides:
+    //    - Google Fonts → CacheFirst
+    //    - Static assets (fonts, images, JS, CSS) → CacheFirst / StaleWhileRevalidate
+    //    - Next.js static JS → CacheFirst
+    //    - Next.js data → NetworkFirst
+    //    - RSC prefetch / RSC payloads → NetworkFirst (pages-rsc-prefetch / pages-rsc)
+    //    - HTML pages → NetworkFirst (pages cache)
+    //    - Same-origin APIs → NetworkFirst
+    //    - Cross-origin requests → NetworkFirst
+    //    - Catch-all → NetworkOnly
     ...defaultCache,
   ],
   fallbacks: {
     entries: [
       {
+        // When any navigation request fails (user is offline and page isn't cached),
+        // serve the precached /~offline page instead of a browser error.
         url: "/~offline",
         matcher({ request }) {
           return request.mode === "navigate";
@@ -125,6 +67,8 @@ const serwist = new Serwist({
 });
 
 serwist.addEventListeners();
+
+// --- Push Notification Handling ---
 
 self.addEventListener("push", (event) => {
   let data = { title: "CareHub Alert", body: "You have a new update", url: "/" };

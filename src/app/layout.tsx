@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import SWLifecycleManager from "@/components/pwa/SWLifecycleManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,6 +52,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <AuthProvider>
+          <SWLifecycleManager />
           <Navbar />
           <main className="flex-1">
             {children}
