@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; connect-src 'self' http://localhost:3000 https://www.transparenttextures.com; img-src 'self' data: https://www.transparenttextures.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
+            value: "default-src 'self'; connect-src 'self' http://localhost:3000 https://hospital-managment-backend-liart.vercel.app https://carehub-two.vercel.app https://*.vercel.app ws://localhost:3000 wss://*.vercel.app; img-src 'self' data: https://www.transparenttextures.com blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
           },
         ],
       },
