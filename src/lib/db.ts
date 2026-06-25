@@ -1,7 +1,7 @@
 import { openDB, IDBPDatabase } from 'idb';
 
 const DB_NAME = 'carehub-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbInstance: IDBPDatabase | null = null;
 
@@ -21,6 +21,9 @@ export async function getDB() {
       }
       if (!db.objectStoreNames.contains('medications_summary')) {
         db.createObjectStore('medications_summary', { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains('medications_past')) {
+        db.createObjectStore('medications_past', { keyPath: 'medicineName' });
       }
 
       // Sync queues for offline actions
@@ -55,11 +58,21 @@ export async function getLocalVitalsData() {
 
 export async function queueVitalSync(payload: any) {
   const db = await getDB();
+  
+  // Inject the auth token for the Service Worker
+  let token = "";
+  if (typeof window !== "undefined") {
+    // Cannot import Cookies here easily if it causes circular dependency, we'll read document.cookie directly or use standard
+    const match = document.cookie.match(new RegExp('(^| )' + 'auth_token' + '=([^;]+)'));
+    if (match) token = match[2];
+  }
+  
   const syncRecord = {
     syncId: crypto.randomUUID(),
     payload,
     timestamp: Date.now(),
-    synced: false
+    synced: false,
+    authToken: token
   };
   await db.add('vitals_sync_queue', syncRecord);
   return syncRecord;
@@ -86,7 +99,7 @@ export async function removeVitalSyncRecord(syncId: string) {
 }
 
 // --- Medications Operations ---
-export async function saveMedicationsData(active: any[], history: any[], summary: any) {
+export async function saveMedicationsData(active: any[], history: any[], summary: any, past: any[] = []) {
   const db = await getDB();
   
   const txActive = db.transaction('medications_active', 'readwrite');
@@ -109,6 +122,13 @@ export async function saveMedicationsData(active: any[], history: any[], summary
     await txSummary.objectStore('medications_summary').put({ id: 'summary', ...summary });
   }
   await txSummary.done;
+
+  const txPast = db.transaction('medications_past', 'readwrite');
+  await txPast.objectStore('medications_past').clear();
+  for (const med of past) {
+    if (med.medicineName) await txPast.objectStore('medications_past').put(med);
+  }
+  await txPast.done;
 }
 
 export async function getLocalMedicationsData() {
@@ -116,20 +136,30 @@ export async function getLocalMedicationsData() {
   const active = await db.getAll('medications_active');
   const history = await db.getAll('medications_history');
   const summaryWrapper = await db.get('medications_summary', 'summary');
+  const past = await db.getAll('medications_past');
   return { 
     active, 
     history, 
+    past: past || [],
     summary: summaryWrapper ? { ...summaryWrapper, id: undefined } : null 
   };
 }
 
 export async function queueMedicationSync(payload: any) {
   const db = await getDB();
+
+  let token = "";
+  if (typeof window !== "undefined") {
+    const match = document.cookie.match(new RegExp('(^| )' + 'auth_token' + '=([^;]+)'));
+    if (match) token = match[2];
+  }
+
   const syncRecord = {
     syncId: crypto.randomUUID(),
     payload,
     timestamp: Date.now(),
-    synced: false
+    synced: false,
+    authToken: token
   };
   await db.add('medications_sync_queue', syncRecord);
   return syncRecord;

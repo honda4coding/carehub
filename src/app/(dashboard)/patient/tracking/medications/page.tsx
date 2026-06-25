@@ -6,7 +6,7 @@ import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { 
     LuPill, LuClock, LuCalendar, 
-    LuChevronLeft, LuFlame, LuActivity
+    LuChevronLeft, LuFlame, LuActivity, LuHistory
 } from "react-icons/lu";
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
@@ -57,6 +57,7 @@ interface Summary {
 
 export default function MedicationTrackingPage() {
     const [medications, setMedications] = useState<ActiveMedication[]>([]);
+    const [pastMedications, setPastMedications] = useState<any[]>([]);
     const [history, setHistory] = useState<HistoryRecord[]>([]);
     const [summary, setSummary] = useState<Summary | null>(null);
     const [loading, setLoading] = useState(true);
@@ -68,6 +69,7 @@ export default function MedicationTrackingPage() {
             if (!navigator.onLine) {
                 const localData = await getLocalMedicationsData();
                 setMedications(localData.active || []);
+                setPastMedications(localData.past || []);
                 setHistory(localData.history || []);
                 setSummary(localData.summary || null);
                 setLoading(false);
@@ -78,26 +80,78 @@ export default function MedicationTrackingPage() {
             if (!token) return;
             const headers = { Authorization: `Bearer ${token}` };
 
-            const [medsRes, histRes, summRes] = await Promise.all([
+            const [medsRes, histRes, summRes, rxRes] = await Promise.all([
                 axios.get(`${BASE_URL}/patient/medications/active`, { headers }),
                 axios.get(`${BASE_URL}/patient/medications/history`, { headers }),
                 axios.get(`${BASE_URL}/patient/medications/summary`, { headers }),
+                axios.get(`${BASE_URL}/patient/prescriptions`, { headers }),
             ]);
 
             const active = medsRes.data.data ?? [];
             const hist = histRes.data.data ?? [];
             const summ = summRes.data.data ?? null;
+            const prescriptions = rxRes.data.data ?? (Array.isArray(rxRes.data) ? rxRes.data : []);
 
-            await saveMedicationsData(active, hist, summ);
+            const pastMedsMap = new Map();
+            const now = new Date();
+            
+            prescriptions.forEach((rx: any) => {
+              const rxDate = new Date(rx.createdAt);
+              (rx.medications || []).forEach((m: any) => {
+                 let isActive = false;
+                 let isLifelong = false;
+                 let totalDays = 0;
+                 if (m.duration) {
+                    const durationStr = String(m.duration).toLowerCase();
+                    const match = durationStr.match(/(\d+)\s*(days?|weeks?|months?)/i);
+                    if (durationStr === 'lifelong') isLifelong = true;
+                    else if (match) {
+                       const num = parseInt(match[1], 10);
+                       const unit = match[2];
+                       if (unit.startsWith('day')) totalDays = num;
+                       else if (unit.startsWith('week')) totalDays = num * 7;
+                       else if (unit.startsWith('month')) totalDays = num * 30;
+                    } else if (!isNaN(parseInt(durationStr, 10))) {
+                       totalDays = parseInt(durationStr, 10);
+                    }
+                 }
+                 if (isLifelong) isActive = true;
+                 else {
+                    const endDate = new Date(rxDate);
+                    endDate.setDate(endDate.getDate() + totalDays);
+                    if (now <= endDate || (now > endDate && (now.getTime() - endDate.getTime()) < 24 * 60 * 60 * 1000)) {
+                        isActive = true;
+                    }
+                 }
+                 
+                 const finalStatus = (isActive && rx.status === 'active') ? 'active' : 'completed';
+                 
+                 if (finalStatus === 'completed') {
+                    const key = m.medicineName.toLowerCase();
+                    if (!pastMedsMap.has(key)) {
+                       pastMedsMap.set(key, { ...m, date: rxDate });
+                    } else if (rxDate > pastMedsMap.get(key).date) {
+                       pastMedsMap.set(key, { ...m, date: rxDate });
+                    }
+                 }
+              });
+            });
+            const pastRaw = Array.from(pastMedsMap.values()).sort((a: any, b: any) => b.date.getTime() - a.date.getTime());
+            const activeMedsNames = new Set(active.map((a: any) => a.medicineName.toLowerCase()));
+            const pastMeds = pastRaw.filter((p: any) => !activeMedsNames.has(p.medicineName.toLowerCase()));
+
+            await saveMedicationsData(active, hist, summ, pastMeds);
 
             setMedications(active);
+            setPastMedications(pastMeds);
             setHistory(hist);
             setSummary(summ);
         } catch (err) {
             console.error("Failed to load medication data", err);
             const localData = await getLocalMedicationsData();
-            if (localData.active.length > 0 || localData.history.length > 0) {
+            if (localData.active.length > 0 || localData.history.length > 0 || localData.past.length > 0) {
                 setMedications(localData.active || []);
+                setPastMedications(localData.past || []);
                 setHistory(localData.history || []);
                 setSummary(localData.summary || null);
             }
@@ -224,12 +278,13 @@ export default function MedicationTrackingPage() {
                 )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Active Medications */}
-                    <div className="lg:col-span-2 space-y-6">
-                        <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
-                            <LuPill className="text-[hsl(var(--color-primary))]" size={20} />
-                            Active Medications
-                        </h2>
+                    {/* Active Medications & Past Medications */}
+                    <div className="lg:col-span-2 space-y-8">
+                        <div className="space-y-6">
+                            <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
+                                <LuPill className="text-[hsl(var(--color-primary))]" size={20} />
+                                Active Medications
+                            </h2>
                         
                         {medications.length === 0 ? (
                             <Card className="p-10 text-center text-[hsl(var(--color-text-muted))]">
@@ -301,6 +356,47 @@ export default function MedicationTrackingPage() {
                                 </Card>
                             ))
                         )}
+                        
+                        {pastMedications.length > 0 && (
+                            <div className="space-y-6 pt-6 border-t border-[hsl(var(--color-border))]">
+                                <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
+                                    <LuHistory className="text-[hsl(var(--color-text-muted))]" size={20} />
+                                    Past Medications
+                                </h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    {pastMedications.map((med: any, idx: number) => {
+                                        let durationDays = 0;
+                                        if (med.duration) {
+                                            const durationStr = String(med.duration).toLowerCase();
+                                            const match = durationStr.match(/(\d+)\s*(days?|weeks?|months?)/i);
+                                            if (match) {
+                                                const num = parseInt(match[1], 10);
+                                                const unit = match[2];
+                                                if (unit.startsWith('day')) durationDays = num;
+                                                else if (unit.startsWith('week')) durationDays = num * 7;
+                                                else if (unit.startsWith('month')) durationDays = num * 30;
+                                            } else if (!isNaN(parseInt(durationStr, 10))) {
+                                                durationDays = parseInt(durationStr, 10);
+                                            }
+                                        }
+                                        const endedAt = new Date(med.date.getTime() + durationDays * 24 * 60 * 60 * 1000);
+                                        return (
+                                            <Card key={idx} className="p-4 bg-[hsl(var(--color-bg-surface))] opacity-80 border border-[hsl(var(--color-border))] transition-opacity hover:opacity-100">
+                                                <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))] mb-2">{med.medicineName}</h3>
+                                                <div className="flex flex-wrap gap-2 mb-2 text-xs font-bold text-[hsl(var(--color-text-muted))]">
+                                                    <span className="bg-[hsl(var(--color-bg-soft))] px-2 py-0.5 rounded-md">{med.dosage}</span>
+                                                    <span className="bg-[hsl(var(--color-bg-soft))] px-2 py-0.5 rounded-md">{med.frequency}</span>
+                                                </div>
+                                                <p className="text-[11px] text-[hsl(var(--color-text-muted))] font-medium mt-3 flex items-center gap-1 border-t border-[hsl(var(--color-border-soft))] pt-2">
+                                                    <LuCalendar size={12} /> Ended: {endedAt.toLocaleDateString()}
+                                                </p>
+                                            </Card>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        )}
+                        </div>
                     </div>
 
                     {/* History */}

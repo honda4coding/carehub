@@ -392,22 +392,60 @@ export default function MedicalHistoryPage() {
   // Extract all medications
   const allMedications = useMemo(() => {
     const meds = new Map();
+    const now = new Date();
+    
     records.forEach(r => {
       (r.prescriptions || []).forEach((rx: any) => {
         const rxDate = new Date(rx.createdAt || r.createdAt);
         (rx.medications || []).forEach((m: any) => {
           const key = m.medicineName.toLowerCase();
+          
+          // Calculate true active status based on duration
+          let isActive = false;
+          let isLifelong = false;
+          let totalDays = 0;
+          
+          if (m.duration) {
+            const durationStr = String(m.duration).toLowerCase();
+            const match = durationStr.match(/(\d+)\s*(days?|weeks?|months?)/i);
+            
+            if (durationStr === 'lifelong') {
+               isLifelong = true;
+            } else if (match) {
+               const num = parseInt(match[1], 10);
+               const unit = match[2];
+               if (unit.startsWith('day')) totalDays = num;
+               else if (unit.startsWith('week')) totalDays = num * 7;
+               else if (unit.startsWith('month')) totalDays = num * 30;
+            } else if (!isNaN(parseInt(durationStr, 10))) {
+               totalDays = parseInt(durationStr, 10);
+            }
+          }
+          
+          if (isLifelong) {
+             isActive = true;
+          } else {
+             const endDate = new Date(rxDate);
+             endDate.setDate(endDate.getDate() + totalDays);
+             // Allow a 1-day grace period for completion
+             if (now <= endDate || (now > endDate && (now.getTime() - endDate.getTime()) < 24 * 60 * 60 * 1000)) {
+                 isActive = true;
+             }
+          }
+          
+          const finalStatus = (isActive && rx.status === 'active') ? 'active' : 'completed';
+
           if (!meds.has(key)) {
             meds.set(key, {
               ...m,
               date: rxDate,
               prescriptionId: rx._id,
-              status: rx.status || "completed"
+              status: finalStatus
             });
           } else {
              // update with more recent
              if (rxDate > meds.get(key).date) {
-               meds.set(key, { ...m, date: rxDate, prescriptionId: rx._id, status: rx.status || "completed" });
+               meds.set(key, { ...m, date: rxDate, prescriptionId: rx._id, status: finalStatus });
              }
           }
         });
