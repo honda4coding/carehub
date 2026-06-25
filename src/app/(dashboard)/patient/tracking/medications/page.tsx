@@ -11,6 +11,12 @@ import {
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
+import { 
+    getLocalMedicationsData, 
+    saveMedicationsData, 
+    queueMedicationSync 
+} from "@/lib/db";
+import { syncMedications } from "@/lib/sync";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -59,6 +65,15 @@ export default function MedicationTrackingPage() {
 
     const fetchAllData = async () => {
         try {
+            if (!navigator.onLine) {
+                const localData = await getLocalMedicationsData();
+                setMedications(localData.active || []);
+                setHistory(localData.history || []);
+                setSummary(localData.summary || null);
+                setLoading(false);
+                return;
+            }
+
             const token = Cookies.get(AUTH_COOKIE_NAME);
             if (!token) return;
             const headers = { Authorization: `Bearer ${token}` };
@@ -69,18 +84,34 @@ export default function MedicationTrackingPage() {
                 axios.get(`${BASE_URL}/patient/medications/summary`, { headers }),
             ]);
 
-            setMedications(medsRes.data.data);
-            setHistory(histRes.data.data);
-            setSummary(summRes.data.data);
+            const active = medsRes.data.data ?? [];
+            const hist = histRes.data.data ?? [];
+            const summ = summRes.data.data ?? null;
+
+            await saveMedicationsData(active, hist, summ);
+
+            setMedications(active);
+            setHistory(hist);
+            setSummary(summ);
         } catch (err) {
             console.error("Failed to load medication data", err);
+            const localData = await getLocalMedicationsData();
+            if (localData.active.length > 0 || localData.history.length > 0) {
+                setMedications(localData.active || []);
+                setHistory(localData.history || []);
+                setSummary(localData.summary || null);
+            }
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchAllData();
+        if (navigator.onLine) {
+            syncMedications().then(() => fetchAllData());
+        } else {
+            fetchAllData();
+        }
     }, []);
 
     const handleTrack = async (med: ActiveMedication, status: 'taken' | 'missed') => {
@@ -89,21 +120,39 @@ export default function MedicationTrackingPage() {
             const token = Cookies.get(AUTH_COOKIE_NAME);
             
             // For simplicity, we assume tracking for 'now'.
-            // In a real app, the patient might select a specific scheduled dose.
             const scheduledDoseDateTime = new Date().toISOString();
-
-            await axios.post(`${BASE_URL}/patient/medications/track`, {
+            
+            const payload = {
                 prescriptionId: med.prescriptionId,
                 medicationId: med.medicationId,
                 scheduledDoseDateTime,
                 status
-            }, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            };
 
-            await fetchAllData();
-        } catch (err: any) {
-            alert(err?.response?.data?.message || "Failed to track dose");
+            if (!navigator.onLine) {
+                await queueMedicationSync(payload);
+                // Optimistic UI update
+                setHistory(prev => [{
+                    _id: crypto.randomUUID(),
+                    ...payload,
+                    completedAt: scheduledDoseDateTime
+                }, ...prev]);
+                
+                setMedications(prev => prev.map(m => 
+                    m.medicationId === med.medicationId 
+                        ? { ...m, hasTrackedToday: true }
+                        : m
+                ));
+            } else {
+                const headers = { Authorization: `Bearer ${token}` };
+                await axios.post(`${BASE_URL}/patient/medications/track`, payload, { headers });
+                fetchAllData();
+            }
+        } catch (err) {
+            console.error("Failed to track medication", err);
+            if (!navigator.onLine) {
+                 // Already handled optimistic
+            }
         } finally {
             setActionLoading(null);
         }

@@ -173,6 +173,11 @@ const patientNav: NavSection[] = [
     title: "Directory",
     items: [
       { label: "Doctors", href: "/patient/doctors", icon: <LuStethoscope /> },
+      {
+        label: "Notifications",
+        href: "/patient/notifications",
+        icon: <LuBell />,
+      },
     ],
   },
 ];
@@ -479,7 +484,7 @@ function SidebarContent({
                   ? pendingApprovals
                   : role === "admin" && item.href === "/admin/doctors/licenses"
                     ? pendingLicenses
-                    : role === "admin" && item.href === "/admin/notifications"
+                    : (role === "admin" && item.href === "/admin/notifications") || (role === "patient" && item.href === "/patient/notifications")
                       ? unreadNotifications
                       : item.badge;
               return (
@@ -609,7 +614,7 @@ export default function Sidebar({ role }: { role: string }) {
 
   // ── Unread notifications badge ───────────────────────────────────────────────
   const fetchUnreadCount = useCallback(async () => {
-    if (role !== "admin") return;
+    if (role !== "admin" && role !== "patient") return;
     try {
       const res = await fetchClient.get("/notifications", {
         params: { limit: "100" },

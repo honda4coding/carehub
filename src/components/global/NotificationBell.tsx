@@ -16,7 +16,7 @@ interface Notification {
 }
 
 // ── NotificationBell ───────────────────────────────────────────────────────────
-export default function NotificationBell() {
+export default function NotificationBell({ basePath }: { basePath: string }) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
@@ -41,7 +41,11 @@ export default function NotificationBell() {
   useEffect(() => {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30_000);
-    return () => clearInterval(interval);
+    window.addEventListener("notifications-changed", fetchNotifications);
+    return () => {
+        clearInterval(interval);
+        window.removeEventListener("notifications-changed", fetchNotifications);
+    }
   }, []);
 
   const fetchNotifications = async () => {
@@ -115,7 +119,7 @@ export default function NotificationBell() {
       >
         <LuBell className="text-[15px]" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 min-w-[16px] h-[16px] rounded-full bg-[hsl(var(--color-secondary-strong))] border-2 border-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[9px] font-bold text-white px-[2px]">
+          <span className="absolute top-1 right-1 min-w-[16px] h-[16px] rounded-full bg-[hsl(var(--color-secondary))] border-2 border-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[9px] font-bold text-white px-[2px]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -127,12 +131,12 @@ export default function NotificationBell() {
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--color-border))] shrink-0">
             <Link
-              href="/admin/notifications"
+              href={basePath}
               className="text-[13px] font-bold text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))]"
             >
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[10px] font-semibold">
+                <span className="ml-2 px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))] text-[10px] font-semibold">
                   {unreadCount} new
                 </span>
               )}

@@ -1,6 +1,7 @@
 "use client";
 import { IoIosHelpCircleOutline } from "react-icons/io";
-import { LuBell, LuSearch } from "react-icons/lu";
+import { LuSearch } from "react-icons/lu";
+import NotificationBell from "@/components/global/NotificationBell";
 
 interface Props {
   fullName: string;
@@ -21,10 +22,7 @@ export default function PatientHeader({ fullName, searchTerm, onSearch }: Props)
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
-        <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-all">
-          <LuBell className="text-[15px]" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-[hsl(var(--color-primary))]" />
-        </button>
+        <NotificationBell basePath="/patient/notifications" />
       </div>
     </header>
   );

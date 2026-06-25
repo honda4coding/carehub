@@ -1,6 +1,7 @@
 import React from "react";
 import { LuBell, LuCheck } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 export interface Notification {
   _id: string;
@@ -79,15 +80,9 @@ export default function NotificationsList({
               </td>
 
               <td className="py-3.5 pr-4 text-left">
-                <span
-                  className={`inline-flex items-center text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${
-                    notification.isRead
-                      ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]"
-                      : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
-                  }`}
-                >
+                <Badge variant={notification.isRead ? "success" : "warning"}>
                   {notification.isRead ? "Read" : "Unread"}
-                </span>
+                </Badge>
               </td>
 
               <td className="py-3.5 pr-4">
@@ -118,15 +113,9 @@ export default function NotificationsList({
             className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-4 border border-[hsl(var(--color-border))] shadow-sm"
           >
             <div className="flex justify-between items-start mb-3">
-              <span
-                className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full whitespace-nowrap ${
-                  notification.isRead
-                    ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]"
-                    : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
-                }`}
-              >
+              <Badge variant={notification.isRead ? "success" : "warning"}>
                 {notification.isRead ? "Read" : "Unread"}
-              </span>
+              </Badge>
               <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
                 {notification.type}
               </span>

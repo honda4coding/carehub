@@ -39,6 +39,7 @@ export const fetchClient = {
 
     const config: RequestInit = {
       ...options,
+      credentials: "include",
       headers,
     };
 
