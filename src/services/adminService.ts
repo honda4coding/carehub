@@ -77,6 +77,13 @@ export const adminService = {
     return fetchClient.get("/admin/doctors", { params });
   },
 
+  getPendingDoctors: (startDate?: string, endDate?: string): Promise<GetPendingDoctorsResponse> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admin/doctors/pending", { params });
+  },
+
   /** PATCH /admin/:id/activate  → sets status: "active"  */
   activateUser: (id: string) =>
     fetchClient.request(`/admin/${id}/activate`, { method: "PATCH" }),
