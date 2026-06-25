@@ -34,15 +34,40 @@ export default function UpdatePasswordForm() {
   const [toastMsg, setToastMsg] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [isRegisteringBio, setIsRegisteringBio] = React.useState(false);
   const [bioToast, setBioToast] = React.useState<{ msg: string; variant?: "success" | "error" } | null>(null);
+  const [isBioEnabled, setIsBioEnabled] = React.useState(false);
+
+  React.useEffect(() => {
+    import("@/services/webAuthnService").then((module) => {
+      module.getBiometricStatus().then((status) => {
+        setIsBioEnabled(status.enabled);
+      });
+    });
+  }, []);
 
   const handleRegisterBiometrics = async () => {
     try {
       setIsRegisteringBio(true);
       setBioToast(null);
       await registerBiometrics();
+      setIsBioEnabled(true);
       setBioToast({ msg: "FaceID / TouchID registered successfully!", variant: "success" });
     } catch (err: any) {
       setBioToast({ msg: err.message || "Failed to enable biometric login.", variant: "error" });
+    } finally {
+      setIsRegisteringBio(false);
+    }
+  };
+
+  const handleRemoveBiometrics = async () => {
+    try {
+      setIsRegisteringBio(true);
+      setBioToast(null);
+      const { removeBiometrics } = await import("@/services/webAuthnService");
+      await removeBiometrics();
+      setIsBioEnabled(false);
+      setBioToast({ msg: "Biometric login removed successfully.", variant: "success" });
+    } catch (err: any) {
+      setBioToast({ msg: err.message || "Failed to remove biometrics.", variant: "error" });
     } finally {
       setIsRegisteringBio(false);
     }
@@ -176,24 +201,46 @@ export default function UpdatePasswordForm() {
       <div className="space-y-4">
         <div>
           <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" /> Biometric Login
+            <FaFingerprint className={isBioEnabled ? "w-5 h-5 text-success" : "w-5 h-5 text-[hsl(var(--color-primary))]"} /> Biometric Login
           </h3>
           <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-1 font-semibold">
             Use your device's fingerprint scanner or facial recognition (FaceID/TouchID) to log in instantly next time.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={handleRegisterBiometrics}
-          disabled={isRegisteringBio}
-          className="w-full py-3 px-4 border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        >
-          {isRegisteringBio ? (
-            <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
-          ) : (
-            <>Enable Biometric Login</>
-          )}
-        </button>
+
+        {isBioEnabled ? (
+          <div className="flex flex-col gap-2">
+            <div className="w-full py-3 px-4 bg-success/10 border border-success/30 text-success font-black text-[13px] rounded-xl flex items-center justify-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-success animate-pulse"></span>
+              Biometric Login Activated
+            </div>
+            <button
+              type="button"
+              onClick={handleRemoveBiometrics}
+              disabled={isRegisteringBio}
+              className="w-full py-2 px-4 border border-danger/30 text-danger hover:bg-danger hover:text-white font-bold text-[12px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+            >
+              {isRegisteringBio ? (
+                <><ImSpinner2 className="w-4 h-4 animate-spin" /> Removing...</>
+              ) : (
+                "Remove Biometrics"
+              )}
+            </button>
+          </div>
+        ) : (
+          <button
+            type="button"
+            onClick={handleRegisterBiometrics}
+            disabled={isRegisteringBio}
+            className="w-full py-3 px-4 border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white font-black text-[13px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {isRegisteringBio ? (
+              <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
+            ) : (
+              <>Enable Biometric Login</>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );

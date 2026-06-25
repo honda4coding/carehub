@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  turbopack: {},
 };
 
 const isDev = process.env.NODE_ENV === "development";
@@ -17,7 +18,7 @@ const isDev = process.env.NODE_ENV === "development";
 const finalConfig = isDev
   ? nextConfig
   : withSerwistInit({
-      swSrc: "src/app/sw.ts",
+      swSrc: "src/sw.ts",
       swDest: "public/sw.js",
       disable: false,
       additionalPrecacheEntries: [

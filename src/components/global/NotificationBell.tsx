@@ -50,6 +50,11 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
 
   const fetchNotifications = async () => {
     try {
+      // Prevent fetching if not logged in (e.g. on Landing or Login page)
+      const Cookies = (await import("js-cookie")).default;
+      const { AUTH_COOKIE_NAME } = await import("@/constants/auth");
+      if (!Cookies.get(AUTH_COOKIE_NAME)) return;
+
       setLoading(true);
       const res = await fetchClient.get("/notifications", {
         params: { limit: "20" },
