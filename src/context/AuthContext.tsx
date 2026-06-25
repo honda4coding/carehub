@@ -66,11 +66,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
     localStorage.removeItem(USER_STORAGE_KEY);
 
-    // Clear Service Worker caches
+    // Clear Service Worker runtime caches but keep precaches
     if ('caches' in window) {
       caches.keys().then((names) => {
         names.forEach((name) => {
-          caches.delete(name);
+          if (!name.includes('precache')) {
+            caches.delete(name);
+          }
         });
       });
     }

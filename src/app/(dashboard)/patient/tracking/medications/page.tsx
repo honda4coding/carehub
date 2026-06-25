@@ -11,12 +11,6 @@ import {
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
-import { 
-    getLocalMedicationsData, 
-    saveMedicationsData, 
-    queueMedicationSync 
-} from "@/lib/db";
-import { syncMedications } from "@/lib/sync";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -66,16 +60,6 @@ export default function MedicationTrackingPage() {
 
     const fetchAllData = async () => {
         try {
-            if (!navigator.onLine) {
-                const localData = await getLocalMedicationsData();
-                setMedications(localData.active || []);
-                setPastMedications(localData.past || []);
-                setHistory(localData.history || []);
-                setSummary(localData.summary || null);
-                setLoading(false);
-                return;
-            }
-
             const token = Cookies.get(AUTH_COOKIE_NAME);
             if (!token) return;
             const headers = { Authorization: `Bearer ${token}` };
@@ -140,32 +124,19 @@ export default function MedicationTrackingPage() {
             const activeMedsNames = new Set(active.map((a: any) => a.medicineName.toLowerCase()));
             const pastMeds = pastRaw.filter((p: any) => !activeMedsNames.has(p.medicineName.toLowerCase()));
 
-            await saveMedicationsData(active, hist, summ, pastMeds);
-
             setMedications(active);
             setPastMedications(pastMeds);
             setHistory(hist);
             setSummary(summ);
         } catch (err) {
             console.error("Failed to load medication data", err);
-            const localData = await getLocalMedicationsData();
-            if (localData.active.length > 0 || localData.history.length > 0 || localData.past.length > 0) {
-                setMedications(localData.active || []);
-                setPastMedications(localData.past || []);
-                setHistory(localData.history || []);
-                setSummary(localData.summary || null);
-            }
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        if (navigator.onLine) {
-            syncMedications().then(() => fetchAllData());
-        } else {
-            fetchAllData();
-        }
+        fetchAllData();
     }, []);
 
     const handleTrack = async (med: ActiveMedication, status: 'taken' | 'missed') => {
@@ -173,7 +144,6 @@ export default function MedicationTrackingPage() {
             setActionLoading(med.medicationId);
             const token = Cookies.get(AUTH_COOKIE_NAME);
             
-            // For simplicity, we assume tracking for 'now'.
             const scheduledDoseDateTime = new Date().toISOString();
             
             const payload = {
@@ -183,30 +153,11 @@ export default function MedicationTrackingPage() {
                 status
             };
 
-            if (!navigator.onLine) {
-                await queueMedicationSync(payload);
-                // Optimistic UI update
-                setHistory(prev => [{
-                    _id: crypto.randomUUID(),
-                    ...payload,
-                    completedAt: scheduledDoseDateTime
-                }, ...prev]);
-                
-                setMedications(prev => prev.map(m => 
-                    m.medicationId === med.medicationId 
-                        ? { ...m, hasTrackedToday: true }
-                        : m
-                ));
-            } else {
-                const headers = { Authorization: `Bearer ${token}` };
-                await axios.post(`${BASE_URL}/patient/medications/track`, payload, { headers });
-                fetchAllData();
-            }
+            const headers = { Authorization: `Bearer ${token}` };
+            await axios.post(`${BASE_URL}/patient/medications/track`, payload, { headers });
+            fetchAllData();
         } catch (err) {
             console.error("Failed to track medication", err);
-            if (!navigator.onLine) {
-                 // Already handled optimistic
-            }
         } finally {
             setActionLoading(null);
         }

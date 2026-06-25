@@ -15,8 +15,6 @@ import {
 import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
 import { Card } from "@/components/ui/Card";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
-import { getLocalVitalsData, saveVitalsData, queueVitalSync } from "@/lib/db";
-import { syncVitals } from "@/lib/sync";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -72,25 +70,12 @@ export default function TrackingPage() {
 
   const fetchRecords = useCallback(async () => {
     try {
-      if (!navigator.onLine) {
-        const localData = await getLocalVitalsData();
-        setRecords(localData.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-        setLoading(false);
-        return;
-      }
-
       const { data } = await axios.get(`${BASE_URL}/patient/tracking`, { headers: authHeaders() });
       const result = data.data ?? [];
       
-      await saveVitalsData(result);
       setRecords(result.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()));
     } catch (err: any) {
-      const localData = await getLocalVitalsData();
-      if (localData.length > 0) {
-        setRecords(localData.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-      } else {
-        setToast({ msg: err?.response?.data?.message ?? "Failed to load tracking records", type: "error" });
-      }
+      setToast({ msg: err?.response?.data?.message ?? "Failed to load tracking records", type: "error" });
     } finally {
       setLoading(false);
     }
@@ -98,11 +83,7 @@ export default function TrackingPage() {
 
   useEffect(() => {
     if (user) {
-      if (navigator.onLine) {
-        syncVitals().then(() => fetchRecords());
-      } else {
         fetchRecords();
-      }
     }
   }, [user, fetchRecords]);
 
@@ -121,24 +102,9 @@ export default function TrackingPage() {
         if (parts[1]) payload.bloodPressureDiastolic = Number(parts[1]);
       }
 
-      if (!navigator.onLine) {
-        const syncPayload = { ...payload }; // Clean payload for backend
-        
-        // Mutate only for local UI state
-        const localObj = { 
-          ...payload, 
-          date: new Date().toISOString(), 
-          _id: crypto.randomUUID() 
-        };
-        
-        await queueVitalSync(syncPayload);
-        setRecords((prev) => [...prev, localObj].sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()));
-        setToast({ msg: "Offline mode: Vital saved locally and will sync later", type: "success" });
-      } else {
-        await axios.post(`${BASE_URL}/patient/tracking`, payload, { headers: authHeaders() });
-        setToast({ msg: "Record added successfully", type: "success" });
-        fetchRecords();
-      }
+      await axios.post(`${BASE_URL}/patient/tracking`, payload, { headers: authHeaders() });
+      setToast({ msg: "Record added successfully", type: "success" });
+      fetchRecords();
 
       setFormData({
         weight: "",
@@ -150,11 +116,7 @@ export default function TrackingPage() {
         notes: ""
       });
     } catch (err: any) {
-      if (!navigator.onLine) {
-         setToast({ msg: "Offline mode: Vital saved locally and will sync later", type: "success" });
-      } else {
-         setToast({ msg: err?.response?.data?.message ?? "Failed to add record", type: "error" });
-      }
+      setToast({ msg: err?.response?.data?.message ?? "Failed to add record", type: "error" });
     } finally {
       setIsSubmitting(false);
     }
