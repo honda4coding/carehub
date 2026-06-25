@@ -210,21 +210,30 @@ export const LoginForm = () => {
               </div>
 
               {/* Biometrics Login */}
-              <div>
+              <div className="pt-2">
                 {bioError && (
-                  <div className="bg-danger-light border border-red-200 text-danger text-xs font-semibold px-4 py-2 rounded-xl text-center mb-3">
+                  <div className="bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))] text-xs font-bold px-4 py-3 rounded-xl text-center mb-4">
                     {bioError}
                   </div>
                 )}
-                <Button
+                <button
                   type="button"
-                  variant="outline"
-                  className="w-full flex items-center justify-center gap-2 border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.03)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white"
-                  isLoading={isBioSubmitting}
+                  disabled={isBioSubmitting}
                   onClick={() => handleBiometricLogin(values.email)}
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl text-[hsl(var(--color-text))] font-bold transition-colors hover:bg-[hsl(var(--color-bg-surface-hover))] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  <FaFingerprint className="w-5 h-5" /> Sign in with Biometrics
-                </Button>
+                  {isBioSubmitting ? (
+                    <ImSpinner2 className="w-5 h-5 animate-spin text-[hsl(var(--color-primary))]" />
+                  ) : (
+                    <>
+                      <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+                      <span>Sign in with Biometrics</span>
+                    </>
+                  )}
+                </button>
+                <p className="text-[10px] text-center text-[hsl(var(--color-text-muted))] mt-3 px-4 leading-relaxed font-medium">
+                  Enter your email first, then click here to sign in instantly using Touch ID or Face ID.
+                </p>
               </div>
             </Form>
           )}

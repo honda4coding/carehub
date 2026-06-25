@@ -53,7 +53,7 @@ export async function authenticateBiometrics(email: string): Promise<any> {
 export async function getBiometricStatus(): Promise<{ enabled: boolean }> {
   try {
     const res = await fetchClient.get("/webauthn/status");
-    return res.data;
+    return { enabled: !!res.data.hasBiometrics };
   } catch (error: any) {
     console.error("Failed to fetch biometric status:", error);
     return { enabled: false };
@@ -62,7 +62,7 @@ export async function getBiometricStatus(): Promise<{ enabled: boolean }> {
 
 export async function removeBiometrics(): Promise<void> {
   try {
-    await fetchClient.post("/webauthn/remove", {});
+    await fetchClient.delete("/webauthn/remove");
   } catch (error: any) {
     console.error("Failed to remove biometrics:", error);
     throw new Error(error.message || "Failed to remove biometrics.");
