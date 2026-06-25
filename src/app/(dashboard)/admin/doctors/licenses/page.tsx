@@ -59,17 +59,16 @@ export default function AdminLicensesPage() {
 
   const handleApprove = async (id: string) => {
     await adminService.approveDoctorLicense(id);
-    setDoctors((prev) => prev.filter((d) => d._id !== id));
-    // notify sidebar badge
+    setDoctors((prev) => prev.filter((d) => d.userId !== id));
     window.dispatchEvent(new Event("pending-licenses-changed"));
-    fetchReviewedItems();
+    await fetchReviewedItems();
   };
 
   const handleReject = async (id: string, reason: string) => {
     await adminService.rejectDoctorLicense(id, reason);
-    setDoctors((prev) => prev.filter((d) => d._id !== id));
+    setDoctors((prev) => prev.filter((d) => d.userId !== id));
     window.dispatchEvent(new Event("pending-licenses-changed"));
-    fetchReviewedItems();
+    await fetchReviewedItems();
   };
 
   return (
@@ -123,7 +122,7 @@ export default function AdminLicensesPage() {
           </button>
         </div>
 
-        {/* ── Reviewed history (toggled by the card above) ─────────────────────── */}
+        {/* ── Reviewed history ─────────────────────────────────────────────── */}
         {showReviewed && (
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-6">
             <p className="text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] mb-3">
