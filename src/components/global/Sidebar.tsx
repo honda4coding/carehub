@@ -29,6 +29,7 @@ import {
   LuBell,
   LuBrainCircuit,
   LuBuilding2,
+  LuFileCheck,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -65,6 +66,11 @@ const adminNav: NavSection[] = [
         label: "Approvals",
         href: "/admin/approvals",
         icon: <LuShieldCheck />,
+      },
+      {
+        label: "Doctor Licenses",
+        href: "/admin/doctors/licenses",
+        icon: <LuFileCheck />,
       },
     ],
   },
@@ -380,11 +386,13 @@ function SidebarContent({
   onClose,
   pendingApprovals,
   unreadNotifications,
+  pendingLicenses,
 }: {
   role: string;
   onClose?: () => void;
   pendingApprovals: number | null;
   unreadNotifications: number | null;
+  pendingLicenses: number | null;
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -469,9 +477,11 @@ function SidebarContent({
               const badgeValue =
                 role === "admin" && item.href === "/admin/approvals"
                   ? pendingApprovals
-                  : role === "admin" && item.href === "/admin/notifications"
-                    ? unreadNotifications
-                    : item.badge;
+                  : role === "admin" && item.href === "/admin/doctors/licenses"
+                    ? pendingLicenses
+                    : role === "admin" && item.href === "/admin/notifications"
+                      ? unreadNotifications
+                      : item.badge;
               return (
                 <Link
                   key={item.href}
@@ -551,6 +561,7 @@ export default function Sidebar({ role }: { role: string }) {
   const [unreadNotifications, setUnreadNotifications] = useState<number | null>(
     null,
   );
+  const [pendingLicenses, setPendingLicenses] = useState<number | null>(null);
 
   // ── Pending approvals badge ──────────────────────────────────────────────────
   useEffect(() => {
@@ -571,6 +582,28 @@ export default function Sidebar({ role }: { role: string }) {
       window.removeEventListener(
         "pending-approvals-changed",
         fetchPendingDoctors,
+      );
+  }, [role]);
+
+  // ── Pending license updates badge ────────────────────────────────────────────
+  useEffect(() => {
+    if (role !== "admin") return;
+
+    const fetchPendingLicenses = async () => {
+      try {
+        const res = await adminService.getPendingLicenseDoctors();
+        setPendingLicenses(res?.data?.length || null);
+      } catch {
+        setPendingLicenses(null);
+      }
+    };
+
+    fetchPendingLicenses();
+    window.addEventListener("pending-licenses-changed", fetchPendingLicenses);
+    return () =>
+      window.removeEventListener(
+        "pending-licenses-changed",
+        fetchPendingLicenses,
       );
   }, [role]);
 
@@ -613,6 +646,7 @@ export default function Sidebar({ role }: { role: string }) {
           role={role}
           pendingApprovals={pendingApprovals}
           unreadNotifications={unreadNotifications}
+          pendingLicenses={pendingLicenses}
         />
       </aside>
 
@@ -640,6 +674,7 @@ export default function Sidebar({ role }: { role: string }) {
               onClose={() => setOpen(false)}
               pendingApprovals={pendingApprovals}
               unreadNotifications={unreadNotifications}
+              pendingLicenses={pendingLicenses}
             />
           </aside>
         </>

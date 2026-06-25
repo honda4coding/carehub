@@ -85,13 +85,30 @@ export const adminService = {
   deactivateUser: (id: string) =>
     fetchClient.request(`/admin/${id}/deactivate`, { method: "PATCH" }),
 
-  /** GET /admin/doctors/pending → doctor registrations awaiting review */
-  getPendingDoctors: (startDate?: string, endDate?: string) => {
-    const params = new URLSearchParams();
-    if (startDate) params.append("startDate", startDate);
-    if (endDate) params.append("endDate", endDate);
-    const qs = params.toString();
-    return fetchClient.get(`/admin/doctors/pending${qs ? `?${qs}` : ""}`);
-  },
+  /** GET /admin/doctors/pending-licenses → doctors with pending license updates */
+  getPendingLicenseDoctors: (): Promise<{ data: PendingLicenseDoctor[] }> =>
+    fetchClient.get("/admin/doctors/pending-licenses"),
+
+  /** PATCH /admin/doctors/:id/approve-license */
+  approveDoctorLicense: (id: string) =>
+    fetchClient.request(`/admin/doctors/${id}/approve-license`, { method: "PATCH" }),
+
+  /** PATCH /admin/doctors/:id/reject-license */
+  rejectDoctorLicense: (id: string, reason?: string) =>
+    fetchClient.request(`/admin/doctors/${id}/reject-license`, {
+      method: "PATCH",
+      body: JSON.stringify({ reason }),
+    }),
 
 };
+
+export interface PendingLicenseDoctor {
+  _id: string;
+  userId: string;
+  fullName: string;
+  email: string;
+  specialty?: string;
+  pendingLicenseImage: { secure_url: string; public_id: string };
+  licenseimage?: { secure_url: string; public_id: string };
+  updatedAt: string;
+}
