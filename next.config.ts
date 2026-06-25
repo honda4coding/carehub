@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import withSerwistInit from "@serwist/next";
 
 const nextConfig: NextConfig = {
   images: {
@@ -42,7 +43,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; script-src 'self'",
+            value: "default-src 'self'; connect-src 'self' http://localhost:3000 https://www.transparenttextures.com; img-src 'self' data: https://www.transparenttextures.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
           },
         ],
       },
@@ -50,4 +51,15 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+const isDev = process.env.NODE_ENV === "development";
+
+const finalConfig = isDev
+  ? nextConfig
+  : withSerwistInit({
+      swSrc: "src/app/sw.ts",
+      swDest: "public/sw.js",
+      disable: false,
+      additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
+    })(nextConfig);
+
+export default finalConfig;
