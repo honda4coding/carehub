@@ -88,7 +88,8 @@ export default function GenerateSlotsCard({
       setMySlots((prev) => prev.filter((s) => !deletedIds.has(s._id)));
       onToast("All slots for this day removed", "success");
     } catch (err: any) {
-      onToast(err.message || "Could not delete some slots", "error");
+       await loadSlots();
+       onToast(err.message || "Could not delete some slots", "error");
     }
   }
 
@@ -188,7 +189,7 @@ export default function GenerateSlotsCard({
                     </button>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleDeleteDaySlots(group.slots)}
+                        onClick={(e) => { e.stopPropagation(); handleDeleteDaySlots(group.slots); }}
                         className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors p-1 cursor-pointer"
                         title="Delete all slots for this day"
                       >
