@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
-
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useAuth } from "@/context/AuthContext";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
-  LuClipboardList, LuStethoscope, LuCalendar, LuChevronDown, LuChevronUp, LuFileText, LuHistory, LuPill, LuSearch, LuShieldAlert, LuActivity, LuScissors
+  LuClipboardList, LuStethoscope, LuCalendar, LuChevronDown, LuChevronUp,
+  LuFileText, LuHistory, LuPill, LuSearch, LuShieldAlert, LuActivity,
+  LuScissors, LuHeartPulse, LuThermometer, LuDroplets, LuWeight,
+  LuRuler, LuFlame, LuX, LuExternalLink, LuImage
 } from "react-icons/lu";
-import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import EmptyState from "@/components/appointments/EmptyState";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
@@ -21,275 +22,518 @@ function authHeaders() {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+/* ─── Skeleton ──────────────────────────────────────────────────────────── */
 function Skeleton() {
   return (
-    <div className="flex flex-col gap-4 animate-pulse">
-      {[...Array(2)].map((_, i) => (
-        <div key={i} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="h-4 bg-[hsl(var(--color-border))] rounded w-1/3 mb-3" />
-          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-1/2 mb-2" />
-          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-full mb-1" />
-          <div className="h-3 bg-[hsl(var(--color-border))] rounded w-4/5" />
+    <div className="flex flex-col gap-3 animate-pulse">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
+          <div className="flex gap-4 p-5">
+            <div className="w-1 rounded-full bg-[hsl(var(--color-border))] self-stretch shrink-0" />
+            <div className="flex-1">
+              <div className="h-3 bg-[hsl(var(--color-border))] rounded-full w-24 mb-3" />
+              <div className="h-4 bg-[hsl(var(--color-border))] rounded-full w-48 mb-2" />
+              <div className="h-3 bg-[hsl(var(--color-border))] rounded-full w-36" />
+            </div>
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-function TimelineAccordionCard({ record }: { record: any }) {
+/* ─── Vital Chip ─────────────────────────────────────────────────────────── */
+function VitalChip({ icon, label, value, highlight = false }: {
+  icon: React.ReactNode; label: string; value: string; highlight?: boolean;
+}) {
+  if (!value || value === "--") return null;
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-[12px] font-medium transition-colors
+      ${highlight
+        ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]"
+        : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+      }`}>
+      <span className="text-[11px]">{icon}</span>
+      <span className="text-[hsl(var(--color-text-muted))]">{label}</span>
+      <span className={`font-semibold ${highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text))]"}`}>
+        {value}
+      </span>
+    </div>
+  );
+}
+
+/* ─── Tab Button ─────────────────────────────────────────────────────────── */
+function TabBtn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-4 py-2 text-[13px] font-semibold transition-colors relative cursor-pointer
+        ${active
+          ? "text-[hsl(var(--color-primary))] after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-[hsl(var(--color-primary))] after:rounded-full"
+          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+        }`}
+    >
+      {label}
+    </button>
+  );
+}
+
+/* ─── Visit Card ─────────────────────────────────────────────────────────── */
+type Severity = "critical" | "warning" | "normal";
+
+function getSeverity(record: any): Severity {
+  const diag = (record.diagnosis || "").toLowerCase();
+  if (diag.includes("crisis") || diag.includes("emergency") || diag.includes("acute") || diag.includes("severe"))
+    return "critical";
+  if (diag.includes("infection") || diag.includes("fever") || diag.includes("inflammation") || diag.includes("chronic"))
+    return "warning";
+  return "normal";
+}
+
+const SEVERITY_STYLES: Record<Severity, { bar: string; dot: string; badge: string }> = {
+  critical: {
+    bar: "bg-[hsl(var(--color-danger))]",
+    dot: "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))]",
+    badge: "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] border border-[hsl(var(--color-danger)/0.2)]",
+  },
+  warning: {
+    bar: "bg-[hsl(var(--color-warning))]",
+    dot: "bg-[hsl(var(--color-warning-bg))] border-[hsl(var(--color-warning)/0.3)] text-[hsl(var(--color-warning))]",
+    badge: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] border border-[hsl(var(--color-warning)/0.2)]",
+  },
+  normal: {
+    bar: "bg-[hsl(var(--color-primary))]",
+    dot: "bg-[hsl(var(--color-primary)/0.1)] border-[hsl(var(--color-primary)/0.25)] text-[hsl(var(--color-primary))]",
+    badge: "bg-[hsl(var(--color-primary)/0.08)] text-[hsl(var(--color-primary-strong))] border border-[hsl(var(--color-primary)/0.2)]",
+  },
+};
+
+type ExpandTab = "vitals" | "medications" | "notes" | "documents";
+
+function VisitCard({ record }: { record: any }) {
   const [expanded, setExpanded] = useState(false);
-  const dateStr = new Date(record.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-  const timeStr = new Date(record.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  const [activeTab, setActiveTab] = useState<ExpandTab>("vitals");
+
+  const severity = getSeverity(record);
+  const styles = SEVERITY_STYLES[severity];
+
+  const dateStr = new Date(record.createdAt).toLocaleDateString("en-GB", {
+    day: "2-digit", month: "short", year: "numeric",
+  });
+  const timeStr = new Date(record.createdAt).toLocaleTimeString("en-US", {
+    hour: "2-digit", minute: "2-digit",
+  });
+
+  const hasVitals = record.bloodPressure || record.sugarLevel || record.pulse || record.temperature || record.height || record.weight;
+  const prescriptions = record.prescriptions || [];
+  const documents = record.documents || [];
+  const hasDocs = documents.length > 0;
+
+  // Detect high fever for highlight
+  const tempVal = parseFloat(record.temperature);
+  const highTemp = !isNaN(tempVal) && tempVal >= 38;
+
+  const tabs: { key: ExpandTab; label: string }[] = [
+    { key: "vitals", label: "Vitals" },
+    { key: "medications", label: "Medications" },
+    { key: "notes", label: "Notes" },
+    ...(hasDocs ? [{ key: "documents" as ExpandTab, label: "Documents" }] : []),
+  ];
 
   return (
-    <div 
-      onClick={() => setExpanded(!expanded)}
-      className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 hover:border-[hsl(var(--color-primary)/0.5)] transition-all cursor-pointer group w-full"
+    <div
+      className={`bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] overflow-hidden transition-all duration-200
+        ${expanded ? "border-[hsl(var(--color-primary)/0.4)] shadow-sm" : "hover:border-[hsl(var(--color-border))]"}
+      `}
     >
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-surface-hover))] text-[hsl(var(--color-text-muted))] group-hover:bg-[hsl(var(--color-primary))] group-hover:text-white transition-colors">
-            <LuCalendar className="text-lg" />
-          </span>
-          <div>
-            <p className="text-[15px] font-black text-[hsl(var(--color-text))]"> {dateStr} <span className="text-[13px] text-[hsl(var(--color-text-muted))] ml-1">{timeStr}</span></p>
-            <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-               <LuStethoscope className="text-[hsl(var(--color-text-muted))] flex-shrink-0" /> 
-               {record.doctorId?.fullName ?? record.doctorId?.userName ?? "Doctor"} • {record.diagnosis || "No diagnosis recorded"}
-            </p>
+      {/* Clickable Header Row */}
+      <div
+        className="flex cursor-pointer select-none"
+        onClick={() => setExpanded(!expanded)}
+        role="button"
+        aria-expanded={expanded}
+      >
+        {/* Severity accent bar */}
+        <div className={`w-[3px] shrink-0 ${styles.bar} rounded-l-2xl`} />
+
+        {/* Main info */}
+        <div className="flex-1 px-5 py-4">
+          {/* Top row: date + chevron */}
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex items-center gap-2 text-[12px] text-[hsl(var(--color-text-muted))] font-medium">
+              <LuCalendar className="text-[11px]" />
+              <span>{dateStr}</span>
+              <span className="opacity-50">·</span>
+              <span>{timeStr}</span>
+            </div>
+            <div className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg ${styles.badge}`}>
+              {severity === "critical" ? "Critical" : severity === "warning" ? "Follow-up" : "Routine"}
+            </div>
           </div>
+
+          {/* Diagnosis */}
+          <h3 className="text-[15px] font-semibold text-[hsl(var(--color-text))] mb-1.5 leading-snug">
+            {record.diagnosis || "No diagnosis recorded"}
+          </h3>
+
+          {/* Doctor */}
+          <p className="text-[13px] text-[hsl(var(--color-text-muted))] flex items-center gap-1.5">
+            <LuStethoscope className="shrink-0 text-[12px]" />
+            <span className="font-medium text-[hsl(var(--color-text))]">
+              {record.doctorId?.fullName ?? record.doctorId?.userName ?? "Doctor"}
+            </span>
+            {record.doctorId?.specialization && (
+              <span className="opacity-60">· {record.doctorId.specialization}</span>
+            )}
+          </p>
+
+          {/* Inline vitals preview — always visible */}
+          {hasVitals && (
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              {record.bloodPressure && <VitalChip icon={<LuHeartPulse />} label="BP" value={record.bloodPressure} />}
+              {record.pulse && <VitalChip icon={<LuActivity />} label="Pulse" value={`${record.pulse} bpm`} />}
+              {record.temperature && <VitalChip icon={<LuThermometer />} label="Temp" value={`${record.temperature}°C`} highlight={highTemp} />}
+            </div>
+          )}
         </div>
-        
-        <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors cursor-pointer">
-          {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
-        </button>
+
+        {/* Chevron */}
+        <div className="flex items-center pr-4 pl-1 text-[hsl(var(--color-text-muted))]">
+          {expanded ? <LuChevronUp className="text-[16px]" /> : <LuChevronDown className="text-[16px]" />}
+        </div>
       </div>
 
+      {/* Expanded Body */}
       {expanded && (
-        <div className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border))] pt-4" onClick={(e) => e.stopPropagation()}>
-          <MedicalHistoryCard record={record} hideHeader={true} />
+        <div className="border-t border-[hsl(var(--color-border))] animate-in fade-in slide-in-from-top-1 duration-150">
+          {/* Tab Bar */}
+          <div className="flex border-b border-[hsl(var(--color-border))] px-4">
+            {tabs.map((t) => (
+              <TabBtn
+                key={t.key}
+                label={t.label}
+                active={activeTab === t.key}
+                onClick={() => setActiveTab(t.key)}
+              />
+            ))}
+          </div>
+
+          {/* Tab Content */}
+          <div className="p-5">
+            {/* ── Vitals Tab ── */}
+            {activeTab === "vitals" && (
+              <div>
+                {hasVitals ? (
+                  <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {[
+                      { icon: <LuHeartPulse />, label: "Blood pressure", value: record.bloodPressure, unit: "mmHg" },
+                      { icon: <LuDroplets />, label: "Sugar level", value: record.sugarLevel, unit: "mg/dL" },
+                      { icon: <LuActivity />, label: "Pulse", value: record.pulse ? `${record.pulse}` : null, unit: "bpm" },
+                      { icon: <LuThermometer />, label: "Temperature", value: record.temperature ? `${record.temperature}` : null, unit: "°C", highlight: highTemp },
+                      { icon: <LuRuler />, label: "Height", value: record.height !== "-" ? record.height : null, unit: "cm" },
+                      { icon: <LuWeight />, label: "Weight", value: record.weight !== "-" ? record.weight : null, unit: "kg" },
+                    ].map((v, i) =>
+                      v.value ? (
+                        <div
+                          key={i}
+                          className={`rounded-xl p-3 border ${v.highlight
+                            ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.15)]"
+                            : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))]"
+                          }`}
+                        >
+                          <div className={`flex items-center gap-1.5 text-[11px] font-medium mb-1.5 ${v.highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text-muted))]"}`}>
+                            {v.icon} {v.label}
+                          </div>
+                          <div className={`text-[18px] font-semibold leading-none ${v.highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text))]"}`}>
+                            {v.value}
+                            <span className="text-[12px] font-normal text-[hsl(var(--color-text-muted))] ml-1">{v.unit}</span>
+                          </div>
+                        </div>
+                      ) : null
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-[13px] text-[hsl(var(--color-text-muted))] italic text-center py-4">No vitals recorded for this visit.</p>
+                )}
+              </div>
+            )}
+
+            {/* ── Medications Tab ── */}
+            {activeTab === "medications" && (
+              <div>
+                {prescriptions.length > 0 ? (
+                  <div className="space-y-2">
+                    {prescriptions.map((rx: any) =>
+                      rx.medications?.map((med: any, mIdx: number) => (
+                        <div key={mIdx} className="flex items-start gap-3 p-3 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
+                          <div className="w-7 h-7 rounded-lg bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] shrink-0 mt-0.5">
+                            <LuPill className="text-[13px]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[14px] font-semibold text-[hsl(var(--color-text))] leading-tight">{med.medicineName}</p>
+                            <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-0.5 font-medium">
+                              {[med.dosage, med.frequency, med.duration].filter(Boolean).join(" · ")}
+                            </p>
+                          </div>
+                        </div>
+                      ))
+                    )}
+                    {record.prescriptionText && (
+                      <div className="mt-3 p-3 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">Rx notes</p>
+                        <p className="text-[13px] text-[hsl(var(--color-text))] leading-relaxed">{record.prescriptionText}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-[13px] text-[hsl(var(--color-text-muted))] italic text-center py-4">No medications prescribed in this visit.</p>
+                )}
+              </div>
+            )}
+
+            {/* ── Notes Tab ── */}
+            {activeTab === "notes" && (
+              <div>
+                {record.notes ? (
+                  <div className="p-4 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">Symptoms &amp; notes</p>
+                    <p className="text-[14px] text-[hsl(var(--color-text))] leading-relaxed">{record.notes}</p>
+                  </div>
+                ) : (
+                  <p className="text-[13px] text-[hsl(var(--color-text-muted))] italic text-center py-4">No notes recorded for this visit.</p>
+                )}
+
+                {/* Alerts snapshot in notes tab */}
+                {(record.allergies?.length > 0 || record.chronic?.length > 0) && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                    {record.allergies?.length > 0 && (
+                      <div className="p-3 rounded-xl bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.15)]">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-danger)/0.8)] mb-1.5">Allergies</p>
+                        <p className="text-[13px] text-[hsl(var(--color-text))] font-medium">{record.allergies.join(", ")}</p>
+                      </div>
+                    )}
+                    {record.chronic?.length > 0 && (
+                      <div className="p-3 rounded-xl bg-[hsl(var(--color-warning-bg))] border border-[hsl(var(--color-warning)/0.15)]">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-warning)/0.8)] mb-1.5">Chronic</p>
+                        <p className="text-[13px] text-[hsl(var(--color-text))] font-medium">{record.chronic.join(", ")}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── Documents Tab ── */}
+            {activeTab === "documents" && (
+              <div className="flex flex-wrap gap-2">
+                {documents.map((doc: any, dIdx: number) => {
+                  const isImage = ["prescription", "xray", "mri", "ct"].includes(doc.type);
+                  return (
+                    <a
+                      key={dIdx}
+                      href={doc.secure_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] font-semibold
+                        bg-[hsl(var(--color-primary)/0.06)] text-[hsl(var(--color-primary-strong))]
+                        border border-[hsl(var(--color-primary)/0.15)] hover:bg-[hsl(var(--color-primary)/0.12)]
+                        transition-colors"
+                    >
+                      {isImage ? <LuImage className="text-[13px]" /> : <LuFileText className="text-[13px]" />}
+                      {doc.title || "Document"}
+                      <LuExternalLink className="text-[11px] opacity-60" />
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// ─── Medications & Medical Info Sidebar ─────────────────────────────────────────
-function MedicalInfoSidebar({ medications, loading, allergies, chronicDiseases, surgeries }: {
-  medications: any[];
-  loading: boolean;
-  allergies: string[];
-  chronicDiseases: string[];
-  surgeries: string[];
+/* ─── Health Snapshot Banner ─────────────────────────────────────────────── */
+function HealthSnapshot({ allergies, chronicDiseases, surgeries }: {
+  allergies: string[]; chronicDiseases: string[]; surgeries: string[];
 }) {
-  const [medSearch, setMedSearch] = useState("");
-  const [medStartDate, setMedStartDate] = useState("");
-  const [medEndDate, setMedEndDate] = useState("");
-  const [showAll, setShowAll] = useState(false);
-  const LIMIT = 5;
+  const hasAny = allergies.length > 0 || chronicDiseases.length > 0 || surgeries.length > 0;
+  if (!hasAny) return null;
 
-  const activeMeds = medications.filter(m => m.status === 'active');
-  const pastMeds = medications.filter(m => m.status !== 'active');
-
-  // Filter only past medications
-  const filteredPast = pastMeds.filter(m => {
-    const nameMatch = !medSearch || m.medicineName.toLowerCase().includes(medSearch.toLowerCase());
-    let dateMatch = true;
-    if (medStartDate) {
-      const start = new Date(medStartDate);
-      start.setHours(0, 0, 0, 0);
-      dateMatch = m.date >= start;
-    }
-    if (medEndDate && dateMatch) {
-      const end = new Date(medEndDate);
-      end.setHours(23, 59, 59, 999);
-      dateMatch = m.date <= end;
-    }
-    return nameMatch && dateMatch;
-  });
-
-  const displayedPast = showAll ? filteredPast : filteredPast.slice(0, LIMIT);
-  const hasMore = filteredPast.length > LIMIT;
-
-  const handleReset = () => {
-    setMedSearch("");
-    setMedStartDate("");
-    setMedEndDate("");
-  };
-
-  const MedCard = ({ med, isActive }: { med: any; isActive: boolean }) => (
-    <div className={`bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl p-3 flex flex-col transition-colors ${isActive ? 'hover:border-[hsl(var(--color-success)/0.4)]' : 'opacity-80'}`}>
-      <div className="flex justify-between items-start mb-1">
-        <h5 className="text-[14px] font-bold text-[hsl(var(--color-text))]">{med.medicineName}</h5>
-        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-          isActive
-            ? 'text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))]'
-            : 'text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-border))]'
-        }`}>
-          {isActive ? 'Active' : 'Past'}
+  return (
+    <div className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 overflow-x-auto">
+      <div className="flex flex-nowrap sm:flex-wrap gap-2 items-center min-w-max sm:min-w-0">
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] shrink-0 pr-2 border-r border-[hsl(var(--color-border))]">
+          Health alerts
         </span>
+
+        {allergies.map((a, i) => (
+          <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[12px] font-semibold
+            bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] border border-[hsl(var(--color-danger)/0.2)]">
+            <LuShieldAlert className="text-[11px]" /> {a}
+          </span>
+        ))}
+
+        {chronicDiseases.map((c, i) => (
+          <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[12px] font-semibold
+            bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] border border-[hsl(var(--color-warning)/0.2)]">
+            <LuActivity className="text-[11px]" /> {c}
+          </span>
+        ))}
+
+        {surgeries.map((s, i) => (
+          <span key={i} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[12px] font-semibold
+            bg-[hsl(var(--color-primary)/0.08)] text-[hsl(var(--color-primary-strong))] border border-[hsl(var(--color-primary)/0.15)]">
+            <LuScissors className="text-[11px]" /> {s}
+          </span>
+        ))}
       </div>
-      <div className="text-[13px] text-[hsl(var(--color-text-muted))] flex flex-wrap gap-x-2 gap-y-1 mb-2">
-        <span>{med.dosage}</span>
-        <span>•</span>
-        <span>{med.frequency}</span>
-      </div>
-      <div className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-        {isActive ? 'Since' : 'Date'}: {med.date.toLocaleDateString()}
+    </div>
+  );
+}
+
+/* ─── Medications Sidebar (shared content) ───────────────────────────────── */
+function MedicationsSidebar({ medications, loading }: { medications: any[]; loading: boolean }) {
+  const [search, setSearch] = useState("");
+  const activeMeds = medications.filter(m => m.status === "active");
+  const pastMeds = medications.filter(m => m.status !== "active").filter(m =>
+    !search || m.medicineName.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (loading) return (
+    <div className="space-y-2 animate-pulse">
+      {[...Array(4)].map((_, i) => (
+        <div key={i} className="h-14 bg-[hsl(var(--color-border))] rounded-xl" />
+      ))}
+    </div>
+  );
+
+  if (medications.length === 0) return (
+    <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-8 italic">
+      No medications on record.
+    </p>
+  );
+
+  const MedRow = ({ med, isActive }: { med: any; isActive: boolean }) => (
+    <div className={`flex items-start gap-3 p-3 rounded-xl border transition-colors
+      ${isActive
+        ? "bg-[hsl(var(--color-success-bg))] border-[hsl(var(--color-success)/0.2)]"
+        : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))]"
+      }`}>
+      <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${isActive ? "bg-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-text-muted))]"}`} />
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-2 mb-0.5">
+          <p className="text-[13px] font-semibold text-[hsl(var(--color-text))] truncate">{med.medicineName}</p>
+          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0
+            ${isActive
+              ? "bg-[hsl(var(--color-success)/0.15)] text-[hsl(var(--color-success))]"
+              : "text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-border))]"
+            }`}>
+            {isActive ? "Active" : "Past"}
+          </span>
+        </div>
+        <p className="text-[11px] text-[hsl(var(--color-text-muted))] font-medium">
+          {med.dosage} · {med.frequency}
+        </p>
       </div>
     </div>
   );
 
   return (
     <div className="space-y-5">
-      {/* ── Allergies ── */}
-      {allergies.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <LuShieldAlert className="text-[hsl(var(--color-danger))] text-lg" />
-            <h3 className="text-[15px] font-black text-[hsl(var(--color-danger))]">Allergies</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {allergies.map((a, idx) => (
-              <span key={idx} className="bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] px-3 py-1.5 rounded-full text-[12px] font-bold">
-                ⚠️ {a}
-              </span>
-            ))}
+      {activeMeds.length > 0 && (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5">
+            Active ({activeMeds.length})
+          </p>
+          <div className="space-y-2">
+            {activeMeds.map((m, i) => <MedRow key={i} med={m} isActive={true} />)}
           </div>
         </div>
       )}
 
-      {/* ── Chronic Diseases ── */}
-      {chronicDiseases.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <LuActivity className="text-[hsl(var(--color-warning))] text-lg" />
-            <h3 className="text-[15px] font-black text-[hsl(var(--color-warning))]">Chronic Conditions</h3>
+      {pastMeds.length > 0 || search ? (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5">
+            Past medications
+          </p>
+          <div className="relative mb-2.5">
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-[hsl(var(--color-text-muted))]" />
+            <input
+              type="text"
+              placeholder="Search..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-8 pr-3 py-2 text-[12px] font-medium rounded-xl border border-[hsl(var(--color-border))]
+                bg-[hsl(var(--color-bg-surface-hover))] outline-none text-[hsl(var(--color-text))]
+                focus:border-[hsl(var(--color-primary))] transition-colors
+                placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+            />
+            {search && (
+              <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] cursor-pointer hover:text-[hsl(var(--color-text))]">
+                <LuX className="text-[12px]" />
+              </button>
+            )}
           </div>
-          <div className="flex flex-wrap gap-2">
-            {chronicDiseases.map((c, idx) => (
-              <span key={idx} className="flex items-center gap-2 text-[12px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-warning-bg))] px-3 py-1.5 rounded-full">
-                <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-warning))] shrink-0" />
-                {c}
-              </span>
-            ))}
+          <div className="space-y-2">
+            {pastMeds.map((m, i) => <MedRow key={i} med={m} isActive={false} />)}
           </div>
-        </div>
-      )}
-
-      {/* ── Surgeries ── */}
-      {surgeries.length > 0 && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <div className="flex items-center gap-2 mb-3">
-            <LuScissors className="text-[hsl(var(--color-primary))] text-lg" />
-            <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Surgeries</h3>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {surgeries.map((s, idx) => (
-              <span key={idx} className="flex items-center gap-2 text-[12px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-full">
-                {s}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── Medications ── */}
-      {!loading && (
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-          <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-4">
-            <LuPill className="text-[hsl(var(--color-primary))] text-lg" /> Patient Medications
-          </h3>
-
-          {medications.length === 0 ? (
-            <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4">No medications on record.</p>
-          ) : (
-            <>
-              {/* Active Medications — always show all */}
-              {activeMeds.length > 0 && (
-                <div className="mb-5">
-                  <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-3 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-success))]"></span> Active ({activeMeds.length})
-                  </h4>
-                  <div className="space-y-3">
-                    {activeMeds.map((med, idx) => <MedCard key={idx} med={med} isActive={true} />)}
-                  </div>
-                </div>
-              )}
-
-              {/* Past Medications — with search + date filter + limit */}
-              <div className="mt-8 border-t border-[hsl(var(--color-border))] pt-6">
-                <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-3 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-text-muted))]"></span> Past Medications ({pastMeds.length})
-                </h4>
-
-                {/* Search */}
-                <div className="relative mb-3">
-                  <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[hsl(var(--color-text-muted))]" />
-                  <input
-                    type="text"
-                    placeholder="Search past medication..."
-                    value={medSearch}
-                    onChange={(e) => setMedSearch(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 text-[13px] font-medium rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface-hover))] outline-none text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] transition-colors placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
-                  />
-                </div>
-
-                {/* Date Range Filter */}
-                <DateRangeFilter
-                  startDate={medStartDate}
-                  endDate={medEndDate}
-                  onStartDateChange={setMedStartDate}
-                  onEndDateChange={setMedEndDate}
-                  onReset={(medStartDate || medEndDate) ? handleReset : undefined}
-                  className="mb-3 !mt-0"
-                />
-
-                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-3">
-                  Showing {displayedPast.length} of {filteredPast.length} past medication{filteredPast.length !== 1 ? "s" : ""}
-                </p>
-
-                {filteredPast.length === 0 ? (
-                  <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4 bg-[hsl(var(--color-bg-surface-hover))] rounded-xl border border-[hsl(var(--color-border))]">No past medications match your search.</p>
-                ) : (
-                  <div className="space-y-3">
-                    {displayedPast.map((med, idx) => <MedCard key={idx} med={med} isActive={false} />)}
-                    {hasMore && (
-                      <button
-                        onClick={() => setShowAll(!showAll)}
-                        className="w-full text-center text-[13px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer py-2"
-                      >
-                        {showAll ? 'Show less' : `Show all ${filteredPast.length} past medications`}
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            </>
+          {pastMeds.length === 0 && search && (
+            <p className="text-[12px] text-[hsl(var(--color-text-muted))] text-center py-4 italic">No results for "{search}"</p>
           )}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+
+/* ─── Mobile Medications Panel ───────────────────────────────────────────── */
+function MobileMedicationsPanel({ medications, loading }: { medications: any[]; loading: boolean }) {
+  const [open, setOpen] = useState(false);
+  const activeMeds = medications.filter(m => m.status === "active");
+  return (
+    <div className="lg:hidden border-b border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))]">
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full flex items-center justify-between px-4 py-3 cursor-pointer"
+      >
+        <span className="text-[13px] font-semibold text-[hsl(var(--color-text))] flex items-center gap-2">
+          <LuPill className="text-[hsl(var(--color-primary))] text-[14px]" />
+          Medications
+          {activeMeds.length > 0 && (
+            <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]">
+              {activeMeds.length} active
+            </span>
+          )}
+        </span>
+        {open ? <LuChevronUp className="text-[14px] text-[hsl(var(--color-text-muted))]" /> : <LuChevronDown className="text-[14px] text-[hsl(var(--color-text-muted))]" />}
+      </button>
+      {open && (
+        <div className="px-4 pb-4 animate-in fade-in slide-in-from-top-2 duration-150">
+          <MedicationsSidebar medications={medications} loading={loading} />
         </div>
       )}
     </div>
   );
 }
 
+/* ─── Main Page ──────────────────────────────────────────────────────────── */
 export default function MedicalHistoryPage() {
   const { user } = useAuth();
   const [records, setRecords] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
 
-  // Patient profile data
   const [allergies, setAllergies] = useState<string[]>([]);
   const [chronicDiseases, setChronicDiseases] = useState<string[]>([]);
   const [surgeries, setSurgeries] = useState<string[]>([]);
 
-  // Filters State
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [filterText, setFilterText] = useState("");
 
-  // Infinite Scroll State
   const [visibleCount, setVisibleCount] = useState(10);
   const observerTarget = useRef<HTMLDivElement>(null);
 
@@ -299,27 +543,20 @@ export default function MedicalHistoryPage() {
 
     async function fetchAll() {
       setLoading(true);
-
-      // Fetch profile (allergies, chronic diseases, surgeries)
       try {
-        const { data } = await axios.get(`${BASE_URL}/patient/profile`, {
-          headers: authHeaders(),
-        });
+        const { data } = await axios.get(`${BASE_URL}/patient/profile`, { headers: authHeaders() });
         const p = data.data ?? data;
         setAllergies(p.allergies ?? []);
         setChronicDiseases(p.chronic ?? p.chronicDiseases ?? []);
-        setSurgeries((p.surgeries ?? []).map((s: any) => typeof s === 'string' ? s : s.operationName || ""));
+        setSurgeries((p.surgeries ?? []).map((s: any) => typeof s === "string" ? s : s.operationName || ""));
       } catch {}
 
-      // Fetch medical history
       try {
-        const { data } = await axios.get(`${BASE_URL}/medical-history/${patientId}`, {
-          headers: authHeaders(),
-        });
+        const { data } = await axios.get(`${BASE_URL}/medical-history/${patientId}`, { headers: authHeaders() });
         const result = data.data ?? data;
-        const fetchedRecords = Array.isArray(result) ? result : result ? [result] : [];
-        setRecords(fetchedRecords.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
-      } catch (err: any) {
+        const fetched = Array.isArray(result) ? result : result ? [result] : [];
+        setRecords(fetched.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+      } catch {
         setToast({ msg: "Failed to load medical history", variant: "error" });
       } finally {
         setLoading(false);
@@ -328,251 +565,185 @@ export default function MedicalHistoryPage() {
     fetchAll();
   }, [user]);
 
-  // Apply filters
   const filteredRecords = records.filter(r => {
-    const search = filterText.toLowerCase();
+    const q = filterText.toLowerCase();
     const docName = (r.doctorId?.fullName || r.doctorId?.userName || "").toLowerCase();
     const specialty = (r.doctorId?.specialization || "").toLowerCase();
     const diag = (r.diagnosis || "").toLowerCase();
-    const medications = (r.prescriptions || []).map((p: any) => (p.medication || p.name || "").toLowerCase()).join(" ");
-    
-    const matchesText = docName.includes(search) || specialty.includes(search) || diag.includes(search) || medications.includes(search);
+    const meds = (r.prescriptions || []).map((p: any) => (p.medication || p.name || "").toLowerCase()).join(" ");
+    const matchText = docName.includes(q) || specialty.includes(q) || diag.includes(q) || meds.includes(q);
 
-    const recordDate = new Date(r.createdAt);
-    recordDate.setHours(0, 0, 0, 0);
-    
-    let matchesStartDate = true;
-    let matchesEndDate = true;
-    
-    if (startDate) {
-      const start = new Date(startDate);
-      start.setHours(0, 0, 0, 0);
-      matchesStartDate = recordDate >= start;
-    }
-    
-    if (endDate) {
-      const end = new Date(endDate);
-      end.setHours(0, 0, 0, 0);
-      matchesEndDate = recordDate <= end;
-    }
-
-    return matchesText && matchesStartDate && matchesEndDate;
+    const recDate = new Date(r.createdAt); recDate.setHours(0,0,0,0);
+    let matchStart = true, matchEnd = true;
+    if (startDate) { const s = new Date(startDate); s.setHours(0,0,0,0); matchStart = recDate >= s; }
+    if (endDate) { const e = new Date(endDate); e.setHours(0,0,0,0); matchEnd = recDate <= e; }
+    return matchText && matchStart && matchEnd;
   });
 
-  // Reset infinite scroll when filters change
-  useEffect(() => {
-    setVisibleCount(10);
-  }, [filterText, startDate, endDate]);
+  useEffect(() => { setVisibleCount(10); }, [filterText, startDate, endDate]);
 
   const displayedRecords = filteredRecords.slice(0, visibleCount);
   const hasMoreRecords = visibleCount < filteredRecords.length;
 
-  // Intersection Observer for Infinite Scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
-      entries => {
-        if (entries[0].isIntersecting && hasMoreRecords) {
-          setVisibleCount(prev => prev + 10);
-        }
-      },
+      entries => { if (entries[0].isIntersecting && hasMoreRecords) setVisibleCount(p => p + 10); },
       { threshold: 0.1 }
     );
-
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
-
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
-      }
-    };
+    if (observerTarget.current) observer.observe(observerTarget.current);
+    return () => { if (observerTarget.current) observer.unobserve(observerTarget.current); };
   }, [hasMoreRecords]);
 
-  // Extract all medications
   const allMedications = useMemo(() => {
     const meds = new Map();
-    const now = new Date();
-    
     records.forEach(r => {
       (r.prescriptions || []).forEach((rx: any) => {
         const rxDate = new Date(rx.createdAt || r.createdAt);
         (rx.medications || []).forEach((m: any) => {
           const key = m.medicineName.toLowerCase();
-          
-          // Calculate true active status based on duration
-          let isActive = false;
-          let isLifelong = false;
-          let totalDays = 0;
-          
-          if (m.duration) {
-            const durationStr = String(m.duration).toLowerCase();
-            const match = durationStr.match(/(\d+)\s*(days?|weeks?|months?)/i);
-            
-            if (durationStr === 'lifelong') {
-               isLifelong = true;
-            } else if (match) {
-               const num = parseInt(match[1], 10);
-               const unit = match[2];
-               if (unit.startsWith('day')) totalDays = num;
-               else if (unit.startsWith('week')) totalDays = num * 7;
-               else if (unit.startsWith('month')) totalDays = num * 30;
-            } else if (!isNaN(parseInt(durationStr, 10))) {
-               totalDays = parseInt(durationStr, 10);
-            }
-          }
-          
-          if (isLifelong) {
-             isActive = true;
-          } else {
-             const endDate = new Date(rxDate);
-             endDate.setDate(endDate.getDate() + totalDays);
-             // Allow a 1-day grace period for completion
-             if (now <= endDate || (now > endDate && (now.getTime() - endDate.getTime()) < 24 * 60 * 60 * 1000)) {
-                 isActive = true;
-             }
-          }
-          
-          const finalStatus = (isActive && rx.status === 'active') ? 'active' : 'completed';
-
-          if (!meds.has(key)) {
-            meds.set(key, {
-              ...m,
-              date: rxDate,
-              prescriptionId: rx._id,
-              status: finalStatus
-            });
-          } else {
-             // update with more recent
-             if (rxDate > meds.get(key).date) {
-               meds.set(key, { ...m, date: rxDate, prescriptionId: rx._id, status: finalStatus });
-             }
+          if (!meds.has(key) || rxDate > meds.get(key).date) {
+            meds.set(key, { ...m, date: rxDate, prescriptionId: rx._id, status: rx.status || "completed" });
           }
         });
       });
     });
-    return Array.from(meds.values()).sort((a: any, b: any) => b.date.getTime() - a.date.getTime());
+    return Array.from(meds.values()).sort((a: any, b: any) => b.date - a.date);
   }, [records]);
 
+  const clearFilters = () => { setStartDate(""); setEndDate(""); setFilterText(""); };
+  const hasFilters = startDate || endDate || filterText;
+
   return (
-    <div className="flex flex-col flex-1 min-h-screen">
+    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
 
-      {/* Header */}
+      {/* ── Page Header ── */}
       <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4">
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] items-center justify-center text-[20px] shrink-0">
+        <div className="flex items-center gap-3">
+          <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] items-center justify-center text-[18px] shrink-0">
             <LuClipboardList />
           </div>
           <div>
-            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              Medical History
+            <h1 className="text-[20px] font-semibold text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+              Medical history
             </h1>
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
               Your complete clinical encounter records
             </p>
           </div>
         </div>
       </header>
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
-          
-          {/* Filters Section */}
-          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
-            <h3 className="text-[17px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
-              <LuHistory className="text-[hsl(var(--color-text-muted))] text-[20px]" /> Full Medical History
-            </h3>
-            
-            <div className="flex flex-col sm:flex-row flex-wrap items-end sm:items-center gap-3 w-full xl:w-auto">
-              <DateRangeFilter
-                startDate={startDate}
-                endDate={endDate}
-                onStartDateChange={setStartDate}
-                onEndDateChange={setEndDate}
-                onReset={(startDate || endDate) ? () => { setStartDate(""); setEndDate(""); } : undefined}
-                className="!mt-0"
+      {/* ── Health Snapshot (always-visible alerts) ── */}
+      <HealthSnapshot allergies={allergies} chronicDiseases={chronicDiseases} surgeries={surgeries} />
+
+      {/* ── Mobile Medications (below snapshot, above timeline) ── */}
+      <MobileMedicationsPanel medications={allMedications} loading={loading} />
+
+      {/* ── Body ── */}
+      <div className="flex flex-1 min-h-0">
+
+        {/* ── Sidebar ── */}
+        <aside className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] overflow-y-auto">
+          <div className="p-5 border-b border-[hsl(var(--color-border))]">
+            <h2 className="text-[13px] font-semibold text-[hsl(var(--color-text))] flex items-center gap-2">
+              <LuPill className="text-[hsl(var(--color-primary))] text-[14px]" /> Medications
+            </h2>
+          </div>
+          <div className="p-5 flex-1">
+            <MedicationsSidebar medications={allMedications} loading={loading} />
+          </div>
+        </aside>
+
+        {/* ── Timeline ── */}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+
+          {/* Filters row */}
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="relative flex-1">
+              <LuSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] text-[hsl(var(--color-text-muted))]" />
+              <input
+                type="text"
+                placeholder="Search doctor, diagnosis, medication…"
+                value={filterText}
+                onChange={e => setFilterText(e.target.value)}
+                className="w-full pl-10 pr-9 py-2.5 text-[13px] font-medium rounded-xl border border-[hsl(var(--color-border))]
+                  bg-[hsl(var(--color-bg-surface))] outline-none text-[hsl(var(--color-text))]
+                  focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)]
+                  transition-colors placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
               />
-              <div className="relative w-full sm:flex-1 sm:min-w-[200px] xl:w-auto xl:flex-none">
-                <input 
-                  type="text"
-                  placeholder="Search doctor, diagnosis, medication..."
-                  value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
-                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[13px] font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
-                />
-              </div>
+              {filterText && (
+                <button onClick={() => setFilterText("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer">
+                  <LuX className="text-[13px]" />
+                </button>
+              )}
             </div>
+            <DateRangeFilter
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={setStartDate}
+              onEndDateChange={setEndDate}
+              onReset={hasFilters ? clearFilters : undefined}
+              className="!mt-0"
+            />
           </div>
 
-          {/* Swapped: Medications Sidebar FIRST, then Timeline */}
-          <div className="flex flex-col lg:flex-row gap-8">
-            {/* Medical Info Sidebar (LEFT) */}
-            <div className="w-full lg:w-1/3 xl:w-1/4 shrink-0">
-              <MedicalInfoSidebar
-                medications={allMedications}
-                loading={loading}
-                allergies={allergies}
-                chronicDiseases={chronicDiseases}
-                surgeries={surgeries}
-              />
+          {/* Record count */}
+          {!loading && records.length > 0 && (
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-[12px] text-[hsl(var(--color-text-muted))] font-medium">
+                {hasFilters
+                  ? `${filteredRecords.length} of ${records.length} visits`
+                  : `${records.length} visit${records.length !== 1 ? "s" : ""} total`
+                }
+              </p>
+              {hasFilters && (
+                <button onClick={clearFilters} className="text-[12px] font-semibold text-[hsl(var(--color-primary))] hover:underline cursor-pointer">
+                  Clear filters
+                </button>
+              )}
             </div>
+          )}
 
-            {/* Timeline Column (RIGHT) */}
-            <div className="flex-1">
-              <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                <LuHistory className="text-[hsl(var(--color-text-muted))] text-xl" /> Clinical Visits
-              </h3>
-              {loading ? (
-                <Skeleton />
-              ) : records.length === 0 ? (
-                <EmptyState
-                  icon={<LuHistory />}
-                  title="No Medical History"
-                  description="You have no recorded visits or diagnoses yet."
-                />
-              ) : filteredRecords.length === 0 ? (
-                 <div className="text-center py-16 bg-[hsl(var(--color-bg-surface-hover))] rounded-2xl border border-[hsl(var(--color-border))]">
-                  <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))] mb-2">No records match your filters.</p>
-                  <button 
-                    onClick={() => { setStartDate(""); setEndDate(""); setFilterText(""); }}
-                    className="text-[13px] text-[hsl(var(--color-primary))] font-black hover:underline cursor-pointer"
-                  >
-                    Clear all filters
-                  </button>
+          {/* Timeline list */}
+          {loading ? (
+            <Skeleton />
+          ) : records.length === 0 ? (
+            <EmptyState
+              icon={<LuHistory />}
+              title="No medical history"
+              description="You have no recorded visits or diagnoses yet."
+            />
+          ) : filteredRecords.length === 0 ? (
+            <div className="text-center py-16 bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))]">
+              <p className="text-[14px] font-semibold text-[hsl(var(--color-text-muted))] mb-3">No records match your filters.</p>
+              <button onClick={clearFilters} className="text-[13px] font-semibold text-[hsl(var(--color-primary))] hover:underline cursor-pointer">
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {displayedRecords.map(r => (
+                <VisitCard key={r._id} record={r} />
+              ))}
+
+              {/* Infinite scroll trigger */}
+              {hasMoreRecords && (
+                <div ref={observerTarget} className="flex justify-center py-6">
+                  <div className="w-5 h-5 border-2 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin" />
                 </div>
-              ) : (
-                <div className="space-y-8 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-[hsl(var(--color-border))]">
-                  {displayedRecords.map((r, index) => (
-                    <div key={r._id} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
-                      {/* Timeline dot — NEUTRAL/GRAY */}
-                      <div className="flex items-center justify-center w-10 h-10 rounded-full border-4 border-[hsl(var(--color-bg-surface))] bg-[hsl(var(--color-bg-surface-hover))] text-[hsl(var(--color-text-muted))] font-bold shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                        <LuFileText />
-                      </div>
-                      {/* Timeline Card */}
-                      <div className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)]">
-                        <TimelineAccordionCard record={r} />
-                      </div>
-                    </div>
-                  ))}
-                  
-                  {/* Infinite Scroll Trigger */}
-                  {hasMoreRecords && (
-                    <div ref={observerTarget} className="flex justify-center py-6 relative z-10">
-                      <div className="w-6 h-6 border-2 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                  )}
-                  {!hasMoreRecords && filteredRecords.length > 0 && (
-                    <div className="text-center py-4 text-[13px] font-bold text-[hsl(var(--color-text-muted))] relative z-10 bg-[hsl(var(--color-bg-surface))] inline-block px-4 mx-auto md:left-1/2 md:-translate-x-1/2 rounded-full border border-[hsl(var(--color-border))]">
-                      End of history ({filteredRecords.length} records)
-                    </div>
-                  )}
+              )}
+
+              {/* End of list */}
+              {!hasMoreRecords && filteredRecords.length > 4 && (
+                <div className="text-center py-5 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
+                  — End of history · {filteredRecords.length} record{filteredRecords.length !== 1 ? "s" : ""} —
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      </main>
+          )}
+        </main>
+      </div>
     </div>
   );
 }
