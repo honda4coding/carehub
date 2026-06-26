@@ -22,6 +22,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [pushPermission, setPushPermission] = useState<NotificationPermission>("default");
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -36,6 +37,18 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && "Notification" in window) {
+      setPushPermission(Notification.permission);
+    }
+  }, []);
+
+  const handleEnablePush = async () => {
+    const { subscribeToPushNotifications } = await import("@/services/pushNotificationService");
+    await subscribeToPushNotifications();
+    if ("Notification" in window) setPushPermission(Notification.permission);
+  };
 
   // Fetch on mount and every 30s (polling fallback if no socket)
   useEffect(() => {
@@ -159,6 +172,20 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
 
           {/* List */}
           <div className="overflow-y-auto flex-1">
+            {pushPermission !== "granted" && (
+              <div className="bg-[hsl(var(--color-warning-bg))] px-4 py-3 border-b border-[hsl(var(--color-warning))/0.2] flex flex-col gap-2">
+                <p className="text-[12px] font-medium text-[hsl(var(--color-warning))] leading-tight">
+                  Enable push notifications to receive real-time alerts even when the app is closed.
+                </p>
+                <button
+                  onClick={handleEnablePush}
+                  className="self-start text-[11px] font-bold bg-[hsl(var(--color-warning))] text-white px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity"
+                >
+                  Enable Notifications
+                </button>
+              </div>
+            )}
+            
             {loading && notifications.length === 0 ? (
               <div className="flex items-center justify-center py-10 text-[12px] text-[hsl(var(--color-text-muted))]">
                 Loading…

@@ -53,13 +53,11 @@ const nextConfig: NextConfig = {
 
 const isDev = process.env.NODE_ENV === "development";
 
-const finalConfig = isDev
-  ? nextConfig
-  : withSerwistInit({
-      swSrc: "src/app/sw.ts",
-      swDest: "public/sw.js",
-      disable: false,
-      additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
-    })(nextConfig);
+const finalConfig = withSerwistInit({
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+  disable: process.env.NODE_ENV === "development" ? false : false, // ensure it runs in dev for testing push
+  additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
+})(nextConfig);
 
 export default finalConfig;
