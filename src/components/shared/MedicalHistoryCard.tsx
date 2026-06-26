@@ -1,129 +1,203 @@
-import { LuClock, LuFileText, LuImage, LuPill, LuActivity } from "react-icons/lu";
+import {
+  LuFileText, LuImage, LuPill, LuActivity, LuHeartPulse,
+  LuThermometer, LuDroplets, LuWeight, LuRuler, LuShieldAlert,
+  LuScissors, LuExternalLink,
+} from "react-icons/lu";
 
 interface MedicalHistoryCardProps {
   record: any;
   hideHeader?: boolean;
 }
 
-export default function MedicalHistoryCard({ record, hideHeader = false }: MedicalHistoryCardProps) {
-  const hasVitals = record.bloodPressure || record.sugarLevel || record.pulse || record.temperature || (record.height && record.height !== "-") || (record.weight && record.weight !== "-");
-  
+function VitalItem({
+  icon, label, value, unit, highlight = false,
+}: {
+  icon: React.ReactNode; label: string; value: string | undefined; unit: string; highlight?: boolean;
+}) {
+  if (!value || value === "--" || value === "-") return null;
   return (
-    <div className={`w-full ${hideHeader ? '' : 'bg-[hsl(var(--color-bg-soft))] p-5 rounded-2xl border border-[hsl(var(--color-border))] hover:border-primary/30 transition-colors '}`}>
-      {/* Header */}
+    <div className={`rounded-xl p-3 border ${
+      highlight
+        ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.15)]"
+        : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))]"
+    }`}>
+      <div className={`flex items-center gap-1.5 text-[11px] font-medium mb-1.5 ${
+        highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text-muted))]"
+      }`}>
+        {icon} {label}
+      </div>
+      <div className={`text-[18px] font-semibold leading-none ${
+        highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text))]"
+      }`}>
+        {value}
+        <span className="text-[12px] font-normal text-[hsl(var(--color-text-muted))] ml-1">{unit}</span>
+      </div>
+    </div>
+  );
+}
+
+export default function MedicalHistoryCard({ record, hideHeader = false }: MedicalHistoryCardProps) {
+  const hasVitals =
+    record.bloodPressure || record.sugarLevel || record.pulse ||
+    record.temperature || (record.height && record.height !== "-") ||
+    (record.weight && record.weight !== "-");
+
+  const prescriptions = record.prescriptions || [];
+  const documents = record.documents || [];
+  const allergies: string[] = record.allergies || [];
+  const chronic: string[] = record.chronic || [];
+  const surgeries: any[] = record.surgeries || [];
+
+  const tempVal = parseFloat(record.temperature);
+  const highTemp = !isNaN(tempVal) && tempVal >= 38;
+
+  const hasMeds = prescriptions.some((rx: any) => rx.medications?.length > 0);
+
+  return (
+    <div className={`w-full space-y-4 ${hideHeader ? "" : "bg-[hsl(var(--color-bg-surface))] p-5 rounded-2xl border border-[hsl(var(--color-border))]"}`}>
+
+      {/* ── Header (when not hidden) ── */}
       {!hideHeader && (
-        <div className="flex flex-wrap justify-between items-start mb-4 gap-2 border-b border-[hsl(var(--color-border-soft))] pb-3">
-          <div className="flex flex-col">
-            <span className="text-sm font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1">
-              <LuClock /> {new Date(record.createdAt).toLocaleDateString()}
-            </span>
-            <h4 className="text-base font-black text-[hsl(var(--color-text))] mt-1">
-              Diagnosis: <span className="text-primary">{record.diagnosis || "Not Recorded"}</span>
-            </h4>
-          </div>
-          <span className="text-xs font-bold bg-[hsl(var(--color-primary)/0.1)] text-primary px-2 py-1 rounded-md whitespace-nowrap">
-            Dr. {record.doctorId?.fullName || 'Unknown'}
-          </span>
+        <div className="pb-3 border-b border-[hsl(var(--color-border))]">
+          <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mb-1">
+            {new Date(record.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
+          </p>
+          <h4 className="text-[16px] font-semibold text-[hsl(var(--color-text))]">
+            {record.diagnosis || "No diagnosis recorded"}
+          </h4>
+          {record.doctorId && (
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] mt-0.5 font-medium">
+              Dr. {record.doctorId.fullName || record.doctorId.userName}
+              {record.doctorId.specialization && ` · ${record.doctorId.specialization}`}
+            </p>
+          )}
         </div>
       )}
-      
-      {/* Symptoms / Notes */}
-      <div className="mb-4 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-        <span className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] block mb-1">Symptoms / Notes:</span>
-        <p className="text-sm font-medium text-[hsl(var(--color-text))]">
-          {record.notes || <span className="text-[hsl(var(--color-text-muted))] italic">No symptoms recorded</span>}
-        </p>
-      </div>
 
-      {/* Vitals Grid */}
-      <div className="mb-4 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-        <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-2 uppercase tracking-wider flex items-center gap-1">
-          <LuActivity /> Vitals Recorded:
-        </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-[13px]">
-          <div><span className="text-[hsl(var(--color-text-muted))]">BP:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.bloodPressure || "--"}</span></div>
-          <div><span className="text-[hsl(var(--color-text-muted))]">Sugar:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.sugarLevel || "--"}</span></div>
-          <div><span className="text-[hsl(var(--color-text-muted))]">Pulse:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.pulse || "--"}</span></div>
-          <div><span className="text-[hsl(var(--color-text-muted))]">Temp:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.temperature || "--"}</span></div>
-          <div><span className="text-[hsl(var(--color-text-muted))]">Height:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.height !== "-" ? record.height : "--"}</span></div>
-          <div><span className="text-[hsl(var(--color-text-muted))]">Weight:</span> <span className="font-bold text-[hsl(var(--color-text))]">{record.weight !== "-" ? record.weight : "--"}</span></div>
+      {/* ── Vitals ── */}
+      {hasVitals && (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
+            <LuActivity className="text-[hsl(var(--color-primary))]" /> Vitals
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+            <VitalItem icon={<LuHeartPulse />} label="Blood pressure" value={record.bloodPressure} unit="mmHg" />
+            <VitalItem icon={<LuDroplets />} label="Sugar level" value={record.sugarLevel} unit="mg/dL" />
+            <VitalItem icon={<LuActivity />} label="Pulse" value={record.pulse} unit="bpm" />
+            <VitalItem icon={<LuThermometer />} label="Temperature" value={record.temperature} unit="°C" highlight={highTemp} />
+            <VitalItem icon={<LuRuler />} label="Height" value={record.height !== "-" ? record.height : undefined} unit="cm" />
+            <VitalItem icon={<LuWeight />} label="Weight" value={record.weight !== "-" ? record.weight : undefined} unit="kg" />
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Alerts & Surgeries */}
-      <div className="mb-4 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))] grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* ── Notes ── */}
+      {record.notes && (
         <div>
-          <span className="text-xs text-[hsl(var(--color-danger)/0.8)] font-bold uppercase block mb-1">Allergies:</span>
-          <span className="text-[13px] font-medium text-[hsl(var(--color-text))]">
-            {record.allergies && record.allergies.length > 0 ? record.allergies.join(", ") : <span className="text-[hsl(var(--color-text-muted))] italic">None</span>}
-          </span>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">
+            Symptoms &amp; notes
+          </p>
+          <div className="p-3.5 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
+            <p className="text-[13px] text-[hsl(var(--color-text))] leading-relaxed">{record.notes}</p>
+          </div>
         </div>
-        <div>
-          <span className="text-xs text-[hsl(var(--color-warning)/0.8)] font-bold uppercase block mb-1">Chronic:</span>
-          <span className="text-[13px] font-medium text-[hsl(var(--color-text))]">
-            {record.chronic && record.chronic.length > 0 ? record.chronic.join(", ") : <span className="text-[hsl(var(--color-text-muted))] italic">None</span>}
-          </span>
-        </div>
-        <div>
-          <span className="text-xs text-[hsl(var(--color-primary)/0.8)] font-bold uppercase block mb-1">Surgeries:</span>
-          <span className="text-[13px] font-medium text-[hsl(var(--color-text))]">
-            {record.surgeries && record.surgeries.length > 0 ? record.surgeries.map((s:any)=>s.operationName).join(", ") : <span className="text-[hsl(var(--color-text-muted))] italic">None</span>}
-          </span>
-        </div>
-      </div>
+      )}
 
-      {/* Prescriptions */}
-      <div className="mb-4 border-t border-[hsl(var(--color-border-soft))] pt-3">
-        <h5 className="text-[13px] font-bold text-[hsl(var(--color-text))] flex items-center gap-1 mb-2">
-          <LuPill className="text-[hsl(var(--color-secondary-strong))]" /> Medications Prescribed
-        </h5>
-        {record.prescriptions && record.prescriptions.length > 0 ? (
+      {/* ── Alerts row: Allergies + Chronic + Surgeries ── */}
+      {(allergies.length > 0 || chronic.length > 0 || surgeries.length > 0) && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+          {allergies.length > 0 && (
+            <div className="p-3 rounded-xl bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.15)]">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-danger)/0.8)] mb-1.5 flex items-center gap-1">
+                <LuShieldAlert /> Allergies
+              </p>
+              <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">{allergies.join(", ")}</p>
+            </div>
+          )}
+          {chronic.length > 0 && (
+            <div className="p-3 rounded-xl bg-[hsl(var(--color-warning-bg))] border border-[hsl(var(--color-warning)/0.15)]">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-warning)/0.8)] mb-1.5 flex items-center gap-1">
+                <LuActivity /> Chronic
+              </p>
+              <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">{chronic.join(", ")}</p>
+            </div>
+          )}
+          {surgeries.length > 0 && (
+            <div className="p-3 rounded-xl bg-[hsl(var(--color-primary)/0.06)] border border-[hsl(var(--color-primary)/0.15)]">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-primary-strong)/0.8)] mb-1.5 flex items-center gap-1">
+                <LuScissors /> Surgeries
+              </p>
+              <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">
+                {surgeries.map((s: any) => typeof s === "string" ? s : s.operationName || "").join(", ")}
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── Medications ── */}
+      {hasMeds && (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
+            <LuPill className="text-[hsl(var(--color-primary))]" /> Medications prescribed
+          </p>
           <div className="space-y-2">
-            {record.prescriptions.map((rx: any) => 
+            {prescriptions.map((rx: any) =>
               rx.medications?.map((med: any, mIdx: number) => (
-                <div key={mIdx} className="bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))]">
-                  <h6 className="text-[13px] font-bold text-[hsl(var(--color-text))]">{med.medicineName}</h6>
-                  <p className="text-xs text-[hsl(var(--color-text-muted))]">{med.dosage} • {med.frequency} • {med.duration}</p>
+                <div
+                  key={mIdx}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]"
+                >
+                  <div className="w-7 h-7 rounded-lg bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] shrink-0 mt-0.5">
+                    <LuPill className="text-[13px]" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] font-semibold text-[hsl(var(--color-text))] leading-tight">{med.medicineName}</p>
+                    <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5 font-medium">
+                      {[med.dosage, med.frequency, med.duration].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
                 </div>
               ))
             )}
           </div>
-        ) : (
-          <p className="text-[13px] text-[hsl(var(--color-text-muted))] italic bg-[hsl(var(--color-bg-base))] p-2 rounded-lg border border-[hsl(var(--color-border-soft))]">No medications prescribed in this visit.</p>
-        )}
-      </div>
+          {record.prescriptionText && (
+            <div className="mt-2 p-3 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1">Rx notes</p>
+              <p className="text-[13px] text-[hsl(var(--color-text))] leading-relaxed">{record.prescriptionText}</p>
+            </div>
+          )}
+        </div>
+      )}
 
-      {/* Rx Notes */}
-      <div className="mb-3 bg-[hsl(var(--color-bg-base))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
-        <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Rx Notes / Instructions:</p>
-        <p className="text-[13px] text-[hsl(var(--color-text))]">
-          {record.prescriptionText || <span className="text-[hsl(var(--color-text-muted))] italic">No notes</span>}
-        </p>
-      </div>
-      
-      {/* Documents */}
-      <div className="mt-3">
-        <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-2 uppercase tracking-wider">Attached Documents:</p>
-        {record.documents && record.documents.length > 0 ? (
+      {/* ── Documents ── */}
+      {documents.length > 0 && (
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
+            <LuFileText className="text-[hsl(var(--color-primary))]" /> Documents
+          </p>
           <div className="flex flex-wrap gap-2">
-            {record.documents.map((doc: any, dIdx: number) => {
-              let icon = <LuFileText />;
-              let label = doc.title || "Document";
-              if (doc.type === "prescription") { icon = <LuImage />; label = doc.title || "Scanned Rx"; }
-              else if (doc.type === "lab") { icon = <LuFileText />; }
-              else if (doc.type === "xray" || doc.type === "mri" || doc.type === "ct") { icon = <LuImage />; }
-              
+            {documents.map((doc: any, dIdx: number) => {
+              const isImage = ["prescription", "xray", "mri", "ct"].includes(doc.type);
               return (
-                <a key={dIdx} href={doc.secure_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary)/0.1)] transition-colors bg-[hsl(var(--color-primary)/0.05)] px-3 py-1.5 rounded-lg border border-[hsl(var(--color-primary)/0.15)]">
-                  {icon} {label}
+                <a
+                  key={dIdx}
+                  href={doc.secure_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-[12px] font-semibold
+                    bg-[hsl(var(--color-primary)/0.06)] text-[hsl(var(--color-primary-strong))]
+                    border border-[hsl(var(--color-primary)/0.15)] hover:bg-[hsl(var(--color-primary)/0.12)] transition-colors"
+                >
+                  {isImage ? <LuImage className="text-[12px]" /> : <LuFileText className="text-[12px]" />}
+                  {doc.title || "Document"}
+                  <LuExternalLink className="text-[10px] opacity-60" />
                 </a>
               );
             })}
           </div>
-        ) : (
-          <p className="text-[13px] text-[hsl(var(--color-text-muted))] italic">No documents attached.</p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
