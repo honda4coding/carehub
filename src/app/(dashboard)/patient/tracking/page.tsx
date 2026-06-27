@@ -15,6 +15,7 @@ import {
 import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
 import { Card } from "@/components/ui/Card";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -200,14 +201,11 @@ export default function TrackingPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3">
-        <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-          <LuActivity className="text-[hsl(var(--color-primary))]" /> Personal Tracking
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Monitor your vital signs, earn badges, and track your progress!
-        </p>
-      </header>
+      <DashboardHeader
+        title="Personal Tracking"
+        subtitle="Monitor your vital signs, earn badges, and track your progress!"
+        backPath="/patient"
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="max-w-5xl mx-auto space-y-6">

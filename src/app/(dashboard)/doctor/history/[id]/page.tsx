@@ -8,6 +8,7 @@ import {
   LuArrowLeft, LuHistory, LuCalendar, LuStethoscope, LuFileText, LuChevronDown, LuChevronUp, LuSearch, LuArrowDownUp
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
   const [expanded, setExpanded] = useState(false);
@@ -151,24 +152,12 @@ function OnlinePatientHistoryContent() {
   }, [visibleCount, filteredAndSortedHistory.length]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-4 z-10 sticky top-0">
-        <button 
-          onClick={() => router.back()}
-          className="p-2 bg-[hsl(var(--color-bg-soft))] hover:bg-primary hover:text-white rounded-lg transition-colors border border-[hsl(var(--color-border))] flex-shrink-0"
-        >
-          <LuArrowLeft className="text-xl" />
-        </button>
-        <div>
-          <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <LuHistory className="text-primary" /> Patient Medical History
-          </h1>
-          <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-1">
-            Complete visit timeline for: <span className="font-bold text-[hsl(var(--color-text))]">{patientName}</span> {patientPhone ? `(${patientPhone})` : ''}
-          </p>
-        </div>
-      </header>
+    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
+      <DashboardHeader
+        title="Patient Medical History"
+        subtitle={`Visit timeline for: ${patientName}${patientPhone ? ` (${patientPhone})` : ''}`}
+        backPath="/doctor"
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">
         <div className="max-w-4xl mx-auto w-full">

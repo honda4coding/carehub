@@ -13,6 +13,7 @@ import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import EmptyState from "@/components/appointments/EmptyState";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -458,24 +459,14 @@ export default function MedicalHistoryPage() {
     <div className="flex flex-col flex-1 min-h-screen">
       {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
 
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4">
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] items-center justify-center text-[20px] shrink-0">
-            <LuClipboardList />
-          </div>
-          <div>
-            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              Medical History
-            </h1>
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-              Your complete clinical encounter records
-            </p>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="Medical History"
+        subtitle="Your complete clinical encounter records"
+        backPath="/patient"
+      />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
           
           {/* Filters Section */}
@@ -570,6 +561,7 @@ export default function MedicalHistoryPage() {
                 </div>
               )}
             </div>
+          </div>
           </div>
         </div>
       </main>

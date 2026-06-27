@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { fetchClient } from "@/services/fetchClient";
 
-import NotificationsHeader from "@/components/admin/notifications/NotificationsHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import NotificationsFilters, { TabValue } from "@/components/admin/notifications/NotificationsFilters";
 import NotificationsList, { Notification } from "@/components/admin/notifications/NotificationsList";
 
@@ -78,9 +78,10 @@ export default function NotificationsPage() {
   const readCount = notifications.filter((n) => n.isRead).length;
 
   return (
-    <div className="flex-1 p-4 md:p-6 overflow-auto bg-[hsl(var(--color-bg))]">
-      <NotificationsHeader />
-
+    <div className="flex flex-col flex-1 min-h-screen">
+      <DashboardHeader title="Notifications" subtitle="View and manage all your notifications" backPath="/doctor" />
+      <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">
         <NotificationsFilters
           filter={filter}
@@ -98,6 +99,8 @@ export default function NotificationsPage() {
           loading={loading}
           handleMarkAsRead={handleMarkAsRead}
         />
+      </div>
+        </div>
       </div>
     </div>
   );

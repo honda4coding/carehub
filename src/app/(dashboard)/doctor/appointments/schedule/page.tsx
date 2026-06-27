@@ -8,6 +8,7 @@ import AppointmentToast from "@/components/appointments/AppointmentToast";
 import SectionToggle from "@/components/appointments/SectionToggle";
 import ClinicScheduleCard from "@/components/appointments/ClinicScheduleCard";
 import { getMyClinics, Clinic } from "@/services/clinicService";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 export default function DoctorSchedulePage() {
   const router = useRouter();
@@ -32,23 +33,12 @@ export default function DoctorSchedulePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4 shadow-[0_1px_0_hsl(var(--color-border))]">
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-gradient-to-br from-[hsl(var(--color-primary)/0.15)] to-[hsl(var(--color-primary)/0.05)] border border-[hsl(var(--color-primary)/0.1)] text-primary items-center justify-center text-[20px] shrink-0">
-            <LuSettings2 />
-          </div>
-          <div>
-            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              My Schedule
-            </h1>
-            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-              Your weekly hours for each clinic
-            </p>
-          </div>
-        </div>
-        <SectionToggle />
-      </header>
+      <DashboardHeader
+        title="My Schedule"
+        subtitle="Your weekly hours for each clinic"
+        backPath="/doctor/appointments"
+        rightElement={<SectionToggle />}
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         {loadingClinics ? (

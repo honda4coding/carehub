@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import PatientDirectoryFilters from "@/components/doctor/patients/PatientDirectoryFilters";
 import PatientTable from "@/components/doctor/patients/PatientTable";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 function PatientDirectoryContent() {
   const searchParams = useSearchParams();
@@ -97,23 +98,17 @@ function PatientDirectoryContent() {
   });
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))] relative">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between z-10">
-        <div>
-          <h1 className="text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-            <LuUsers className="text-primary" /> Patient Directory
-          </h1>
-          <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mt-1 pl-11 md:pl-0">
-            Your complete archive of all clinic patients
-          </p>
-        </div>
-        <div className="hidden md:flex items-center gap-3">
+    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))] relative">
+      <DashboardHeader
+        title="Patient Directory"
+        subtitle="Your complete archive of all clinic patients"
+        backPath="/doctor"
+        rightElement={
           <span className="text-sm font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] px-3 py-1.5 rounded-full border border-[hsl(var(--color-primary)/0.2)]">
-            Total Patients: {patients.length}
+            Total: {patients.length}
           </span>
-        </div>
-      </header>
+        }
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-hidden flex">
         <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">

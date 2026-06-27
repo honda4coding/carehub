@@ -52,7 +52,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
       {STATS.map((s) => {
         const CardContent = (
           <div

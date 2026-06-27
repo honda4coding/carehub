@@ -15,7 +15,7 @@ export const DoctorActions = ({
   user,
 }: any) => {
   return (
-    <div className="mb-4 grid grid-cols-1 md:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
       {/* Welcome Card - Left, larger */}
       <div className="md:col-span-2">
         <div className="bg-gradient-doctor rounded-xl p-5 h-full flex items-center gap-4 text-white relative overflow-hidden">

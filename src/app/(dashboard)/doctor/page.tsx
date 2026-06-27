@@ -20,6 +20,7 @@ import {
   LuUserPlus,
   LuSmartphone
 } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 type SessionStatus = "pending_otp" | "in_progress" | "completed";
 
@@ -350,57 +351,44 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative min-w-0">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between">
-        <div className="min-w-0">
-          <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 truncate">
-            Doctor Workspace
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <NotificationBell basePath="/doctor/notifications" />
-        </div>
-      </header>
+      <DashboardHeader
+        title="Doctor Workspace"
+        subtitle="Manage your daily encounters and patient care"
+        rightElement={<NotificationBell basePath="/doctor/notifications" />}
+      />
 
       {/* Content */}
-      <main className="flex-1 p-4 md:p-6 overflow-x-hidden overflow-y-auto min-w-0 flex flex-col gap-4">
-        
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
-          <div className="order-1 xl:order-1 xl:col-span-1 flex flex-col">
-            <DoctorActions 
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              handleSearch={handleSearch}
-              isSearching={isSearching}
-              showSearchResults={showSearchResults}
-              setShowSearchResults={setShowSearchResults}
-              searchError={searchError}
-              realSearchResults={realSearchResults}
-              handleRequestAccess={handleRequestAccess}
-              setWalkInModalOpen={setWalkInModalOpen}
-              user={user}
-            />
-          </div>
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden overflow-y-auto min-w-0 bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-6">
+          
+          <DoctorActions 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+            isSearching={isSearching}
+            showSearchResults={showSearchResults}
+            setShowSearchResults={setShowSearchResults}
+            searchError={searchError}
+            realSearchResults={realSearchResults}
+            handleRequestAccess={handleRequestAccess}
+            setWalkInModalOpen={setWalkInModalOpen}
+            user={user}
+          />
 
-          <div className="order-3 xl:order-2 xl:col-span-2 flex flex-col">
-            <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
-          </div>
+          <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
 
-          <div className="order-2 xl:order-3 xl:col-span-3 flex flex-col">
-            <CurrentQueue 
-              statusFilter={statusFilter}
-              setStatusFilter={setStatusFilter}
-              typeFilter={typeFilter}
-              setTypeFilter={setTypeFilter}
-              filter={filter}
-              setFilter={setFilter}
-              filteredSessions={filtered}
-              handleCancelRequest={handleCancelRequest}
-              setSelectedSession={setSelectedSession}
-              setOTPModalOpen={setOTPModalOpen}
-            />
-          </div>
+          <CurrentQueue 
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            typeFilter={typeFilter}
+            setTypeFilter={setTypeFilter}
+            filter={filter}
+            setFilter={setFilter}
+            filteredSessions={filtered}
+            handleCancelRequest={handleCancelRequest}
+            setSelectedSession={setSelectedSession}
+            setOTPModalOpen={setOTPModalOpen}
+          />
         </div>
       </main>
 

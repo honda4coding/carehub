@@ -21,6 +21,7 @@ import EmptyState from "@/components/appointments/EmptyState";
 import ApptTab, { TabType as Tab } from "@/components/appointments/ApptTab";
 import PatientApptCard from "@/components/appointments/PatientApptCard";
 import PayModal from "@/components/appointments/PayModal";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -138,23 +139,14 @@ export default function PatientAppointmentsPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex w-12 h-12 rounded-[14px] bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] items-center justify-center text-[20px] shrink-0">
-            <LuCalendarDays />
-          </div>
-          <div>
-            <h1 className="text-[18px] md:text-[22px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              My Appointments
-            </h1>
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-              Track your upcoming and past visits
-            </p>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="My Appointments"
+        subtitle="Track your upcoming and past visits"
+        backPath="/patient"
+      />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto flex flex-col lg:flex-row gap-5">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6">
 
         {/* ══════════════════════════════════════════════════════
             LEFT — Clinics / Doctors sidebar
@@ -224,44 +216,47 @@ export default function PatientAppointmentsPage() {
             RIGHT — Bookings for the selected clinic (or all)
         ══════════════════════════════════════════════════════ */}
         <div className="flex-1 min-w-0">
-          {/* Tabs */}
-          <div className="flex justify-center mb-6">
-            <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
-              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
-          ) : tab === "upcoming" ? (
-            grouped.upcoming.length === 0 ? (
-              <EmptyState
-                icon={<LuStethoscope />}
-                title="No upcoming appointments"
-                description="When you book a visit, it'll show up here."
-              />
-            ) : upcomingByDay.map((group) => (
-              <div key={group.sortKey} className="mb-6">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-primary))] shrink-0" />
-                  <h4 className="text-[14px] font-black text-[hsl(var(--color-text))]">{group.label}</h4>
-                  <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{group.items.length} visit{group.items.length !== 1 ? "s" : ""}</span>
-                  <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
-                </div>
-                {group.items.map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+          <div className="max-w-3xl mx-auto">
+            {/* Tabs */}
+            <div className="flex justify-center mb-6">
+              <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
+                <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+                <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+                <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
               </div>
-            ))
-          ) : grouped[tab].length === 0 ? (
-            <EmptyState
-              icon={<LuCalendarDays />}
-              title={`No ${tab} appointments`}
-              description="Nothing to show here yet."
-            />
-          ) : (
-            <div>{grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
-          )}
+            </div>
+
+            {loading ? (
+              <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
+            ) : tab === "upcoming" ? (
+              grouped.upcoming.length === 0 ? (
+                <EmptyState
+                  icon={<LuStethoscope />}
+                  title="No upcoming appointments"
+                  description="When you book a visit, it'll show up here."
+                />
+              ) : upcomingByDay.map((group) => (
+                <div key={group.sortKey} className="mb-6">
+                  <div className="flex items-center gap-2.5 mb-3">
+                    <span className="w-2 h-2 rounded-full bg-[hsl(var(--color-primary))] shrink-0" />
+                    <h4 className="text-[14px] font-black text-[hsl(var(--color-text))]">{group.label}</h4>
+                    <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{group.items.length} visit{group.items.length !== 1 ? "s" : ""}</span>
+                    <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
+                  </div>
+                  {group.items.map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+                </div>
+              ))
+            ) : grouped[tab].length === 0 ? (
+              <EmptyState
+                icon={<LuCalendarDays />}
+                title={`No ${tab} appointments`}
+                description="Nothing to show here yet."
+              />
+            ) : (
+              <div>{grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
+            )}
+          </div>
+        </div>
         </div>
       </main>
 

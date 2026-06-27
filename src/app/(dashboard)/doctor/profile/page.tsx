@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import { LuUser, LuShieldCheck } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
 import ProfessionalInfoForm from "@/components/doctor/profile/ProfessionalInfoForm";
 import LicenseSection from "@/components/doctor/profile/LicenseSection";
@@ -47,15 +48,11 @@ export default function DoctorProfilePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
-      {/* Page header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
-        <h1 className="text-[16px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
-          Profile Settings
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Manage your personal information and license
-        </p>
-      </header>
+      <DashboardHeader
+        title="Profile Settings"
+        subtitle="Manage your personal information and license"
+        backPath="/doctor"
+      />
 
       <main className="flex-1 p-6">
         {/* Loading */}
