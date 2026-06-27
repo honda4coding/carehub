@@ -366,34 +366,42 @@ const [sessions, setSessions] = useState<Session[]>([]);
       {/* Content */}
       <main className="flex-1 p-4 md:p-6 overflow-x-hidden overflow-y-auto min-w-0 flex flex-col gap-4">
         
-        <DoctorActions 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-          isSearching={isSearching}
-          showSearchResults={showSearchResults}
-          setShowSearchResults={setShowSearchResults}
-          searchError={searchError}
-          realSearchResults={realSearchResults}
-          handleRequestAccess={handleRequestAccess}
-          setWalkInModalOpen={setWalkInModalOpen}
-          user={user}
-        />
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 md:gap-6">
+          <div className="order-1 xl:order-1 xl:col-span-1 flex flex-col">
+            <DoctorActions 
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              handleSearch={handleSearch}
+              isSearching={isSearching}
+              showSearchResults={showSearchResults}
+              setShowSearchResults={setShowSearchResults}
+              searchError={searchError}
+              realSearchResults={realSearchResults}
+              handleRequestAccess={handleRequestAccess}
+              setWalkInModalOpen={setWalkInModalOpen}
+              user={user}
+            />
+          </div>
 
-        <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
+          <div className="order-3 xl:order-2 xl:col-span-2 flex flex-col">
+            <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
+          </div>
 
-        <CurrentQueue 
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          typeFilter={typeFilter}
-          setTypeFilter={setTypeFilter}
-          filter={filter}
-          setFilter={setFilter}
-          filteredSessions={filtered}
-          handleCancelRequest={handleCancelRequest}
-          setSelectedSession={setSelectedSession}
-          setOTPModalOpen={setOTPModalOpen}
-        />
+          <div className="order-2 xl:order-3 xl:col-span-3 flex flex-col">
+            <CurrentQueue 
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+              typeFilter={typeFilter}
+              setTypeFilter={setTypeFilter}
+              filter={filter}
+              setFilter={setFilter}
+              filteredSessions={filtered}
+              handleCancelRequest={handleCancelRequest}
+              setSelectedSession={setSelectedSession}
+              setOTPModalOpen={setOTPModalOpen}
+            />
+          </div>
+        </div>
       </main>
 
       <DashboardModals 

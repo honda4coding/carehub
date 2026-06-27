@@ -158,11 +158,12 @@ export default function PatientDashboard() {
         )}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-          <div className="xl:col-span-2 flex flex-col">
+          <div className="order-2 xl:order-1 xl:col-span-2 flex flex-col">
             <MedicalTimeline entries={filteredTimeline} loading={timelineLoading} searchTerm={searchTerm} />
           </div>
           
-          <div className="flex flex-col gap-6">
+          <div className="order-1 xl:order-2 flex flex-col gap-6 xl:sticky xl:top-[88px] xl:self-start">
+            <QuickActions />
             {!profileLoading && profile && (
               <MedicalAlerts 
                 allergies={profile.allergies ?? []} 
@@ -170,7 +171,6 @@ export default function PatientDashboard() {
               />
             )}
             <MedicationSummaryWidget />
-            <QuickActions />
           </div>
         </div>
       </main>
