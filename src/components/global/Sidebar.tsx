@@ -140,6 +140,16 @@ const doctorNav: NavSection[] = [
       },
     ],
   },
+  {
+    title: "System",
+    items: [
+      {
+        label: "Notifications",
+        href: "/doctor/notifications",
+        icon: <LuBell />,
+      },
+    ],
+  },
 ];
 
 const patientNav: NavSection[] = [
@@ -614,7 +624,7 @@ export default function Sidebar({ role }: { role: string }) {
 
   // ── Unread notifications badge ───────────────────────────────────────────────
   const fetchUnreadCount = useCallback(async () => {
-    if (role !== "admin" && role !== "patient") return;
+    if (role !== "admin" && role !== "patient" && role !== "doctor") return;
     try {
       const res = await fetchClient.get("/notifications", {
         params: { limit: "100" },

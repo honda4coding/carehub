@@ -197,11 +197,10 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
       // Only show OTP alert if the session actually requires OTP verification
       if (sessionStatus === "pending_otp") {
-        const tempOtp = responseData.temp_otp || response.data.temp_otp || "Not Provided";
-        alert(`Test OTP for ${patient.fullName} is: ${tempOtp}`);
+        alert("✅ An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
       } else {
         // Session is in_progress immediately — no OTP needed
-        alert(`✅ تم السماح بالوصول الفوري للمريض بناءً على إعدادات الخصوصية الخاصة به.`);
+        alert(`✅ Instant access granted to the patient based on their privacy settings.`);
       }
 
      const newActiveSession: Session = {
@@ -243,7 +242,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
         msg === "Access already granted for this patient"
       ) {
         // Session already active — just refresh the queue to show it
-        alert("✅ هذا المريض موجود بالفعل في طابور العيادة (الجلسة نشطة).");
+        alert("✅ This patient is already in the clinic queue (Active Session).");
         fetchCurrentQueue();
       } else {
         alert("Failed to request access: " + (msg || err.message));

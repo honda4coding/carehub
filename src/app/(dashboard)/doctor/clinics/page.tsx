@@ -315,7 +315,7 @@ export default function DoctorClinicsPage() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="مركز الشفاء"
+                  placeholder="Al-Shifa Center"
                 />
               </div>
 
@@ -327,7 +327,7 @@ export default function DoctorClinicsPage() {
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="دمياط الجديدة"
+                  placeholder="New Damietta"
                 />
               </div>
 

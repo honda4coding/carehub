@@ -26,7 +26,7 @@ export default function PatientInsightsCard({ patientId }: { patientId: string }
         const res = await axios.get(`${BASE_URL}/ai/patient/${patientId}/insights`, {
           headers: authHeaders(),
         });
-        setInsights(res.data?.data?.insights || "لا توجد رؤية متاحة حالياً.");
+        setInsights(res.data?.data?.insights || "No insights available currently.");
       } catch (err) {
         console.error("AI Insights Error:", err);
         setError(true);
@@ -59,7 +59,7 @@ export default function PatientInsightsCard({ patientId }: { patientId: string }
       <div className="relative z-10">
         {loading ? (
           <div className="flex items-center gap-2 text-sm font-bold text-[hsl(var(--color-primary))] py-4">
-            <LuLoader className="animate-spin" /> جاري تحليل السجل الطبي للمريض...
+            <LuLoader className="animate-spin" /> Analyzing patient's medical history...
           </div>
         ) : (
           <div className="text-sm text-[hsl(var(--color-text))] font-medium leading-relaxed whitespace-pre-wrap bg-white/50 dark:bg-black/20 p-4 rounded-xl border border-[hsl(var(--color-border-soft))]">

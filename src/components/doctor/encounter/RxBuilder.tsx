@@ -521,10 +521,10 @@ export default function RxBuilder({
                       onChange={(e) => updateAttachmentMeta(index, 'type', e.target.value)}
                       className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
                     >
-                      <option value="lab">Lab Test (تحليل)</option>
-                      <option value="xray">X-Ray (أشعة عادية)</option>
-                      <option value="mri">MRI Scan (رنين)</option>
-                      <option value="ct">CT Scan (مقطعية)</option>
+                      <option value="lab">Lab Test</option>
+                      <option value="xray">X-Ray</option>
+                      <option value="mri">MRI Scan</option>
+                      <option value="ct">CT Scan</option>
                       <option value="other">Specify Other...</option>
                     </select>
                   </div>
