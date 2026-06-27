@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   LuBuilding2,
   LuPlus,
@@ -21,8 +22,6 @@ import {
 } from "@/services/clinicService";
 import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
 
-// ─── Empty form state ──────────────────────────────────────────────────────────
-
 const EMPTY_FORM: ClinicPayload = {
   name: "",
   address: "",
@@ -33,38 +32,49 @@ const EMPTY_FORM: ClinicPayload = {
 };
 
 export default function DoctorClinicsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
 
-  // modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClinic, setEditingClinic] = useState<Clinic | null>(null);
   const [form, setForm] = useState<ClinicPayload>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // delete confirm state
   const [deleteTarget, setDeleteTarget] = useState<Clinic | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  async function loadClinics(selectFirst = false) {
+  async function loadClinics(): Promise<Clinic[]> {
     setLoading(true);
     setError(null);
     try {
       const data = await getMyClinics();
       setClinics(data);
-      if (selectFirst && data.length > 0) setSelectedClinicId(data[0]._id);
+      return data;
     } catch (err: any) {
       setError(err.message || "Failed to load clinics");
+      return [];
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    loadClinics(true);
+    const preselect = searchParams.get("selected");
+    loadClinics().then((data) => {
+      if (preselect && data.some((c) => c._id === preselect)) {
+        setSelectedClinicId(preselect);
+        // clean up URL without full reload
+        router.replace("/doctor/clinics", { scroll: false });
+      } else if (data.length > 0) {
+        setSelectedClinicId(data[0]._id);
+      }
+    });
   }, []);
 
   function openAddModal() {
@@ -230,9 +240,7 @@ export default function DoctorClinicsPage() {
                         <p className="text-[13px] font-bold truncate">{clinic.name}</p>
                         <p
                           className={`text-[10.5px] font-medium truncate ${
-                            isActive
-                              ? "text-white/80"
-                              : "text-[hsl(var(--color-text-muted))]"
+                            isActive ? "text-white/80" : "text-[hsl(var(--color-text-muted))]"
                           }`}
                         >
                           {clinic.governorate}
@@ -274,7 +282,7 @@ export default function DoctorClinicsPage() {
               </div>
             </aside>
 
-            {/* ── RIGHT: Selected clinic's editable data ── */}
+            {/* ── RIGHT: Selected clinic detail ── */}
             <div className="flex-1 min-w-0">
               {selectedClinicId ? (
                 <ClinicDetailsPanel clinicId={selectedClinicId} />
@@ -342,18 +350,14 @@ export default function DoctorClinicsPage() {
                 >
                   <option value="">Select governorate</option>
                   {egyptianGovernorates.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
+                    <option key={g} value={g}>{g}</option>
                   ))}
                 </select>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    Phone
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Phone</label>
                   <input
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
@@ -362,9 +366,7 @@ export default function DoctorClinicsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    WhatsApp
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">WhatsApp</label>
                   <input
                     value={form.whatsapp}
                     onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
@@ -373,9 +375,7 @@ export default function DoctorClinicsPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    Landline
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Landline</label>
                   <input
                     value={form.landline}
                     onChange={(e) => setForm({ ...form, landline: e.target.value })}

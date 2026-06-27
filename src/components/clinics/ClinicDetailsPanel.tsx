@@ -45,7 +45,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
   const [clinic, setClinic] = useState<Clinic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [slotsVersion, setSlotsVersion] = useState(0);
   // toast
   const [toast, setToast] = useState<{
     msg: string;
@@ -280,6 +280,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             doctorId={doctorId}
             onToast={(msg, variant) => setToast({ msg, variant })}
             onSelectedDaysChange={setHasSelectedDays}
+            onDayDeleted={() => setSlotsVersion((v) => v + 1)}
           />
 
           {/* Right: generate + open slots */}
@@ -288,6 +289,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             doctorId={doctorId}
             hasSelectedDays={hasSelectedDays}
             onToast={(msg, variant) => setToast({ msg, variant })}
+            slotsVersion={slotsVersion}
           />
         </div>
       </section>

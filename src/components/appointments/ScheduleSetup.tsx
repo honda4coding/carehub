@@ -47,6 +47,7 @@ interface ScheduleSetupProps {
   clinicName?: string;
   clinicId?: string;
   doctorId?: string;
+  onDayDeleted?: () => void;
   onToast: (msg: string, variant: "success" | "error") => void;
   onSelectedDaysChange?: (hasDays: boolean) => void;
 }
@@ -63,10 +64,13 @@ export default function ScheduleSetup({
   doctorId,
   onToast,
   onSelectedDaysChange,
+  onDayDeleted,
 }: ScheduleSetupProps) {
   const [loadingAvailability, setLoadingAvailability] = useState(!!clinicId);
   const [selectedDays, setSelectedDays] = useState<Set<Day>>(new Set());
-  const [timeConfig, setTimeConfig] = useState<Partial<Record<Day, DayConfig>>>({});
+  const [timeConfig, setTimeConfig] = useState<Partial<Record<Day, DayConfig>>>(
+    {},
+  );
   const [savedIds, setSavedIds] = useState<Partial<Record<Day, string>>>({});
   const [expandedDay, setExpandedDay] = useState<Day | null>(null);
   const [savingDay, setSavingDay] = useState<Day | null>(null);
@@ -113,7 +117,7 @@ export default function ScheduleSetup({
       const id = savedIds[day];
       if (id) {
         const confirmed = window.confirm(
-          `Remove ${DAY_LABELS[day]} from your schedule? This will also delete all open slots for this day.`
+          `Remove ${DAY_LABELS[day]} from your schedule? This will also delete all open slots for this day.`,
         );
         if (!confirmed) return;
         await handleDeleteDay(day);
@@ -134,7 +138,11 @@ export default function ScheduleSetup({
       if (!timeConfig[day]) {
         setTimeConfig((tc) => ({
           ...tc,
-          [day]: { startTime: "09:00", endTime: "17:00", appointmentDuration: 30 },
+          [day]: {
+            startTime: "09:00",
+            endTime: "17:00",
+            appointmentDuration: 30,
+          },
         }));
       }
     }
@@ -167,7 +175,12 @@ export default function ScheduleSetup({
       }
       setExpandedDay(null);
     } catch (err: any) {
-      onToast(err.message || "Failed to save availability", "error");
+      onToast(
+        err.response?.data?.message ||
+          err.message ||
+          "Failed to save availability",
+        "error",
+      );
     } finally {
       setSavingDay(null);
     }
@@ -188,14 +201,18 @@ export default function ScheduleSetup({
       await deleteAvailability(id);
 
       // Delete all open slots for this day
-      const daySlots = await getAvailableSlots(doctorId ?? "", clinicId).catch(() => []);
+      const daySlots = await getAvailableSlots(doctorId ?? "", clinicId).catch(
+        () => [],
+      );
       const toDelete = daySlots.filter((s: any) => {
         const slotDay = new Date(s.startTime)
           .toLocaleDateString("en-US", { weekday: "long" })
           .toLowerCase();
         return slotDay === day;
       });
-      await Promise.all(toDelete.map((s: any) => deleteSlot(s._id))).catch(() => {});
+      await Promise.all(toDelete.map((s: any) => deleteSlot(s._id))).catch(
+        () => {},
+      );
 
       setSelectedDays((prev) => {
         const n = new Set(prev);
@@ -213,8 +230,14 @@ export default function ScheduleSetup({
         return n;
       });
       onToast(`${DAY_LABELS[day]} availability removed`, "success");
+      onDayDeleted?.();
     } catch (err: any) {
-      onToast(err.message || "Could not remove this day", "error");
+      onToast(
+        err.response?.data?.message ||
+          err.message ||
+          "Could not remove this day",
+        "error",
+      );
     } finally {
       setDeletingDay(null);
     }
@@ -329,7 +352,10 @@ export default function ScheduleSetup({
                           onChange={(e) =>
                             setTimeConfig((prev) => ({
                               ...prev,
-                              [day]: { ...prev[day]!, startTime: e.target.value },
+                              [day]: {
+                                ...prev[day]!,
+                                startTime: e.target.value,
+                              },
                             }))
                           }
                           className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"

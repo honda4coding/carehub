@@ -13,7 +13,6 @@ export default function DoctorSchedulePage() {
   const router = useRouter();
 
   const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
-
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loadingClinics, setLoadingClinics] = useState(true);
 
@@ -84,6 +83,9 @@ export default function DoctorSchedulePage() {
                 clinicId={clinic._id}
                 clinicName={clinic.name}
                 clinicAddress={clinic.address}
+                onEdit={() =>
+                  router.push(`/doctor/clinics?selected=${clinic._id}`)
+                }
               />
             ))}
           </div>

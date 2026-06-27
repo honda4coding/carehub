@@ -14,6 +14,7 @@ interface GenerateSlotsCardProps {
   clinicId?: string;
   doctorId?: string;
   hasSelectedDays: boolean;
+  slotsVersion?: number;
   onToast: (msg: string, variant: "success" | "error") => void;
 }
 
@@ -22,6 +23,7 @@ export default function GenerateSlotsCard({
   doctorId,
   hasSelectedDays,
   onToast,
+   slotsVersion,
 }: GenerateSlotsCardProps) {
   const [generateRange, setGenerateRange] = useState({ startDate: "", endDate: "" });
   const [generating, setGenerating] = useState(false);
@@ -45,7 +47,7 @@ export default function GenerateSlotsCard({
 
   useEffect(() => {
     if (doctorId) loadSlots();
-  }, [doctorId, clinicId]);
+  }, [doctorId, clinicId, slotsVersion]);
 
   async function handleGenerate() {
     if (!generateRange.startDate || !generateRange.endDate) {
