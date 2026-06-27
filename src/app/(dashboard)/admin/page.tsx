@@ -115,7 +115,7 @@ export default function AdminDashboard() {
         rightElement={<NotificationBell basePath="/admin/notifications" />}
       />
 
-      <main className="flex-1 p-5 md:p-8 overflow-auto flex flex-col gap-6 md:gap-8 max-w-[1600px] mx-auto w-full">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto flex flex-col gap-6 md:gap-8 max-w-7xl mx-auto w-full">
         {/* Stats error banner */}
         {statsError && (
           <div className="flex items-center gap-2.5 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] rounded-xl px-4 py-3">
