@@ -14,6 +14,7 @@ import {
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import EmptyState from "@/components/appointments/EmptyState";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -617,75 +618,46 @@ export default function MedicalHistoryPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
 
-      {/* ── Page Header ── */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4">
-        <div className="flex items-center gap-3">
-          <div className="hidden md:flex w-10 h-10 rounded-[12px] bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] items-center justify-center text-[18px] shrink-0">
-            <LuClipboardList />
-          </div>
-          <div>
-            <h1 className="text-[20px] font-semibold text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
-              Medical history
-            </h1>
-            <p className="text-[13px] text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-              Your complete clinical encounter records
-            </p>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="Medical History"
+        subtitle="Your complete clinical encounter records"
+        backPath="/patient"
+      />
 
-      {/* ── Health Snapshot (always-visible alerts) ── */}
-      <HealthSnapshot allergies={allergies} chronicDiseases={chronicDiseases} surgeries={surgeries} />
-
-      {/* ── Mobile Medications (below snapshot, above timeline) ── */}
-      <MobileMedicationsPanel medications={allMedications} loading={loading} />
-
-      {/* ── Body ── */}
-      <div className="flex flex-1 min-h-0">
-
-        {/* ── Sidebar ── */}
-        <aside className="hidden lg:flex flex-col w-64 xl:w-72 shrink-0 border-r border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] overflow-y-auto">
-          <div className="p-5 border-b border-[hsl(var(--color-border))]">
-            <h2 className="text-[13px] font-semibold text-[hsl(var(--color-text))] flex items-center gap-2">
-              <LuPill className="text-[hsl(var(--color-primary))] text-[14px]" /> Medications
-            </h2>
-          </div>
-          <div className="p-5 flex-1">
-            <MedicationsSidebar medications={allMedications} loading={loading} />
-          </div>
-        </aside>
-
-        {/* ── Timeline ── */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-
-          {/* Filters row */}
-          <div className="flex flex-col sm:flex-row gap-3 mb-6">
-            <div className="relative flex-1">
-              <LuSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[13px] text-[hsl(var(--color-text-muted))]" />
-              <input
-                type="text"
-                placeholder="Search doctor, diagnosis, medication…"
-                value={filterText}
-                onChange={e => setFilterText(e.target.value)}
-                className="w-full pl-10 pr-9 py-2.5 text-[13px] font-medium rounded-xl border border-[hsl(var(--color-border))]
-                  bg-[hsl(var(--color-bg-surface))] outline-none text-[hsl(var(--color-text))]
-                  focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)]
-                  transition-colors placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
+          
+          {/* Filters Section */}
+          <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 mb-6 border-b border-[hsl(var(--color-border))] pb-6">
+            <h3 className="text-[17px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
+              <LuHistory className="text-[hsl(var(--color-text-muted))] text-[20px]" /> Full Medical History
+            </h3>
+            
+            <div className="flex flex-col sm:flex-row flex-wrap items-end sm:items-center gap-3 w-full xl:w-auto">
+              <DateRangeFilter
+                startDate={startDate}
+                endDate={endDate}
+                onStartDateChange={setStartDate}
+                onEndDateChange={setEndDate}
+                onReset={hasFilters ? clearFilters : undefined}
+                className="!mt-0"
               />
-              {filterText && (
-                <button onClick={() => setFilterText("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer">
-                  <LuX className="text-[13px]" />
-                </button>
-              )}
+              <div className="relative w-full sm:flex-1 sm:min-w-[200px] xl:w-auto xl:flex-none">
+                <input 
+                  type="text"
+                  placeholder="Search doctor, diagnosis..."
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[13px] font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                />
+                {filterText && (
+                  <button onClick={() => setFilterText("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer">
+                    <LuX className="text-[13px]" />
+                  </button>
+                )}
+              </div>
             </div>
-            <DateRangeFilter
-              startDate={startDate}
-              endDate={endDate}
-              onStartDateChange={setStartDate}
-              onEndDateChange={setEndDate}
-              onReset={hasFilters ? clearFilters : undefined}
-              className="!mt-0"
-            />
           </div>
 
           {/* Record count */}
@@ -742,8 +714,9 @@ export default function MedicalHistoryPage() {
               )}
             </div>
           )}
-        </main>
-      </div>
+        </div>
+        </div>
+      </main>
     </div>
   );
 }

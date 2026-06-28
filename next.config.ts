@@ -56,7 +56,7 @@ const isDev = process.env.NODE_ENV === "development";
 const finalConfig = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
-  disable: process.env.NODE_ENV === "development" ? false : false, // ensure it runs in dev for testing push
+  disable: process.env.NODE_ENV !== "production", // Fixes Turbopack warning
   additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
 })(nextConfig);
 

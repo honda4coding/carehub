@@ -18,6 +18,7 @@ import {
   formatFullDate, groupSlotsByDate, initialsOf, slotTimeRangeLabel,
 } from "@/components/appointments/format";
 import EmptyState from "@/components/appointments/EmptyState";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -225,46 +226,34 @@ export default function BookAppointmentPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
 
-      {/* ── Header ── */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-3">
-        <Link
-          href="/patient/doctors"
-          className="w-9 h-9 rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))] transition-all shrink-0"
-        >
-          <LuArrowLeft className="text-[14px]" />
-        </Link>
-        <div>
-          <h1 className="text-[17px] font-black text-[hsl(var(--color-text))]">
-            {step === "clinic" ? "Choose a clinic"
-              : step === "calendar" ? "Pick a day"
-              : step === "confirm" ? "Confirm booking"
-              : "Booking confirmed!"}
-          </h1>
-          <p className="text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-            {step === "success" ? "You're all set" : doctorName}
-          </p>
-        </div>
-
-        {/* Step indicators */}
-        {step !== "success" && (
-          <div className="ml-auto flex items-center gap-2">
-            {ALL_STEPS.map((s, i) => (
-              <div key={s} className="flex items-center gap-2">
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
-                  i < stepIndex
-                    ? "bg-sky-700 border-sky-800 text-white"
-                    : step === s
-                    ? "bg-sky-200 border-sky-500 text-sky-800"
-                    : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
-                }`}>{i + 1}</div>
-                {i < ALL_STEPS.length - 1 && (
-                  <div className={`w-8 h-0.5 rounded ${i < stepIndex ? "bg-sky-700" : "bg-[hsl(var(--color-border))]"}`} />
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </header>
+      <DashboardHeader
+        title={step === "clinic" ? "Choose a clinic"
+          : step === "calendar" ? "Pick a day"
+          : step === "confirm" ? "Confirm booking"
+          : "Booking confirmed!"}
+        subtitle={step === "success" ? "You're all set" : doctorName}
+        backPath="/patient/doctors"
+        rightElement={
+          step !== "success" ? (
+            <div className="flex items-center gap-2">
+              {ALL_STEPS.map((s, i) => (
+                <div key={s} className="flex items-center gap-2">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
+                    i < stepIndex
+                      ? "bg-sky-700 border-sky-800 text-white"
+                      : step === s
+                      ? "bg-sky-200 border-sky-500 text-sky-800"
+                      : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+                  }`}>{i + 1}</div>
+                  {i < ALL_STEPS.length - 1 && (
+                    <div className={`w-8 h-0.5 rounded ${i < stepIndex ? "bg-sky-700" : "bg-[hsl(var(--color-border))]"}`} />
+                  )}
+                </div>
+              ))}
+            </div>
+          ) : undefined
+        }
+      />
 
       {/* ── Main ── */}
       <main className="flex-1 overflow-auto">

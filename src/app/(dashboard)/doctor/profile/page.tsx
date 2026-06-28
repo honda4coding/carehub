@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { ImSpinner2 } from "react-icons/im";
 import { LuUser, LuShieldCheck } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
 import ProfessionalInfoForm from "@/components/doctor/profile/ProfessionalInfoForm";
 import LicenseSection from "@/components/doctor/profile/LicenseSection";
@@ -47,15 +48,11 @@ export default function DoctorProfilePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
-      {/* Page header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
-        <h1 className="text-[16px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
-          Profile Settings
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Manage your personal information and license
-        </p>
-      </header>
+      <DashboardHeader
+        title="Profile Settings"
+        subtitle="Manage your personal information and license"
+        backPath="/doctor"
+      />
 
       <main className="flex-1 p-6">
         {/* Loading */}
@@ -77,17 +74,17 @@ export default function DoctorProfilePage() {
 
         {/* Content */}
         {!loading && !error && (
-          <div className="max-w-4xl mx-auto w-full flex gap-4 items-start">
+          <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
             {/* ── Left sidebar — cards ── */}
-            <aside className="flex flex-col gap-3 w-44 shrink-0">
+            <aside className="flex flex-row md:flex-col gap-3 w-full md:w-44 shrink-0 overflow-x-auto scrollbar-hide pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer shadow-sm ${
+                    className={`w-[140px] md:w-full shrink-0 text-left p-4 rounded-2xl border transition-all cursor-pointer shadow-sm flex flex-col md:block ${
                       isActive
                         ? "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-primary)/0.4)] shadow-[0_0_0_1px_hsl(var(--color-primary)/0.15)]"
                         : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.25)] hover:shadow-md"

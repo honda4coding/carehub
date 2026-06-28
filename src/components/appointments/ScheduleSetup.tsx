@@ -77,6 +77,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
   }, [clinicId]);
 
   function toggleDay(day: Day) {
+    let newSize = 0;
     setSelectedDays((prev) => {
       const next = new Set(prev);
       if (next.has(day)) {
@@ -90,9 +91,16 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
           }));
         }
       }
-      if (onSelectedDaysChange) onSelectedDaysChange(next.size > 0);
+      newSize = next.size;
       return next;
     });
+    // Call the side-effect outside the setState updater function to prevent React warnings.
+    // However, since state updates are asynchronous, we defer it slightly or just pass newSize.
+    // Since React batches state updates, calling it here synchronously with newSize is fine.
+    // A better approach is using useEffect, but calling it here also avoids the warning.
+    if (onSelectedDaysChange) {
+      setTimeout(() => onSelectedDaysChange(newSize > 0), 0);
+    }
   }
 
   async function handleSaveDay(day: Day) {

@@ -26,7 +26,7 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
   const hasSlots = !loadingSlots && slots.length > 0;
 
   return (
-    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 hover:-translate-y-1 hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300">
+    <div className="group bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col gap-4 hover:-translate-y-1 hover:shadow-md hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 border border-[hsl(var(--color-primary)/0.2)] overflow-hidden">

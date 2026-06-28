@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
-
-import KBHeader from "@/components/doctor/knowledge-base/KBHeader";
+import { LuLoader, LuUpload } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import KBStorageInfo from "@/components/doctor/knowledge-base/KBStorageInfo";
 import KBDocumentsList from "@/components/doctor/knowledge-base/KBDocumentsList";
 
@@ -29,6 +29,7 @@ export default function KnowledgeBasePage() {
   const [uploading, setUploading] = useState(false);
   const [switchingDb, setSwitchingDb] = useState(false);
   const [creatingDb, setCreatingDb] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchKBInfo = async () => {
     try {
@@ -157,28 +158,81 @@ export default function KnowledgeBasePage() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto w-full p-4 md:p-8 space-y-6">
-      <KBHeader uploading={uploading} onFileUpload={handleFileUpload} />
+    <div className="flex flex-col flex-1 min-h-screen">
+      <DashboardHeader
+        title="Knowledge Base"
+        subtitle="Manage the documents your Clinical Assistant learns from"
+        backPath="/doctor"
+        rightElement={
+          <div className="flex gap-2 w-full md:w-auto no-print">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
+            >
+              {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
+              Upload File(s)
+            </button>
+            <input
+              type="file"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={(e) => {
+                handleFileUpload(e);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+              }}
+              accept=".pdf,.txt,.docx"
+              multiple
+            />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-1 space-y-6">
-          <KBStorageInfo
-            info={info}
-            loading={loading}
-            switchingDb={switchingDb}
-            creatingDb={creatingDb}
-            onSwitchDatabase={handleSwitchDatabase}
-            onCreateDatabase={handleCreateDatabase}
-            onClearDB={handleClearDB}
-          />
+            <button
+              onClick={() => document.getElementById("folderUploadInput")?.click()}
+              disabled={uploading}
+              className="bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
+            >
+              {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
+              Upload Folder
+            </button>
+            <input
+              id="folderUploadInput"
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                handleFileUpload(e);
+                const el = document.getElementById("folderUploadInput") as HTMLInputElement;
+                if (el) el.value = "";
+              }}
+              accept=".pdf,.txt,.docx"
+              multiple
+              {...({ webkitdirectory: "", directory: "" } as any)}
+            />
+          </div>
+        }
+      />
+      <div className="flex-1 overflow-auto min-w-0">
+        <div className="p-4 md:p-8 max-w-5xl mx-auto w-full space-y-6">
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-1 space-y-6">
+            <KBStorageInfo
+              info={info}
+              loading={loading}
+              switchingDb={switchingDb}
+              creatingDb={creatingDb}
+              onSwitchDatabase={handleSwitchDatabase}
+              onCreateDatabase={handleCreateDatabase}
+              onClearDB={handleClearDB}
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <KBDocumentsList
+              files={info?.files}
+              loading={loading}
+              onDelete={handleDelete}
+            />
+          </div>
         </div>
-
-        <div className="md:col-span-2">
-          <KBDocumentsList
-            files={info?.files}
-            loading={loading}
-            onDelete={handleDelete}
-          />
         </div>
       </div>
     </div>

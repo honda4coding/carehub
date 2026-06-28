@@ -19,6 +19,7 @@ import AppointmentToast from "@/components/appointments/AppointmentToast";
 import DoctorCard from "@/components/patients/doctors/DoctorCard";
 import DoctorsSkeleton from "@/components/patients/doctors/DoctorsSkeleton";
 import SelectDropdown from "@/components/patients/doctors/SelectDropdown";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 const SPECIALTIES = ["All Specialties", "Cardiology", "General Practice", "Dermatology", "Orthopedics", "Neurology", "Pediatrics"];
 // Must match the backend's canonical spelling exactly (clinic_model.js), or the filter silently matches nothing.
@@ -84,12 +85,14 @@ export default function DoctorsPage() {
     <div className="flex flex-col flex-1 min-h-screen">
       {toastMsg && <AppointmentToast message={toastMsg.msg} variant={toastMsg.variant} onClose={() => setToastMsg(null)} />}
 
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4">
-        <h1 className="text-[20px] md:text-[22px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">Doctor Directory</h1>
-        <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">Browse our network of verified specialists</p>
-      </header>
+      <DashboardHeader
+        title="Doctor Directory"
+        subtitle="Browse our network of verified specialists"
+        backPath="/patient"
+      />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           <SelectDropdown value={specialty} onChange={setSpecialty} options={SPECIALTIES} icon={<LuBriefcaseMedical />} />
           <SelectDropdown value={governorate} onChange={setGovernorate} options={GOVERNORATES} icon={<LuMapPin />} />
@@ -130,6 +133,7 @@ export default function DoctorsPage() {
             ))}
           </div>
         )}
+        </div>
       </main>
     </div>
   );

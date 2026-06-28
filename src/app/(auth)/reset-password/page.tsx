@@ -109,7 +109,7 @@ const handleSendOtp = async (email: string) => {
 
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center pt-24 px-4 pb-4">
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
 
         {/* Header */}

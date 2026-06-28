@@ -85,14 +85,14 @@ export default function Navbar() {
             ) : !isAuthenticated ? (
               <>
                 <InstallButton />
-                <div className="hidden sm:flex items-center gap-2 border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
-                  <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors">
-                    Sign In
-                  </Link>
+                <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
+                  Sign In
+                </Link>
+                <div className="hidden sm:block">
+                  <Button variant="primary" size="sm" href="/register">
+                    Sign up
+                  </Button>
                 </div>
-                <Button variant="primary" size="sm" href="/register">
-                  Sign up
-                </Button>
               </>
             ) : (
               <div className="flex items-center gap-4">

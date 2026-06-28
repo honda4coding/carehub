@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
 import Pagination from "@/components/ui/Pagination";
 
-import ApprovalsHeader from "@/components/admin/approvals/ApprovalsHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import ApprovalsFilters, { ApprovalStatus } from "@/components/admin/approvals/ApprovalsFilters";
 import ApprovalsList, { DoctorApproval } from "@/components/admin/approvals/ApprovalsList";
 import RejectDoctorModal from "@/components/admin/approvals/RejectDoctorModal";
@@ -146,8 +146,10 @@ export default function ApprovalsPage() {
 
   return (
     <>
-      <div className="flex-1 p-4 md:p-6 overflow-auto bg-[hsl(var(--color-bg))]">
-        <ApprovalsHeader />
+      <div className="flex flex-col flex-1 min-h-screen">
+        <DashboardHeader title="Doctor Approvals" subtitle="Review and manage doctor registration requests" backPath="/admin" />
+        <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
+          <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
 
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           <ApprovalsFilters
@@ -178,6 +180,8 @@ export default function ApprovalsPage() {
               />
             </div>
           )}
+        </div>
+          </div>
         </div>
       </div>
 

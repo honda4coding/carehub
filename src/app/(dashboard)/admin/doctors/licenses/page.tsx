@@ -6,6 +6,7 @@ import { LuChevronLeft, LuShieldCheck, LuClock } from "react-icons/lu";
 import { adminService, PendingLicenseDoctor } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
 import LicensePendingList from "@/components/admin/licenses/LicensePendingList";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 interface ReviewedItem {
   _id: string;
@@ -73,25 +74,11 @@ export default function AdminLicensesPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
-      {/* ── Page header ──────────────────────────────────────────────────────── */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => router.push("/admin")}
-            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))] transition-all cursor-pointer"
-          >
-            <LuChevronLeft className="text-[15px]" />
-          </button>
-          <div>
-            <h1 className="text-[16px] font-black text-[hsl(var(--color-text))]">
-              License Updates
-            </h1>
-            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-              Review new license submissions from approved doctors
-            </p>
-          </div>
-        </div>
-      </header>
+      <DashboardHeader
+        title="License Updates"
+        subtitle="Review new license submissions from approved doctors"
+        backPath="/admin"
+      />
 
       <main className="flex-1 p-6">
         {/* ── Stats strip ────────────────────────────────────────────────────── */}
