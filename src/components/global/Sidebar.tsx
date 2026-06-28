@@ -128,6 +128,11 @@ const doctorNav: NavSection[] = [
         href: "/doctor/clinics",
         icon: <LuBuilding2 />,
       },
+      {
+        label: "Staff & Logs",
+        href: "/doctor/staff",
+        icon: <LuShieldCheck />,
+      },
     ],
   },
   {
@@ -192,10 +197,22 @@ const patientNav: NavSection[] = [
   },
 ];
 
+const assistantNav: NavSection[] = [
+  {
+    title: "Main",
+    items: [
+      { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
+      { label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> },
+      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
+    ],
+  },
+];
+
 const navMap: Record<string, NavSection[]> = {
   admin: adminNav,
   doctor: doctorNav,
   patient: patientNav,
+  assistant: assistantNav,
 };
 
 ////////////////////
@@ -239,6 +256,18 @@ const settingsSub: Record<
     {
       label: "Security",
       href: "/admin/security",
+      icon: <LuLock className="text-sm" />,
+    },
+  ],
+  assistant: [
+    {
+      label: "Profile",
+      href: "/assistant/profile",
+      icon: <LuUser className="text-sm" />,
+    },
+    {
+      label: "Security",
+      href: "/assistant/security",
       icon: <LuLock className="text-sm" />,
     },
   ],
