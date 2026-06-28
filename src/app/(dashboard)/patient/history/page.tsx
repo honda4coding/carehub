@@ -640,23 +640,24 @@ export default function MedicalHistoryPage() {
                 endDate={endDate}
                 onStartDateChange={setStartDate}
                 onEndDateChange={setEndDate}
-                onReset={(startDate || endDate) ? () => { setStartDate(""); setEndDate(""); } : undefined}
+                onReset={hasFilters ? clearFilters : undefined}
                 className="!mt-0"
               />
-              {filterText && (
-                <button onClick={() => setFilterText("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer">
-                  <LuX className="text-[13px]" />
-                </button>
-              )}
+              <div className="relative w-full sm:flex-1 sm:min-w-[200px] xl:w-auto xl:flex-none">
+                <input 
+                  type="text"
+                  placeholder="Search doctor, diagnosis..."
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-[13px] font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
+                />
+                {filterText && (
+                  <button onClick={() => setFilterText("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer">
+                    <LuX className="text-[13px]" />
+                  </button>
+                )}
+              </div>
             </div>
-            <DateRangeFilter
-              startDate={startDate}
-              endDate={endDate}
-              onStartDateChange={setStartDate}
-              onEndDateChange={setEndDate}
-              onReset={hasFilters ? clearFilters : undefined}
-              className="!mt-0"
-            />
           </div>
 
           {/* Record count */}
@@ -712,8 +713,8 @@ export default function MedicalHistoryPage() {
                 </div>
               )}
             </div>
-          </div>
-          </div>
+          )}
+        </div>
         </div>
       </main>
     </div>
