@@ -46,9 +46,9 @@ export default function StaffManagementPage() {
             const res = await fetchClient.post("/doctor/staff", formData);
             setStaff([...staff, res.data]);
             setIsModalOpen(false);
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            alert("Failed to create staff member.");
+            alert(err.message || "Failed to create staff member.");
         }
     };
 
