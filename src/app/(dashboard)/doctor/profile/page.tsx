@@ -74,17 +74,17 @@ export default function DoctorProfilePage() {
 
         {/* Content */}
         {!loading && !error && (
-          <div className="max-w-4xl mx-auto w-full flex gap-4 items-start">
+          <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
             {/* ── Left sidebar — cards ── */}
-            <aside className="flex flex-col gap-3 w-44 shrink-0">
+            <aside className="flex flex-row md:flex-col gap-3 w-full md:w-44 shrink-0 overflow-x-auto scrollbar-hide pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all cursor-pointer shadow-sm ${
+                    className={`w-[140px] md:w-full shrink-0 text-left p-4 rounded-2xl border transition-all cursor-pointer shadow-sm flex flex-col md:block ${
                       isActive
                         ? "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-primary)/0.4)] shadow-[0_0_0_1px_hsl(var(--color-primary)/0.15)]"
                         : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.25)] hover:shadow-md"

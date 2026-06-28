@@ -111,8 +111,8 @@ export const DoctorActions = ({
 
       {/* Walk-In Patient - Compact & Narrow */}
       <div className="md:col-span-1">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-between relative">
-          <div className="flex items-center gap-3 mb-2">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-row md:flex-col items-center md:items-stretch justify-between relative">
+          <div className="flex items-center gap-3 mb-0 md:mb-2">
             <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.1)] rounded-xl flex items-center justify-center text-[hsl(var(--color-primary))] text-[24px] shrink-0">
               <LuUserPlus />
             </div>
@@ -124,7 +124,7 @@ export const DoctorActions = ({
           <Button 
             size="sm"
             onClick={() => setWalkInModalOpen(true)}
-            className="!text-[11px] !py-1 !px-3 !h-[32px] !rounded-lg w-fit self-end"
+            className="!text-[11px] !py-1 !px-3 !h-[32px] !rounded-lg w-fit md:self-end shrink-0"
           >
             Register
           </Button>

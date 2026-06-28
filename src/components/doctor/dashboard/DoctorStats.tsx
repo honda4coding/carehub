@@ -57,8 +57,8 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
         const CardContent = (
           <div
             onClick={s.onClick}
-            className={`bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 h-full flex flex-col justify-center ${
-              (s.link || s.onClick) ? 'hover:border-[hsl(var(--color-primary)/0.5)] transition-colors cursor-pointer' : ''
+            className={`bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 h-full flex flex-col justify-center transition-all duration-300 ${
+              (s.link || s.onClick) ? 'hover:border-[hsl(var(--color-primary)/0.5)] hover:-translate-y-1 hover:shadow-lg cursor-pointer' : ''
             }`}
           >
             <div className="flex items-start gap-4">

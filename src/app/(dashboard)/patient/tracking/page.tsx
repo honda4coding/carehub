@@ -272,20 +272,21 @@ export default function TrackingPage() {
                 </div>
               </div>
             </Card>
-
-            {/* Medications Tracking Widget (Second Row) */}
-            <div className="md:col-span-12 mt-2">
-              <MedicationSummaryWidget />
-            </div>
           </div>
         )}
 
-        {/* Quick Log Form */}
-        <Card className="p-6">
+        {/* Second Row: Medication & Log Form */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div className="lg:col-span-5 flex flex-col">
+            <MedicationSummaryWidget />
+          </div>
+
+          <div className="lg:col-span-7 flex flex-col">
+            <Card className="p-6 h-full">
           <h2 className="text-[16px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex flex-col">
               <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
               <input type="number" step="0.1" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 75" />
@@ -333,13 +334,15 @@ export default function TrackingPage() {
               <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
               <input type="number" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 72" />
             </div>
-            <div className="flex flex-col justify-end md:col-span-2 items-end mt-2">
+            <div className="flex flex-col justify-end col-span-2 md:col-span-3 items-end mt-2">
               <button disabled={isSubmitting} type="submit" className="cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
                 {isSubmitting ? "Saving..." : <><LuPlus /> Log & Earn XP</>}
               </button>
             </div>
           </form>
         </Card>
+      </div>
+    </div>
 
         {/* Filters Section */}
         <Card className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">

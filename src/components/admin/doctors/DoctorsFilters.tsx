@@ -48,7 +48,7 @@ export default function DoctorsFilters({
 
       <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto shrink-0">
         {/* Status tabs */}
-        <div className="flex items-center gap-1 flex-wrap bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto">
+        <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto">
           {STATUS_TABS.map((tab) => {
             const isActive = statusFilter === tab.value;
             const count = tab.value === "" ? totalDoctors : tabCounts[tab.value] ?? 0;
@@ -56,7 +56,7 @@ export default function DoctorsFilters({
               <button
                 key={tab.value}
                 onClick={() => setStatusFilter(tab.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12px] font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
                   isActive
                     ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
                     : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"

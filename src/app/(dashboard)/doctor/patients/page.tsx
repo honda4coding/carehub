@@ -110,7 +110,7 @@ function PatientDirectoryContent() {
         }
       />
 
-      <main className="flex-1 p-4 md:p-6 overflow-hidden flex">
+      <main className="flex-1 p-4 md:p-6 overflow-auto flex">
         <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
           
           <PatientDirectoryFilters

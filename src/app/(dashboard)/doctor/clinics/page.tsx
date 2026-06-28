@@ -209,7 +209,7 @@ export default function DoctorClinicsPage() {
               <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
                 Clinics
               </p>
-              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
+              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
                 {clinics.map((clinic) => {
                   const isActive = selectedClinicId === clinic._id;
                   return (

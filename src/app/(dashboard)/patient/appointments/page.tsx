@@ -167,7 +167,7 @@ export default function PatientAppointmentsPage() {
               No bookings yet.
             </p>
           ) : (
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
+            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
               <button
                 onClick={() => setSelectedGroupKey(null)}
                 className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
@@ -219,7 +219,7 @@ export default function PatientAppointmentsPage() {
           <div className="max-w-3xl mx-auto">
             {/* Tabs */}
             <div className="flex justify-center mb-6">
-              <div className="w-full lg:w-auto flex flex-wrap items-center justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
+              <div className="w-full lg:w-auto flex flex-nowrap overflow-x-auto scrollbar-hide items-center justify-start lg:justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
                 <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
                 <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
                 <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />

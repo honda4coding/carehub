@@ -32,9 +32,9 @@ export default function PatientApptCard({
   const clinicPhone   = clinic?.phone || clinic?.whatsapp;
 
   return (
-    <div className="group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden mb-3 transition-all duration-300 hover:-translate-y-0.5 cursor-pointer">
+    <div className="group relative flex bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden mb-3 transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-pointer">
       {/* Date stub */}
-      <div className={`w-[90px] sm:w-[110px] shrink-0 flex flex-col items-center justify-center gap-1 py-4 border-r-2 border-dashed border-[hsl(var(--color-border))] relative z-10 ${
+      <div className={`w-[75px] sm:w-[110px] shrink-0 flex flex-col items-center justify-center gap-1 py-4 border-r-2 border-dashed border-[hsl(var(--color-border))] relative z-10 ${
         status === "upcoming" ? "bg-[hsl(var(--color-warning-bg))]"
         : status === "completed" ? "bg-[hsl(var(--color-success-bg))]"
         : "bg-[hsl(var(--color-danger-bg))]"
@@ -97,7 +97,7 @@ export default function PatientApptCard({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <div className="flex items-center justify-end gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
           <StatusBadge status={status} />
           {status === "upcoming" && (
             <>

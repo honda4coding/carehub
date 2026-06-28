@@ -494,7 +494,7 @@ function SidebarContent({
                   ? pendingApprovals
                   : role === "admin" && item.href === "/admin/doctors/licenses"
                     ? pendingLicenses
-                    : (role === "admin" && item.href === "/admin/notifications") || (role === "patient" && item.href === "/patient/notifications")
+                    : item.href.endsWith("/notifications")
                       ? unreadNotifications
                       : item.badge;
               return (
@@ -669,7 +669,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />

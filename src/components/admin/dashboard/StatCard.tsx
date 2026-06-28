@@ -22,7 +22,7 @@ export function StatCard({
   loading = false,
 }: StatCardProps) {
   return (
-    <Card className="p-3 md:p-5 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 group hover:border-[hsl(var(--color-primary)/0.4)] transition-colors cursor-default">
+    <Card className="p-3 md:p-5 flex flex-col md:flex-row md:items-center gap-2 md:gap-4 group hover:border-[hsl(var(--color-primary)/0.4)] transition-all duration-300 hover:-translate-y-1 hover:shadow-md cursor-default">
       <div
         className={`w-10 h-10 md:w-14 md:h-14 rounded-[12px] md:rounded-[14px] flex items-center justify-center text-[18px] md:text-[24px] shadow-sm shrink-0 transition-transform group-hover:scale-105 ${iconStyle}`}
       >
