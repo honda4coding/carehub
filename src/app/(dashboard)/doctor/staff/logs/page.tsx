@@ -15,7 +15,7 @@ export default function StaffLogsPage() {
         const fetchLogs = async () => {
             try {
                 const res = await fetchClient.get("/doctor/staff/logs");
-                setLogs(res.data?.data || []);
+                setLogs(res.data || []);
             } catch (err) {
                 console.error("Failed to load logs", err);
             } finally {

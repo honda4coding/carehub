@@ -29,8 +29,8 @@ export default function StaffManagementPage() {
                     fetchClient.get("/doctor/staff"),
                     fetchClient.get("/clinics")
                 ]);
-                setStaff(staffRes.data?.data || []);
-                setClinics(clinicsRes.data?.data || []);
+                setStaff(staffRes.data || []);
+                setClinics(clinicsRes.data || []);
             } catch (err) {
                 console.error("Failed to load data", err);
             } finally {
@@ -44,7 +44,7 @@ export default function StaffManagementPage() {
         e.preventDefault();
         try {
             const res = await fetchClient.post("/doctor/staff", formData);
-            setStaff([...staff, res.data.data]);
+            setStaff([...staff, res.data]);
             setIsModalOpen(false);
         } catch (err) {
             console.error(err);
