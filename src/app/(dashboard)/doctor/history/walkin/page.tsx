@@ -9,6 +9,7 @@ import {
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useAuth } from "@/context/AuthContext";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
   const [expanded, setExpanded] = useState(false);
@@ -78,6 +79,7 @@ function WalkinHistoryContent() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const token = Cookies.get("auth_token");
+  const { role } = useAuth();
 
   // Advanced Filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -161,7 +163,7 @@ function WalkinHistoryContent() {
       <DashboardHeader
         title="Walk-in Medical History"
         subtitle={`Visit timeline for: ${guestName}${guestPhone ? ` (${guestPhone})` : ''}`}
-        backPath="/doctor"
+        backPath={role === "assistant" ? "/assistant/patients" : "/doctor/patients"}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">

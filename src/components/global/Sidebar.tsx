@@ -449,9 +449,9 @@ function SidebarContent({
         title: "Main",
         items: [
           { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
-          ...(user.permissions?.canManageAppointments ? [{ label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> }] : []),
-          ...(user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> }] : []),
-          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/doctor/billing", icon: <LuCreditCard /> }] : []),
+          ...(user.permissions?.canManageAppointments ? [{ label: "Appointments", href: "/assistant/appointments", icon: <LuCalendarDays /> }] : []),
+          ...(user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/assistant/patients", icon: <LuUsers /> }] : []),
+          ...(user.permissions?.canManageBilling ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <FaSquarePollVertical /> }] : []),
         ],
       },
     ];
