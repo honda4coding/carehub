@@ -198,16 +198,8 @@ const patientNav: NavSection[] = [
   },
 ];
 
-const assistantNav: NavSection[] = [
-  {
-    title: "Main",
-    items: [
-      { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
-      { label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> },
-      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
-    ],
-  },
-];
+// Assistant nav will be dynamically built inside the component based on permissions.
+const assistantNav: NavSection[] = [];
 
 const navMap: Record<string, NavSection[]> = {
   admin: adminNav,
@@ -449,9 +441,26 @@ function SidebarContent({
         title: "Main",
         items: [
           { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
-          ...(user.permissions?.canManageAppointments ? [{ label: "Appointments", href: "/assistant/appointments", icon: <LuCalendarDays /> }] : []),
+          ...(user.permissions?.canManageAppointments ? [{ 
+            label: "Appointments", 
+            href: "/assistant/appointments", 
+            icon: <LuCalendarDays />,
+            subItems: [
+              {
+                label: "Appointments",
+                href: "/assistant/appointments",
+                icon: <LuCalendarDays className="text-sm" />,
+              },
+              {
+                label: "My Schedule",
+                href: "/doctor/appointments/schedule",
+                icon: <LuSettings2 className="text-sm" />,
+              },
+            ],
+          }] : []),
           ...(user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/assistant/patients", icon: <LuUsers /> }] : []),
-          ...(user.permissions?.canManageBilling ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <FaSquarePollVertical /> }] : []),
+          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuSettings2 /> }] : []),
+          ...(user.permissions?.canManageReports ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <FaSquarePollVertical /> }] : []),
         ],
       },
     ];
@@ -470,6 +479,8 @@ function SidebarContent({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     (user as any)?.profilepicture?.secure_url || null,
   );
+
+
 
   useEffect(() => {
     if (!avatarUrl) {
@@ -572,12 +583,14 @@ function SidebarContent({
         ))}
 
         {/* Account — Settings expandable */}
-        <div className="mb-2">
-          <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-            Account
-          </p>
-          <SettingsGroup role={role} onClose={onClose} />
-        </div>
+        {role !== "assistant" && (
+          <div className="mb-2">
+            <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
+              Account
+            </p>
+            <SettingsGroup role={role} onClose={onClose} />
+          </div>
+        )}
       </nav>
 
       {/* User footer */}

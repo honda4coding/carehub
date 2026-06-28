@@ -20,7 +20,7 @@ export default function StaffManagementPage() {
     // Form state
     const defaultFormData = {
         fullName: "", email: "", password: "", phoneNumber: "", clinicId: "", jobTitle: "",
-        permissions: { canManageAppointments: false, canManagePatients: false, canManageBilling: false }
+        permissions: { canManageAppointments: false, canManagePatients: false, canManageBilling: false, canManageReports: false }
     };
     const [formData, setFormData] = useState(defaultFormData);
 
@@ -184,7 +184,7 @@ export default function StaffManagementPage() {
 
                             <div className="pt-4 border-t border-[hsl(var(--color-border))]">
                                 <h4 className="font-bold text-sm mb-3 text-[hsl(var(--color-text))]">Permissions</h4>
-                                {['Appointments', 'Patients', 'Billing'].map(perm => (
+                                {['Appointments', 'Patients', 'Billing', 'Reports'].map(perm => (
                                     <label key={perm} className="flex items-center gap-3 mb-2 cursor-pointer">
                                         <input type="checkbox" checked={formData.permissions[`canManage${perm}` as keyof typeof formData.permissions]} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 
                                             onChange={e => setFormData({...formData, permissions: {...formData.permissions, [`canManage${perm}`]: e.target.checked}})} 

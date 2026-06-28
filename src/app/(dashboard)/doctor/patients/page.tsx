@@ -9,10 +9,14 @@ import PatientDirectoryFilters from "@/components/doctor/patients/PatientDirecto
 import PatientTable from "@/components/doctor/patients/PatientTable";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { useAuth } from "@/context/AuthContext";
+import VitalsModal from "@/components/assistant/VitalsModal";
 
 function PatientDirectoryContent() {
   const searchParams = useSearchParams();
   const filterParam = searchParams.get('filter');
+  
+  const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
+  const [selectedPatientForVitals, setSelectedPatientForVitals] = useState<any>(null);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -133,10 +137,24 @@ function PatientDirectoryContent() {
             patients={filteredPatients}
             loading={loading}
             onViewHistory={handleViewHistory}
+            onRecordVitals={(patient: any) => {
+              setSelectedPatientForVitals(patient);
+              setIsVitalsModalOpen(true);
+            }}
+            isAssistant={role === 'assistant'}
           />
 
         </div>
       </main>
+
+      <VitalsModal
+        isOpen={isVitalsModalOpen}
+        onClose={() => setIsVitalsModalOpen(false)}
+        patient={selectedPatientForVitals}
+        onSuccess={() => {
+          alert('Vitals recorded successfully');
+        }}
+      />
     </div>
   );
 }

@@ -6,8 +6,13 @@ export interface User {
     canManageAppointments: boolean;
     canManagePatients: boolean;
     canManageBilling: boolean;
+    canManageReports: boolean;
   };
   doctorId?: string;
+  jobTitle?: string;
+  doctorName?: string;
+  clinicId?: string;
+  clinicName?: string;
 }
 
 export interface AuthContextType {

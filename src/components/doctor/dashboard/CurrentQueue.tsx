@@ -33,6 +33,10 @@ export const CurrentQueue = ({
   handleCancelRequest,
   setSelectedSession,
   setOTPModalOpen,
+  handleReorder,
+  handleUpdateFees,
+  isAssistant,
+  onRecordVitals,
 }: any) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
@@ -104,13 +108,18 @@ export const CurrentQueue = ({
           <thead>
             <tr className="border-b border-[hsl(var(--color-border))]">
               {["Patient", "Phone", "Type", "Time", "Status", "Actions"].map((h) => (
-                <th
+                <th 
                   key={h}
-                  className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-3"
+                  className="py-3.5 pr-2 text-left text-[10px] font-black uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.7)]"
                 >
                   {h}
                 </th>
               ))}
+              {isAssistant && (
+                <th className="py-3.5 pr-2 text-left text-[10px] font-black uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.7)]">
+                  Fees
+                </th>
+              )}
             </tr>
           </thead>
 
@@ -134,6 +143,7 @@ export const CurrentQueue = ({
                   >
                     <td className="py-3.5 pr-2 text-left">
                       <div className="flex items-center gap-3">
+
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${s.avatarStyle}`}>
                           {s.initials}
                         </div>
@@ -169,7 +179,16 @@ export const CurrentQueue = ({
 
                     <td className="py-3.5 text-left whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        {s.status === "pending_otp" ? (
+                        {isAssistant ? (
+                          <Button
+                            size="sm"
+                            variant="primary"
+                            onClick={() => onRecordVitals && onRecordVitals(s)}
+                            className="!text-[11px] !px-3 !h-[32px] !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+                          >
+                            Update Vitals
+                          </Button>
+                        ) : s.status === "pending_otp" ? (
                           <>
                             <button
                               onClick={() => handleCancelRequest(s.id)}
@@ -202,6 +221,33 @@ export const CurrentQueue = ({
                         )}
                       </div>
                     </td>
+                    {isAssistant && (
+                      <td className="py-3.5 pr-2 text-left">
+                        {s.status === "completed" ? (
+                          <form 
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const feeValue = Number((e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement).value);
+                              handleUpdateFees(s.id, feeValue);
+                            }}
+                            className="flex items-center gap-2"
+                          >
+                            <input
+                              name="feeInput"
+                              type="number"
+                              min="0"
+                              className="w-20 px-2 py-1 text-sm border border-[hsl(var(--color-border))] rounded-lg bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
+                              defaultValue={s.fees}
+                            />
+                            <button type="submit" className="px-2 py-1 bg-[hsl(var(--color-primary))] text-white text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-primary-strong))] transition-colors">
+                              Submit
+                            </button>
+                          </form>
+                        ) : (
+                          <span className="text-[hsl(var(--color-text-muted))] text-[12px]">-</span>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 );
               })

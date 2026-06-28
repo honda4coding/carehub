@@ -9,9 +9,11 @@ import SectionToggle from "@/components/appointments/SectionToggle";
 import ClinicScheduleCard from "@/components/appointments/ClinicScheduleCard";
 import { getMyClinics, Clinic } from "@/services/clinicService";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DoctorSchedulePage() {
   const router = useRouter();
+  const { user, role } = useAuth();
 
   const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
 
@@ -21,7 +23,10 @@ export default function DoctorSchedulePage() {
   useEffect(() => {
     (async () => {
       try {
-        const data = await getMyClinics();
+        let data = await getMyClinics();
+        if (role === 'assistant' && user?.clinicId) {
+          data = data.filter(c => c._id === user.clinicId);
+        }
         setClinics(data);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load clinics", variant: "error" });
