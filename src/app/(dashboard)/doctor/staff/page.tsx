@@ -27,7 +27,7 @@ export default function StaffManagementPage() {
             try {
                 const [staffRes, clinicsRes] = await Promise.all([
                     fetchClient.get("/doctor/staff"),
-                    fetchClient.get("/doctor/clinics")
+                    fetchClient.get("/clinics")
                 ]);
                 setStaff(staffRes.data?.data || []);
                 setClinics(clinicsRes.data?.data || []);
