@@ -2,6 +2,12 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  permissions?: {
+    canManageAppointments: boolean;
+    canManagePatients: boolean;
+    canManageBilling: boolean;
+  };
+  doctorId?: string;
 }
 
 export interface AuthContextType {

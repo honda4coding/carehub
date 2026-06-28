@@ -30,6 +30,7 @@ import {
   LuBrainCircuit,
   LuBuilding2,
   LuFileCheck,
+  LuCreditCard,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -440,7 +441,23 @@ function SidebarContent({
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const sections = navMap[role] ?? [];
+  
+  let sections = navMap[role] ?? [];
+  if (role === "assistant" && user) {
+    const assistantDynamicNav: NavSection[] = [
+      {
+        title: "Main",
+        items: [
+          { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
+          ...(user.permissions?.canManageAppointments ? [{ label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> }] : []),
+          ...(user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> }] : []),
+          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/doctor/billing", icon: <LuCreditCard /> }] : []),
+        ],
+      },
+    ];
+    sections = assistantDynamicNav;
+  }
+
   const initials = user?.name
     ? user.name
         .split(" ")

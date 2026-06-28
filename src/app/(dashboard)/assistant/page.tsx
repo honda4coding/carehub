@@ -1,12 +1,71 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import DashboardHeader from "@/components/global/DashboardHeader";
-import { Card } from "@/components/ui/Card";
-import { LuLayoutDashboard, LuCalendarDays, LuUsers, LuActivity } from "react-icons/lu";
+import { DoctorStats } from "@/components/doctor/dashboard/DoctorStats";
+import { CurrentQueue } from "@/components/doctor/dashboard/CurrentQueue";
+import { fetchClient } from "@/services/fetchClient";
 
 export default function AssistantDashboard() {
   const { user } = useAuth();
+  const [dashboardStats, setDashboardStats] = useState({ totalConsultations: 0, totalPatients: 0, totalPrescriptions: 0 });
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        // Fetch overall stats (generic dashboard spoofed to doctor)
+        const statsRes = await fetchClient.get(`/doctor/dashboard?startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}`);
+        setDashboardStats({
+          totalConsultations: statsRes?.data?.totalMedicalHistories || 0,
+          totalPatients: statsRes?.data?.totalPatients || 0,
+          totalPrescriptions: statsRes?.data?.totalPrescriptions || 0
+        });
+
+        // Only fetch queue/sessions if they have appointment permissions
+        if (user?.permissions?.canManageAppointments) {
+          const sessionRes = await fetchClient.get(`/doctor/session`);
+          const activeSessions = sessionRes?.data || [];
+          
+          const mappedSessions = activeSessions.map((s: any) => {
+            let name = s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "Unknown";
+            let phone = s.isOfflinePatient ? s.guestPhone : s.patientId?.phoneNumber || "N/A";
+            return {
+              id: s._id,
+              patient: name,
+              type: s.isOfflinePatient ? "Walk-in" : "Online",
+              time: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              status: s.status,
+              initials: name.slice(0, 2).toUpperCase(),
+              phone: phone,
+              avatarStyle: s.isOfflinePatient 
+                ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]"
+                : "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
+              validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
+            };
+          });
+          setSessions(mappedSessions);
+        }
+      } catch (err) {
+        console.error("Failed to fetch assistant dashboard data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
+
+  if (loading) {
+    return <div className="p-8 text-center text-[hsl(var(--color-text-muted))]">Loading Dashboard...</div>;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -16,35 +75,22 @@ export default function AssistantDashboard() {
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-        <div className="max-w-6xl mx-auto space-y-6">
-          <Card className="p-8 text-center bg-gradient-to-r from-[hsl(var(--color-primary)/0.1)] to-transparent border-none shadow-sm">
-            <h1 className="text-3xl font-black mb-2 text-[hsl(var(--color-text))]">Hello, {user?.name} 👋</h1>
-            <p className="text-[hsl(var(--color-text-muted))] max-w-xl mx-auto">
-              Welcome to your clinic management workspace. Use the sidebar to access the tools your doctor has authorized for you.
-            </p>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            <Card className="p-6">
-              <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] rounded-2xl flex items-center justify-center mb-4">
-                <LuCalendarDays size={24} />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-[hsl(var(--color-text))]">Manage Appointments</h3>
-              <p className="text-[hsl(var(--color-text-muted))] text-sm">
-                Schedule, confirm, or cancel patient appointments for the clinic.
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] rounded-2xl flex items-center justify-center mb-4">
-                <LuUsers size={24} />
-              </div>
-              <h3 className="text-xl font-bold mb-2 text-[hsl(var(--color-text))]">Patient Records</h3>
-              <p className="text-[hsl(var(--color-text-muted))] text-sm">
-                Access patient directories and log essential pre-visit vitals.
-              </p>
-            </Card>
-          </div>
+        <div className="max-w-7xl mx-auto space-y-6">
+          <DoctorStats dashboardStats={dashboardStats} sessions={sessions} />
+          
+          {user?.permissions?.canManageAppointments && (
+            <div className="mt-8">
+              <CurrentQueue 
+                sessions={sessions} 
+                filter="" 
+                statusFilter="All" 
+                typeFilter="All" 
+                onStatusChange={() => {}} 
+                onStartSession={() => {}} 
+                onCancelSession={() => {}} 
+              />
+            </div>
+          )}
         </div>
       </main>
     </div>
