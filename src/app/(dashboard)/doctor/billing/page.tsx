@@ -29,8 +29,13 @@ export default function DoctorBillingPage() {
   const handleUpdateFees = async (id: string, fees: number, isFeesFinalized: boolean = false) => {
     try {
       await fetchClient.patch(`/doctor/session/${id}/fees`, { fees, isFeesFinalized });
-      setSessions(sessions.map(s => s._id === id ? { ...s, fees, isFeesFinalized } : s));
-      alert("Fees updated successfully");
+      if (isFeesFinalized) {
+        setSessions(sessions.filter(s => s._id !== id));
+        alert("Fees finalized and session removed from billing queue");
+      } else {
+        setSessions(sessions.map(s => s._id === id ? { ...s, fees, isFeesFinalized } : s));
+        alert("Fees updated successfully");
+      }
     } catch (err) {
       console.error(err);
       alert("Failed to update fees");
@@ -78,8 +83,8 @@ export default function DoctorBillingPage() {
                   <tbody>
                     {sessions.map(s => (
                       <tr key={s._id} className="border-b border-[hsl(var(--color-border-soft))]">
-                        <td className="py-4 pr-2 font-bold text-[hsl(var(--color-text))]">{s.patientId?.fullName || "App User"}</td>
-                        <td className="py-4 pr-2 text-[hsl(var(--color-text-muted))]">{s.patientId?.phoneNumber || s.phone || "N/A"}</td>
+                        <td className="py-4 pr-2 font-bold text-[hsl(var(--color-text))]">{s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "App User"}</td>
+                        <td className="py-4 pr-2 text-[hsl(var(--color-text-muted))]">{s.isOfflinePatient ? s.guestPhone || "N/A" : s.patientId?.phoneNumber || s.phone || "N/A"}</td>
                         <td className="py-4 pr-2">
                           {s.isFeesFinalized ? (
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-lg opacity-70">
