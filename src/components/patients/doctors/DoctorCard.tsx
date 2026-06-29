@@ -4,8 +4,11 @@ import { LuClock, LuCalendarPlus } from "react-icons/lu";
 
 import { DoctorListItem, Slot, getAvailableSlots } from "@/services/appointmentService";
 import { nextAvailableLabel, initialsOf } from "@/components/appointments/format";
+import { useTranslations } from "next-intl";
 
 export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem; onBook: (userId: string) => void }) {
+  const t = useTranslations("patient.DoctorCard");
+  const tSpec = useTranslations("common.specialties");
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(true);
   const userId = doctor.userId._id;
@@ -40,10 +43,10 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
             href={`/patient/doctors/${userId}`}
             className="text-[16px] font-black text-[hsl(var(--color-text))] truncate block hover:text-[hsl(var(--color-primary-strong))] transition-colors"
           >
-            Dr. {fullName}
+            {t("drName", { name: fullName })}
           </Link>
           <p className="text-[12px] font-bold text-[hsl(var(--color-primary))] uppercase tracking-widest mt-0.5">
-            {doctor.specialization ?? "General Practice"}
+            {tSpec(doctor.specialization ?? "general_practice")}
           </p>
         </div>
       </div>
@@ -53,14 +56,14 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
         {doctor.experience != null && (
           <div className="flex-1 bg-[hsl(var(--color-bg-soft))] rounded-xl p-2.5 text-center border border-[hsl(var(--color-border))]">
             <p className="text-[18px] font-black text-[hsl(var(--color-text))]">{doctor.experience}</p>
-            <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Yrs Exp</p>
+            <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">{t("yrsExp")}</p>
           </div>
         )}
         <div className="flex-1 bg-[hsl(var(--color-bg-soft))] rounded-xl p-2.5 text-center border border-[hsl(var(--color-border))]">
           <p className="text-[18px] font-black text-[hsl(var(--color-text))]">
             {loadingSlots ? "…" : activeDaysCount}
           </p>
-          <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Days/Week</p>
+          <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">{t("daysWeek")}</p>
         </div>
       </div>
 
@@ -72,7 +75,7 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
         nextLabel ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] border border-[hsl(var(--color-success)/0.2)]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] border border-[hsl(var(--color-border))]"
       }`}>
         <LuClock className="text-[14px] shrink-0" />
-        {loadingSlots ? "Checking availability…" : nextLabel ? `Next: ${nextLabel}` : "No slots available"}
+        {loadingSlots ? t("checkingAvailability") : nextLabel ? t("nextAvailable", { label: nextLabel }) : t("noSlotsAvailable")}
       </div>
 
       {/* Book button */}
@@ -89,7 +92,7 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
           <span className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 skew-x-12" />
         )}
         <LuCalendarPlus className="text-[16px] relative z-10" />
-        <span className="relative z-10">{hasSlots ? "Book Now" : loadingSlots ? "Loading…" : "Unavailable"}</span>
+        <span className="relative z-10">{hasSlots ? t("bookNow") : loadingSlots ? t("loading") : t("unavailable")}</span>
       </button>
     </div>
   );

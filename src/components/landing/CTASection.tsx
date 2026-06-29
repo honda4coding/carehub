@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { LuArrowRight } from "react-icons/lu";
+import { useTranslations } from 'next-intl';
 
 export default function CTASection() {
+  const t = useTranslations('landing.CTASection');
   return (
     <section className="w-full bg-[hsl(var(--color-bg))] py-24 lg:py-32 px-6 lg:px-10">
       <div className="max-w-5xl mx-auto rounded-[3rem] bg-linear-to-br from-[hsl(var(--color-primary))] via-[hsl(var(--color-primary-strong))] to-[hsl(var(--color-secondary))] shadow-2xl shadow-[hsl(var(--color-primary)/0.2)] p-10 lg:p-20 text-center relative overflow-hidden group">
@@ -11,10 +13,10 @@ export default function CTASection() {
         
         <div className="relative z-10 flex flex-col items-center">
           <h2 className="text-2xl lg:text-4xl font-black text-white tracking-tight mb-6 leading-tight">
-            Ready to upgrade your <br className="hidden sm:block"/> medical experience?
+            {t('title1')} <br className="hidden sm:block"/> {t('title2')}
           </h2>
           <p className="text-white/90 text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-            Join thousands of patients and medical professionals who have already made the switch to the most intelligent healthcare ecosystem.
+            {t('description')}
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
@@ -22,13 +24,13 @@ export default function CTASection() {
               href="/register?role=patient" 
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-white text-[hsl(var(--color-primary))] font-black hover:-translate-y-1 transition-all duration-300"
             >
-              Start as Patient
+              {t('startPatient')}
             </Link>
             <Link 
               href="/register?role=doctor" 
               className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto bg-transparent border-2 border-white/30 text-white font-bold hover:bg-white/10 transition-all duration-300"
             >
-              Start as Doctor
+              {t('startDoctor')}
               <LuArrowRight className="w-5 h-5" />
             </Link>
           </div>

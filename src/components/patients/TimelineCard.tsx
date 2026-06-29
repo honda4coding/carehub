@@ -3,6 +3,7 @@ import { useState } from "react";
 import { LuStethoscope, LuChevronDown, LuChevronUp, LuCalendar, LuHeartPulse, LuActivity, LuThermometer } from "react-icons/lu";
 import { TimelineEntry } from "@/types/patient";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
+import { useTranslations } from "next-intl";
 
 interface Props {
   entry: TimelineEntry;
@@ -27,6 +28,7 @@ const SEVERITY_BADGE: Record<Severity, string> = {
 };
 
 export default function TimelineCard({ entry }: Props) {
+  const t = useTranslations("patient.TimelineCard");
   const [expanded, setExpanded] = useState(false);
   const severity = getSeverity(entry.diagnosis || "");
 
@@ -46,7 +48,7 @@ export default function TimelineCard({ entry }: Props) {
         aria-expanded={expanded}
       >
         {/* Severity bar */}
-        <div className={`w-[3px] shrink-0 rounded-l-2xl ${SEVERITY_BAR[severity]}`} />
+        <div className={`w-[3px] shrink-0 rounded-s-2xl ${SEVERITY_BAR[severity]}`} />
 
         <div className="flex-1 px-4 py-3.5">
           {/* Date + badge */}
@@ -55,13 +57,13 @@ export default function TimelineCard({ entry }: Props) {
               <LuCalendar className="text-[11px]" /> {entry.date}
             </div>
             <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${SEVERITY_BADGE[severity]}`}>
-              {severity === "critical" ? "Critical" : severity === "warning" ? "Follow-up" : "Routine"}
+              {severity === "critical" ? t("critical") : severity === "warning" ? t("followUp") : t("routine")}
             </span>
           </div>
 
           {/* Diagnosis */}
           <p className="text-[14px] font-semibold text-[hsl(var(--color-text))] leading-snug mb-1">
-            {entry.diagnosis || "No diagnosis recorded"}
+            {entry.diagnosis || t("noDiagnosis")}
           </p>
 
           {/* Doctor */}
@@ -76,12 +78,12 @@ export default function TimelineCard({ entry }: Props) {
             <div className="flex flex-wrap gap-1.5 mt-2.5">
               {record.bloodPressure && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-medium bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]">
-                  <LuHeartPulse className="text-[10px]" /> BP <span className="font-semibold text-[hsl(var(--color-text))]">{record.bloodPressure}</span>
+                  <LuHeartPulse className="text-[10px]" /> {t("bp")} <span className="font-semibold text-[hsl(var(--color-text))]">{record.bloodPressure}</span>
                 </span>
               )}
               {record.pulse && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-medium bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]">
-                  <LuActivity className="text-[10px]" /> Pulse <span className="font-semibold text-[hsl(var(--color-text))]">{record.pulse} bpm</span>
+                  <LuActivity className="text-[10px]" /> {t("pulse")} <span className="font-semibold text-[hsl(var(--color-text))]">{record.pulse} {t("bpm")}</span>
                 </span>
               )}
               {record.temperature && (
@@ -90,7 +92,7 @@ export default function TimelineCard({ entry }: Props) {
                     ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]"
                     : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
                 }`}>
-                  <LuThermometer className="text-[10px]" /> Temp <span className="font-semibold">{record.temperature}°C</span>
+                  <LuThermometer className="text-[10px]" /> {t("temp")} <span className="font-semibold">{record.temperature}°C</span>
                 </span>
               )}
             </div>
@@ -98,7 +100,7 @@ export default function TimelineCard({ entry }: Props) {
         </div>
 
         {/* Chevron */}
-        <div className="flex items-center pr-4 pl-1 text-[hsl(var(--color-text-muted))]">
+        <div className="flex items-center pe-4 ps-1 text-[hsl(var(--color-text-muted))]">
           {expanded ? <LuChevronUp className="text-[15px]" /> : <LuChevronDown className="text-[15px]" />}
         </div>
       </div>
@@ -113,7 +115,7 @@ export default function TimelineCard({ entry }: Props) {
             <MedicalHistoryCard record={entry.rawRecord} hideHeader={true} />
           ) : (
             <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4 italic">
-              Detailed record not available.
+              {t("notAvailable")}
             </p>
           )}
         </div>

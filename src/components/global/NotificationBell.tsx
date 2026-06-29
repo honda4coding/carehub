@@ -137,7 +137,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
       >
         <LuBell className="text-[15px]" />
         {unreadCount > 0 && (
-          <span className="absolute top-1 right-1 min-w-[16px] h-[16px] rounded-full bg-[hsl(var(--color-secondary))] border-2 border-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[9px] font-bold text-white px-[2px]">
+          <span className="absolute top-1 end-1 min-w-[16px] h-[16px] rounded-full bg-[hsl(var(--color-secondary))] border-2 border-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[9px] font-bold text-white px-[2px]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -145,7 +145,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
 
       {/* ── Dropdown ── */}
       {open && (
-        <div className="absolute right-0 mt-2 w-[340px] max-h-[420px] flex flex-col rounded-[12px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] z-50 overflow-hidden">
+        <div className="absolute end-0 mt-2 w-[340px] max-h-[420px] flex flex-col rounded-[12px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] z-50 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--color-border))] shrink-0">
             <Link
@@ -154,7 +154,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
             >
               Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))] text-[10px] font-semibold">
+                <span className="ms-2 px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))] text-[10px] font-semibold">
                   {unreadCount} new
                 </span>
               )}

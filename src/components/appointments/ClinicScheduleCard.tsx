@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LuBuilding2, LuCalendarDays, LuClock, LuPencil } from "react-icons/lu";
 
 import { Availability, getClinicAvailability } from "@/services/appointmentService";
+import { useTranslations } from "next-intl";
 
 const DAYS = [
   "sunday", "monday", "tuesday", "wednesday",
@@ -33,6 +34,8 @@ export default function ClinicScheduleCard({
   clinicAddress,
   onLoaded,
 }: Props) {
+  const t = useTranslations("doctor.schedule");
+  const tCommon = useTranslations("common.days");
   const router = useRouter();
   const [availability, setAvailabilityList] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,7 +68,7 @@ export default function ClinicScheduleCard({
           </div>
           <div>
             <p className="text-[14px] font-black text-[hsl(var(--color-text))] leading-tight">
-              {clinicName || "Clinic"}
+              {clinicName || t("clinic")}
             </p>
             {clinicAddress ? (
               <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
@@ -73,7 +76,7 @@ export default function ClinicScheduleCard({
               </p>
             ) : (
               <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wide">
-                Weekly schedule
+                {t("weeklySchedule")}
               </p>
             )}
           </div>
@@ -83,7 +86,7 @@ export default function ClinicScheduleCard({
           onClick={() => router.push(`/doctor/clinics`)}
           className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/0.3)] px-3 py-1.5 rounded-xl hover:bg-[hsl(var(--color-primary)/0.08)] transition-colors cursor-pointer shrink-0"
         >
-          <LuPencil className="text-[12px]" /> Edit
+          <LuPencil className="text-[12px]" /> {t("edit")}
         </button>
       </div>
 
@@ -98,13 +101,13 @@ export default function ClinicScheduleCard({
         <div className="text-center py-6">
           <LuCalendarDays className="text-[22px] text-[hsl(var(--color-text-muted))] mx-auto mb-2" />
           <p className="text-[12.5px] font-semibold text-[hsl(var(--color-text-muted))]">
-            No working days set yet for this clinic.
+            {t("noWorkingDays")}
           </p>
           <button
             onClick={() => router.push(`/doctor/clinics/${clinicId}`)}
             className="text-[12px] font-bold text-[hsl(var(--color-primary))] mt-2 cursor-pointer"
           >
-            Set it up →
+            {t("setUp")}
           </button>
         </div>
       ) : (
@@ -114,7 +117,7 @@ export default function ClinicScheduleCard({
             return (
               <div key={day} className="flex items-center justify-between py-2.5 gap-3">
                 <span className="text-[12.5px] font-bold text-[hsl(var(--color-text))] w-24 shrink-0">
-                  {DAY_LABELS[day]}
+                  {tCommon(day)}
                 </span>
                 <div className="flex flex-wrap gap-x-3 gap-y-1 justify-end flex-1">
                   {entries.map((a) => (

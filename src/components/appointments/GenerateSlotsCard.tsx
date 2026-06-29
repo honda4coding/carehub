@@ -172,7 +172,7 @@ export default function GenerateSlotsCard({
                   <div className="w-full flex items-center justify-between px-4 py-3">
                     <button
                       onClick={() => setOpenSlotDay(isOpen ? null : group.dateKey)}
-                      className="flex items-center gap-3 flex-1 text-left hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
+                      className="flex items-center gap-3 flex-1 text-start hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
                     >
                       <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center shrink-0">
                         <LuCalendarDays className="text-base" />

@@ -2,21 +2,22 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LuSearch, LuSmartphone, LuX, LuShieldCheck, LuEye, LuInbox } from "react-icons/lu";
 import { CountdownTimer } from "./OTPComponents";
+import { useTranslations } from "next-intl";
 import Pagination from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
 
-const statusConfig: Record<string, { style: string; label: string }> = {
+const statusConfig: Record<string, { style: string; labelKey: string }> = {
   pending_otp: {
     style: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
-    label: "Pending OTP",
+    labelKey: "statusPending",
   },
   in_progress: {
     style: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
-    label: "In Progress",
+    labelKey: "statusInProgress",
   },
   completed: {
     style: "bg-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]",
-    label: "Completed",
+    labelKey: "statusCompleted",
   },
 };
 
@@ -34,6 +35,7 @@ export const CurrentQueue = ({
   setSelectedSession,
   setOTPModalOpen,
 }: any) => {
+  const t = useTranslations("doctor.dashboard.queue");
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -54,20 +56,20 @@ export const CurrentQueue = ({
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div className="flex-1 min-w-[200px]">
           <div>
-            <h2 className="text-[14px] font-black uppercase tracking-[.05em] text-[hsl(var(--color-text))]">Current Queue</h2>
-            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">Patients currently registered or in consultation</p>
+            <h2 className="text-[14px] font-black uppercase tracking-[.05em] text-[hsl(var(--color-text))]">{t("title")}</h2>
+            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">{t("subtitle")}</p>
           </div>
         </div>
 
         <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
           <div className="relative flex items-center min-w-[200px] flex-1 lg:flex-none">
-            <LuSearch className="absolute left-2.5 text-[13px] text-[hsl(var(--color-text-muted))]" />
+            <LuSearch className="absolute start-2.5 text-[13px] text-[hsl(var(--color-text-muted))]" />
             <input
               type="text"
-              placeholder="Search name or phone..."
+              placeholder={t("searchPlaceholder")}
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-7 pr-3 py-1.5 text-[12px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-1 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+              className="ps-7 pe-3 py-1.5 text-[12px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-1 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
             />
           </div>
 
@@ -77,10 +79,10 @@ export const CurrentQueue = ({
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-2 py-1 text-[12px] font-bold rounded-[8px] bg-transparent text-[hsl(var(--color-text-muted))] outline-none cursor-pointer hover:text-[hsl(var(--color-text))] transition-colors"
             >
-              <option value="All">All Status</option>
-              <option value="pending_otp">Pending OTP</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
+              <option value="All">{t("statusAll")}</option>
+              <option value="pending_otp">{t("statusPending")}</option>
+              <option value="in_progress">{t("statusInProgress")}</option>
+              <option value="completed">{t("statusCompleted")}</option>
             </select>
           </div>
 
@@ -90,9 +92,9 @@ export const CurrentQueue = ({
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-2 py-1 text-[12px] font-bold rounded-[6px] bg-transparent text-[hsl(var(--color-text-muted))] outline-none cursor-pointer hover:text-[hsl(var(--color-text))] transition-colors"
             >
-              <option value="all">All Types</option>
-              <option value="walk_in">Walk-in</option>
-              <option value="online">Online</option>
+              <option value="all">{t("typeAll")}</option>
+              <option value="walk_in">{t("typeWalkIn")}</option>
+              <option value="online">{t("typeOnline")}</option>
             </select>
           </div>
         </div>
@@ -106,9 +108,10 @@ export const CurrentQueue = ({
               {["Patient", "Phone", "Type", "Time", "Status", "Actions"].map((h) => (
                 <th
                   key={h}
-                  className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-3"
+                  className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-start pe-3"
                 >
-                  {h}
+                  {/* @ts-ignore */}
+                  {t(`columns.${h}`)}
                 </th>
               ))}
             </tr>
@@ -120,7 +123,7 @@ export const CurrentQueue = ({
                 <td colSpan={6} className="py-16 text-center">
                   <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
                   <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-                    No patients found in queue.
+                    {t("empty")}
                   </p>
                 </td>
               </tr>
@@ -132,7 +135,7 @@ export const CurrentQueue = ({
                     key={s.id}
                     className="border-b border-[hsl(var(--color-border-soft))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors last:border-b-0"
                   >
-                    <td className="py-3.5 pr-2 text-left">
+                    <td className="py-3.5 pe-2 text-start">
                       <div className="flex items-center gap-3">
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${s.avatarStyle}`}>
                           {s.initials}
@@ -143,38 +146,39 @@ export const CurrentQueue = ({
                       </div>
                     </td>
 
-                    <td className="py-3.5 pr-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-left whitespace-nowrap">
-                      {s.phone || "App User"}
+                    <td className="py-3.5 pe-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-start whitespace-nowrap">
+                      {s.phone || t("appUser")}
                     </td>
 
-                    <td className="py-3.5 pr-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-left whitespace-nowrap">
-                      {s.type}
+                    <td className="py-3.5 pe-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-start whitespace-nowrap">
+                      {s.type === 'Walk-in' ? t('typeWalkIn') : t('typeOnline')}
                     </td>
 
-                    <td className="py-3.5 pr-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-left whitespace-nowrap">
+                    <td className="py-3.5 pe-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-start whitespace-nowrap">
                       {s.time}
                     </td>
 
-                    <td className="py-3.5 pr-2 text-left whitespace-nowrap">
+                    <td className="py-3.5 pe-2 text-start whitespace-nowrap">
                       <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold ${sc.style}`}>
-                        {s.status === "pending_otp" && <LuSmartphone className="mr-1.5 text-[12px]" />}
-                        {sc.label}
+                        {s.status === "pending_otp" && <LuSmartphone className="me-1.5 text-[12px]" />}
+                        {/* @ts-ignore */}
+                        {t(sc.labelKey)}
                       </span>
                       {s.status === "pending_otp" && s.validUntil && (
-                        <div className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 ml-1">
+                        <div className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 ms-1">
                           <CountdownTimer targetTime={s.validUntil} />
                         </div>
                       )}
                     </td>
 
-                    <td className="py-3.5 text-left whitespace-nowrap">
+                    <td className="py-3.5 text-start whitespace-nowrap">
                       <div className="flex items-center gap-2">
                         {s.status === "pending_otp" ? (
                           <>
                             <button
                               onClick={() => handleCancelRequest(s.id)}
                               className="w-[32px] h-[32px] rounded-lg flex items-center justify-center text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] transition-colors cursor-pointer"
-                              title="Cancel Request"
+                              title={t("cancelRequest")}
                             >
                               <LuX className="text-[16px]" />
                             </button>
@@ -187,7 +191,7 @@ export const CurrentQueue = ({
                               }}
                               className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[11px] !px-3 !h-[32px] !rounded-lg"
                             >
-                              Enter OTP
+                              {t("enterOtp")}
                             </Button>
                           </>
                         ) : (
@@ -197,7 +201,7 @@ export const CurrentQueue = ({
                             onClick={() => router.push(`/doctor/encounter/${s.id}`)}
                             className="!text-[11px] !px-3 !h-[32px] !rounded-lg"
                           >
-                            Open File
+                            {t("openFile")}
                           </Button>
                         )}
                       </div>
@@ -215,7 +219,7 @@ export const CurrentQueue = ({
             <div className="py-16 text-center">
               <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
               <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-                No patients found in queue.
+                {t("empty")}
               </p>
             </div>
           ) : (
@@ -231,13 +235,13 @@ export const CurrentQueue = ({
                       <div>
                         <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight">{s.patient}</p>
                         <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-                          {s.phone || "App User"}
+                          {s.phone || t("appUser")}
                         </p>
                       </div>
                     </div>
-                    <div className="text-right shrink-0">
+                    <div className="text-end shrink-0">
                       <span className="text-[10px] font-bold bg-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] px-2 py-0.5 rounded-md block mb-1">
-                        {s.type}
+                        {s.type === 'Walk-in' ? t('typeWalkIn') : t('typeOnline')}
                       </span>
                       <p className="text-[11px] font-bold text-[hsl(var(--color-text))]">{s.time}</p>
                     </div>
@@ -246,11 +250,12 @@ export const CurrentQueue = ({
                   <div className="flex items-center justify-between pt-3 border-t border-[hsl(var(--color-border-soft))]">
                     <div>
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold ${sc.style}`}>
-                        {s.status === "pending_otp" && <LuSmartphone className="mr-1 text-[11px]" />}
-                        {sc.label}
+                        {s.status === "pending_otp" && <LuSmartphone className="me-1 text-[11px]" />}
+                        {/* @ts-ignore */}
+                        {t(sc.labelKey)}
                       </span>
                       {s.status === "pending_otp" && s.validUntil && (
-                        <div className="text-[9px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 ml-1">
+                        <div className="text-[9px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 ms-1">
                           <CountdownTimer targetTime={s.validUntil} />
                         </div>
                       )}
@@ -261,7 +266,7 @@ export const CurrentQueue = ({
                           <button
                             onClick={() => handleCancelRequest(s.id)}
                             className="w-[28px] h-[28px] rounded-lg flex items-center justify-center bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] hover:opacity-80 transition-colors"
-                            title="Cancel Request"
+                            title={t("cancelRequest")}
                           >
                             <LuX className="text-[14px]" />
                           </button>
@@ -274,7 +279,7 @@ export const CurrentQueue = ({
                             }}
                             className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                           >
-                            Enter OTP
+                            {t("enterOtp")}
                           </Button>
                         </>
                       ) : (
@@ -284,7 +289,7 @@ export const CurrentQueue = ({
                           onClick={() => router.push(`/doctor/encounter/${s.id}`)}
                           className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                         >
-                          Open File
+                          {t("openFile")}
                         </Button>
                       )}
                     </div>

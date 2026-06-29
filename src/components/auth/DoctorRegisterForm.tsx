@@ -10,6 +10,7 @@ import { ImSpinner2 } from 'react-icons/im';
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from 'next-intl';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -35,6 +36,7 @@ async function parseErrorMessage(res: Response): Promise<string> {
 }
 
 export default function DoctorRegisterForm() {
+  const t = useTranslations('auth.RegisterForm');
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik<DoctorFormValues>({
@@ -77,10 +79,10 @@ export default function DoctorRegisterForm() {
           throw new Error(message);
         }
 
-        alert("Registration submitted successfully! Awaiting admin approval.");
+        alert(t('registrationSuccess'));
 
       } catch (error) {
-        alert(error instanceof Error ? error.message : "Something went wrong");
+        alert(error instanceof Error ? error.message : t('connectionError'));
       } finally {
         setLoading(false);
       }
@@ -91,52 +93,52 @@ export default function DoctorRegisterForm() {
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Full Name */}
       <div>
-        <Label>Full Name <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('fullNameLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="text" 
           {...formik.getFieldProps('fullName')} 
-          placeholder="Dr. Ahmed Mohamed" 
+          placeholder={t('fullNamePlaceholderDoctor')} 
           leftIcon={<MdPerson className="w-5 h-5" />}
           error={!!(formik.touched.fullName && formik.errors.fullName)}
         />
         {formik.touched.fullName && formik.errors.fullName && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.fullName}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.fullName}</p>
         )}
       </div>
 
       {/* Email */}
       <div>
-        <Label>Email <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('emailLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="email" 
           {...formik.getFieldProps('email')} 
-          placeholder="doctor@clinic.com" 
+          placeholder={t('emailPlaceholderDoctor')} 
           leftIcon={<MdEmail className="w-5 h-5" />}
           error={!!(formik.touched.email && formik.errors.email)}
         />
         {formik.touched.email && formik.errors.email && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.email}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.email}</p>
         )}
       </div>
 
       {/* Phone Number */}
       <div>
-        <Label>Phone Number <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('phoneLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="tel" 
           {...formik.getFieldProps('phoneNumber')} 
-          placeholder="01234567890" 
+          placeholder={t('phonePlaceholder')} 
           leftIcon={<MdPhone className="w-5 h-5" />}
           error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
         />
         {formik.touched.phoneNumber && formik.errors.phoneNumber && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.phoneNumber}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.phoneNumber}</p>
         )}
       </div>
 
       {/* National ID Upload */}
       <div>
-        <Label>National ID Image <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('nationalIdLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input
           type="file"
           accept="image/*,application/pdf"
@@ -145,31 +147,31 @@ export default function DoctorRegisterForm() {
           error={!!(formik.touched.nationalId && formik.errors.nationalId)}
           className="file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-primary)/0.1)] file:text-[hsl(var(--color-primary))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer"
         />
-        <p className="text-[hsl(var(--color-text-muted))] text-[10px] mt-1 ml-1 uppercase tracking-wider">JPG, PNG, PDF (Max 5MB)</p>
+        <p className="text-[hsl(var(--color-text-muted))] text-[10px] mt-1 ms-1 uppercase tracking-wider">{t('nationalIdHint')}</p>
         {formik.touched.nationalId && formik.errors.nationalId && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.nationalId}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.nationalId}</p>
         )}
       </div>
 
       {/* Password & Confirm */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>Password <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('passwordLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="password" 
             {...formik.getFieldProps('password')} 
-            placeholder="********" 
+            placeholder={t('passwordPlaceholder')} 
             leftIcon={<MdLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
           {formik.touched.password && formik.errors.password && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.password}</p>}
         </div>
         <div>
-          <Label>Confirm <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('confirmPasswordLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="password" 
             {...formik.getFieldProps('confirmPassword')} 
-            placeholder="********" 
+            placeholder={t('passwordPlaceholder')} 
             leftIcon={<MdLock className="w-5 h-5" />}
             error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
           />
@@ -179,46 +181,48 @@ export default function DoctorRegisterForm() {
 
       {/* Specialty */}
       <div>
-        <Label>Specialty <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('specialtyLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <div className="relative">
-          <MdMedicalServices className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <MdMedicalServices className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
           <select 
             {...formik.getFieldProps('specialty')} 
-            className={`w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
+            className={`w-full py-4 ps-12 pe-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
               formik.touched.specialty && formik.errors.specialty 
               ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger)/0.05)] focus:ring-4 focus:ring-[hsl(var(--color-danger)/0.1)]'
               : 'border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]'
             }`}
           >
-            <option value="">Select specialty</option>
+            <option value="">{t('selectSpecialty')}</option>
             {specialties.map((spec) => (
-              <option key={spec.value} value={spec.value}>{spec.label}</option>
+              <option key={spec.value} value={spec.value}>
+                {t(`specialties.${spec.value}`)}
+              </option>
             ))}
           </select>
         </div>
         {formik.touched.specialty && formik.errors.specialty && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.specialty}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.specialty}</p>
         )}
       </div>
 
       {/* Syndicate ID */}
       <div>
-        <Label>Syndicate ID <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('syndicateIdLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="number" 
           {...formik.getFieldProps('syndicateId')} 
-          placeholder="123456" 
+          placeholder={t('syndicateIdPlaceholder')} 
           leftIcon={<MdBadge className="w-5 h-5" />}
           error={!!(formik.touched.syndicateId && formik.errors.syndicateId)}
         />
         {formik.touched.syndicateId && formik.errors.syndicateId && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.syndicateId}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.syndicateId}</p>
         )}
       </div>
 
       {/* License Image */}
       <div>
-        <Label>License Image <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('licenseImageLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input
           type="file"
           accept="image/*,application/pdf"
@@ -228,20 +232,20 @@ export default function DoctorRegisterForm() {
           className="file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-[hsl(var(--color-primary)/0.1)] file:text-[hsl(var(--color-primary))] hover:file:bg-[hsl(var(--color-primary)/0.2)] cursor-pointer"
         />
         {formik.touched.licenseImage && formik.errors.licenseImage && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.licenseImage}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.licenseImage}</p>
         )}
       </div>
 
       {/* Address */}
       <div>
-        <Label>Address (Optional)</Label>
+        <Label>{t('addressLabel')}</Label>
         <div className="relative">
-          <MdLocationOn className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <MdLocationOn className="absolute start-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
           <textarea 
             {...formik.getFieldProps('address')} 
             rows={2} 
-            className="w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]" 
-            placeholder="Clinic or Hospital address" 
+            className="w-full py-4 ps-12 pe-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]" 
+            placeholder={t('addressPlaceholderDoctor')} 
           />
         </div>
       </div>
@@ -253,7 +257,7 @@ export default function DoctorRegisterForm() {
           className="w-full py-4 text-lg"
           isLoading={loading}
         >
-          Complete Registration
+          {t('submitDoctor')}
         </Button>
       </div>
     </form>

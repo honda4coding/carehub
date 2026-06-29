@@ -96,7 +96,7 @@ export default function ApprovalsList({
             ].map((h) => (
               <th
                 key={h}
-                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-4"
+                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-start pe-4"
               >
                 {h}
               </th>
@@ -113,7 +113,7 @@ export default function ApprovalsList({
                 key={doc._id}
                 className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
               >
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${avatarStyle}`}
@@ -131,15 +131,15 @@ export default function ApprovalsList({
                   </div>
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                   {doc.specialty ?? "—"}
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                   {new Date(doc.createdAt).toLocaleDateString()}
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   <span
                     className={`inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                   >
@@ -147,7 +147,7 @@ export default function ApprovalsList({
                   </span>
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   {doc.licenseUrl ? (
                     <Button
                       variant="outline"
@@ -167,7 +167,7 @@ export default function ApprovalsList({
                   )}
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   {doc.nationalIdUrl ? (
                     <Button
                       variant="outline"
@@ -190,7 +190,7 @@ export default function ApprovalsList({
                   )}
                 </td>
 
-                <td className="py-3.5 pr-4">
+                <td className="py-3.5 pe-4">
                   <div className="flex items-center gap-1.5 w-[140px]">
                     {doc.status === "pending" ? (
                       <>

@@ -3,8 +3,10 @@ import Link from "next/link";
 import { LuArrowRight, LuStethoscope, LuBadgeCheck, LuActivity } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslations } from 'next-intl';
 
 const Hero = () => {
+  const t = useTranslations('landing.Hero');
   return (
     <section className="w-full bg-[hsl(var(--color-bg))] overflow-hidden">
       <div className="mx-auto max-w-7xl px-6 lg:px-10 pt-20 lg:pt-28 pb-16 lg:pb-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -14,37 +16,35 @@ const Hero = () => {
           {/* Badge */}
           <Badge variant="primary" className="self-start gap-2 mb-8 shadow-sm">
             <LuBadgeCheck className="w-4 h-4" />
-            <span>Clinical Grade Platform</span>
+            <span>{t('badge')}</span>
           </Badge>
 
           {/* Heading */}
           <h1 className="text-4xl sm:text-5xl lg:text-[64px] font-black tracking-tighter text-[hsl(var(--color-text))] leading-[1.1] lg:leading-[1.05]">
-            Your Complete
+            {t('title1')}
             <br />
-            Medical History,
+            {t('title2')}
             <br />
-            <span className="text-[hsl(var(--color-primary))]">Unified.</span>
+            <span className="text-[hsl(var(--color-primary))]">{t('title3')}</span>
           </h1>
 
           <p className="mt-6 text-base lg:text-lg text-[hsl(var(--color-text-muted))] max-w-xl leading-relaxed">
-            Experience the sanctuary of modern healthcare. CareHub brings precision,
-            clarity, and security to your medical journey, connecting patients and
-            professionals seamlessly.
+            {t('description')}
           </p>
 
           {/* Action Buttons */}
           <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto">
             <Link href="/register?role=patient" passHref className="w-full sm:w-auto">
               <Button variant="primary" size="lg" className="w-full shadow-lg shadow-[hsl(var(--color-primary)/0.2)]">
-                Register as Patient
-                <LuArrowRight className="ml-2 w-5 h-5 shrink-0" />
+                {t('registerPatient')}
+                <LuArrowRight className="ms-2 w-5 h-5 shrink-0" />
               </Button>
             </Link>
             
             <Link href="/register?role=doctor" passHref className="w-full sm:w-auto">
               <Button variant="outline" size="lg" className="w-full bg-[hsl(var(--color-bg-surface))]">
-                Join as Doctor
-                <LuStethoscope className="ml-2 w-5 h-5 shrink-0" />
+                {t('joinDoctor')}
+                <LuStethoscope className="ms-2 w-5 h-5 shrink-0" />
               </Button>
             </Link>
           </div>
@@ -66,15 +66,15 @@ const Hero = () => {
             />
 
             {/* Floating Activity Card */}
-            <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 sm:translate-x-0 sm:bottom-8 sm:-left-10 bg-[hsl(var(--color-bg-surface))] rounded-2xl p-5 flex items-center gap-4 z-20 shadow-xl shadow-[hsl(var(--color-text-muted)/0.05)] border border-[hsl(var(--color-border-soft))] animate-bounce-slow w-[90%] sm:w-auto min-w-[260px]">
+            <div className="absolute -bottom-6 start-1/2 -translate-x-1/2 sm:translate-x-0 sm:bottom-8 sm:-start-10 bg-[hsl(var(--color-bg-surface))] rounded-2xl p-5 flex items-center gap-4 z-20 shadow-xl shadow-[hsl(var(--color-text-muted)/0.05)] border border-[hsl(var(--color-border-soft))] animate-bounce-slow w-[90%] sm:w-auto min-w-[260px]">
               <div className="w-12 h-12 rounded-xl bg-gradient-doctor text-white flex items-center justify-center shrink-0 shadow-inner">
                 <LuActivity className="w-6 h-6" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-black text-[hsl(var(--color-text))] uppercase tracking-tight truncate">
-                  Vitals Synced
+                  {t('vitalsTitle')}
                 </p>
-                <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase opacity-70 mt-0.5">Real-time update</p>
+                <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase opacity-70 mt-0.5">{t('vitalsDesc')}</p>
                 <div className="mt-3 h-1.5 w-full rounded-full bg-[hsl(var(--color-bg-surface-hover))] overflow-hidden">
                   <div className="h-full w-3/4 rounded-full bg-linear-to-r from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))]" />
                 </div>

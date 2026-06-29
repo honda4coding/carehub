@@ -1,52 +1,55 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME } from './constants/auth';
+import createIntlMiddleware from 'next-intl/middleware';
+import { routing } from './i18n/routing';
+
+const intlMiddleware = createIntlMiddleware(routing);
 
 export function proxy(request: NextRequest) {
   const token = request.cookies.get(AUTH_COOKIE_NAME)?.value;
   const role = request.cookies.get(ROLE_COOKIE_NAME)?.value;
   const { pathname } = request.nextUrl;
 
+  const localeMatch = pathname.match(/^\/(ar|en)(\/|$)/);
+  const localePrefix = localeMatch ? localeMatch[1] : '';
+  const pathWithoutLocale = pathname.replace(/^\/(ar|en)/, '') || '/';
+
   // Handle protected route access control
   const protectedPaths = ['/admin', '/doctor', '/patient'];
   const isProtectedRoute = protectedPaths.some(path => 
-    pathname === path || pathname.startsWith(`${path}/`)
+    pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`)
   );
 
   if (isProtectedRoute) {
-    // Redirect unauthenticated users to login
     if (!token) {
-      const loginPath = pathname.startsWith('/admin') ? '/admin-login' : '/login';
-      return NextResponse.redirect(new URL(loginPath, request.url));
+      const loginPath = pathWithoutLocale.startsWith('/admin') ? '/admin-login' : '/login';
+      const redirectUrl = localePrefix ? `/${localePrefix}${loginPath}` : loginPath;
+      return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
-    // Role-based access control: Redirect to assigned dashboard if unauthorized
-    if (role && !pathname.startsWith(`/${role}`)) {
-      return NextResponse.redirect(new URL(`/${role}`, request.url));
+    if (role && !pathWithoutLocale.startsWith(`/${role}`)) {
+      const redirectUrl = localePrefix ? `/${localePrefix}/${role}` : `/${role}`;
+      return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
   }
 
-  // Redirect authenticated users away from auth pages
   const authPaths = ['/login', '/register', '/admin-login'];
-  const isAuthRoute = authPaths.some(path => pathname === path || pathname.startsWith(`${path}/`));
+  const isAuthRoute = authPaths.some(path => pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`));
   
   if (isAuthRoute && token) {
-    // If they have a token, redirect to their role dashboard, default to patient if role is somehow missing
     const redirectRole = role || 'patient';
-    return NextResponse.redirect(new URL(`/${redirectRole}`, request.url));
+    const redirectUrl = localePrefix ? `/${localePrefix}/${redirectRole}` : `/${redirectRole}`;
+    return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
 
-  return NextResponse.next();
+  return intlMiddleware(request);
 }
 
-// Middleware path configuration
 export const config = {
   matcher: [
-    '/admin/:path*',
-    '/doctor/:path*',
-    '/patient/:path*',
-    '/login',
-    '/register',
-    '/admin-login',
+    '/',
+    '/(ar|en)/:path*',
+    '/((?!api|_next|_vercel|.*\\..*).*)',
   ],
 };

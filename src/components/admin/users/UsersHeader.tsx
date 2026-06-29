@@ -13,17 +13,17 @@ export default function UsersHeader({ pagination, isLoading, onRefresh }: UsersH
     <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
       <div className="flex items-center gap-4">
         <div>
-          <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight pl-11 md:pl-0">
+          <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight ps-11 md:pl-0">
             User Directory
           </h1>
-          <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
+          <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 ps-11 md:pl-0">
             Manage all registered accounts and suspension statuses
           </p>
         </div>
 
         {/* Stat strip inside header */}
         {pagination && !isLoading && (
-          <div className="hidden md:flex items-center gap-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-1.5 shadow-sm ml-4">
+          <div className="hidden md:flex items-center gap-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl px-3 py-1.5 shadow-sm ms-4">
             <LuUsers className="text-[14px] text-[hsl(var(--color-primary))]" />
             <span className="text-[13px] font-black text-[hsl(var(--color-text))]">
               {pagination.totalCount}

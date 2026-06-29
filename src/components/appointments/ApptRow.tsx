@@ -21,7 +21,7 @@ export default function ApptRow({ appt }: { appt: Appointment }) {
     >
       {/* Date stub */}
       <div
-        className={`w-[90px] sm:w-[110px] shrink-0 flex flex-col items-center justify-center gap-1 py-4 border-r-2 border-dashed border-[hsl(var(--color-border))] relative z-10 ${
+        className={`w-[90px] sm:w-[110px] shrink-0 flex flex-col items-center justify-center gap-1 py-4 border-e-2 border-dashed border-[hsl(var(--color-border))] relative z-10 ${
           status === "upcoming"
             ? "bg-[hsl(var(--color-warning-bg))]"
             : status === "completed"
@@ -47,8 +47,8 @@ export default function ApptRow({ appt }: { appt: Appointment }) {
           {isoTo12Hour(appt.startDateTime)}
         </span>
         {/* Punch holes */}
-        <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
-        <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
+        <span className="absolute -end-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
+        <span className="absolute -end-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
       </div>
 
       {/* Body */}

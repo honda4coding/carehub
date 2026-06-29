@@ -1,21 +1,23 @@
 import { LuShieldCheck, LuLockKeyhole, LuFileBadge } from "react-icons/lu";
+import { useTranslations } from 'next-intl';
 
 export default function TrustMetrics() {
+  const t = useTranslations('landing.TrustMetrics');
   const metrics = [
     {
       icon: <LuLockKeyhole className="w-8 h-8" />,
-      title: "Secure Authentication",
-      desc: "All user sessions are protected using industry-standard JSON Web Tokens (JWT) and encrypted passwords.",
+      title: t('metric1Title'),
+      desc: t('metric1Desc'),
     },
     {
       icon: <LuShieldCheck className="w-8 h-8" />,
-      title: "Role-Based Privacy",
-      desc: "Strict separation of data. Patients only see their own records, and doctors only access the patients they treat.",
+      title: t('metric2Title'),
+      desc: t('metric2Desc'),
     },
     {
       icon: <LuFileBadge className="w-8 h-8" />,
-      title: "Private Medical History",
-      desc: "Your prescriptions, lab results, and vitals are securely stored in the cloud, accessible only by authorized personnel.",
+      title: t('metric3Title'),
+      desc: t('metric3Desc'),
     },
   ];
 
@@ -25,10 +27,10 @@ export default function TrustMetrics() {
         
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-4">
-            Security built into the code.
+            {t('title')}
           </h2>
           <p className="text-lg text-[hsl(var(--color-text-muted))]">
-            We prioritize data privacy through strong authentication and strict role-based access controls.
+            {t('description')}
           </p>
         </div>
 

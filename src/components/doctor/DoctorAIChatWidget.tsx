@@ -102,7 +102,7 @@ export default function DoctorAIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-transform hover:scale-105 z-50"
+          className="fixed bottom-6 end-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-transform hover:scale-105 z-50"
           title="Clinical Assistant"
         >
           <LuBrainCircuit size={28} />
@@ -132,10 +132,10 @@ export default function DoctorAIChatWidget() {
                 <div 
                   className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${
                     msg.role === "user" 
-                    ? "bg-primary text-white rounded-tr-none" 
+                    ? "bg-primary text-white rounded-se-none" 
                     : msg.role === "system"
                     ? "bg-primary/10 text-primary rounded-lg text-xs w-full text-center border border-primary/20"
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-ss-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
                   }`}
                   dir="auto"
                 >
@@ -149,7 +149,7 @@ export default function DoctorAIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-tl-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
+                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-ss-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
                   <LuLoader className="animate-spin" /> Analyzing...
                 </div>
               </div>

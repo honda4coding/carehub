@@ -43,7 +43,7 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs ps-1 font-medium" />
     </div>
   );
 }

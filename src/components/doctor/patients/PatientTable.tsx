@@ -3,6 +3,7 @@ import { LuPhone, LuHistory, LuSearch, LuCalendar } from "react-icons/lu";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Pagination from "@/components/ui/Pagination";
+import { useTranslations } from "next-intl";
 
 interface PatientTableProps {
   patients: any[];
@@ -15,6 +16,7 @@ export default function PatientTable({
   loading,
   onViewHistory,
 }: PatientTableProps) {
+  const t = useTranslations("doctor.patientDirectory");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   
@@ -36,7 +38,7 @@ export default function PatientTable({
         {loading ? (
           <div className="py-12 text-center text-[hsl(var(--color-text-muted))]">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-sm font-bold">Loading patients...</p>
+            <p className="text-sm font-bold">{t("loadingPatients")}</p>
           </div>
         ) : paginatedPatients.length > 0 ? (
           paginatedPatients.map((p) => {
@@ -79,7 +81,7 @@ export default function PatientTable({
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div className="bg-[hsl(var(--color-bg-soft))] p-2.5 rounded-xl border border-[hsl(var(--color-border))] border-dashed">
                     <p className="text-[10px] text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-wider mb-1">
-                      First Visit
+                      {t("firstVisit")}
                     </p>
                     <p className="text-sm font-bold text-[hsl(var(--color-text))] flex items-center gap-1">
                       <LuCalendar className="text-[hsl(var(--color-primary))]" />
@@ -88,13 +90,13 @@ export default function PatientTable({
                   </div>
                   <div className="bg-[hsl(var(--color-bg-soft))] p-2.5 rounded-xl border border-[hsl(var(--color-border))] border-dashed">
                     <p className="text-[10px] text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-wider mb-1">
-                      Last Visit
+                      {t("lastVisit")}
                     </p>
                     <p className="text-sm font-bold text-[hsl(var(--color-text))] flex items-center gap-1">
                       <LuCalendar className="text-[hsl(var(--color-primary))]" />
                       {p.lastVisit ? new Date(p.lastVisit).toLocaleDateString() : "N/A"}
                     </p>
-                    <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 ml-4">
+                    <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5 ms-4">
                       {p.lastType}
                     </p>
                   </div>
@@ -103,7 +105,7 @@ export default function PatientTable({
                 <div className="flex items-center justify-between pt-3 mt-1 border-t border-[hsl(var(--color-border-soft))]">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">
-                      Visits:
+                      {t("visits")}:
                     </span>
                     <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-sm font-black text-[hsl(var(--color-text))]">
                       {p.totalVisits}
@@ -113,7 +115,7 @@ export default function PatientTable({
                     onClick={() => onViewHistory(p)}
                     className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1.5  cursor-pointer"
                   >
-                    <LuHistory className="text-sm" /> View History
+                    <LuHistory className="text-sm" /> {t("viewHistory")}
                   </button>
                 </div>
               </div>
@@ -122,22 +124,22 @@ export default function PatientTable({
         ) : (
           <div className="py-12 text-center text-[hsl(var(--color-text-muted))]">
             <LuSearch className="text-4xl mb-3 opacity-20 mx-auto" />
-            <p className="text-base font-bold">No patients found</p>
-            <p className="text-sm mt-1">Try adjusting your filters or search term.</p>
+            <p className="text-base font-bold">{t("noPatientsFound")}</p>
+            <p className="text-sm mt-1">{t("adjustFilters")}</p>
           </div>
         )}
       </div>
 
       {/* Desktop View: Table */}
       <div className="hidden lg:block overflow-x-auto w-full flex-1 bg-[hsl(var(--color-bg-surface))]">
-        <table className="w-full min-w-[900px] text-left border-collapse">
+        <table className="w-full min-w-[900px] text-start border-collapse">
           <thead className="bg-[hsl(var(--color-bg-soft))] sticky top-0 z-10 border-b border-[hsl(var(--color-border))]">
             <tr>
-              {["Patient details", "First Visit", "Last Visit", "Visits", "Status", "Actions"].map((h, i) => (
+              {[t("columns.patientDetails"), t("columns.firstVisit"), t("columns.lastVisit"), t("columns.visits"), t("columns.status"), t("columns.actions")].map((h, i) => (
                 <th
                   key={h}
                   className={`py-4 text-sm font-black uppercase tracking-wider text-[hsl(var(--color-text))] border-b border-[hsl(var(--color-border))] ${
-                    i === 0 ? "pl-8 pr-4" : i === 3 ? "text-center px-4" : i === 5 ? "pr-8 text-right" : "px-4"
+                    i === 0 ? "ps-8 pe-4" : i === 3 ? "text-center px-4" : i === 5 ? "pe-8 text-end" : "px-4"
                   }`}
                 >
                   {h}
@@ -150,7 +152,7 @@ export default function PatientTable({
               <tr>
                 <td colSpan={6} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-sm font-bold">Loading patients...</p>
+                  <p className="text-sm font-bold">{t("loadingPatients")}</p>
                 </td>
               </tr>
             ) : paginatedPatients.length > 0 ? (
@@ -167,7 +169,7 @@ export default function PatientTable({
                     key={p.id || p._id}
                     className="hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors group cursor-default"
                   >
-                    <td className="pl-8 pr-4 py-4">
+                    <td className="ps-8 pe-4 py-4">
                       <div className="flex items-center gap-4">
                         <div
                           className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-black shrink-0  ${avatarStyle}`}
@@ -212,12 +214,12 @@ export default function PatientTable({
                         {status}
                       </Badge>
                     </td>
-                    <td className="pr-8 pl-4 py-4 text-right">
+                    <td className="pe-8 ps-4 py-4 text-end">
                       <button
                         onClick={() => onViewHistory(p)}
-                        className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 ml-auto cursor-pointer"
+                        className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 ms-auto cursor-pointer"
                       >
-                        <LuHistory className="text-sm" /> View History
+                        <LuHistory className="text-sm" /> {t("viewHistory")}
                       </button>
                     </td>
                   </tr>
@@ -228,8 +230,8 @@ export default function PatientTable({
                 <td colSpan={6} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="flex flex-col items-center justify-center">
                     <LuSearch className="text-5xl mb-4 opacity-20" />
-                    <p className="text-base font-bold">No patients found</p>
-                    <p className="text-sm mt-1">Try adjusting your filters or search term.</p>
+                    <p className="text-base font-bold">{t("noPatientsFound")}</p>
+                    <p className="text-sm mt-1">{t("adjustFilters")}</p>
                   </div>
                 </td>
               </tr>
@@ -247,7 +249,7 @@ export default function PatientTable({
         />
         {patients.length > 0 && totalPages <= 1 && (
           <div className="text-center py-2">
-             <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">Showing all {patients.length} patients</span>
+             <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">{t("showingAll", { count: patients.length })}</span>
           </div>
         )}
       </div>

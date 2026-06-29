@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
 import { FaSquarePollVertical } from "react-icons/fa6";
+import { useTranslations } from 'next-intl';
 
 import {
   LuLayoutDashboard,
@@ -281,6 +282,7 @@ function SettingsGroup({
   onClose?: () => void;
 }) {
   const pathname = usePathname();
+  const t = useTranslations('common.sidebar');
   const subItems = settingsSub[role] ?? [];
   // const anyActive = subItems.some((i) => pathname.startsWith(i.href));
   const anyActive = subItems.some((i) =>
@@ -309,7 +311,7 @@ function SettingsGroup({
         >
           <LuSettings />
         </span>
-        <span className="flex-1 text-left">Settings</span>
+        <span className="flex-1 text-start">{t('items.Settings')}</span>
         <LuChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
@@ -317,7 +319,7 @@ function SettingsGroup({
 
       {/* Sub-items */}
       {open && (
-        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
+        <div className="ms-4 mt-0.5 border-s border-[hsl(var(--color-border))] ps-3 space-y-0.5">
           {subItems.map((item) => {
             // const isActive = pathname.startsWith(item.href);
             const isActive =
@@ -346,7 +348,7 @@ function SettingsGroup({
                 >
                   {item.icon}
                 </span>
-                {item.label}
+                {t(`items.${item.label}` as any)}
               </Link>
             );
           })}
@@ -358,6 +360,7 @@ function SettingsGroup({
 
 function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
   const pathname = usePathname();
+  const t = useTranslations('common.sidebar');
   const subItems = item.subItems ?? [];
   const anyActive = subItems.some((i) =>
     i.href === item.href ? pathname === i.href : pathname.startsWith(i.href),
@@ -380,14 +383,14 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
         >
           {item.icon}
         </span>
-        <span className="flex-1 text-left">{item.label}</span>
+        <span className="flex-1 text-start">{t(`items.${item.label}` as any)}</span>
         <LuChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
-        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
+        <div className="ms-4 mt-0.5 border-s border-[hsl(var(--color-border))] ps-3 space-y-0.5">
           {subItems.map((sub) => {
             const isActive =
               sub.href === item.href
@@ -413,7 +416,7 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
                 >
                   {sub.icon}
                 </span>
-                {sub.label}
+                {t(`items.${sub.label}` as any)}
               </Link>
             );
           })}
@@ -440,6 +443,7 @@ function SidebarContent({
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const t = useTranslations('common.sidebar');
   const sections = navMap[role] ?? [];
   const initials = user?.name
     ? user.name
@@ -485,7 +489,7 @@ function SidebarContent({
               CareHub
             </span>
             <p className="text-[9px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] leading-none">
-              {role} Portal
+              {t('portal', { role: role.toUpperCase() })}
             </p>
           </div>
         </Link>
@@ -505,7 +509,7 @@ function SidebarContent({
         {sections.map((section) => (
           <div key={section.title} className="mb-2">
             <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-              {section.title}
+              {t(`sections.${section.title}` as any)}
             </p>
             {section.items.map((item) => {
               if (item.subItems && item.subItems.length > 0) {
@@ -542,9 +546,9 @@ function SidebarContent({
                   >
                     {item.icon}
                   </span>
-                  <span className="flex-1">{item.label}</span>
+                  <span className="flex-1">{t(`items.${item.label}` as any)}</span>
                   {!!badgeValue && (
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ml-auto">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ms-auto">
                       {badgeValue}
                     </span>
                   )}
@@ -557,7 +561,7 @@ function SidebarContent({
         {/* Account — Settings expandable */}
         <div className="mb-2">
           <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-            Account
+            {t('sections.Account')}
           </p>
           <SettingsGroup role={role} onClose={onClose} />
         </div>
@@ -685,7 +689,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-e border-[hsl(var(--color-border))] h-screen sticky top-0">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}
@@ -698,7 +702,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden fixed top-3.5 start-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />
@@ -712,7 +716,7 @@ export default function Sidebar({ role }: { role: string }) {
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))]">
+          <aside className="md:hidden fixed inset-y-0 start-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-e border-[hsl(var(--color-border))]">
             <SidebarContent
               role={role}
               onClose={() => setOpen(false)}

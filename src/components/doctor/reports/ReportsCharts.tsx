@@ -13,6 +13,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useTranslations } from "next-intl";
 
 interface ReportsChartsProps {
   visitTrends?: { date: string; visits: number }[];
@@ -25,6 +26,7 @@ export default function ReportsCharts({
   visitTrends,
   ageDemographics,
 }: ReportsChartsProps) {
+  const t = useTranslations("doctor.reports");
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* Visit Trends Area Chart */}
@@ -32,11 +34,10 @@ export default function ReportsCharts({
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-              <LuActivity className="text-[hsl(var(--color-primary))]" /> Visit
-              Trends
+              <LuActivity className="text-[hsl(var(--color-primary))]" /> {t("visitTrends")}
             </h3>
             <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-              Number of completed visits per day
+              {t("visitTrendsDesc")}
             </p>
           </div>
         </div>
@@ -125,10 +126,10 @@ export default function ReportsCharts({
       <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-5 shadow-sm">
         <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-1">
           <LuFileChartPie className="text-[hsl(var(--color-primary))]" />{" "}
-          Patient Demographics
+          {t("patientDemographics")}
         </h3>
         <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mb-4">
-          Age distribution for registered patients
+          {t("patientDemographicsDesc")}
         </p>
 
         <div className="h-[250px] w-full">
@@ -181,7 +182,7 @@ export default function ReportsCharts({
             </ResponsiveContainer>
           ) : (
             <div className="h-full flex items-center justify-center text-[hsl(var(--color-text-muted))] text-sm font-bold bg-[hsl(var(--color-bg-soft))] rounded-xl border border-dashed border-[hsl(var(--color-border))]">
-              No demographics data available
+              {t("noDemographicsData")}
             </div>
           )}
         </div>

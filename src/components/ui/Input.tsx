@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="relative w-full">
         {leftIcon && (
-          <div className={`absolute left-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
+          <div className={`absolute start-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
             {leftIcon}
           </div>
         )}
@@ -32,13 +32,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={`${baseStyles} ${errorStyles} ${
-            leftIcon ? (size === 'sm' ? 'pl-8' : 'pl-12') : ''
-          } ${rightIcon ? (size === 'sm' ? 'pr-8' : 'pr-12') : ''} ${className}`}
+            leftIcon ? (size === 'sm' ? 'ps-8' : 'ps-12') : ''
+          } ${rightIcon ? (size === 'sm' ? 'pe-8' : 'pe-12') : ''} ${className}`}
           {...props}
         />
 
         {rightIcon && (
-          <div className={`absolute right-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
+          <div className={`absolute end-0 top-0 bottom-0 flex items-center justify-center text-[hsl(var(--color-text-muted))] ${size === 'sm' ? 'w-8 text-[12px]' : 'w-12 text-[20px]'}`}>
             {rightIcon}
           </div>
         )}

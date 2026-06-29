@@ -94,7 +94,7 @@ export default function ActivityOverviewChart({
       <div className="grid grid-cols-3 gap-2 md:gap-4 pt-4 border-t border-[hsl(var(--color-border))] shrink-0">
         <button 
           onClick={() => toggleLine('patients')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.patients ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.patients ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalPatients?.toLocaleString() ?? "—"}
@@ -106,7 +106,7 @@ export default function ActivityOverviewChart({
         </button>
         <button 
           onClick={() => toggleLine('doctors')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.doctors ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.doctors ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalDoctors?.toLocaleString() ?? "—"}
@@ -118,7 +118,7 @@ export default function ActivityOverviewChart({
         </button>
         <button 
           onClick={() => toggleLine('appointments')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.appointments ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.appointments ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalAppointments?.toLocaleString() ?? "—"}

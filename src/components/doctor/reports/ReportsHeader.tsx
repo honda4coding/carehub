@@ -37,7 +37,7 @@ export default function ReportsHeader({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
         {/* Date Range Picker */}
         <div className="flex items-center bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.15)] focus-within:border-[hsl(var(--color-primary)/0.5)] transition-all flex-1 sm:flex-none">
-          <div className="flex items-center px-3 py-2 bg-[hsl(var(--color-bg-soft))] border-r border-[hsl(var(--color-border))]">
+          <div className="flex items-center px-3 py-2 bg-[hsl(var(--color-bg-soft))] border-e border-[hsl(var(--color-border))]">
             <LuCalendarDays className="text-[hsl(var(--color-primary))] text-lg shrink-0" />
           </div>
           <input

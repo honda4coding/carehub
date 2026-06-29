@@ -41,7 +41,7 @@
   body {
     background-color: hsl(var(--color-bg));
     color: hsl(var(--color-text));
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-cairo, var(--font-geist-sans)), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
 }
 

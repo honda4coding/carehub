@@ -35,13 +35,13 @@ export default function NotificationsFilters({
     <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
         <div className="relative flex items-center w-full max-w-[300px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
+          <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
             placeholder="Search notifications..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+            className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
           />
         </div>
       </div>

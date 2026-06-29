@@ -55,7 +55,7 @@ function SkeletonRow() {
   return (
     <tr className="border-b border-[hsl(var(--color-border-soft))]">
       {[75, 60, 45, 35, 40, 30, 30].map((w, i) => (
-        <td key={i} className="py-3 pr-4">
+        <td key={i} className="py-3 pe-4">
           <div
             className="h-3 rounded-full bg-[hsl(var(--color-bg-soft))] animate-pulse"
             style={{ width: `${w}%` }}
@@ -103,7 +103,7 @@ export default function DoctorsList({
               <th
                 key={h}
                 className={`pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] ${
-                  i >= 5 ? "text-center px-2" : "text-left pr-4"
+                  i >= 5 ? "text-center px-2" : "text-start pe-4"
                 }`}
               >
                 {h}
@@ -149,7 +149,7 @@ export default function DoctorsList({
                   key={doc._id}
                   className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
                 >
-                  <td className="py-3.5 pr-4 text-left">
+                  <td className="py-3.5 pe-4 text-start">
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${pickAvatar(
@@ -164,17 +164,17 @@ export default function DoctorsList({
                     </div>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                  <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                     {doc.specialty ?? "—"}
                   </td>
 
-                  <td className="py-3.5 pr-4 max-w-[170px] text-left">
+                  <td className="py-3.5 pe-4 max-w-[170px] text-start">
                     <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
                       {doc.email}
                     </p>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-left">
+                  <td className="py-3.5 pe-4 text-start">
                     <span
                       className={`inline-flex items-center text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                     >
@@ -182,11 +182,11 @@ export default function DoctorsList({
                     </span>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                  <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                     {fmtDate(doc.createdAt)}
                   </td>
 
-                  <td className="py-3.5 pr-4 text-center">
+                  <td className="py-3.5 pe-4 text-center">
                     {doc.licenseUrl ? (
                       <button
                         onClick={() =>

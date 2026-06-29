@@ -69,7 +69,7 @@ export default function VitalsPanel({
         </h3>
         <button 
           onClick={() => setIsEditVitalsOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary hover:border-[hsl(var(--color-primary)/0.3)]"
+          className="no-print absolute top-4 end-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary hover:border-[hsl(var(--color-primary)/0.3)]"
         >
           <LuPen />
         </button>
@@ -106,7 +106,7 @@ export default function VitalsPanel({
                 <span className="text-sm font-black text-[hsl(var(--color-text))]">{loading ? "--" : patientData?.bloodType || "Unknown"}</span>
                 <button 
                   onClick={() => setIsEditBloodTypeOpen(true)} 
-                  className="absolute top-1.5 right-1.5 w-5 h-5 flex items-center justify-center rounded-md bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary"
+                  className="absolute top-1.5 end-1.5 w-5 h-5 flex items-center justify-center rounded-md bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-primary"
                   title="Edit Blood Type"
                 >
                   <LuPen className="text-[10px]" />
@@ -146,7 +146,7 @@ export default function VitalsPanel({
           <div className="p-4 bg-[hsl(var(--color-primary)/0.03)] border border-[hsl(var(--color-primary)/0.15)] rounded-2xl relative">
             <button 
               onClick={() => setIsEditVitalsOpen(true)} 
-              className="no-print absolute top-3 right-3 text-[10px] font-bold text-primary bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary)/0.2)] px-3 py-1.5 rounded-md transition-colors"
+              className="no-print absolute top-3 end-3 text-[10px] font-bold text-primary bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary)/0.2)] px-3 py-1.5 rounded-md transition-colors"
             >
               Update
             </button>

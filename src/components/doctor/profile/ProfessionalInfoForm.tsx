@@ -122,7 +122,7 @@ function EditField({
       <ErrorMessage
         name={name}
         component="p"
-        className="text-danger text-xs pl-1 font-medium"
+        className="text-danger text-xs ps-1 font-medium"
       />
     </div>
   );
@@ -266,14 +266,14 @@ export default function ProfessionalInfoForm({
                       ))}
                     </Field>
                     {/* Dropdown arrow */}
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
+                    <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
                       ▾
                     </span>
                   </div>
                   <ErrorMessage
                     name="specialization"
                     component="p"
-                    className="text-danger text-xs pl-1 font-medium"
+                    className="text-danger text-xs ps-1 font-medium"
                   />
                 </div>
 
@@ -318,7 +318,7 @@ export default function ProfessionalInfoForm({
                 <ErrorMessage
                   name="bio"
                   component="p"
-                  className="text-danger text-xs pl-1 font-medium"
+                  className="text-danger text-xs ps-1 font-medium"
                 />
               </div>
             </div>

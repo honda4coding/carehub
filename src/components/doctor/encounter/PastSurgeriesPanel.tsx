@@ -47,7 +47,7 @@ export default function PastSurgeriesPanel({
         </h3>
         <button 
           onClick={() => setIsEditSurgeriesOpen(true)} 
-          className="no-print absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] text-[hsl(var(--color-primary))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.2)]"
+          className="no-print absolute top-4 end-4 w-8 h-8 flex items-center justify-center rounded-lg bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] text-[hsl(var(--color-primary))] opacity-100 transition-colors hover:bg-[hsl(var(--color-primary)/0.2)]"
         >
           <LuPen />
         </button>
@@ -62,7 +62,7 @@ export default function PastSurgeriesPanel({
                   </span>
                   {/* Tooltip */}
                   {(s.date || s.report || s.surgeonName) && (
-                    <div className="absolute left-0 bottom-full mb-2 w-48 p-2.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50">
+                    <div className="absolute start-0 bottom-full mb-2 w-48 p-2.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg opacity-0 group-hover/tooltip:opacity-100 transition-opacity pointer-events-none z-50">
                       {s.surgeonName && <p className="text-[10px] font-bold text-[hsl(var(--color-text))] mb-1">Surgeon: {s.surgeonName}</p>}
                       {s.date && <p className="text-[10px] font-bold text-[hsl(var(--color-primary))] mb-1">{s.date}</p>}
                       {s.report && <p className="text-[10px] text-[hsl(var(--color-text-muted))] whitespace-pre-wrap">{s.report}</p>}
@@ -99,10 +99,10 @@ export default function PastSurgeriesPanel({
                 <div className="space-y-4">
                   {editSurgeries.map((surgery, index) => (
                     <div key={index} className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border-soft))] p-4 rounded-xl relative group">
-                      <button onClick={() => removeSurgery(index)} className="absolute top-2 right-2 text-[hsl(var(--color-danger)/0.5)] hover:text-[hsl(var(--color-danger))]">
+                      <button onClick={() => removeSurgery(index)} className="absolute top-2 end-2 text-[hsl(var(--color-danger)/0.5)] hover:text-[hsl(var(--color-danger))]">
                         <LuTrash2 />
                       </button>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 pr-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 pe-6">
                         <div>
                           <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Operation Name *</label>
                           <input type="text" value={surgery.operationName} onChange={(e) => updateSurgery(index, "operationName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Appendectomy" />

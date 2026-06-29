@@ -1,0 +1,30 @@
+{
+  "PatientApptCard": {
+    "doctor": "Doctor",
+    "dr": "Dr. {name}",
+    "pay": "Pay"
+  },
+  "StatusBadge": {
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "CancelModal": {
+    "title": "Cancel this appointment?",
+    "keepIt": "Keep it",
+    "cancelling": "Cancelling…",
+    "yesCancel": "Yes, cancel"
+  },
+  "PayModal": {
+    "title": "Pay for Appointment",
+    "subtitle": "Secure payment — temporary placeholder",
+    "successTitle": "Payment successful!",
+    "successSubtitle": "This is a placeholder — no real charge was made.",
+    "consultationFee": "Consultation fee",
+    "platformFee": "Platform fee",
+    "total": "Total",
+    "payNow": "Pay Now",
+    "close": "Close",
+    "cancel": "Cancel"
+  }
+}

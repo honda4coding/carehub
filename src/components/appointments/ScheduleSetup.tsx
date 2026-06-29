@@ -266,9 +266,9 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                               [day]: { ...prev[day]!, startTime: e.target.value },
                             }))
                           }
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
+                          className="w-full ps-10 pe-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
                         />
-                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
+                        <LuClock className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
                       </div>
                     </div>
                     <div className="flex-1">
@@ -285,9 +285,9 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                               [day]: { ...prev[day]!, endTime: e.target.value },
                             }))
                           }
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
+                          className="w-full ps-10 pe-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
                         />
-                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
+                        <LuClock className="absolute start-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
                       </div>
                     </div>
                   </div>
@@ -324,7 +324,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                       isLoading={savingDay === day}
                       className="w-full !py-3.5 !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-text-inverse))] hover:!bg-[hsl(var(--color-primary-strong))]"
                     >
-                      {isSaved ? <><LuPencil className="inline mr-1.5" />Update Schedule</> : "Save Schedule"}
+                      {isSaved ? <><LuPencil className="inline me-1.5" />Update Schedule</> : "Save Schedule"}
                     </Button>
                   </div>
                 </div>

@@ -262,16 +262,16 @@ export default function RxBuilder({
           const isDanger = interactionResult.severity === "DANGER";
           const isWarning = interactionResult.severity === "WARNING";
           
-          let boxColors = "bg-blue-50/80 border-l-4 border-l-blue-500 border-y border-r border-transparent text-main ";
+          let boxColors = "bg-blue-50/80 border-s-4 border-s-blue-500 border-y border-e border-transparent text-main ";
           let iconColor = "text-primary";
           let btnColor = "text-primary hover:text-blue-900";
           
           if (isDanger) {
-            boxColors = "bg-danger-light/80 border-l-4 border-l-red-500 border-y border-r border-transparent text-main ";
+            boxColors = "bg-danger-light/80 border-s-4 border-s-red-500 border-y border-e border-transparent text-main ";
             iconColor = "text-danger";
             btnColor = "text-red-700 hover:text-red-900";
           } else if (isWarning) {
-            boxColors = "bg-amber-50/80 border-l-4 border-l-amber-500 border-y border-r border-transparent text-main ";
+            boxColors = "bg-amber-50/80 border-s-4 border-s-amber-500 border-y border-e border-transparent text-main ";
             iconColor = "text-amber-500";
             btnColor = "text-amber-700 hover:text-amber-900";
           }
@@ -375,7 +375,7 @@ export default function RxBuilder({
                     <LuPill />
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm text-[hsl(var(--color-text))]">{drug.medicineName} <span className="text-xs font-semibold text-[hsl(var(--color-text-muted))] ml-2">{drug.dosage}</span></h4>
+                    <h4 className="font-bold text-sm text-[hsl(var(--color-text))]">{drug.medicineName} <span className="text-xs font-semibold text-[hsl(var(--color-text-muted))] ms-2">{drug.dosage}</span></h4>
                     <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mt-0.5">{drug.frequency} for {drug.duration}</p>
                     {drug.instructions && <p className="text-[11px] text-[hsl(var(--color-primary))] mt-0.5 font-semibold">{drug.instructions}</p>}
                   </div>

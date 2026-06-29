@@ -30,7 +30,7 @@ function VitalItem({
         highlight ? "text-[hsl(var(--color-danger))]" : "text-[hsl(var(--color-text))]"
       }`}>
         {value}
-        <span className="text-[12px] font-normal text-[hsl(var(--color-text-muted))] ml-1">{unit}</span>
+        <span className="text-[12px] font-normal text-[hsl(var(--color-text-muted))] ms-1">{unit}</span>
       </div>
     </div>
   );

@@ -2,6 +2,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { LuChevronLeft } from "react-icons/lu";
+import LanguageSwitcher from "@/components/global/LanguageSwitcher";
 
 interface DashboardHeaderProps {
   title: string | React.ReactNode;
@@ -20,7 +21,7 @@ export default function DashboardHeader({
 
   return (
     <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex flex-wrap items-center justify-between gap-3 md:gap-4 z-40 sticky top-0 shrink-0">
-      <div className="flex items-center gap-3 md:gap-4 min-w-0 pl-11 md:pl-0 flex-1 md:flex-none">
+      <div className="flex items-center gap-3 md:gap-4 min-w-0 ps-11 md:pl-0 flex-1 md:flex-none">
         {backPath && (
           <button
             onClick={() => router.push(backPath)}
@@ -45,11 +46,10 @@ export default function DashboardHeader({
         </div>
       </div>
 
-      {rightElement && (
-        <div className="flex items-center gap-2 shrink-0 w-auto max-w-full overflow-visible pb-1 md:pb-0">
-          {rightElement}
-        </div>
-      )}
+      <div className="flex items-center gap-2 shrink-0 w-auto max-w-full overflow-visible pb-1 md:pb-0">
+        <LanguageSwitcher />
+        {rightElement && rightElement}
+      </div>
     </header>
   );
 }

@@ -106,7 +106,7 @@ export default function PendingApprovalsTable({
                       {["Doctor", "Specialty", "Phone", "Submitted", "Status"].map((h, i) => (
                         <th
                           key={h}
-                          className={`py-4 text-[14px] font-black text-[hsl(var(--color-text))] uppercase tracking-wider ${i === 0 ? 'pl-[80px] pr-4 text-left' : i === 4 ? 'px-8 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.5)]' : 'px-4 text-left'}`}
+                          className={`py-4 text-[14px] font-black text-[hsl(var(--color-text))] uppercase tracking-wider ${i === 0 ? 'ps-[80px] pe-4 text-start' : i === 4 ? 'px-8 text-center border-s-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.5)]' : 'px-4 text-start'}`}
                         >
                           {h}
                         </th>
@@ -124,7 +124,7 @@ export default function PendingApprovalsTable({
                           onClick={() => router.push("/admin/approvals")}
                           className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 cursor-pointer hover:bg-[hsl(var(--color-bg-surface-hover))] transition-colors group"
                         >
-                          <td className="pl-8 pr-4 py-3.5">
+                          <td className="ps-8 pe-4 py-3.5">
                             <div className="flex items-center gap-3.5">
                               <div
                                 className={`w-11 h-11 rounded-full flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm ${avatarStyle}`}
@@ -141,16 +141,16 @@ export default function PendingApprovalsTable({
                               </div>
                             </div>
                           </td>
-                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-start text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
                             {req.specialty ?? "—"}
                           </td>
-                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-start text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
                             {req.phoneNumber ?? "—"}
                           </td>
-                          <td className="px-4 py-3.5 text-left text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                          <td className="px-4 py-3.5 text-start text-[14px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
                             {new Date(req.createdAt).toLocaleDateString()}
                           </td>
-                          <td className="px-8 py-3.5 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.2)] group-hover:bg-transparent transition-colors">
+                          <td className="px-8 py-3.5 text-center border-s-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.2)] group-hover:bg-transparent transition-colors">
                             <Badge variant={sc.variant} className="gap-1.5 px-3 py-1.5 text-[11px] lowercase capitalize shadow-sm inline-flex">
                               {sc.icon} {sc.label}
                             </Badge>
@@ -194,11 +194,11 @@ export default function PendingApprovalsTable({
                     <div className="flex items-center justify-between mt-2 pt-3 border-t border-[hsl(var(--color-border-soft))] text-[12px]">
                       <div className="flex flex-col gap-1">
                         <div>
-                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mr-1.5">Specialty:</span>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">Specialty:</span>
                           <span className="font-bold text-[hsl(var(--color-text))]">{req.specialty ?? "—"}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] mr-1.5">Phone:</span>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">Phone:</span>
                           <span className="font-bold text-[hsl(var(--color-text))]">{req.phoneNumber ?? "—"}</span>
                         </div>
                       </div>

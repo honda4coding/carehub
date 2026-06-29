@@ -194,7 +194,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                     )}
                 </div>
 
-                <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
+                <div className="flex-1 overflow-y-auto space-y-3 pe-2 custom-scrollbar">
                     {activeTab === "active" ? (
                         compliance.activeMeds.length === 0 ? (
                             <p className="text-[13px] text-muted text-center mt-4">No active medications.</p>

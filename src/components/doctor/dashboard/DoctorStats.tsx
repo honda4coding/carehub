@@ -1,30 +1,32 @@
 import { LuUsers, LuCalendarDays, LuShieldCheck, LuPill, LuFileText } from "react-icons/lu";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { dashboardStats: any, sessions: any[], setStatusFilter?: (status: string) => void }) => {
+  const t = useTranslations("doctor.dashboard.stats");
   const STATS = [
     {
-      label: "Total Patients",
+      label: t("totalPatients"),
       value: dashboardStats.totalPatients?.toString() || "0",
-      trend: "Today's patients",
+      trend: t("todayPatients"),
       up: true,
       icon: <LuUsers />,
       iconStyle: "bg-[hsl(var(--color-badge-bg))] text-[hsl(var(--color-badge-text))]",
       link: "/doctor/patients?filter=today"
     },
     {
-      label: "Total Prescriptions",
+      label: t("totalPrescriptions"),
       value: dashboardStats.totalPrescriptions?.toString() || "0",
-      trend: "Today's prescriptions",
+      trend: t("todayPrescriptions"),
       up: true,
       icon: <LuPill />,
       iconStyle: "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
       link: "/doctor/prescriptions?filter=today"
     },
     {
-      label: "Active Sessions",
+      label: t("activeSessions"),
       value: sessions.filter(s => s.status === "in_progress").length.toString(),
-      trend: "Currently in clinic",
+      trend: t("currentlyInClinic"),
       up: true,
       icon: <LuCalendarDays />,
       iconStyle: "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
@@ -36,9 +38,9 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
       }
     },
     {
-      label: "Pending OTPs",
+      label: t("pendingOtps"),
       value: sessions.filter(s => s.status === 'pending_otp').length.toString(),
-      trend: "Waiting for verification",
+      trend: t("waitingVerification"),
       up: false,
       icon: <LuShieldCheck />,
       iconStyle: "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]",

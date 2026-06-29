@@ -79,7 +79,7 @@ export default function AIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-dark))] transition-transform hover:scale-105 z-50"
+          className="fixed bottom-6 end-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-dark))] transition-transform hover:scale-105 z-50"
         >
           <LuBot size={28} />
         </button>
@@ -87,7 +87,7 @@ export default function AIChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col">
+        <div className="fixed bottom-6 end-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-[hsl(var(--color-primary))] text-white">
             <div className="flex items-center gap-2 font-bold">
@@ -111,8 +111,8 @@ export default function AIChatWidget() {
                 <div 
                   className={`max-w-[85%] p-3 rounded-2xl text-sm ${
                     msg.role === "user" 
-                    ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none whitespace-pre-wrap" 
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none rtl:prose-reverse prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-ul:list-disc prose-ol:list-decimal prose-li:my-0"
+                    ? "bg-[hsl(var(--color-primary))] text-white rounded-se-none whitespace-pre-wrap" 
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-ss-none  prose prose-sm max-w-none rtl:prose-reverse prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-ul:list-disc prose-ol:list-decimal prose-li:my-0"
                   }`}
                   dir="auto"
                 >
@@ -126,7 +126,7 @@ export default function AIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-tl-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
+                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-ss-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
                   <LuLoader className="animate-spin" /> Thinking...
                 </div>
               </div>

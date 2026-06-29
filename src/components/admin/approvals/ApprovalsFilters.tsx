@@ -63,13 +63,13 @@ export default function ApprovalsFilters({
 
       <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto shrink-0">
         <div className="relative flex items-center w-full sm:w-[250px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
+          <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
             placeholder="Filter by name or specialty..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+            className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
           />
         </div>
       </div>

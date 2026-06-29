@@ -54,7 +54,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
           {tags.map((tag, i) => (
             <span key={i} className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]">
               {tag}
-              <button type="button" onClick={() => onRemove(i)} className="hover:text-danger transition-colors ml-0.5">
+              <button type="button" onClick={() => onRemove(i)} className="hover:text-danger transition-colors ms-0.5">
                 <LuX className="w-3 h-3" />
               </button>
             </span>
@@ -74,7 +74,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
           <LuPlus className="w-4 h-4" />
         </button>
       </div>
-      <p className="text-[11px] text-[hsl(var(--color-text-muted))] pl-1">Press Enter or + to add</p>
+      <p className="text-[11px] text-[hsl(var(--color-text-muted))] ps-1">Press Enter or + to add</p>
     </div>
   );
 }
@@ -116,7 +116,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
             <Field name={`surgeries.${index}.operationName`} placeholder="e.g. Appendectomy"
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-            <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-danger text-[11px] pl-1" />
+            <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-danger text-[11px] ps-1" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
@@ -124,14 +124,14 @@ function SurgeryCard({ index, surgery, onRemove }: {
               <Field name={`surgeries.${index}.surgeonName`} placeholder="Dr. Ahmed Ali"
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-              <ErrorMessage name={`surgeries.${index}.surgeonName`} component="p" className="text-danger text-[11px] pl-1" />
+              <ErrorMessage name={`surgeries.${index}.surgeonName`} component="p" className="text-danger text-[11px] ps-1" />
             </div>
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Date *</label>
               <Field type="date" name={`surgeries.${index}.date`}
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-              <ErrorMessage name={`surgeries.${index}.date`} component="p" className="text-danger text-[11px] pl-1" />
+              <ErrorMessage name={`surgeries.${index}.date`} component="p" className="text-danger text-[11px] ps-1" />
             </div>
           </div>
           <div className="space-y-1">
@@ -140,7 +140,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
               placeholder="Brief description..."
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
-            <ErrorMessage name={`surgeries.${index}.report`} component="p" className="text-danger text-[11px] pl-1" />
+            <ErrorMessage name={`surgeries.${index}.report`} component="p" className="text-danger text-[11px] ps-1" />
           </div>
         </div>
       )}
@@ -220,7 +220,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
                 <option value="">Select blood type</option>
                 {BLOOD_TYPES.map((bt) => <option key={bt} value={bt}>{bt}</option>)}
               </Field>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+              <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
             </div>
           </div>
 
@@ -247,7 +247,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
                 <LuScissors className="w-3.5 h-3.5" />
                 Surgeries
                 {values.surgeries.length > 0 && (
-                  <span className="ml-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]">
+                  <span className="ms-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]">
                     {values.surgeries.length}
                   </span>
                 )}
@@ -262,7 +262,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
               </button>
             </div>
             {values.surgeries.length === 0 && (
-              <p className="text-[12px] text-[hsl(var(--color-text-muted))] italic pl-1">No surgeries added yet</p>
+              <p className="text-[12px] text-[hsl(var(--color-text-muted))] italic ps-1">No surgeries added yet</p>
             )}
             <div className="space-y-2">
               {values.surgeries.map((surgery, index) => (

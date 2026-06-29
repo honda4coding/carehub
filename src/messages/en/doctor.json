@@ -1,0 +1,205 @@
+{
+  "dashboard": {
+    "title": "Doctor Workspace",
+    "subtitle": "Manage your daily encounters and patient care",
+    "queue": {
+      "title": "Current Queue",
+      "subtitle": "Patients currently registered or in consultation",
+      "searchPlaceholder": "Search name or phone...",
+      "statusAll": "All Status",
+      "statusPending": "Pending OTP",
+      "statusInProgress": "In Progress",
+      "statusCompleted": "Completed",
+      "typeAll": "All Types",
+      "typeWalkIn": "Walk-in",
+      "typeOnline": "Online",
+      "columns": {
+        "Patient": "Patient",
+        "Phone": "Phone",
+        "Type": "Type",
+        "Time": "Time",
+        "Status": "Status",
+        "Actions": "Actions"
+      },
+      "empty": "No patients found in queue.",
+      "appUser": "App User",
+      "cancelRequest": "Cancel Request",
+      "enterOtp": "Enter OTP",
+      "openFile": "Open File"
+    },
+    "stats": {
+      "totalPatients": "Total Patients",
+      "todayPatients": "Today's patients",
+      "totalPrescriptions": "Total Prescriptions",
+      "todayPrescriptions": "Today's prescriptions",
+      "activeSessions": "Active Sessions",
+      "currentlyInClinic": "Currently in clinic",
+      "pendingOtps": "Pending OTPs",
+      "waitingVerification": "Waiting for verification"
+    },
+    "actions": {
+      "welcomeBack": "Welcome back,",
+      "productiveDay": "Have a productive day ahead ✨",
+      "startConsultation": "Start Consultation",
+      "searchPlaceholder": "Search patient phone or name...",
+      "searchBtn": "Search",
+      "searchingBtn": "...",
+      "searchResults": "Search Results",
+      "close": "Close",
+      "searchingDb": "Searching database...",
+      "noPatientsFound": "No patients found. Try another phone or name.",
+      "accessBtn": "Access",
+      "walkIn": "Walk-In",
+      "offlinePatients": "Offline patients",
+      "registerBtn": "Register"
+    },
+    "modals": {
+      "secureAccess": "Secure Access Handshake",
+      "enterOtp": "Enter Patient OTP",
+      "otpDescription": "We've sent a 6-digit code to the patient. Ask them for the code to securely access their file.",
+      "verifyBtn": "Verify & Open File",
+      "walkInTitle": "Walk-in Patient",
+      "walkInDescription": "Register a quick session for an offline patient. They won't need to verify an OTP.",
+      "patientName": "Patient Name",
+      "patientNamePlaceholder": "e.g. Ahmed Ali",
+      "phoneNumber": "Phone Number",
+      "ageOptional": "Age (Optional)",
+      "startSessionBtn": "Start Consultation Session"
+    }
+  },
+  "encounterDashboard": {
+    "tabs": {
+      "profile": "Profile & Vitals",
+      "history": "Medical History",
+      "assessment": "Clinical Assessment",
+      "prescription": "Prescription"
+    },
+    "messages": {
+      "fillDrugDetails": "Please fill Drug Name, Dosage, Frequency, and Duration",
+      "failedToSaveAlerts": "Failed to save alerts",
+      "failedToSaveSurgeries": "Failed to save surgeries",
+      "sessionEndedSuccess": "Session ended successfully. Medical History saved.",
+      "failedToEndSession": "Failed to end session"
+    }
+  },
+  "patientDirectory": {
+    "title": "Patient Directory",
+    "subtitle": "Your complete archive of all clinic patients",
+    "total": "Total: {count}",
+    "loading": "Loading Patient Directory...",
+    "searchPlaceholder": "Search by patient name or phone number...",
+    "allVisitTypes": "All Visit Types",
+    "online": "Online",
+    "walkIn": "Walk-in",
+    "resetFilters": "Reset Filters",
+    "loadingPatients": "Loading patients...",
+    "firstVisit": "First Visit",
+    "lastVisit": "Last Visit",
+    "visits": "Visits",
+    "viewHistory": "View History",
+    "noPatientsFound": "No patients found",
+    "adjustFilters": "Try adjusting your filters or search term.",
+    "showingAll": "Showing all {count} patients",
+    "columns": {
+      "patientDetails": "Patient details",
+      "firstVisit": "First Visit",
+      "lastVisit": "Last Visit",
+      "visits": "Visits",
+      "status": "Status",
+      "actions": "Actions"
+    }
+  },
+  "appointments": {
+    "title": "Appointments",
+    "subtitle": "Manage your schedule and patient visits",
+    "clinics": "Clinics",
+    "allClinics": "All Clinics",
+    "tabs": {
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "empty": {
+      "todayTitle": "No patients today",
+      "todayDesc": "Your schedule is clear for today. Enjoy the break!",
+      "upcomingTitle": "No upcoming appointments",
+      "upcomingDesc": "Patients will appear here once they book a slot.",
+      "otherTitle": "No {tab} appointments",
+      "otherDesc": "Nothing to show in this tab yet."
+    },
+    "messages": {
+      "markedCompleted": "Appointment marked as completed",
+      "completeError": "Could not complete appointment"
+    },
+    "patientsToday": "{count} patients today",
+    "patientToday": "1 patient today",
+    "patientsCount": "{count} patients",
+    "patientCount": "1 patient"
+  },
+  "schedule": {
+    "title": "My Schedule",
+    "subtitle": "Your weekly hours for each clinic",
+    "noClinics": "No clinics yet",
+    "addClinicFirst": "Add a clinic first to set its schedule",
+    "goToClinics": "Go to My Clinics",
+    "weeklySchedule": "Weekly schedule",
+    "edit": "Edit",
+    "noWorkingDays": "No working days set yet for this clinic.",
+    "setUp": "Set it up →",
+    "clinic": "Clinic"
+  },
+  "reports": {
+    "loading": "Loading Analytics...",
+    "title": "Reports & Analytics",
+    "subtitle": "Clinic performance overview",
+    "to": "To",
+    "resetFilters": "Reset Filters",
+    "export": "Export",
+    "refreshing": "Refreshing Data...",
+    "totalRevenue": "Total Revenue",
+    "totalVisits": "Total Visits",
+    "visitDistribution": "Visit Distribution",
+    "online": "Online",
+    "walkIn": "Walk-in",
+    "visitTrends": "Visit Trends",
+    "visitTrendsDesc": "Number of completed visits per day",
+    "patientDemographics": "Patient Demographics",
+    "patientDemographicsDesc": "Age distribution for registered patients",
+    "noDemographicsData": "No demographics data available"
+  },
+  "clinics": {
+    "title": "My Clinics",
+    "subtitle": "Pick a clinic to manage its services and schedule",
+    "addClinic": "Add Clinic",
+    "noClinics": "No clinics yet",
+    "addFirstClinic": "Add your first clinic to start managing services and availability.",
+    "sidebarTitle": "Clinics",
+    "editTooltip": "Edit clinic info",
+    "deleteTooltip": "Delete clinic",
+    "selectClinic": "Select a clinic to manage it",
+    "editClinic": "Edit Clinic",
+    "clinicNameLabel": "Clinic Name *",
+    "addressLabel": "Address *",
+    "governorateLabel": "Governorate *",
+    "selectGovernorate": "Select governorate",
+    "phoneLabel": "Phone",
+    "whatsappLabel": "WhatsApp",
+    "landlineLabel": "Landline",
+    "cancel": "Cancel",
+    "saveChanges": "Save Changes",
+    "saving": "Saving…",
+    "deleteTitle": "Delete this clinic?",
+    "deleteDesc": "\"{name}\" will be deactivated. You can't undo this from here.",
+    "keepIt": "Keep it",
+    "yesDelete": "Yes, delete",
+    "deleting": "Deleting…",
+    "messages": {
+      "requiredFields": "Name, address and governorate are required.",
+      "contactRequired": "Please provide at least one contact number.",
+      "loadFailed": "Failed to load clinics",
+      "generalError": "Something went wrong",
+      "deleteFailed": "Failed to delete clinic"
+    }
+  }
+}

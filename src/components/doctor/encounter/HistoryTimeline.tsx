@@ -73,7 +73,7 @@ function TimelineAccordionCard({ record }: { record: any }) {
         aria-expanded={expanded}
       >
         {/* Severity accent */}
-        <div className={`w-[3px] shrink-0 rounded-l-2xl ${SEVERITY_BAR[severity]}`} />
+        <div className={`w-[3px] shrink-0 rounded-s-2xl ${SEVERITY_BAR[severity]}`} />
 
         <div className="flex-1 px-4 py-3.5">
           {/* Date + badge row */}
@@ -114,7 +114,7 @@ function TimelineAccordionCard({ record }: { record: any }) {
         </div>
 
         {/* Chevron */}
-        <div className="flex items-center pr-4 pl-1 text-[hsl(var(--color-text-muted))]">
+        <div className="flex items-center pe-4 ps-1 text-[hsl(var(--color-text-muted))]">
           {expanded ? <LuChevronUp className="text-[15px]" /> : <LuChevronDown className="text-[15px]" />}
         </div>
       </div>
@@ -176,13 +176,13 @@ export default function HistoryTimeline({
             className="!mt-0"
           />
           <div className="relative flex-1 min-w-0">
-            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-[hsl(var(--color-text-muted))]" />
+            <LuSearch className="absolute start-3 top-1/2 -translate-y-1/2 text-[12px] text-[hsl(var(--color-text-muted))]" />
             <input
               type="text"
               placeholder="Search doctor, diagnosis…"
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
-              className="w-full pl-8 pr-8 py-2 text-[12px] font-medium rounded-xl border border-[hsl(var(--color-border))]
+              className="w-full ps-8 pe-8 py-2 text-[12px] font-medium rounded-xl border border-[hsl(var(--color-border))]
                 bg-[hsl(var(--color-bg-surface-hover))] outline-none text-[hsl(var(--color-text))]
                 focus:border-[hsl(var(--color-primary))] transition-colors
                 placeholder:text-[hsl(var(--color-text-muted)/0.5)]"
@@ -190,7 +190,7 @@ export default function HistoryTimeline({
             {filterText && (
               <button
                 onClick={() => setFilterText("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer"
+                className="absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] cursor-pointer"
               >
                 <LuX className="text-[12px]" />
               </button>

@@ -72,7 +72,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
             {["Doctor", "Specialty", "Submitted", "Current License", "New License", "Actions"].map((h) => (
               <th
                 key={h}
-                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-4"
+                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-start pe-4"
               >
                 {h}
               </th>
@@ -91,7 +91,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                 className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
               >
                 {/* Doctor */}
-                <td className="py-4 pr-4">
+                <td className="py-4 pe-4">
                   <div className="flex items-center gap-3">
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${avatarStyle}`}>
                       {initials}
@@ -104,17 +104,17 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                 </td>
 
                 {/* Specialty */}
-                <td className="py-4 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                <td className="py-4 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
                   {doc.specialty ?? "—"}
                 </td>
 
                 {/* Submitted */}
-                <td className="py-4 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
+                <td className="py-4 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
                   {new Date(doc.updatedAt).toLocaleDateString()}
                 </td>
 
                 {/* Current license */}
-                <td className="py-4 pr-4">
+                <td className="py-4 pe-4">
                   {doc.licenseimage?.secure_url ? (
                     <button
                       onClick={() => setViewModal({ open: true, url: doc.licenseimage!.secure_url, title: "Current License" })}
@@ -128,7 +128,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                 </td>
 
                 {/* New pending license */}
-                <td className="py-4 pr-4">
+                <td className="py-4 pe-4">
                   <div className="flex items-center gap-2">
                     {/* Thumbnail */}
                     <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-[hsl(var(--color-border))] shrink-0 bg-[hsl(var(--color-bg-soft))]">
@@ -144,7 +144,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                 </td>
 
                 {/* Actions */}
-                <td className="py-4 pr-4">
+                <td className="py-4 pe-4">
                   <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => handleApprove(doc.userId)}

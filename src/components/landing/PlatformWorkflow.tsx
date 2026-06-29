@@ -1,26 +1,28 @@
 import { LuStethoscope, LuRefreshCcw, LuHouse, LuTrendingUp } from "react-icons/lu";
+import { useTranslations } from 'next-intl';
 
 export default function PlatformWorkflow() {
+  const t = useTranslations('landing.PlatformWorkflow');
   const steps = [
     {
       icon: <LuStethoscope className="w-6 h-6" />,
-      title: "Clinical Encounter",
-      desc: "Doctor performs diagnosis and builds a smart prescription instantly.",
+      title: t('step1Title'),
+      desc: t('step1Desc'),
     },
     {
       icon: <LuRefreshCcw className="w-6 h-6" />,
-      title: "Intelligent Sync",
-      desc: "Data is securely encrypted and routed directly to the patient's profile.",
+      title: t('step2Title'),
+      desc: t('step2Desc'),
     },
     {
       icon: <LuHouse className="w-6 h-6" />,
-      title: "Home Tracking",
-      desc: "Patient follows the interactive schedule, logs vitals, and builds adherence streaks.",
+      title: t('step3Title'),
+      desc: t('step3Desc'),
     },
     {
       icon: <LuTrendingUp className="w-6 h-6" />,
-      title: "Remote Monitoring",
-      desc: "Doctor monitors progress through real-time adherence analytics and charts.",
+      title: t('step4Title'),
+      desc: t('step4Desc'),
     }
   ];
 
@@ -29,16 +31,16 @@ export default function PlatformWorkflow() {
       <div className="max-w-7xl mx-auto px-6 lg:px-10">
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-6">
-            A Seamless Workflow
+            {t('title')}
           </h2>
           <p className="text-lg text-[hsl(var(--color-text-muted))] leading-relaxed">
-            Experience healthcare without friction. Our platform ensures that the medical journey doesn't end when the patient leaves the clinic.
+            {t('description')}
           </p>
         </div>
 
         <div className="relative">
           {/* Connecting Line */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-[hsl(var(--color-text-muted)/0.1)] -translate-y-1/2 rounded-full z-0" />
+          <div className="hidden lg:block absolute top-1/2 start-0 end-0 h-1 bg-[hsl(var(--color-text-muted)/0.1)] -translate-y-1/2 rounded-full z-0" />
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 relative z-10">
             {steps.map((step, index) => (

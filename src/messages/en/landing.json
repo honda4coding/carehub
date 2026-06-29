@@ -1,0 +1,72 @@
+{
+  "Hero": {
+    "badge": "Clinical Grade Platform",
+    "title1": "Your Complete",
+    "title2": "Medical History,",
+    "title3": "Unified.",
+    "description": "Experience the sanctuary of modern healthcare. CareHub brings precision, clarity, and security to your medical journey, connecting patients and professionals seamlessly.",
+    "registerPatient": "Register as Patient",
+    "joinDoctor": "Join as Doctor",
+    "vitalsTitle": "Vitals Synced",
+    "vitalsDesc": "Real-time update"
+  },
+  "BentoFeatures": {
+    "badge": "Omnipotent Ecosystem",
+    "title1": "Every tool you need,",
+    "title2": "perfectly synchronized.",
+    "description": "From intelligent prescription safety checks to daily medication reminders, CareHub fuses clinical precision with an unforgettable user experience.",
+    "feature1Title": "AI Safety Intelligence",
+    "feature1Desc": "Prescribe with absolute confidence. Our engine analyzes real-time drug interactions and patient allergies before the prescription is even finalized.",
+    "feature1Badge": "100% Safe",
+    "feature2Title": "Smart AI Assistant",
+    "feature2Desc": "Chat with our medical AI to find the perfect specialist and get personalized guidance.",
+    "feature3Title": "Digital Prescriptions",
+    "feature3Desc": "Instant, paperless Rx routing. Clear dosages directly in your pocket.",
+    "feature4Title": "Unified Medical Records",
+    "feature4Desc": "Your entire history—vitals, blood pressure, sugar levels, and lab results—consolidated into beautifully rendered, easy-to-read charts available anytime."
+  },
+  "PlatformWorkflow": {
+    "title": "A Seamless Workflow",
+    "description": "Experience healthcare without friction. Our platform ensures that the medical journey doesn't end when the patient leaves the clinic.",
+    "step1Title": "Clinical Encounter",
+    "step1Desc": "Doctor performs diagnosis and builds a smart prescription instantly.",
+    "step2Title": "Intelligent Sync",
+    "step2Desc": "Data is securely encrypted and routed directly to the patient's profile.",
+    "step3Title": "Home Tracking",
+    "step3Desc": "Patient follows the interactive schedule, logs vitals, and builds adherence streaks.",
+    "step4Title": "Remote Monitoring",
+    "step4Desc": "Doctor monitors progress through real-time adherence analytics and charts."
+  },
+  "AIIntelligence": {
+    "badge": "Core Intelligence",
+    "title": "Preventing medical errors before they happen.",
+    "description": "CareHub's proprietary AI engine cross-references every new prescription against the patient's entire medical history, instantly detecting dangerous drug-drug interactions and severe allergies.",
+    "point1Title": "Real-time Analysis",
+    "point1Desc": "Interactions are flagged instantly while the doctor types, ensuring clinical flow is never interrupted.",
+    "point2Title": "Context-Aware Safety",
+    "point2Desc": "The AI considers active medications, chronic conditions, and past allergies simultaneously.",
+    "alertBadge": "Interaction Alert",
+    "aiConfidence": "AI Confidence: 99.8%",
+    "newPrescription": "New Prescription",
+    "criticalConflict": "Critical Conflict Detected",
+    "conflictDesc1": "Patient is currently active on ",
+    "conflictDesc2": ". Co-administration may result in severe symptomatic hypotension."
+  },
+  "TrustMetrics": {
+    "title": "Security built into the code.",
+    "description": "We prioritize data privacy through strong authentication and strict role-based access controls.",
+    "metric1Title": "Secure Authentication",
+    "metric1Desc": "All user sessions are protected using industry-standard JSON Web Tokens (JWT) and encrypted passwords.",
+    "metric2Title": "Role-Based Privacy",
+    "metric2Desc": "Strict separation of data. Patients only see their own records, and doctors only access the patients they treat.",
+    "metric3Title": "Private Medical History",
+    "metric3Desc": "Your prescriptions, lab results, and vitals are securely stored in the cloud, accessible only by authorized personnel."
+  },
+  "CTASection": {
+    "title1": "Ready to upgrade your",
+    "title2": "medical experience?",
+    "description": "Join thousands of patients and medical professionals who have already made the switch to the most intelligent healthcare ecosystem.",
+    "startPatient": "Start as Patient",
+    "startDoctor": "Start as Doctor"
+  }
+}

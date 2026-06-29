@@ -74,7 +74,7 @@ export function ActivityFeed({ activities, loading, className = "" }: ActivityFe
           Recent Activity
         </h3>
       </div>
-      <div className="flex flex-col flex-1 overflow-y-auto pr-2">
+      <div className="flex flex-col flex-1 overflow-y-auto pe-2">
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">

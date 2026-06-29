@@ -1,10 +1,12 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/routing";
 import { LuActivity } from "react-icons/lu";
+import { useTranslations } from 'next-intl';
 
 export default function Footer() {
   const pathname = usePathname();
+  const t = useTranslations('common');
   const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient");
   if (isDashboard) return null;
 
@@ -18,28 +20,28 @@ export default function Footer() {
             <Link href="/" className="flex items-center gap-2 group">
               <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform" />
               <span className="text-xl font-bold text-[hsl(var(--color-text))] tracking-tight">
-                CareHub
+                {t('navbar.brand')}
               </span>
             </Link>
             <p className="text-[hsl(var(--color-text-muted))] text-xs font-semibold leading-relaxed max-w-xs">
-              Empowering healthcare professionals and patients with an integrated, intelligent, and seamless medical ecosystem.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="flex flex-col items-center md:items-start gap-3">
-            <h4 className="text-[hsl(var(--color-text))] text-sm font-black uppercase tracking-wider mb-2">Quick Links</h4>
-            <Link href="/" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">Home</Link>
-            <Link href="/about" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">About Us</Link>
-            <Link href="/doctors" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">Find a Doctor</Link>
+            <h4 className="text-[hsl(var(--color-text))] text-sm font-black uppercase tracking-wider mb-2">{t('footer.quickLinks')}</h4>
+            <Link href="/" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('navbar.home')}</Link>
+            <Link href="/about" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('navbar.about')}</Link>
+            <Link href="/doctors" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('navbar.doctors')}</Link>
           </div>
 
           {/* Legal & Support */}
           <div className="flex flex-col items-center md:items-start gap-3">
-            <h4 className="text-[hsl(var(--color-text))] text-sm font-black uppercase tracking-wider mb-2">Legal & Support</h4>
-            <Link href="/privacy" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">Terms of Service</Link>
-            <Link href="/support" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">Contact Support</Link>
+            <h4 className="text-[hsl(var(--color-text))] text-sm font-black uppercase tracking-wider mb-2">{t('footer.legalSupport')}</h4>
+            <Link href="/privacy" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('footer.privacyPolicy')}</Link>
+            <Link href="/terms" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('footer.termsOfService')}</Link>
+            <Link href="/support" className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] text-xs font-bold transition-colors">{t('footer.contactSupport')}</Link>
           </div>
 
         </div>
@@ -47,10 +49,10 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-[hsl(var(--color-text-muted)/0.1)] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[hsl(var(--color-text-muted))] text-[10px] font-bold uppercase tracking-[0.15em]">
-            © {new Date().getFullYear()} CareHub <span className="text-[hsl(var(--color-primary))]">Medical Systems</span>.
+            © {new Date().getFullYear()} {t('navbar.brand')} <span className="text-[hsl(var(--color-primary))]">{t('footer.medicalSystems')}</span>.
           </p>
           <p className="text-[hsl(var(--color-text-muted))] text-[10px] font-bold uppercase tracking-widest opacity-80">
-            Precision in Care.
+            {t('footer.tagline')}
           </p>
         </div>
       </div>

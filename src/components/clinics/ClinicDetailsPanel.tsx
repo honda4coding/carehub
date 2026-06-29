@@ -292,7 +292,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden p-6">
             <button
               onClick={() => !saving && setModalOpen(false)}
-              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
@@ -360,7 +360,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden text-center p-6">
             <button
               onClick={() => !deleting && setDeleteTarget(null)}
-              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
