@@ -68,15 +68,19 @@ export default function AssistantVitalsPage() {
     fetchDashboardData();
   }, [user]);
 
-  const handleReorder = async (sessionId: string, newOrder: number) => {
+  const handleReorder = async (draggedId: string, targetId: string) => {
     try {
-      const allSessions = sessions.map(s => ({ id: s.id, order: s.order }));
-      const targetSession = allSessions.find(s => s.id === sessionId);
-      if (targetSession) {
-        targetSession.order = newOrder;
-        await fetchClient.patch("/doctor/session/reorder", { sessions: allSessions });
-        setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, order: newOrder } : s));
-      }
+      const reordered = [...sessions];
+      const draggedIndex = reordered.findIndex(s => s.id === draggedId);
+      const targetIndex = reordered.findIndex(s => s.id === targetId);
+      
+      const [dragged] = reordered.splice(draggedIndex, 1);
+      reordered.splice(targetIndex, 0, dragged);
+      
+      setSessions(reordered);
+
+      const payload = reordered.map((s, idx) => ({ id: s.id, order: idx }));
+      await fetchClient.patch("/doctor/session/reorder", { sessions: payload });
     } catch (err) {
       console.error("Failed to reorder", err);
     }
