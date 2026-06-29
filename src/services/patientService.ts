@@ -73,18 +73,15 @@ export async function uploadPatientAvatar(file: File): Promise<{ secure_url: str
   const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("profilepicture", file);
-
   const res = await fetch(`${BASE_URL}/patient/profile-image`, {
     method: "PATCH",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Failed to upload image");
   }
-
   const json = await res.json();
   return json.data.profilepicture;
 }
@@ -96,9 +93,15 @@ export async function deletePatientAvatar(): Promise<void> {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Failed to delete image");
   }
+}
+
+// ─── Delete Account ───────────────────────────────────────────────────────────
+
+/** DELETE /user/profile */
+export async function deletePatientAccount(): Promise<void> {
+  await fetchClient.request("/user/profile", { method: "DELETE" });
 }

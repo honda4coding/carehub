@@ -53,13 +53,11 @@ export async function uploadDoctorLicense(file: File): Promise<void> {
   const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("license", file);
-
   const res = await fetch(`${BASE_URL}/doctor/license`, {
     method: "PATCH",
     headers: { Authorization: `Bearer ${token}` },
     body: formData,
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Failed to upload license");
@@ -73,10 +71,46 @@ export async function cancelPendingLicense(): Promise<void> {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
-
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.message || "Failed to cancel pending license");
   }
 }
 
+// ─── Profile Image & Delete Account ──────────────────────────────────────────
+
+/** PATCH /doctor/profile-image */
+export async function uploadDoctorAvatar(file: File): Promise<{ secure_url: string; public_id: string }> {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  const formData = new FormData();
+  formData.append("profilepicture", file);
+  const res = await fetch(`${BASE_URL}/doctor/profile-image`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to upload image");
+  }
+  const json = await res.json();
+  return json.data.profilepicture;
+}
+
+/** DELETE /doctor/profile-image */
+export async function deleteDoctorAvatar(): Promise<void> {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  const res = await fetch(`${BASE_URL}/doctor/profile-image`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to delete image");
+  }
+}
+
+/** DELETE /user/profile */
+export async function deleteDoctorAccount(): Promise<void> {
+  await fetchClient.request("/user/profile", { method: "DELETE" });
+}

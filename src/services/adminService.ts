@@ -2,6 +2,10 @@ import { fetchClient } from "@/services/fetchClient";
 import { GetUsersParams, GetUsersResponse } from "@/types/user";
 import { DoctorApprovalStatus, GetDoctorsResponse, GetPendingDoctorsResponse } from "@/types/doctor";
 import { GetDashboardData, MonthlyStats, DailyStats, AnalyticsData } from "@/types/admin";
+import Cookies from "js-cookie";
+import { AUTH_COOKIE_NAME } from "@/constants/auth";
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AdminProfile {
@@ -35,15 +39,11 @@ export async function updateAdminProfile(payload: UpdateAdminProfilePayload): Pr
 export const adminService = {
 
   getUsers: (params: GetUsersParams = {}): Promise<GetUsersResponse> => {
-    // must convert params to be string as it is defined in the fetchClient.ts as a Record<String,String>
-    // so it cant still be GetUsersParams type
     const query: Record<string, string> = {};
-
     if (params.page) query.page = String(params.page);
     if (params.limit) query.limit = String(params.limit);
     if (params.role) query.role = params.role;
     if(params.status) query.status = params.status;
-
     return fetchClient.get("/admin/users", { method: "GET" , params: query });
   },
 
@@ -70,7 +70,6 @@ export const adminService = {
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
-  /** GET /admin/doctors?status=...Returns a flat (non-paginated) array of merged user+doctorDetails objects.*/
   getDoctors: (status?:DoctorApprovalStatus | ""): Promise<GetDoctorsResponse> =>{
     const params : Record<string,string> = {};
     if(status) params.status = status;
@@ -84,23 +83,18 @@ export const adminService = {
     return fetchClient.get("/admin/doctors/pending", { params });
   },
 
-  /** PATCH /admin/:id/activate  → sets status: "active"  */
   activateUser: (id: string) =>
     fetchClient.request(`/admin/${id}/activate`, { method: "PATCH" }),
 
-  /** PATCH /admin/:id/deactivate → sets status: "blocked" */
   deactivateUser: (id: string) =>
     fetchClient.request(`/admin/${id}/deactivate`, { method: "PATCH" }),
 
-  /** GET /admin/doctors/pending-licenses → doctors with pending license updates */
   getPendingLicenseDoctors: (): Promise<{ data: PendingLicenseDoctor[] }> =>
     fetchClient.get("/admin/doctors/pending-licenses"),
 
-  /** PATCH /admin/doctors/:id/approve-license */
   approveDoctorLicense: (id: string) =>
     fetchClient.request(`/admin/doctors/${id}/approve-license`, { method: "PATCH" }),
 
-  /** PATCH /admin/doctors/:id/reject-license */
   rejectDoctorLicense: (id: string, reason?: string) =>
     fetchClient.request(`/admin/doctors/${id}/reject-license`, {
       method: "PATCH",
@@ -118,4 +112,42 @@ export interface PendingLicenseDoctor {
   pendingLicenseImage: { secure_url: string; public_id: string };
   licenseimage?: { secure_url: string; public_id: string };
   updatedAt: string;
+}
+
+// ─── Profile Image & Delete Account ──────────────────────────────────────────
+
+/** PATCH /admin/profile-image */
+export async function uploadAdminAvatar(file: File): Promise<{ secure_url: string; public_id: string }> {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  const formData = new FormData();
+  formData.append("profilepicture", file);
+  const res = await fetch(`${BASE_URL}/admin/profile-image`, {
+    method: "PATCH",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to upload image");
+  }
+  const json = await res.json();
+  return json.data.profilepicture;
+}
+
+/** DELETE /admin/profile-image */
+export async function deleteAdminAvatar(): Promise<void> {
+  const token = Cookies.get(AUTH_COOKIE_NAME);
+  const res = await fetch(`${BASE_URL}/admin/profile-image`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Failed to delete image");
+  }
+}
+
+/** DELETE /user/profile */
+export async function deleteAdminAccount(): Promise<void> {
+  await fetchClient.request("/user/profile", { method: "DELETE" });
 }
