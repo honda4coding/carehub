@@ -7,6 +7,7 @@ import { HiOutlineArrowRight } from "react-icons/hi2";
 import { LuUser, LuMail, LuPhone, LuMapPin, LuCheck } from "react-icons/lu";
 import { useState } from "react";
 import { AdminProfile, UpdateAdminProfilePayload, updateAdminProfile } from "@/services/adminService";
+import { useTranslations } from "next-intl";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 const schema = Yup.object({
@@ -28,6 +29,7 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
   errors: Record<string, string | undefined>;
   touched: Record<string, boolean | undefined>;
 }) {
+    const t = useTranslations("auto");
   const hasError = !!(errors[name] && touched[name]);
   return (
     <div className="space-y-1.5">
@@ -55,6 +57,7 @@ interface Props {
 }
 
 export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
+    const t = useTranslations("auto");
   const [serverError,   setServerError]   = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
@@ -86,8 +89,8 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
   return (
     <div className="overflow-hidden">
       <div className="px-6 pt-5 pb-2">
-        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Basic Information</h3>
-        <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">Update your personal details</p>
+        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">{t('basicInformation')}</h3>
+        <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">{t('updateYourPersonalDetails')}</p>
       </div>
 
       {(serverError || serverSuccess) && (
@@ -107,23 +110,22 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
             <div className="px-6 pb-5 space-y-4">
 
               {/* Full Name */}
-              <EditField name="fullName" label="Full Name" icon={<LuUser />} placeholder="Admin Name" errors={errors} touched={touched} />
+              <EditField name="fullName" label={t('fullName')} icon={<LuUser />} placeholder={t('adminName')} errors={errors} touched={touched} />
 
               {/* Email — read only */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                  <LuMail className="w-4 h-4" /> Email
-                </label>
+                  <LuMail className="w-4 h-4" /> {t('email')}</label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
                   {profile?.email || "—"}
                 </div>
               </div>
 
               {/* Phone */}
-              <EditField name="phoneNumber" label="Phone" icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
+              <EditField name="phoneNumber" label={t('phone_g48o')} icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
 
               {/* Address */}
-              <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St, Cairo" errors={errors} touched={touched} />
+              <EditField name="address" label={t('address')} icon={<LuMapPin />} placeholder={t('123MainStCairo')} errors={errors} touched={touched} />
             </div>
 
             {/* Save button */}
@@ -133,8 +135,8 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
                 className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-                  : <><HiOutlineArrowRight className="w-4 h-4" /> Save Changes</>
+                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t('saving')}</>
+                  : <><HiOutlineArrowRight className="w-4 h-4" /> {t('saveChanges')}</>
                 }
               </button>
             </div>

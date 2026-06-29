@@ -6,10 +6,12 @@ import RoleSelector from "@/components/auth/RoleSelector";
 import DoctorRegisterForm from "@/components/auth/DoctorRegisterForm";
 import PatientRegisterForm from "@/components/auth/PatientRegisterForm";
 import { AuthCard } from "@/components/auth/AuthCard";
+import { useTranslations } from "next-intl";
 
 function RegisterContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const t = useTranslations("auth.RegisterPage");
   const roleFromUrl = searchParams.get("role");
   const [selectedRole, setSelectedRole] = useState<"doctor" | "patient">("doctor");
 
@@ -28,10 +30,10 @@ function RegisterContent() {
     <AuthCard className="max-w-2xl w-full">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-[hsl(var(--color-text))]">
-          Create New Account
+          {t("title")}
         </h1>
         <p className="text-[hsl(var(--color-text-muted))] mt-2">
-          Register as {selectedRole === "doctor" ? "Medical Professional" : "Patient"}
+          {selectedRole === "doctor" ? t("subtitleDoctor") : t("subtitlePatient")}
         </p>
       </div>
 
@@ -47,13 +49,13 @@ function RegisterContent() {
 
       <div className="text-center mt-10 pt-8 border-t border-soft/50">
         <p className="text-[hsl(var(--color-text-muted))]">
-          Already have an account?{" "}
+          {t("alreadyHaveAccount")}{" "}
           <a
             href="/login"
             className="font-bold hover:underline underline-offset-4 transition-all"
             style={{ color: "hsl(var(--color-primary-strong))" }}
           >
-            Sign in
+            {t("signIn")}
           </a>
         </p>
       </div>
@@ -63,6 +65,7 @@ function RegisterContent() {
 
 
 export default function RegisterPage() {
+    const t = useTranslations("auto");
   return (
     <div
       className="min-h-screen flex items-start justify-center p-6 pt-28" 
@@ -74,7 +77,7 @@ export default function RegisterPage() {
         `,
       }}
     >
-      <Suspense fallback={<div className="mt-20 font-medium text-[hsl(var(--color-primary))] text-center">Loading Registration...</div>}>
+      <Suspense fallback={<div className="mt-20 font-medium text-[hsl(var(--color-primary))] text-center">{t('loadingRegistration')}</div>}>
         <RegisterContent />
       </Suspense>
     </div>

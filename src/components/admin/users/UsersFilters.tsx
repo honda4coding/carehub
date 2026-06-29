@@ -1,6 +1,7 @@
 import React from "react";
 import { LuSearch, LuFilter } from "react-icons/lu";
 import { UserRole, UserStatus } from "@/types/user";
+import { useTranslations } from "next-intl";
 
 export const ROLE_OPTIONS: { label: string; value: UserRole | "" }[] = [
   { label: "All Roles", value: "" },
@@ -34,6 +35,7 @@ export default function UsersFilters({
   statusFilter,
   setStatusFilter,
 }: UsersFiltersProps) {
+    const t = useTranslations("auto");
   return (
     <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
@@ -41,7 +43,7 @@ export default function UsersFilters({
           <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
-            placeholder="Search name or email…"
+            placeholder={t('searchNameOrEmail')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"

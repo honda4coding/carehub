@@ -14,6 +14,7 @@ import {
 } from "react-icons/lu";
 import { ImSpinner2 } from "react-icons/im";
 import { DoctorProfile, uploadDoctorLicense, cancelPendingLicense } from "@/services/doctorService";
+import { useTranslations } from "next-intl";
 
 interface Props {
   profile: DoctorProfile | null;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export default function LicenseSection({ profile, onUploadSuccess }: Props) {
+    const t = useTranslations("auto");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview]   = useState<string | null>(null);
   const [file, setFile]         = useState<File | null>(null);
@@ -103,8 +105,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
       <div className="flex items-center gap-2">
         <LuShieldCheck className="w-4 h-4 text-[hsl(var(--color-primary))]" />
         <h3 className="text-[13px] font-black text-[hsl(var(--color-text))]">
-          License Management
-        </h3>
+          {t('licenseManagement')}</h3>
       </div>
 
       {/* ── Server messages ───────────────────────────────────────────────── */}
@@ -125,7 +126,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Current license */}
         <LicenseCard
-          title="Current License"
+          title={t('currentLicense')}
           subtitle="Active & approved"
           url={profile?.licenseimage?.secure_url}
           badge={{ label: "Approved", color: "success" }}
@@ -137,7 +138,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         {hasPending && (
           <div className="space-y-2">
             <LicenseCard
-              title="Pending License"
+              title={t('pendingLicense')}
               subtitle="Awaiting admin review"
               url={profile?.pendingLicenseImage?.secure_url}
               badge={{ label: "Under Review", color: "warning" }}
@@ -151,8 +152,8 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
               className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[12px] font-bold border border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {cancelling
-                ? <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> Cancelling...</>
-                : <><LuX className="w-3.5 h-3.5" /> Cancel Pending</>
+                ? <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> {t('cancelling')}</>
+                : <><LuX className="w-3.5 h-3.5" /> {t('cancelPending')}</>
               }
             </button>
           </div>
@@ -161,7 +162,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         {/* Previous license — collapsed by default */}
         {hasPrevious && !hasPending && (
           <LicenseCard
-            title="Previous License"
+            title={t('previousLicense')}
             subtitle="Replaced after last approval"
             url={profile?.previousLicenseImage?.secure_url}
             badge={{ label: "Archived", color: "muted" }}
@@ -188,17 +189,15 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
           >
             <LuFileImage className="w-8 h-8 text-[hsl(var(--color-text-muted))]" />
             <span className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-              Click to choose an image
-            </span>
+              {t('clickToChooseAn')}</span>
             <span className="text-[11px] text-[hsl(var(--color-text-muted))]">
-              PNG, JPG, WEBP — max 5 MB
-            </span>
+              {t('pngJpgWebpMax')}</span>
           </button>
         ) : (
           /* Preview */
           <div className="relative w-full rounded-xl overflow-hidden border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))]">
             <div className="relative w-full h-48">
-              <Image src={preview} alt="License preview" fill className="object-contain p-2" />
+              <Image src={preview} alt={t('licensePreview')} fill className="object-contain p-2" />
             </div>
             <div className="px-4 py-3 border-t border-[hsl(var(--color-border))] flex items-center justify-between gap-3">
               <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
@@ -210,8 +209,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
                   onClick={handleCancel}
                   className="text-[12px] font-bold text-[hsl(var(--color-danger))] hover:underline"
                 >
-                  Cancel
-                </button>
+                  {t('cancel')}</button>
                 <button
                   type="button"
                   onClick={handleUpload}
@@ -219,9 +217,9 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                 >
                   {uploading ? (
-                    <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
+                    <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> {t('uploading')}</>
                   ) : (
-                    <><LuUpload className="w-3.5 h-3.5" /> Submit for Review</>
+                    <><LuUpload className="w-3.5 h-3.5" /> {t('submitForReview')}</>
                   )}
                 </button>
               </div>
@@ -265,6 +263,7 @@ function LicenseCard({
   emptyText: string;
   icon: React.ReactNode;
 }) {
+    const t = useTranslations("auto");
   return (
     <div className="border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
       {/* Card header */}
@@ -293,8 +292,7 @@ function LicenseCard({
             className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
           >
             <span className="flex items-center gap-1.5 text-white text-[12px] font-black bg-black/60 px-3 py-1.5 rounded-lg">
-              <LuExternalLink className="w-3.5 h-3.5" /> View Full
-            </span>
+              <LuExternalLink className="w-3.5 h-3.5" /> {t('viewFull')}</span>
           </a>
         </div>
       ) : (

@@ -112,7 +112,7 @@ export const DashboardModals = ({
                       value={walkInAge}
                       onChange={(e) => setWalkInAge(e.target.value)}
                       className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors" 
-                      placeholder="e.g. 25" 
+                      placeholder={t('eg25')} 
                       min="0"
                       max="120"
                     />

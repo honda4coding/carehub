@@ -468,7 +468,7 @@ export default function PrintMedicalRecordPage() {
                       +
                     </div>
                     <h1 className="text-2xl font-black tracking-tight text-[hsl(var(--color-text))]">
-                      Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
+                      {t('care')}<span className="text-[hsl(var(--color-primary))]">{t('hub')}</span>
                     </h1>
                   </div>
                   <p className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] ps-12">
@@ -499,7 +499,6 @@ export default function PrintMedicalRecordPage() {
                 </div>
               </section>
 
-              <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 print:break-inside-avoid">
               <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-6 print:break-inside-avoid">
                 <div className="border-2 border-[hsl(var(--color-border))] p-4 print:break-inside-avoid">
                   <SectionTitle icon={<LuActivity />} label={t("chronicDiseases")} />
@@ -663,6 +662,7 @@ export default function PrintMedicalRecordPage() {
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SectionTitle({ icon, label }: { icon: React.ReactNode; label: string }) {
+    const t = useTranslations("auto");
   return (
     <h2 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-3">
       <span className="text-sm">{icon}</span>
@@ -682,6 +682,7 @@ function InfoCell({
   wide?: boolean;
   highlight?: boolean;
 }) {
+    const t = useTranslations("auto");
   return (
     <div
       className={`
@@ -776,8 +777,7 @@ function EncounterCard({ encounter: enc, index }: { encounter: Encounter; index:
         {/* ── Right Column: Prescriptions (Rx) ── */}
         <div className="p-6 md:w-1/2 bg-[hsl(var(--color-bg-surface))] relative">
           <div className="absolute top-4 end-6 text-4xl font-serif text-gray-200 select-none">
-            Rx
-          </div>
+            {t('rx')}</div>
           <p className="text-[10px] font-black uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-4 border-b border-[hsl(var(--color-border-soft))] pb-2 relative z-10">
             {t("medicationPlan")}
           </p>

@@ -3,6 +3,7 @@ import {
   LuThermometer, LuDroplets, LuWeight, LuRuler, LuShieldAlert,
   LuScissors, LuExternalLink,
 } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface MedicalHistoryCardProps {
   record: any;
@@ -14,6 +15,7 @@ function VitalItem({
 }: {
   icon: React.ReactNode; label: string; value: string | undefined; unit: string; highlight?: boolean;
 }) {
+    const t = useTranslations("auto");
   if (!value || value === "--" || value === "-") return null;
   return (
     <div className={`rounded-xl p-3 border ${
@@ -37,6 +39,7 @@ function VitalItem({
 }
 
 export default function MedicalHistoryCard({ record, hideHeader = false }: MedicalHistoryCardProps) {
+    const t = useTranslations("auto");
   const hasVitals =
     record.bloodPressure || record.sugarLevel || record.pulse ||
     record.temperature || (record.height && record.height !== "-") ||
@@ -67,7 +70,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
           </h4>
           {record.doctorId && (
             <p className="text-[13px] text-[hsl(var(--color-text-muted))] mt-0.5 font-medium">
-              Dr. {record.doctorId.fullName || record.doctorId.userName}
+              {t('dr')}{record.doctorId.fullName || record.doctorId.userName}
               {record.doctorId.specialization && ` · ${record.doctorId.specialization}`}
             </p>
           )}
@@ -78,15 +81,14 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
       {hasVitals && (
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
-            <LuActivity className="text-[hsl(var(--color-primary))]" /> Vitals
-          </p>
+            <LuActivity className="text-[hsl(var(--color-primary))]" /> {t('vitals')}</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-            <VitalItem icon={<LuHeartPulse />} label="Blood pressure" value={record.bloodPressure} unit="mmHg" />
-            <VitalItem icon={<LuDroplets />} label="Sugar level" value={record.sugarLevel} unit="mg/dL" />
-            <VitalItem icon={<LuActivity />} label="Pulse" value={record.pulse} unit="bpm" />
-            <VitalItem icon={<LuThermometer />} label="Temperature" value={record.temperature} unit="°C" highlight={highTemp} />
-            <VitalItem icon={<LuRuler />} label="Height" value={record.height !== "-" ? record.height : undefined} unit="cm" />
-            <VitalItem icon={<LuWeight />} label="Weight" value={record.weight !== "-" ? record.weight : undefined} unit="kg" />
+            <VitalItem icon={<LuHeartPulse />} label={t('bloodPressure')} value={record.bloodPressure} unit="mmHg" />
+            <VitalItem icon={<LuDroplets />} label={t('sugarLevel')} value={record.sugarLevel} unit="mg/dL" />
+            <VitalItem icon={<LuActivity />} label={t('pulse')} value={record.pulse} unit="bpm" />
+            <VitalItem icon={<LuThermometer />} label={t('temperature')} value={record.temperature} unit="°C" highlight={highTemp} />
+            <VitalItem icon={<LuRuler />} label={t('height')} value={record.height !== "-" ? record.height : undefined} unit="cm" />
+            <VitalItem icon={<LuWeight />} label={t('weight')} value={record.weight !== "-" ? record.weight : undefined} unit="kg" />
           </div>
         </div>
       )}
@@ -95,8 +97,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
       {record.notes && (
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">
-            Symptoms &amp; notes
-          </p>
+            {t('symptomsAmpNotes')}</p>
           <div className="p-3.5 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
             <p className="text-[13px] text-[hsl(var(--color-text))] leading-relaxed">{record.notes}</p>
           </div>
@@ -109,24 +110,21 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
           {allergies.length > 0 && (
             <div className="p-3 rounded-xl bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.15)]">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-danger)/0.8)] mb-1.5 flex items-center gap-1">
-                <LuShieldAlert /> Allergies
-              </p>
+                <LuShieldAlert /> {t('allergies')}</p>
               <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">{allergies.join(", ")}</p>
             </div>
           )}
           {chronic.length > 0 && (
             <div className="p-3 rounded-xl bg-[hsl(var(--color-warning-bg))] border border-[hsl(var(--color-warning)/0.15)]">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-warning)/0.8)] mb-1.5 flex items-center gap-1">
-                <LuActivity /> Chronic
-              </p>
+                <LuActivity /> {t('chronic')}</p>
               <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">{chronic.join(", ")}</p>
             </div>
           )}
           {surgeries.length > 0 && (
             <div className="p-3 rounded-xl bg-[hsl(var(--color-primary)/0.06)] border border-[hsl(var(--color-primary)/0.15)]">
               <p className="text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-primary-strong)/0.8)] mb-1.5 flex items-center gap-1">
-                <LuScissors /> Surgeries
-              </p>
+                <LuScissors /> {t('surgeries')}</p>
               <p className="text-[12px] font-medium text-[hsl(var(--color-text))]">
                 {surgeries.map((s: any) => typeof s === "string" ? s : s.operationName || "").join(", ")}
               </p>
@@ -139,8 +137,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
       {hasMeds && (
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
-            <LuPill className="text-[hsl(var(--color-primary))]" /> Medications prescribed
-          </p>
+            <LuPill className="text-[hsl(var(--color-primary))]" /> {t('medicationsPrescribed')}</p>
           <div className="space-y-2">
             {prescriptions.map((rx: any) =>
               rx.medications?.map((med: any, mIdx: number) => (
@@ -163,7 +160,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
           </div>
           {record.prescriptionText && (
             <div className="mt-2 p-3 rounded-xl bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))]">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1">Rx notes</p>
+              <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1">{t('rxNotes')}</p>
               <p className="text-[13px] text-[hsl(var(--color-text))] leading-relaxed">{record.prescriptionText}</p>
             </div>
           )}
@@ -174,8 +171,7 @@ export default function MedicalHistoryCard({ record, hideHeader = false }: Medic
       {documents.length > 0 && (
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2.5 flex items-center gap-1.5">
-            <LuFileText className="text-[hsl(var(--color-primary))]" /> Documents
-          </p>
+            <LuFileText className="text-[hsl(var(--color-primary))]" /> {t('documents')}</p>
           <div className="flex flex-wrap gap-2">
             {documents.map((doc: any, dIdx: number) => {
               const isImage = ["prescription", "xray", "mri", "ct"].includes(doc.type);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Cell } from "recharts";
 import { LuActivity } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface ActivityItem {
   name: string;
@@ -13,13 +14,14 @@ interface SystemActivityBarChartProps {
 }
 
 export default function SystemActivityBarChart({ data, colors }: SystemActivityBarChartProps) {
+    const t = useTranslations("auto");
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col h-full">
       <div className="flex items-center gap-2 mb-6">
         <div className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] flex items-center justify-center">
           <LuActivity className="text-[16px]" />
         </div>
-        <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">System Activity Total</h2>
+        <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">{t('systemActivityTotal')}</h2>
       </div>
 
       <div className="flex-1 w-full min-h-[250px] mt-2">

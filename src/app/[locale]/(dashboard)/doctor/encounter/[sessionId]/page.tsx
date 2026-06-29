@@ -92,6 +92,9 @@ export default function PatientDashboardPage() {
   const [editTemperature, setEditTemperature] = useState("");
   const [editAllergies, setEditAllergies] = useState("");
   const [editChronic, setEditChronic] = useState("");
+  const [isSavingFee, setIsSavingFee] = useState(false);
+
+  // Tabs: "history" | "profile" | "clinical" | "prescriptions" | "attachments"
   const [editSurgeries, setEditSurgeries] = useState<{ operationName: string, surgeonName?: string, date?: string, report?: string }[]>([]);
 
   // Fetch session and medication history on load
@@ -402,6 +405,24 @@ export default function PatientDashboardPage() {
     }
   };
 
+  const handleSaveFee = async (fees: number) => {
+    if (!token) return;
+    setIsSavingFee(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      await axios.patch(`${baseUrl}/doctor/session/${sessionId}/fees`, { fees }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("Fee updated successfully!");
+      // Optionally update local sessionData if needed, though fees is managed via state in EncounterHeader
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to update fee");
+    } finally {
+      setIsSavingFee(false);
+    }
+  };
+
   const handlePrint = () => {
     window.print();
   };
@@ -435,12 +456,14 @@ export default function PatientDashboardPage() {
         sessionData={sessionData}
         isAssessmentMode={activeTab !== "profile" && activeTab !== "history"}
         isEnding={isEnding}
+        isSavingFee={isSavingFee}
         onBack={() => {
           if (activeTab !== "history") setActiveTab("history");
           else router.push("/doctor");
         }}
         onPrint={handlePrint}
         onEndSession={handleEndSession}
+        onSaveFee={handleSaveFee}
       />
 
       {/* Main Workspace */}

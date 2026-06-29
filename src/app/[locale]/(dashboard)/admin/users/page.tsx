@@ -11,11 +11,13 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import { LuRefreshCw } from "react-icons/lu";
 import UsersFilters from "@/components/admin/users/UsersFilters";
 import UsersList from "@/components/admin/users/UsersList";
+import { useTranslations } from "next-intl";
 
 const PAGE_SIZE = 20;
 const DEBOUNCE_MS = 350;
 
 export default function AdminUserManagementPage() {
+    const t = useTranslations("auto");
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [pagination, setPagination] = useState<UsersPagination | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -108,14 +110,14 @@ export default function AdminUserManagementPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
-        title="User Directory"
+        title={t('userDirectory')}
         subtitle="Manage all registered accounts and suspension statuses"
         backPath="/admin"
         rightElement={
           <button
             onClick={fetchUsers}
             disabled={isLoading}
-            title="Refresh"
+            title={t('refresh')}
             className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
           >
             <LuRefreshCw className={`text-[14px] ${isLoading ? "animate-spin" : ""}`} />

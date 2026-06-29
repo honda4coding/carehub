@@ -8,6 +8,7 @@ import { LuLoader, LuUpload } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import KBStorageInfo from "@/components/doctor/knowledge-base/KBStorageInfo";
 import KBDocumentsList from "@/components/doctor/knowledge-base/KBDocumentsList";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -24,6 +25,7 @@ interface KBInfo {
 }
 
 export default function KnowledgeBasePage() {
+    const t = useTranslations("auto");
   const [info, setInfo] = useState<KBInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -160,7 +162,7 @@ export default function KnowledgeBasePage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
-        title="Knowledge Base"
+        title={t('knowledgeBase')}
         subtitle="Manage the documents your Clinical Assistant learns from"
         backPath="/doctor"
         rightElement={
@@ -171,8 +173,7 @@ export default function KnowledgeBasePage() {
               className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
             >
               {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
-              Upload File(s)
-            </button>
+              {t('uploadFiles')}</button>
             <input
               type="file"
               className="hidden"
@@ -191,8 +192,7 @@ export default function KnowledgeBasePage() {
               className="bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
             >
               {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
-              Upload Folder
-            </button>
+              {t('uploadFolder')}</button>
             <input
               id="folderUploadInput"
               type="file"

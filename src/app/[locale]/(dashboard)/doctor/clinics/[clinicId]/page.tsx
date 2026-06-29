@@ -3,15 +3,17 @@
 import { useParams } from "next/navigation";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
+import { useTranslations } from "next-intl";
 
 export default function ClinicDetailsPage() {
+    const t = useTranslations("auto");
   const params = useParams();
   const clinicId = params?.clinicId as string;
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title="Clinic Details"
+        title={t('clinicDetails')}
         subtitle="View and manage clinic information"
         backPath="/doctor/clinics"
       />

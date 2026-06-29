@@ -2,6 +2,7 @@ import React from "react";
 import { LuInbox, LuShieldCheck, LuShieldOff } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { AdminUser, UserRole, UserStatus } from "@/types/user";
+import { useTranslations } from "next-intl";
 
 // --- Helpers & Configs ---
 export const statusConfig: Record<UserStatus, { style: string; label: string }> = {
@@ -68,6 +69,7 @@ export function fmtDate(iso: string) {
 }
 
 function SkeletonRow() {
+    const t = useTranslations("auto");
   return (
     <tr className="border-b border-[hsl(var(--color-border-soft))]">
       {[80, 65, 40, 40, 50, 55].map((w, i) => (
@@ -90,6 +92,7 @@ interface RowActionsProps {
 }
 
 function RowActions({ user, busy, onActivate, onDeactivate }: RowActionsProps) {
+    const t = useTranslations("auto");
   if (user.role === "admin") {
     return null;
   }
@@ -105,13 +108,12 @@ function RowActions({ user, busy, onActivate, onDeactivate }: RowActionsProps) {
           size="sm"
           onClick={() => onActivate(user._id)}
           disabled={busy}
-          title="Activate user"
+          title={t('activateUser')}
           isLoading={busy}
           icon={LuShieldCheck}
           className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)]"
         >
-          Activate
-        </Button>
+          {t('activate')}</Button>
       )}
       {canDeactivate && (
         <Button
@@ -119,13 +121,12 @@ function RowActions({ user, busy, onActivate, onDeactivate }: RowActionsProps) {
           size="sm"
           onClick={() => onDeactivate(user._id)}
           disabled={busy}
-          title="Suspend user"
+          title={t('suspendUser')}
           isLoading={busy}
           icon={LuShieldOff}
           className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-danger))] border-[hsl(var(--color-danger)/0.3)] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.5)]"
         >
-          Deactivate
-        </Button>
+          {t('deactivate')}</Button>
       )}
     </div>
   );
@@ -152,6 +153,7 @@ export default function UsersList({
   onActivate,
   onDeactivate,
 }: UsersListProps) {
+    const t = useTranslations("auto");
   return (
     <div className="overflow-x-auto -mx-4 px-4">
       {/* Desktop Table View */}
@@ -188,8 +190,7 @@ export default function UsersList({
                     onClick={() => setSearch("")}
                     className="mt-2 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                   >
-                    Clear search
-                  </button>
+                    {t('clearSearch')}</button>
                 )}
               </td>
             </tr>
@@ -220,8 +221,7 @@ export default function UsersList({
                         </p>
                         {user.role === "admin" && (
                           <p className="text-[11px] font-bold italic text-[hsl(var(--color-text-muted))] mt-0.5">
-                            Protected Account
-                          </p>
+                            {t('protectedAccount')}</p>
                         )}
                       </div>
                     </div>
@@ -318,16 +318,14 @@ export default function UsersList({
                 <div className="flex items-center justify-between mb-4 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
                   <div>
                     <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                      Joined
-                    </p>
+                      {t('joined')}</p>
                     <p className="font-semibold text-[hsl(var(--color-text))]">
                       {fmtDate(user.createdAt)}
                     </p>
                   </div>
                   <div className="text-end">
                     <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                      Status
-                    </p>
+                      {t('status')}</p>
                     <span
                       className={`inline-flex items-center text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap ${sc.style}`}
                     >

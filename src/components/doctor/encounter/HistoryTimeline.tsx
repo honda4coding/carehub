@@ -6,6 +6,7 @@ import {
 import { RefObject, useState } from "react";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import { useTranslations } from "next-intl";
 
 /* ── Severity helper ── */
 type Severity = "critical" | "warning" | "normal";
@@ -30,6 +31,7 @@ const SEVERITY_BADGE: Record<Severity, string> = {
 function VitalChip({ icon, label, value, highlight = false }: {
   icon: React.ReactNode; label: string; value: string; highlight?: boolean;
 }) {
+    const t = useTranslations("auto");
   if (!value || value === "--") return null;
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-[11px] font-medium ${
@@ -48,6 +50,7 @@ function VitalChip({ icon, label, value, highlight = false }: {
 
 /* ── Accordion Card ── */
 function TimelineAccordionCard({ record }: { record: any }) {
+    const t = useTranslations("auto");
   const [expanded, setExpanded] = useState(false);
   const severity = getSeverity(record);
 
@@ -106,9 +109,9 @@ function TimelineAccordionCard({ record }: { record: any }) {
           {/* Inline vitals */}
           {(record.bloodPressure || record.pulse || record.temperature) && (
             <div className="flex flex-wrap gap-1.5 mt-2.5">
-              <VitalChip icon={<LuHeartPulse />} label="BP" value={record.bloodPressure} />
-              <VitalChip icon={<LuActivity />} label="Pulse" value={record.pulse ? `${record.pulse} bpm` : ""} />
-              <VitalChip icon={<LuThermometer />} label="Temp" value={record.temperature ? `${record.temperature}°C` : ""} highlight={highTemp} />
+              <VitalChip icon={<LuHeartPulse />} label={t('bp')} value={record.bloodPressure} />
+              <VitalChip icon={<LuActivity />} label={t('pulse')} value={record.pulse ? `${record.pulse} bpm` : ""} />
+              <VitalChip icon={<LuThermometer />} label={t('temp')} value={record.temperature ? `${record.temperature}°C` : ""} highlight={highTemp} />
             </div>
           )}
         </div>
@@ -158,14 +161,14 @@ export default function HistoryTimeline({
   fullMedicalHistory,
   hasMore, observerTarget,
 }: HistoryTimelineProps) {
+    const t = useTranslations("auto");
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
 
       {/* ── Header ── */}
       <div className="px-5 py-4 border-b border-[hsl(var(--color-border))] flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
         <h3 className="text-[15px] font-semibold text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
-          <LuHistory className="text-[hsl(var(--color-primary))]" /> Full medical history
-        </h3>
+          <LuHistory className="text-[hsl(var(--color-primary))]" /> {t('fullMedicalHistory')}</h3>
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full 2xl:w-auto">
           <DateRangeFilter
             startDate={startDate}
@@ -179,7 +182,7 @@ export default function HistoryTimeline({
             <LuSearch className="absolute start-3 top-1/2 -translate-y-1/2 text-[12px] text-[hsl(var(--color-text-muted))]" />
             <input
               type="text"
-              placeholder="Search doctor, diagnosis…"
+              placeholder={t('searchDoctorDiagnosis')}
               value={filterText}
               onChange={(e) => setFilterText(e.target.value)}
               className="w-full ps-8 pe-8 py-2 text-[12px] font-medium rounded-xl border border-[hsl(var(--color-border))]
@@ -220,8 +223,7 @@ export default function HistoryTimeline({
             )}
             {!hasMore && fullMedicalHistory.length > 3 && (
               <p className="text-center text-[12px] font-medium text-[hsl(var(--color-text-muted))] pt-3 border-t border-[hsl(var(--color-border))]">
-                — End of history · {fullMedicalHistory.length} records —
-              </p>
+                {t('endOfHistory')}{fullMedicalHistory.length} {t('records')}</p>
             )}
           </div>
         ) : (
@@ -229,8 +231,8 @@ export default function HistoryTimeline({
             <div className="w-12 h-12 rounded-2xl bg-[hsl(var(--color-bg-surface-hover))] flex items-center justify-center mx-auto mb-3">
               <LuHistory className="text-[22px] text-[hsl(var(--color-text-muted))]" />
             </div>
-            <p className="text-[14px] font-semibold text-[hsl(var(--color-text))] mb-1">No medical history</p>
-            <p className="text-[13px] text-[hsl(var(--color-text-muted))]">This appears to be the patient's first visit.</p>
+            <p className="text-[14px] font-semibold text-[hsl(var(--color-text))] mb-1">{t('noMedicalHistory')}</p>
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))]">{t('thisAppearsToBe')}</p>
           </div>
         )}
       </div>

@@ -80,6 +80,16 @@
       "failedToSaveSurgeries": "Failed to save surgeries",
       "sessionEndedSuccess": "Session ended successfully. Medical History saved.",
       "failedToEndSession": "Failed to end session"
+    },
+    "header": {
+      "loadingPatient": "Loading Patient...",
+      "inClinic": "In Clinic",
+      "printReport": "Print Report",
+      "fees": "Fees:",
+      "feesPlaceholder": "Fees",
+      "saveFee": "Save Fee",
+      "saving": "Saving...",
+      "endSession": "End Session"
     }
   },
   "patientDirectory": {

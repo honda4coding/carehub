@@ -10,11 +10,13 @@ import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck } from "react-icons/h
 import { ImSpinner2 } from "react-icons/im";
 import { useAuth } from "@/context/AuthContext";
 import { adminLoginSchema } from "@/components/schemas/adminLoginSchema";
+import { useTranslations } from "next-intl";
 
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 export default function AdminLoginPage() {
   const { login } = useAuth();
+  const t = useTranslations("auth.AdminLoginPage");
   const [loading, setLoading] = useState(false);
 
  const handleSubmit = async (values: { email: string; password: string }) => {
@@ -32,7 +34,7 @@ export default function AdminLoginPage() {
     const data = await res.json();
 
     if (!res.ok) {
-      alert(data.message || "Invalid credentials");
+      alert(data.message || t("invalidCredentials"));
       return;
     }
 
@@ -43,7 +45,7 @@ export default function AdminLoginPage() {
     });
 
   } catch {
-    alert("Something went wrong. Please check your connection.");
+    alert(t("connectionError"));
   } finally {
     setLoading(false);
   }
@@ -66,8 +68,8 @@ export default function AdminLoginPage() {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl mx-auto mb-4 shadow-lg shadow-[hsl(var(--color-primary)/0.2)]">
               <HiShieldCheck className="text-3xl" />
             </div>
-            <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">Admin Portal</h1>
-            <p className="text-[hsl(var(--color-text-muted))] text-sm mt-1">Authorized access only</p>
+            <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">{t("title")}</h1>
+            <p className="text-[hsl(var(--color-text-muted))] text-sm mt-1">{t("subtitle")}</p>
           </div>
           <Formik
             initialValues={{ email: "", password: "" }}
@@ -78,13 +80,13 @@ export default function AdminLoginPage() {
               <Form className="space-y-6">
                 {/* Email Field */}
                 <div>
-                  <Label>Admin Email</Label>
+                  <Label>{t("emailLabel")}</Label>
                   <Field name="email">
                     {({ field, meta }: FieldProps) => (
                       <Input
                         {...field}
                         type="email"
-                        placeholder="admin@carehub.com"
+                        placeholder={t("emailPlaceholder")}
                         leftIcon={<HiOutlineMail className="w-5 h-5" />}
                         error={!!(meta.touched && meta.error)}
                       />
@@ -95,13 +97,13 @@ export default function AdminLoginPage() {
 
                 {/* Password Field */}
                 <div>
-                  <Label>Master Password</Label>
+                  <Label>{t("passwordLabel")}</Label>
                   <Field name="password">
                     {({ field, meta }: FieldProps) => (
                       <Input
                         {...field}
                         type="password"
-                        placeholder="••••••••"
+                        placeholder={t("passwordPlaceholder")}
                         leftIcon={<HiOutlineLockClosed className="w-5 h-5" />}
                         error={!!(meta.touched && meta.error)}
                       />
@@ -118,7 +120,7 @@ export default function AdminLoginPage() {
                     className="w-full"
                     isLoading={loading}
                   >
-                    Authorize Access
+                    {t("submitButton")}
                   </Button>
                 </div>
               </Form>
@@ -127,7 +129,7 @@ export default function AdminLoginPage() {
 
           <div className="mt-10 pt-8 border-t border-[hsl(var(--color-border))] text-center">
             <p className="text-center text-[hsl(var(--color-text-muted))] text-[10px] font-bold uppercase tracking-[0.2em]">
-              CareHub Control Systems v1.0
+              {t("footerText")}
             </p>
           </div>
         </AuthCard>

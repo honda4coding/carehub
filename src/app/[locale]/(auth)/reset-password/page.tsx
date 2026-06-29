@@ -26,6 +26,7 @@ import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
 import * as Yup from "yup";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -47,6 +48,7 @@ type ResetPasswordValues = {
 
 export default function ResetPasswordPage() {
   const router = useRouter();
+  const t = useTranslations("auth.ResetPassword");
   const [serverError, setServerError] = React.useState("");
   const [serverSuccess, setServerSuccess] = React.useState("");
 
@@ -98,10 +100,10 @@ const handleSendOtp = async (email: string) => {
         setServerError(data.message || "Something went wrong.");
         return;
       }
-      setServerSuccess("Password reset successfully! Redirecting to login...");
+      setServerSuccess(t("successMessage"));
       setTimeout(() => router.push("/login"), 2000);
     } catch {
-      setServerError("Something went wrong. Please check your connection.");
+      setServerError(t("errorMessage"));
     } finally {
       setSubmitting(false);
     }
@@ -115,10 +117,10 @@ const handleSendOtp = async (email: string) => {
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-black text-[hsl(var(--color-text))]">
-            Reset Password
+            {t("title")}
           </h2>
           <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-2">
-            Enter your email, OTP code, and new password.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -145,10 +147,10 @@ const handleSendOtp = async (email: string) => {
               {/* Email */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold ps-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}>Email</label>
+                  style={{ color: "hsl(var(--color-text-muted))" }}>{t("emailLabel")}</label>
                 <div className="relative">
                   <HiOutlineMail className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Field name="email" type="email" placeholder="name@example.com"
+                  <Field name="email" type="email" placeholder={t("emailPlaceholder")}
                     className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
@@ -166,18 +168,18 @@ const handleSendOtp = async (email: string) => {
   className="w-full py-3 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60"
   style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}
 >
-  {sendingOtp ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Sending...</> : "Send OTP"}
+  {sendingOtp ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t("buttonSending")}</> : t("buttonSend")}
 </button>
 
 {otpSent && (
-  <p className="text-success text-xs text-center font-medium">OTP sent! Check your email.</p>
+  <p className="text-success text-xs text-center font-medium">{t("otpSent")}</p>
 )}
 
               {/* OTP */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold ps-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}>OTP Code</label>
-                <Field name="code" type="text" placeholder="123456" maxLength={6}
+                  style={{ color: "hsl(var(--color-text-muted))" }}>{t("otpLabel")}</label>
+                <Field name="code" type="text" placeholder={t("otpPlaceholder")} maxLength={6}
                   className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                   style={{
                     backgroundColor: errors.code && touched.code ? "#fff5f5" : "white",
@@ -190,10 +192,10 @@ const handleSendOtp = async (email: string) => {
               {/* New Password */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold ps-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}>New Password</label>
+                  style={{ color: "hsl(var(--color-text-muted))" }}>{t("newPasswordLabel")}</label>
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Field name="newpassword" type="password" placeholder="••••••••"
+                  <Field name="newpassword" type="password" placeholder={t("newPasswordPlaceholder")}
                     className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
@@ -207,10 +209,10 @@ const handleSendOtp = async (email: string) => {
               {/* Confirm Password */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold ps-4 tracking-wide uppercase"
-                  style={{ color: "hsl(var(--color-text-muted))" }}>Confirm Password</label>
+                  style={{ color: "hsl(var(--color-text-muted))" }}>{t("confirmPasswordLabel")}</label>
                 <div className="relative">
                   <HiOutlineLockClosed className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Field name="cpassword" type="password" placeholder="••••••••"
+                  <Field name="cpassword" type="password" placeholder={t("confirmPasswordPlaceholder")}
                     className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
@@ -226,16 +228,16 @@ const handleSendOtp = async (email: string) => {
                 className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}>
                 {isSubmitting ? (
-                  <><ImSpinner2 className="w-5 h-5 animate-spin" /> Resetting...</>
+                  <><ImSpinner2 className="w-5 h-5 animate-spin" /> {t("buttonResetting")}</>
                 ) : (
-                  <>Reset Password <HiOutlineArrowRight className="w-5 h-5" /></>
+                  <>{t("buttonReset")} <HiOutlineArrowRight className="w-5 h-5" /></>
                 )}
               </button>
 
               <button type="button" onClick={() => router.push("/forgot-password")}
                 className="w-full py-2 text-sm font-medium transition-colors"
                 style={{ color: "hsl(var(--color-text-muted))" }}>
-                ← Back to Forgot Password
+                {t("backLink")}
               </button>
 
             </Form>

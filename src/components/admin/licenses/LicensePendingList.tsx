@@ -9,6 +9,7 @@ import { ImSpinner2 } from "react-icons/im";
 import { PendingLicenseDoctor } from "@/services/adminService";
 import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
 import RejectLicenseModal from "@/components/admin/licenses/RejectLicenseModal";
+import { useTranslations } from "next-intl";
 
 const avatarColors = [
   "bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary-strong))]",
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function LicensePendingList({ doctors, loading, onApprove, onReject }: Props) {
+    const t = useTranslations("auto");
   const [actionId, setActionId]           = useState<string | null>(null);
   const [viewModal, setViewModal]         = useState<{ open: boolean; url: string | null; title: string }>({ open: false, url: null, title: "" });
   const [rejectModal, setRejectModal]     = useState<{ open: boolean; doctorId: string | null }>({ open: false, doctorId: null });
@@ -57,8 +59,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
       <div className="flex flex-col items-center justify-center py-16 gap-3">
         <LuShieldCheck className="w-10 h-10 text-[hsl(var(--color-success))]" />
         <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-          No pending license updates
-        </p>
+          {t('noPendingLicenseUpdates')}</p>
       </div>
     );
   }
@@ -120,8 +121,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                       onClick={() => setViewModal({ open: true, url: doc.licenseimage!.secure_url, title: "Current License" })}
                       className="flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-text-muted))] border border-[hsl(var(--color-border))] px-2.5 py-1.5 rounded-[8px] hover:bg-[hsl(var(--color-bg-soft))] hover:border-[hsl(var(--color-primary)/0.3)] hover:text-[hsl(var(--color-primary))] transition-all"
                     >
-                      <LuHistory className="w-3 h-3" /> View
-                    </button>
+                      <LuHistory className="w-3 h-3" /> {t('view')}</button>
                   ) : (
                     <span className="text-[12px] text-[hsl(var(--color-text-muted))]">—</span>
                   )}
@@ -132,14 +132,13 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                   <div className="flex items-center gap-2">
                     {/* Thumbnail */}
                     <div className="relative w-10 h-10 rounded-lg overflow-hidden border border-[hsl(var(--color-border))] shrink-0 bg-[hsl(var(--color-bg-soft))]">
-                      <Image src={doc.pendingLicenseImage.secure_url} alt="pending" fill className="object-cover" />
+                      <Image src={doc.pendingLicenseImage.secure_url} alt={t('pending_0khb')} fill className="object-cover" />
                     </div>
                     <button
                       onClick={() => setViewModal({ open: true, url: doc.pendingLicenseImage.secure_url, title: "New License (Pending)" })}
                       className="flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-primary-strong))] border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.06)] px-2.5 py-1.5 rounded-[8px] hover:bg-[hsl(var(--color-primary)/0.12)] transition-all"
                     >
-                      <LuEye className="w-3 h-3" /> View
-                    </button>
+                      <LuEye className="w-3 h-3" /> {t('view')}</button>
                   </div>
                 </td>
 
@@ -152,15 +151,13 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                       className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] border border-[hsl(var(--color-success)/0.3)] text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
                       {isActing ? <ImSpinner2 className="w-3 h-3 animate-spin" /> : <LuCheck className="w-3 h-3" />}
-                      Approve
-                    </button>
+                      {t('approve')}</button>
                     <button
                       onClick={() => setRejectModal({ open: true, doctorId: doc.userId })}
                       disabled={!!actionId}
                       className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] border border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
-                      <LuX className="w-3 h-3" /> Reject
-                    </button>
+                      <LuX className="w-3 h-3" /> {t('reject')}</button>
                   </div>
                 </td>
               </tr>
@@ -190,18 +187,17 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                   </div>
                 </div>
                 <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]">
-                  <LuClock className="w-3 h-3" /> Pending
-                </span>
+                  <LuClock className="w-3 h-3" /> {t('pending')}</span>
               </div>
 
               {/* Info grid */}
               <div className="grid grid-cols-2 gap-3 mb-4 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
                 <div>
-                  <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Specialty</p>
+                  <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">{t('specialty')}</p>
                   <p className="font-semibold text-[hsl(var(--color-text))]">{doc.specialty ?? "—"}</p>
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Submitted</p>
+                  <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">{t('submitted')}</p>
                   <p className="font-semibold text-[hsl(var(--color-text))]">{new Date(doc.updatedAt).toLocaleDateString()}</p>
                 </div>
               </div>
@@ -213,15 +209,13 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                     onClick={() => setViewModal({ open: true, url: doc.licenseimage!.secure_url, title: "Current License" })}
                     className="flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-text-muted))] border border-[hsl(var(--color-border))] px-2.5 py-1.5 rounded-[8px] hover:bg-[hsl(var(--color-bg-soft))] transition-all"
                   >
-                    <LuHistory className="w-3 h-3" /> Current
-                  </button>
+                    <LuHistory className="w-3 h-3" /> {t('current')}</button>
                 )}
                 <button
                   onClick={() => setViewModal({ open: true, url: doc.pendingLicenseImage.secure_url, title: "New License (Pending)" })}
                   className="flex items-center gap-1.5 text-[11px] font-bold text-[hsl(var(--color-primary-strong))] border border-[hsl(var(--color-primary)/0.3)] bg-[hsl(var(--color-primary)/0.06)] px-2.5 py-1.5 rounded-[8px] hover:bg-[hsl(var(--color-primary)/0.12)] transition-all"
                 >
-                  <LuEye className="w-3 h-3" /> New License
-                </button>
+                  <LuEye className="w-3 h-3" /> {t('newLicense')}</button>
               </div>
 
               {/* Actions */}
@@ -232,15 +226,13 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                   className="flex-1 flex items-center justify-center gap-1.5 text-[12px] font-bold py-2 rounded-[10px] border border-[hsl(var(--color-success)/0.3)] text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
                   {isActing ? <ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> : <LuCheck className="w-3.5 h-3.5" />}
-                  Approve
-                </button>
+                  {t('approve')}</button>
                 <button
                   onClick={() => setRejectModal({ open: true, doctorId: doc.userId })}
                   disabled={!!actionId}
                   className="flex-1 flex items-center justify-center gap-1.5 text-[12px] font-bold py-2 rounded-[10px] border border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  <LuX className="w-3.5 h-3.5" /> Reject
-                </button>
+                  <LuX className="w-3.5 h-3.5" /> {t('reject')}</button>
               </div>
             </div>
           );

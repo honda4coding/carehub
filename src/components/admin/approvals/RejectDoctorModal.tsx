@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 
 interface RejectDoctorModalProps {
   isOpen: boolean;
@@ -17,6 +18,7 @@ export default function RejectDoctorModal({
   setReason,
   isLoading,
 }: RejectDoctorModalProps) {
+    const t = useTranslations("auto");
   if (!isOpen) return null;
 
   return (
@@ -29,16 +31,14 @@ export default function RejectDoctorModal({
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-[14px] font-black text-[hsl(var(--color-text))] mb-1">
-          Reject Doctor
-        </h2>
+          {t('rejectDoctor')}</h2>
         <p className="text-[11px] text-[hsl(var(--color-text-muted))] mb-4">
-          Please provide a reason for rejection.
-        </p>
+          {t('pleaseProvideAReason')}</p>
 
         <textarea
           value={reason}
           onChange={(e) => setReason(e.target.value)}
-          placeholder="Enter rejection reason..."
+          placeholder={t('enterRejectionReason')}
           rows={4}
           className="w-full px-3 py-2.5 text-[12px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-danger)/0.5)] transition-colors resize-none"
         />
@@ -48,8 +48,7 @@ export default function RejectDoctorModal({
             onClick={onClose}
             className="flex-1 text-[11px] font-bold py-2 rounded-[9px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all cursor-pointer"
           >
-            Cancel
-          </button>
+            {t('cancel')}</button>
           <button
             onClick={onConfirm}
             disabled={!reason.trim() || isLoading}

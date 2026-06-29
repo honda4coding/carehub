@@ -20,8 +20,10 @@ import { StatCard } from "@/components/admin/dashboard/StatCard";
 import { ActivityFeed, Activity } from "@/components/admin/dashboard/ActivityFeed";
 import PendingApprovalsTable from "@/components/admin/dashboard/PendingApprovalsTable";
 import ActivityOverviewChart from "@/components/admin/dashboard/ActivityOverviewChart";
+import { useTranslations } from "next-intl";
 
 export default function AdminDashboard() {
+    const t = useTranslations("auto");
   const [requests, setRequests] = useState<PendingDoctorRequest[]>([]);
   const [requestsError, setRequestsError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -110,7 +112,7 @@ export default function AdminDashboard() {
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <Topbar 
-        title="Dashboard Overview" 
+        title={t('dashboardOverview')} 
         subtitle="Welcome back. Here is what's happening today."
         rightElement={<NotificationBell basePath="/admin/notifications" />}
       />
@@ -130,28 +132,28 @@ export default function AdminDashboard() {
         {/* ── Metric Cards ── */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           <StatCard
-            label="New Patients"
+            label={t('newPatients')}
             value={totalPatients ?? "—"}
             loading={statsLoading}
             icon={<LuUsers />}
             iconStyle="bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary-strong))]"
           />
           <StatCard
-            label="New Doctors"
+            label={t('newDoctors')}
             value={totalDoctors ?? "—"}
             loading={statsLoading}
             icon={<LuStethoscope />}
             iconStyle="bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
           />
           <StatCard
-            label="New Appointments"
+            label={t('newAppointments')}
             value={totalAppointments ?? "—"}
             loading={statsLoading}
             icon={<LuCalendarDays />}
             iconStyle="bg-[hsl(var(--color-success)/0.15)] text-[hsl(var(--color-success))]"
           />
           <StatCard
-            label="Pending Approvals"
+            label={t('pendingApprovals')}
             value={pendingCount}
             loading={loading}
             icon={<LuClock />}

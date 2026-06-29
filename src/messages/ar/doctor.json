@@ -80,6 +80,16 @@
       "failedToSaveSurgeries": "فشل في حفظ العمليات الجراحية",
       "sessionEndedSuccess": "تم إنهاء الجلسة بنجاح. تم حفظ التاريخ الطبي.",
       "failedToEndSession": "فشل في إنهاء الجلسة"
+    },
+    "header": {
+      "loadingPatient": "جاري تحميل المريض...",
+      "inClinic": "في العيادة",
+      "printReport": "طباعة التقرير",
+      "fees": "الرسوم:",
+      "feesPlaceholder": "الرسوم",
+      "saveFee": "حفظ الرسوم",
+      "saving": "جاري الحفظ...",
+      "endSession": "إنهاء الجلسة"
     }
   },
   "patientDirectory": {

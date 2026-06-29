@@ -3,6 +3,7 @@ import { LuClipboardList, LuX, LuMic, LuWand } from "react-icons/lu";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import AIDiagnosisModal from "./AIDiagnosisModal";
+import { useTranslations } from "next-intl";
 
 interface ClinicalAssessmentProps {
   symptoms: string;
@@ -20,6 +21,7 @@ export default function ClinicalAssessment({
   setDiagnosis,
   setIsAssessmentMode
 }: ClinicalAssessmentProps) {
+    const t = useTranslations("auto");
   const [listeningTo, setListeningTo] = useState<"symptoms" | "diagnosis" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const params = useParams();
@@ -69,20 +71,18 @@ export default function ClinicalAssessment({
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-          <LuClipboardList className="text-primary text-xl shrink-0" /> Clinical Assessment
-        </h2>
+          <LuClipboardList className="text-primary text-xl shrink-0" /> {t('clinicalAssessment')}</h2>
         <button 
           onClick={() => setIsAssessmentMode(false)} 
           className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 no-print border border-[hsl(var(--color-border))] px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-soft))] transition-colors w-fit cursor-pointer"
         >
-          <LuX /> Cancel Assessment
-        </button>
+          <LuX /> {t('cancelAssessment')}</button>
       </div>
       
       <div className="space-y-5">
         <div>
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Chief Complaints / Symptoms</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{t('chiefComplaintsSymptoms')}</label>
             <button 
               onClick={() => startListening("symptoms")}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all w-fit cursor-pointer ${
@@ -98,21 +98,20 @@ export default function ClinicalAssessment({
           <textarea 
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
-            placeholder="Patient reports..."
+            placeholder={t('patientReports')}
             className="w-full h-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
           />
         </div>
         
         <div>
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-2">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Primary Diagnosis</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{t('primaryDiagnosis')}</label>
             <div className="flex flex-wrap items-center gap-2">
               <button 
                 onClick={() => setIsModalOpen(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] cursor-pointer"
               >
-                <LuWand className="shrink-0" /> AI Suggest
-              </button>
+                <LuWand className="shrink-0" /> {t('aiSuggest')}</button>
               <button 
                 onClick={() => startListening("diagnosis")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${
@@ -129,7 +128,7 @@ export default function ClinicalAssessment({
           <textarea 
             value={diagnosis}
             onChange={(e) => setDiagnosis(e.target.value)}
-            placeholder="e.g. Acute Bronchitis, detailed observations..."
+            placeholder={t('egAcuteBronchitisDetailed')}
             className="w-full h-24 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
           />
         </div>

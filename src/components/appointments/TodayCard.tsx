@@ -5,6 +5,7 @@ import { Appointment, getDisplayStatus } from "@/services/appointmentService";
 import { initialsOf, isoTo12Hour } from "@/components/appointments/format";
 import StatusBadge from "@/components/appointments/StatusBadge";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 export default function TodayCard({
   appt,
@@ -15,6 +16,7 @@ export default function TodayCard({
   onComplete: (id: string) => void;
   completing: boolean;
 }) {
+    const t = useTranslations("auto");
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
   const timeLabel =
@@ -53,8 +55,7 @@ export default function TodayCard({
             icon={LuCheck}
             className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-success-bg))] !text-[hsl(var(--color-success))] hover:!bg-[hsl(var(--color-success))]"
           >
-            Complete
-          </Button>
+            {t('complete')}</Button>
         )}
       </div>
     </div>

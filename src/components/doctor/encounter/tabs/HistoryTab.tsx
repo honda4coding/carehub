@@ -2,6 +2,7 @@
 
 import MedicationCompliancePanel from "@/components/doctor/encounter/MedicationCompliancePanel";
 import HistoryTimeline from "@/components/doctor/encounter/HistoryTimeline";
+import { useTranslations } from "next-intl";
 
 export interface HistoryTabProps {
   sessionData: any;
@@ -28,6 +29,7 @@ export default function HistoryTab({
   observerTarget,
   setIsAssessmentMode
 }: HistoryTabProps) {
+    const t = useTranslations("auto");
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
       <div className="lg:col-span-3">
@@ -35,7 +37,7 @@ export default function HistoryTab({
           <MedicationCompliancePanel patientId={sessionData.patientId._id} />
         ) : (
           <div className="bg-white rounded-3xl p-6 border border-soft text-center">
-            <p className="text-sm text-muted">Compliance tracking is not available for offline patients.</p>
+            <p className="text-sm text-muted">{t('complianceTrackingIsNot')}</p>
           </div>
         )}
       </div>

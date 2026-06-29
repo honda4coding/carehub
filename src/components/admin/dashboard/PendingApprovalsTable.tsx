@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { DoctorApprovalStatus, PendingDoctorRequest } from "@/types/doctor";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslations } from "next-intl";
 
 const statusConfig: Record<
   DoctorApprovalStatus,
@@ -51,6 +52,7 @@ export default function PendingApprovalsTable({
   setFilter,
   layout = 'auto',
 }: PendingApprovalsTableProps) {
+    const t = useTranslations("auto");
   const router = useRouter();
   
   const filtered = requests.filter(
@@ -64,13 +66,12 @@ export default function PendingApprovalsTable({
       {/* Header */}
       <div className="p-6 border-b border-[hsl(var(--color-border))] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap shrink-0">
-          Pending Doctor Approvals
-        </h3>
+          {t('pendingDoctorApprovals')}</h3>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <Input
             size="sm"
             type="text"
-            placeholder="Search doctors..."
+            placeholder={t('searchDoctors')}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             leftIcon={<LuSearch />}
@@ -80,8 +81,7 @@ export default function PendingApprovalsTable({
             href="/admin/approvals"
             className="text-[13px] font-bold text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] whitespace-nowrap transition-colors"
           >
-            View all ›
-          </Link>
+            {t('viewAll')}</Link>
         </div>
       </div>
 
@@ -89,11 +89,11 @@ export default function PendingApprovalsTable({
       <div className="overflow-x-auto w-full">
         {loading ? (
           <div className="py-12 flex justify-center">
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">Loading...</p>
+            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">{t('loading')}</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-12 flex justify-center">
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">No pending requests</p>
+            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">{t('noPendingRequests')}</p>
           </div>
         ) : (
           <>
@@ -194,11 +194,11 @@ export default function PendingApprovalsTable({
                     <div className="flex items-center justify-between mt-2 pt-3 border-t border-[hsl(var(--color-border-soft))] text-[12px]">
                       <div className="flex flex-col gap-1">
                         <div>
-                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">Specialty:</span>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">{t('specialty_yvo0')}</span>
                           <span className="font-bold text-[hsl(var(--color-text))]">{req.specialty ?? "—"}</span>
                         </div>
                         <div>
-                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">Phone:</span>
+                          <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] me-1.5">{t('phone')}</span>
                           <span className="font-bold text-[hsl(var(--color-text))]">{req.phoneNumber ?? "—"}</span>
                         </div>
                       </div>

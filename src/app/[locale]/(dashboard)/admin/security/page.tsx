@@ -2,12 +2,14 @@
 
 import DashboardHeader from "@/components/global/DashboardHeader";
 import UpdatePasswordForm from "@/components/settings/UpdatePasswordForm";
+import { useTranslations } from "next-intl";
 
 export default function AdminSecurityPage() {
+    const t = useTranslations("auto");
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
-        title="Security"
+        title={t('security')}
         subtitle="Update your password and account security"
         backPath="/admin"
       />

@@ -23,6 +23,7 @@ import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
 import * as Yup from "yup";
 import { Suspense } from "react";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -57,6 +58,7 @@ function VerifyOtpContent() {
   const [serverSuccess, setServerSuccess] = React.useState("");
 
   const isReset = type === "reset";
+  const t = useTranslations("auth.VerifyOTP");
 
   const handleConfirm = async (
     values: { code: string },
@@ -74,10 +76,10 @@ function VerifyOtpContent() {
         setServerError(data.message || "Something went wrong.");
         return;
       }
-      setServerSuccess("Email confirmed! Redirecting to login...");
+      setServerSuccess(t("successConfirm"));
       setTimeout(() => router.push("/login"), 2000);
     } catch {
-      setServerError("Something went wrong. Please check your connection.");
+      setServerError(t("errorMessage"));
     } finally {
       setSubmitting(false);
     }
@@ -106,10 +108,10 @@ function VerifyOtpContent() {
         setServerError(data.message || "Something went wrong.");
         return;
       }
-      setServerSuccess("Password reset successfully! Redirecting to login...");
+      setServerSuccess(t("successReset"));
       setTimeout(() => router.push("/login"), 2000);
     } catch {
-      setServerError("Something went wrong. Please check your connection.");
+      setServerError(t("errorMessage"));
     } finally {
       setSubmitting(false);
     }
@@ -137,10 +139,10 @@ const handleResend = async () => {
     });
     const data = await res.json();
     if (!res.ok) {
-      setServerError(data.message || "Failed to resend OTP.");
+      setServerError(data.message || t("resendError"));
       return;
     }
-    setResendSuccess("OTP resent! Check your email.");
+    setResendSuccess(t("resendSuccess"));
     setCountdown(60);
     intervalRef.current = setInterval(() => {
       setCountdown((prev) => {
@@ -169,14 +171,10 @@ React.useEffect(() => {
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-black text-[hsl(var(--color-text))]">
-            {isReset ? "Reset Password" : "Verify Your Email"}
+            {isReset ? t("titleReset") : t("titleConfirm")}
           </h2>
           <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-2">
-            {isReset
-              ? `Enter the OTP sent to ${emailInput} and set your new password.`
-              : email
-                ? `Enter the OTP sent to ${email} to confirm your account.`
-                : `Enter your email and the OTP sent to you to confirm your account.`}
+            {isReset ? t("subtitleReset") : t("subtitleConfirm")}
           </p>
         </div>
 
@@ -208,13 +206,13 @@ React.useEffect(() => {
                       className="block text-xs font-bold ps-4 tracking-wide uppercase"
                       style={{ color: "hsl(var(--color-text-muted))" }}
                     >
-                      Email
+                      {t("emailLabel")}
                     </label>
                     <input
                       type="email"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      placeholder="your@email.com"
+                      placeholder={t("emailPlaceholder")}
                       className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         border: "1.5px solid transparent",
@@ -231,12 +229,12 @@ React.useEffect(() => {
                     className="block text-xs font-bold ps-4 tracking-wide uppercase"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    OTP Code
+                    {t("otpLabel")}
                   </label>
                   <Field
                     name="code"
                     type="text"
-                    placeholder="123456"
+                    placeholder={t("otpPlaceholder")}
                     maxLength={6}
                     className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                     style={{
@@ -267,7 +265,7 @@ React.useEffect(() => {
                     className="w-full py-2 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    {countdown > 0 ? `Resend OTP in ${countdown}s` : "Resend OTP"}
+                    {countdown > 0 ? t("resendIn", { seconds: countdown }) : t("resendOTP")}
                   </button>
 
                 <button
@@ -282,11 +280,11 @@ React.useEffect(() => {
                   {isSubmitting ? (
                     <>
                       <ImSpinner2 className="w-5 h-5 animate-spin" />{" "}
-                      Verifying...
+                      {t("buttonConfirming")}
                     </>
                   ) : (
                     <>
-                      Confirm Email <HiOutlineArrowRight className="w-5 h-5" />
+                      {t("buttonConfirm")} <HiOutlineArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -311,13 +309,13 @@ React.useEffect(() => {
                       className="block text-xs font-bold ps-4 tracking-wide uppercase"
                       style={{ color: "hsl(var(--color-text-muted))" }}
                     >
-                      Email
+                      {t("emailLabel")}
                     </label>
                     <input
                       type="email"
                       value={emailInput}
                       onChange={(e) => setEmailInput(e.target.value)}
-                      placeholder="your@email.com"
+                      placeholder={t("emailPlaceholder")}
                       className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         border: "1.5px solid transparent",
@@ -334,12 +332,12 @@ React.useEffect(() => {
                     className="block text-xs font-bold ps-4 tracking-wide uppercase"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    OTP Code
+                    {t("otpLabel")}
                   </label>
                   <Field
                     name="code"
                     type="text"
-                    placeholder="123456"
+                    placeholder={t("otpPlaceholder")}
                     maxLength={6}
                     className="w-full px-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300 text-center tracking-widest font-bold text-lg"
                     style={{
@@ -365,14 +363,14 @@ React.useEffect(() => {
                     className="block text-xs font-bold ps-4 tracking-wide uppercase"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    New Password
+                    {t("newPasswordLabel")}
                   </label>
                   <div className="relative">
                     <HiOutlineLockClosed className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Field
                       name="newpassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t("newPasswordPlaceholder")}
                       className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
@@ -400,14 +398,14 @@ React.useEffect(() => {
                     className="block text-xs font-bold ps-4 tracking-wide uppercase"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    Confirm Password
+                    {t("confirmPasswordLabel")}
                   </label>
                   <div className="relative">
                     <HiOutlineLockClosed className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Field
                       name="cpassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder={t("confirmPasswordPlaceholder")}
                       className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
@@ -440,7 +438,7 @@ React.useEffect(() => {
                   className="w-full py-2 text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{ color: "hsl(var(--color-text-muted))" }}
                 >
-                  {countdown > 0 ? `Resend OTP in ${countdown}s` : "Resend OTP"}
+                  {countdown > 0 ? t("resendIn", { seconds: countdown }) : t("resendOTP")}
                 </button>
 
                 <button
@@ -455,11 +453,11 @@ React.useEffect(() => {
                   {isSubmitting ? (
                     <>
                       <ImSpinner2 className="w-5 h-5 animate-spin" />{" "}
-                      Resetting...
+                      {t("buttonResetting")}
                     </>
                   ) : (
                     <>
-                      Reset Password <HiOutlineArrowRight className="w-5 h-5" />
+                      {t("buttonReset")} <HiOutlineArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -470,7 +468,7 @@ React.useEffect(() => {
                   className="w-full py-2 text-sm font-medium transition-colors"
                   style={{ color: "hsl(var(--color-text-muted))" }}
                 >
-                  ← Back
+                  {t("backLink")}
                 </button>
               </Form>
             )}
@@ -483,12 +481,12 @@ React.useEffect(() => {
 
 // ========== Page ==========
 export default function VerifyOtpPage() {
+    const t = useTranslations("auto");
   return (
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center">
-          Loading...
-        </div>
+          {t('loading')}</div>
       }
     >
       <VerifyOtpContent />

@@ -9,8 +9,10 @@ import {
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
+    const t = useTranslations("auto");
   const [expanded, setExpanded] = useState(false);
   const dateStr = new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
   const timeStr = new Date(item.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -70,6 +72,7 @@ function HistoryCard({ item, index }: { item: any; index: number }) {
 }
 
 function WalkinHistoryContent() {
+    const t = useTranslations("auto");
   const searchParams = useSearchParams();
   const guestName = searchParams.get('guestName');
   const guestPhone = searchParams.get('guestPhone');
@@ -159,7 +162,7 @@ function WalkinHistoryContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title="Walk-in Medical History"
+        title={t('walkinMedicalHistory')}
         subtitle={`Visit timeline for: ${guestName}${guestPhone ? ` (${guestPhone})` : ''}`}
         backPath="/doctor"
       />
@@ -175,7 +178,7 @@ function WalkinHistoryContent() {
               <LuSearch className="absolute start-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
                 type="text"
-                placeholder="Search diagnosis, notes, medications..."
+                placeholder={t('searchDiagnosisNotesMedications')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full ps-10 pe-4 py-2.5 text-[13px] rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none font-medium text-[hsl(var(--color-text))] focus:border-primary transition-colors"
@@ -208,8 +211,7 @@ function WalkinHistoryContent() {
                 onClick={() => { setSearchTerm(""); setDateFilter(""); setSortOrder("newest"); }}
                 className="w-full md:w-auto px-4 py-2.5 bg-danger-light hover:bg-danger-light text-danger font-bold text-[12px] rounded-xl border border-red-100 transition-colors"
               >
-                Clear
-              </button>
+                {t('clear')}</button>
             )}
 
           </div>
@@ -217,7 +219,7 @@ function WalkinHistoryContent() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-               <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Loading medical timeline...</p>
+               <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">{t('loadingMedicalTimeline')}</p>
             </div>
           ) : visibleHistory.length > 0 ? (
             <div className="relative border-s-2 border-[hsl(var(--color-border))] ms-4 md:ml-6 space-y-8 pb-10">
@@ -228,10 +230,9 @@ function WalkinHistoryContent() {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl">
               <LuHistory className="text-6xl text-[hsl(var(--color-text-muted))] opacity-20 mb-4" />
-              <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2">No History Found</h2>
+              <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2">{t('noHistoryFound')}</h2>
               <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] max-w-sm">
-                This patient hasn't had any completed sessions with you yet, or no medical notes were recorded.
-              </p>
+                {t('thisPatientHasntHad')}</p>
             </div>
           )}
         </div>
@@ -241,8 +242,9 @@ function WalkinHistoryContent() {
 }
 
 export default function WalkinHistoryPage() {
+    const t = useTranslations("auto");
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">{t('loading')}</div>}>
       <WalkinHistoryContent />
     </Suspense>
   )

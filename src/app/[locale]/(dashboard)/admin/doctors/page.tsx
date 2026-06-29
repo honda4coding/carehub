@@ -12,11 +12,13 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import { LuRefreshCw } from "react-icons/lu";
 import DoctorsFilters from "@/components/admin/doctors/DoctorsFilters";
 import DoctorsList from "@/components/admin/doctors/DoctorsList";
+import { useTranslations } from "next-intl";
 
 const DEBOUNCE_MS = 350;
 const ITEMS_PER_PAGE = 10;
 
 export default function AdminDoctorsPage() {
+    const t = useTranslations("auto");
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,14 +92,14 @@ export default function AdminDoctorsPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title="Doctor Directory"
+        title={t('doctorDirectory')}
         subtitle="View all registered doctors and their approval status"
         backPath="/admin"
         rightElement={
           <button
             onClick={fetchDoctors}
             disabled={isLoading}
-            title="Refresh"
+            title={t('refresh')}
             className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
           >
             <LuRefreshCw className={`text-[14px] ${isLoading ? "animate-spin" : ""}`} />
@@ -155,9 +157,7 @@ export default function AdminDoctorsPage() {
             visible.length > 0 &&
             visible.length < doctors.length && (
               <p className="mt-4 text-[11px] font-semibold text-[hsl(var(--color-text-muted))] text-center">
-                Showing {visible.length} of {doctors.length} doctors matching
-                &ldquo;{debouncedSearch}&rdquo;
-              </p>
+                {t('showing')}{visible.length} {t('of')}{doctors.length} {t('doctorsMatchingLdquo')}{debouncedSearch}{t('rdquo')}</p>
             )}
         </div>
         </div>

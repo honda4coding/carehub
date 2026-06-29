@@ -443,6 +443,7 @@ function SidebarContent({
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+    const tAuto = useTranslations("auto");
   const t = useTranslations('common.sidebar');
   const sections = navMap[role] ?? [];
   const initials = user?.name
@@ -486,8 +487,7 @@ function SidebarContent({
           <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform shrink-0" />
           <div className="flex flex-col justify-center mt-0.5">
             <span className="text-[19px] font-bold text-[hsl(var(--color-text))] tracking-tight leading-none mb-[3px]">
-              CareHub
-            </span>
+              {tAuto('carehub')}</span>
             <p className="text-[9px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] leading-none">
               {t('portal', { role: role.toUpperCase() })}
             </p>
@@ -574,7 +574,7 @@ function SidebarContent({
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
-                alt="Avatar"
+                alt={tAuto('avatar')}
                 fill
                 className="object-cover"
               />
@@ -593,7 +593,7 @@ function SidebarContent({
           <button
             onClick={logout}
             className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] flex items-center justify-center hover:bg-[hsl(var(--color-danger)/0.2)] transition-all shrink-0"
-            title="Sign out"
+            title={tAuto('signOut')}
           >
             <LuLogOut className="text-[16px]" />
           </button>
@@ -604,6 +604,7 @@ function SidebarContent({
 }
 
 export default function Sidebar({ role }: { role: string }) {
+    const tAuto = useTranslations("auto");
   const [open, setOpen] = useState(false);
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState<number | null>(

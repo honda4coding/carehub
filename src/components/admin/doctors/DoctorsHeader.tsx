@@ -1,5 +1,6 @@
 import React from "react";
 import { LuStethoscope, LuRefreshCw } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface DoctorsHeaderProps {
   totalCount: number;
@@ -14,16 +15,15 @@ export default function DoctorsHeader({
   error,
   onRefresh,
 }: DoctorsHeaderProps) {
+    const t = useTranslations("auto");
   return (
     <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between shrink-0">
       <div className="flex items-center gap-4">
         <div>
           <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight ps-11 md:pl-0">
-            Doctor Directory
-          </h1>
+            {t('doctorDirectory')}</h1>
           <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 ps-11 md:pl-0">
-            View all registered doctors and their approval status
-          </p>
+            {t('viewAllRegisteredDoctors')}</p>
         </div>
 
         {/* Stat strip inside header */}
@@ -34,8 +34,7 @@ export default function DoctorsHeader({
               {totalCount}
             </span>
             <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
-              total doctors
-            </span>
+              {t('totalDoctors')}</span>
           </div>
         )}
       </div>
@@ -45,7 +44,7 @@ export default function DoctorsHeader({
         <button
           onClick={onRefresh}
           disabled={isLoading}
-          title="Refresh"
+          title={t('refresh')}
           className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))] transition-all disabled:opacity-50 cursor-pointer"
         >
           <LuRefreshCw className={`text-[14px] ${isLoading ? "animate-spin" : ""}`} />

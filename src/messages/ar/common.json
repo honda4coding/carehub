@@ -56,7 +56,8 @@
       "Security": "الأمان",
       "Settings": "الإعدادات"
     },
-    "portal": "بوابة {role}"
+    "portal": "بوابة {role}",
+    "carehub": "كير هاب"
   },
   "specialties": {
     "cardiology": "أمراض القلب",
@@ -96,5 +97,27 @@
     "Qena": "قنا",
     "North Sinai": "شمال سيناء",
     "Sohag": "سوهاج"
+  },
+  "notificationBell": {
+    "title": "الإشعارات",
+    "new": "جديد",
+    "markAllRead": "تحديد الكل كمقروء",
+    "pushWarning": "قم بتفعيل الإشعارات لتلقي التنبيهات في الوقت الفعلي حتى عند إغلاق التطبيق.",
+    "enablePush": "تفعيل الإشعارات",
+    "loading": "جاري التحميل…",
+    "empty": "لا توجد إشعارات بعد",
+    "justNow": "الآن",
+    "minsAgo": "منذ {mins}د",
+    "hrsAgo": "منذ {hrs}س",
+    "daysAgo": "منذ {days}ي"
+  },
+  "days": {
+    "sunday": "الأحد",
+    "monday": "الإثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت"
   }
 }

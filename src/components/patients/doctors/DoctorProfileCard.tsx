@@ -32,7 +32,7 @@ export default function DoctorProfileCard({ doctor, onBook }: Props) {
         {/* Right: Info */}
         <div className="flex-1 flex flex-col justify-center w-full">
           <h2 className="text-[26px] md:text-[32px] font-black text-[hsl(var(--color-text))] leading-tight tracking-tight text-center md:text-left mt-2 md:mt-0">
-            Dr. {fullName}
+            {t('dr')}{fullName}
           </h2>
           
           <p className="text-[14px] md:text-[15px] font-medium text-[hsl(var(--color-text-muted))] mt-1 mb-6 text-center md:text-left">

@@ -7,8 +7,10 @@ import Image from "next/image";
 import AdminInfoForm from "@/components/admin/profile/AdminInfoForm";
 import { getAdminProfile, AdminProfile, UpdateAdminProfilePayload } from "@/services/adminService";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 export default function AdminProfilePage() {
+    const t = useTranslations("auto");
   const [profile, setProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState("");
@@ -40,7 +42,7 @@ export default function AdminProfilePage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
 
       <DashboardHeader
-        title="Profile Settings"
+        title={t('profileSettings')}
         subtitle="Manage your account information"
         backPath="/admin"
       />
@@ -57,7 +59,7 @@ export default function AdminProfilePage() {
         {!loading && error && (
           <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-5 py-4 rounded-2xl">
             {error}
-            <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">Try again</button>
+            <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">{t('tryAgain_79js')}</button>
           </div>
         )}
 
@@ -78,8 +80,7 @@ export default function AdminProfilePage() {
                   <div className="flex items-center gap-2">
                     <h2 className="text-[hsl(var(--color-text))] text-lg font-black">{profile?.fullName ?? "—"}</h2>
                     <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[10px] font-bold">
-                      <LuShieldCheck className="w-3 h-3" /> Admin
-                    </span>
+                      <LuShieldCheck className="w-3 h-3" /> {t('admin')}</span>
                   </div>
                   <p className="text-[hsl(var(--color-text-muted))] text-sm mt-0.5">{profile?.email ?? ""}</p>
                 </div>

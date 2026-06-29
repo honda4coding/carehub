@@ -4,12 +4,14 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Sidebar from "@/components/global/Sidebar";
+import { useTranslations } from "next-intl";
 
 export default function AssistantDashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+    const t = useTranslations("auto");
   const { user, role, isLoading } = useAuth();
   const router = useRouter();
 
@@ -28,7 +30,7 @@ export default function AssistantDashboardLayout({
       <div className="flex h-screen items-center justify-center bg-[hsl(var(--color-bg))]">
         <div className="flex flex-col items-center gap-4">
           <div className="w-12 h-12 border-4 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-[hsl(var(--color-text-muted))]">Loading assistant workspace...</p>
+          <p className="text-[hsl(var(--color-text-muted))]">{t('loadingAssistantWorkspace')}</p>
         </div>
       </div>
     );

@@ -28,7 +28,7 @@ export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
           {t("totalRevenue")}
         </p>
         <h3 className="text-3xl font-black text-[hsl(var(--color-text))] leading-none">
-          EGP {kpis?.totalRevenue?.toLocaleString() || 0}
+          {t('egp')}{kpis?.totalRevenue?.toLocaleString() || 0}
         </h3>
       </div>
 

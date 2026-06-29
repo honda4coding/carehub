@@ -6,8 +6,10 @@ import { fetchClient } from "@/services/fetchClient";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import NotificationsFilters, { TabValue } from "@/components/admin/notifications/NotificationsFilters";
 import NotificationsList, { Notification } from "@/components/admin/notifications/NotificationsList";
+import { useTranslations } from "next-intl";
 
 export default function NotificationsPage() {
+    const t = useTranslations("auto");
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("");
@@ -79,7 +81,7 @@ export default function NotificationsPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <DashboardHeader title="Notifications" subtitle="View and manage all your notifications" backPath="/doctor" />
+      <DashboardHeader title={t('notifications')} subtitle="View and manage all your notifications" backPath="/doctor" />
       <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4">

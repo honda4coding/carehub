@@ -6,8 +6,10 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { LuPill, LuSearch, LuCalendar, LuFileText, LuUser, LuEye } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 function PrescriptionsContent() {
+    const t = useTranslations("auto");
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,7 +56,7 @@ function PrescriptionsContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen relative">
       <DashboardHeader
-        title="My Prescriptions"
+        title={t('myPrescriptions')}
         subtitle={filterParam === "today" ? "Prescriptions issued today" : "Your complete archive of issued prescriptions"}
         backPath="/doctor"
       />
@@ -67,7 +69,7 @@ function PrescriptionsContent() {
               <LuSearch className="absolute start-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
                 type="text"
-                placeholder="Search by patient name..."
+                placeholder={t('searchByPatientName')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full ps-10 pe-4 py-2.5 text-[13px] rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none font-medium text-[hsl(var(--color-text))] focus:border-primary transition-colors"
@@ -81,8 +83,7 @@ function PrescriptionsContent() {
               <div className="lg:hidden flex flex-col p-4 gap-3">
                 {isLoading ? (
                   <div className="py-12 text-center text-[hsl(var(--color-text-muted))] font-bold">
-                    Loading prescriptions...
-                  </div>
+                    {t('loadingPrescriptions')}</div>
                 ) : filteredPrescriptions.length > 0 ? (
                   filteredPrescriptions.map((p) => {
                     const patientName = p.isOfflinePatient ? p.guestName : (p.patientId?.fullName || "Unknown");
@@ -132,7 +133,7 @@ function PrescriptionsContent() {
                 ) : (
                   <div className="py-12 text-center text-[hsl(var(--color-text-muted))]">
                     <LuSearch className="text-4xl mb-3 opacity-20 mx-auto" />
-                    <p className="text-[14px] font-bold">No prescriptions found</p>
+                    <p className="text-[14px] font-bold">{t('noPrescriptionsFound')}</p>
                   </div>
                 )}
               </div>
@@ -142,17 +143,16 @@ function PrescriptionsContent() {
                 <table className="w-full min-w-[800px] text-start border-collapse">
                   <thead className="bg-[hsl(var(--color-bg-soft))] sticky top-0 z-10">
                     <tr>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Patient</th>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Date</th>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Medications</th>
+                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">{t('patient')}</th>
+                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">{t('date')}</th>
+                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">{t('medications')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[hsl(var(--color-border))]">
                     {isLoading ? (
                       <tr>
                         <td colSpan={3} className="px-5 py-12 text-center text-[hsl(var(--color-text-muted))] font-bold">
-                          Loading prescriptions...
-                        </td>
+                          {t('loadingPrescriptions')}</td>
                       </tr>
                     ) : filteredPrescriptions.length > 0 ? (
                       filteredPrescriptions.map((p) => {
@@ -207,7 +207,7 @@ function PrescriptionsContent() {
                         <td colSpan={3} className="px-5 py-12 text-center text-[hsl(var(--color-text-muted))]">
                           <div className="flex flex-col items-center justify-center">
                             <LuSearch className="text-4xl mb-3 opacity-20" />
-                            <p className="text-[14px] font-bold">No prescriptions found</p>
+                            <p className="text-[14px] font-bold">{t('noPrescriptionsFound')}</p>
                           </div>
                         </td>
                       </tr>
@@ -225,8 +225,9 @@ function PrescriptionsContent() {
 }
 
 export default function PrescriptionsPage() {
+    const t = useTranslations("auto");
   return (
-    <Suspense fallback={<div className="flex-1 flex items-center justify-center font-bold text-primary">Loading prescriptions...</div>}>
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center font-bold text-primary">{t('loadingPrescriptions')}</div>}>
       <PrescriptionsContent />
     </Suspense>
   );

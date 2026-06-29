@@ -2,6 +2,7 @@ import React from "react";
 import { LuBell, LuCheck } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { useTranslations } from "next-intl";
 
 export interface Notification {
   _id: string;
@@ -23,11 +24,11 @@ export default function NotificationsList({
   loading,
   handleMarkAsRead,
 }: NotificationsListProps) {
+    const t = useTranslations("auto");
   if (loading) {
     return (
       <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-10">
-        Loading...
-      </p>
+        {t('loading')}</p>
     );
   }
 
@@ -36,8 +37,7 @@ export default function NotificationsList({
       <div className="flex flex-col items-center justify-center py-12">
         <LuBell className="text-[28px] text-[hsl(var(--color-text-muted))]" />
         <p className="mt-2 text-[12px] text-[hsl(var(--color-text-muted))]">
-          No notifications found
-        </p>
+          {t('noNotificationsFound')}</p>
       </div>
     );
   }
@@ -95,8 +95,7 @@ export default function NotificationsList({
                       icon={LuCheck}
                       className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)] cursor-pointer"
                     >
-                      Mark Read
-                    </Button>
+                      {t('markRead')}</Button>
                   )}
                 </div>
               </td>
@@ -136,8 +135,7 @@ export default function NotificationsList({
                   icon={LuCheck}
                   className="!text-[11px] !px-3 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)] cursor-pointer"
                 >
-                  Mark Read
-                </Button>
+                  {t('markRead')}</Button>
               )}
             </div>
           </div>

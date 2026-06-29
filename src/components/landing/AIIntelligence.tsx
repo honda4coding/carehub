@@ -71,7 +71,7 @@ export default function AIIntelligence() {
                {/* Mock Rx Input */}
                <div className="bg-[hsl(var(--color-bg))] rounded-xl p-4 border border-[hsl(var(--color-text-muted)/0.1)]">
                   <span className="text-xs text-[hsl(var(--color-text-muted))] font-bold uppercase tracking-wider mb-2 block">{t('newPrescription')}</span>
-                  <div className="text-[hsl(var(--color-text))] font-mono font-bold text-sm">Sildenafil 50mg</div>
+                  <div className="text-[hsl(var(--color-text))] font-mono font-bold text-sm">{t('sildenafil50mg')}</div>
                </div>
 
                {/* Interaction Path */}
@@ -86,7 +86,7 @@ export default function AIIntelligence() {
                     <div>
                       <span className="text-xs text-danger font-black uppercase tracking-wider mb-1 block">{t('criticalConflict')}</span>
                       <p className="text-[hsl(var(--color-text))] text-sm leading-relaxed">
-                        {t('conflictDesc1')} <span className="font-black text-danger">Tamsulosin 0.4mg</span>{t('conflictDesc2')}
+                        {t('conflictDesc1')} <span className="font-black text-danger">{t('tamsulosin04mg')}</span>{t('conflictDesc2')}
                       </p>
                     </div>
                   </div>

@@ -22,6 +22,7 @@ import { HiOutlineMail } from "react-icons/hi";
 import { HiOutlineArrowRight } from "react-icons/hi2";
 import { ImSpinner2 } from "react-icons/im";
 import * as Yup from "yup";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -36,6 +37,7 @@ type ForgotPasswordValues = {
 export default function ForgotPasswordPage() {
   const router = useRouter();
   const [serverError, setServerError] = React.useState("");
+  const t = useTranslations("auth.ForgotPassword");
 
   const handleSubmit = async (
     values: ForgotPasswordValues,
@@ -76,10 +78,10 @@ export default function ForgotPasswordPage() {
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-black text-[hsl(var(--color-text))]">
-            Forgot Password
+            {t("title")}
           </h2>
           <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-2">
-            Enter your email to receive a recovery code.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -104,14 +106,14 @@ export default function ForgotPasswordPage() {
                   className="block text-xs font-bold ps-4 tracking-wide uppercase"
                   style={{ color: "hsl(var(--color-text-muted))" }}
                 >
-                  Email
+                  {t("emailLabel")}
                 </label>
                 <div className="relative">
                   <HiOutlineMail className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="email"
                     type="email"
-                    placeholder="name@example.com"
+                    placeholder={t("emailPlaceholder")}
                     className="w-full ps-12 pe-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.email && touched.email ? "#fff5f5" : "white",
@@ -142,11 +144,11 @@ export default function ForgotPasswordPage() {
                 {isSubmitting ? (
                   <>
                     <ImSpinner2 className="w-5 h-5 animate-spin" />
-                    Sending...
+                    {t("buttonSending")}
                   </>
                 ) : (
                   <>
-                    Send Recovery Code
+                    {t("buttonSend")}
                     <HiOutlineArrowRight className="w-5 h-5" />
                   </>
                 )}

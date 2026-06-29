@@ -8,6 +8,7 @@ import {
   setAvailability,
   updateAvailability,
 } from "@/services/appointmentService";
+import { useTranslations } from "next-intl";
 
 const DAYS = [
   "sunday", "monday", "tuesday", "wednesday",
@@ -36,6 +37,7 @@ type DayConfig = {
 };
 
 export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelectedDaysChange }: ScheduleSetupProps) {
+    const t = useTranslations("auto");
   const [loadingAvailability, setLoadingAvailability] = useState(!!clinicId);
   const [selectedDays, setSelectedDays] = useState<Set<Day>>(new Set());
   const [timeConfig, setTimeConfig] = useState<Partial<Record<Day, DayConfig>>>({});
@@ -180,11 +182,10 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
       <div className="flex items-center gap-2 mb-1">
         <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base" />
         <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
-          Weekly schedule
-        </p>
+          {t('weeklySchedule')}</p>
       </div>
       <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mb-5">
-        Pick your working days and hours{clinicName ? ` for ${clinicName}` : clinicId ? " for this clinic" : ""}
+        {t('pickYourWorkingDays')}{clinicName ? ` for ${clinicName}` : clinicId ? " for this clinic" : ""}
       </p>
 
       <div className="space-y-2">
@@ -223,8 +224,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                   {DAY_LABELS[day]}
                   {isSaved && (
                     <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]">
-                      Saved
-                    </span>
+                      {t('saved')}</span>
                   )}
                 </span>
 
@@ -254,8 +254,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                   <div className="flex flex-col sm:flex-row gap-4">
                     <div className="flex-1">
                       <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
-                        Start Time
-                      </label>
+                        {t('startTime')}</label>
                       <div className="relative group">
                         <input
                           type="time"
@@ -273,8 +272,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                     </div>
                     <div className="flex-1">
                       <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
-                        End Time
-                      </label>
+                        {t('endTime')}</label>
                       <div className="relative group">
                         <input
                           type="time"
@@ -294,8 +292,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
 
                   <div>
                     <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2.5">
-                      Appointment Duration
-                    </label>
+                      {t('appointmentDuration')}</label>
                     <div className="flex gap-2 flex-wrap">
                       {DURATIONS.map((d) => (
                         <button
@@ -312,8 +309,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                               : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] hover:-translate-y-0.5"
                           }`}
                         >
-                          {d} min
-                        </button>
+                          {d} {t('min')}</button>
                       ))}
                     </div>
                   </div>
@@ -324,7 +320,7 @@ export default function ScheduleSetup({ clinicId, clinicName, onToast, onSelecte
                       isLoading={savingDay === day}
                       className="w-full !py-3.5 !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-text-inverse))] hover:!bg-[hsl(var(--color-primary-strong))]"
                     >
-                      {isSaved ? <><LuPencil className="inline me-1.5" />Update Schedule</> : "Save Schedule"}
+                      {isSaved ? <><LuPencil className="inline me-1.5" />{t('updateSchedule')}</> : "Save Schedule"}
                     </Button>
                   </div>
                 </div>

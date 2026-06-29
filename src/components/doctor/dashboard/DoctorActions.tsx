@@ -28,7 +28,7 @@ export const DoctorActions = ({
           </div>
           <div className="flex-1 relative z-10">
             <p className="text-[13px] font-semibold text-white/70 mb-0.5">{t("welcomeBack")}</p>
-            <h2 className="text-[20px] font-black text-white leading-tight">Dr. {user?.name || user?.fullName || "Doctor"}</h2>
+            <h2 className="text-[20px] font-black text-white leading-tight">{t('dr')}{user?.name || user?.fullName || "Doctor"}</h2>
             <p className="text-[12px] font-medium text-white/60 mt-1">{t("productiveDay")}</p>
           </div>
         </div>

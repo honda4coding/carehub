@@ -92,7 +92,7 @@ export default function TimelineCard({ entry }: Props) {
                     ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]"
                     : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
                 }`}>
-                  <LuThermometer className="text-[10px]" /> {t("temp")} <span className="font-semibold">{record.temperature}°C</span>
+                  <LuThermometer className="text-[10px]" /> {t("temp")} <span className="font-semibold">{record.temperature}{t('c')}</span>
                 </span>
               )}
             </div>

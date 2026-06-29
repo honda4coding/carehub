@@ -58,7 +58,7 @@ const Hero = () => {
             
             <Image
               src="/Hero-v4.png"
-              alt="Medical Dashboard Interface"
+              alt={t('medicalDashboardInterface')}
               fill
               priority
               sizes="(max-width: 1024px) 100vw, 600px"

@@ -1,6 +1,7 @@
 import React from "react";
 import { LuFileText, LuLoader, LuTrash2 } from "react-icons/lu";
 import { Card } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
 
 interface KBDocumentsListProps {
   files: string[] | undefined;
@@ -13,25 +14,24 @@ export default function KBDocumentsList({
   loading,
   onDelete,
 }: KBDocumentsListProps) {
+    const t = useTranslations("auto");
   return (
     <Card className="p-0 overflow-hidden border border-[hsl(var(--color-border))] h-full flex flex-col">
       <div className="p-4 bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))] font-bold text-xs uppercase tracking-wider text-[hsl(var(--color-text-muted))] flex items-center gap-2">
-        <LuFileText className="text-base" /> Uploaded Documents
-      </div>
+        <LuFileText className="text-base" /> {t('uploadedDocuments')}</div>
 
       <div className="flex-1 flex flex-col">
         {loading ? (
           <div className="p-10 flex flex-col items-center justify-center text-[hsl(var(--color-text-muted))] flex-1">
             <LuLoader className="animate-spin text-3xl mb-3" />
-            <p className="text-sm font-bold">Loading documents...</p>
+            <p className="text-sm font-bold">{t('loadingDocuments')}</p>
           </div>
         ) : !files || files.length === 0 ? (
           <div className="p-10 flex flex-col items-center justify-center text-[hsl(var(--color-text-muted))] text-center flex-1">
             <LuFileText className="text-5xl mb-4 opacity-20" />
-            <p className="text-base font-bold">No documents found.</p>
+            <p className="text-base font-bold">{t('noDocumentsFound')}</p>
             <p className="text-sm mt-1">
-              Upload a PDF or text document to train your Clinical Assistant.
-            </p>
+              {t('uploadAPdfOr')}</p>
           </div>
         ) : (
           <ul className="divide-y divide-[hsl(var(--color-border-soft))]">
@@ -51,7 +51,7 @@ export default function KBDocumentsList({
                 <button
                   onClick={() => onDelete(file)}
                   className="w-9 h-9 rounded-xl bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.2)] flex items-center justify-center shrink-0 transition-colors cursor-pointer"
-                  title="Remove from Knowledge Base"
+                  title={t('removeFromKnowledgeBase')}
                 >
                   <LuTrash2 className="text-base" />
                 </button>

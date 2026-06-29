@@ -44,7 +44,7 @@ export default function BentoFeatures() {
               <div className="absolute inset-0 mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-500 pointer-events-none">
                 <Image 
                   src="/images/ai_brain.png" 
-                  alt="AI Medical Brain" 
+                  alt={t('aiMedicalBrain')} 
                   fill 
                   className="object-cover object-center"
                 />

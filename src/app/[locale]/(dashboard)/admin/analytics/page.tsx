@@ -19,6 +19,7 @@ import SpecialtyPieChart from "@/components/admin/dashboard/SpecialtyPieChart";
 import SystemActivityBarChart from "@/components/admin/dashboard/SystemActivityBarChart";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 const COLORS = [
   "hsl(var(--color-primary))", 
@@ -30,6 +31,7 @@ const COLORS = [
 ];
 
 export default function AnalyticsPage() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -74,7 +76,7 @@ export default function AnalyticsPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
-        title="Detailed Analytics"
+        title={t('detailedAnalytics')}
         subtitle="Deep dive into platform metrics and statistics"
         backPath="/admin"
         rightElement={
@@ -92,26 +94,26 @@ export default function AnalyticsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">Loading Analytics Data...</p>
+          <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">{t('loadingAnalyticsData')}</p>
         </div>
       ) : (
         <>
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <SummaryCard
-              title="Total Users"
+              title={t('totalUsers_q9u0')}
               value={analyticsData?.summary?.totalUsers || 0}
               icon={LuUsers}
               colorTheme="indigo"
             />
             <SummaryCard
-              title="Total Doctors"
+              title={t('totalDoctors_tcti')}
               value={analyticsData?.summary?.totalDoctors || 0}
               icon={LuStethoscope}
               colorTheme="success"
             />
             <SummaryCard
-              title="Total Patients"
+              title={t('totalPatients')}
               value={analyticsData?.summary?.totalPatients || 0}
               icon={LuUser}
               colorTheme="warning"

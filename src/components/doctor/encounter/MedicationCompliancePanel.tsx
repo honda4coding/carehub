@@ -7,6 +7,7 @@ import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuFlame, LuPill, LuActivity } from "react-icons/lu";
 import { FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -28,6 +29,7 @@ interface ComplianceData {
 }
 
 export default function MedicationCompliancePanel({ patientId }: { patientId: string }) {
+    const t = useTranslations("auto");
     const [compliance, setCompliance] = useState<ComplianceData | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"active" | "past">("active");
@@ -68,7 +70,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
     if (!compliance) {
         return (
             <div className="bg-white rounded-3xl p-6 border border-soft text-center">
-                <p className="text-sm text-muted">Failed to load compliance data.</p>
+                <p className="text-sm text-muted">{t('failedToLoadCompliance')}</p>
             </div>
         );
     }
@@ -108,8 +110,8 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                     <LuActivity size={20} />
                 </div>
                 <div>
-                    <h2 className="text-[17px] font-bold text-main">Medication Compliance</h2>
-                    <p className="text-[13px] text-muted">Patient Adherence Tracking</p>
+                    <h2 className="text-[17px] font-bold text-main">{t('medicationCompliance')}</h2>
+                    <p className="text-[13px] text-muted">{t('patientAdherenceTracking')}</p>
                 </div>
             </div>
 
@@ -129,7 +131,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
 
             <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="bg-soft p-4 rounded-2xl flex flex-col justify-center items-center text-center">
-                    <span className="text-[12px] font-medium text-muted mb-1">Adherence</span>
+                    <span className="text-[12px] font-medium text-muted mb-1">{t('adherence')}</span>
                     <span className="text-2xl font-black text-main">{compliance.adherencePercentage}%</span>
                     <span className={`mt-2 text-[11px] font-bold px-2 py-0.5 rounded-full ${getStatusColor(compliance.complianceStatus)}`}>
                         {getStatusIndicator(compliance.complianceStatus)}
@@ -137,22 +139,21 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                 </div>
                 
                 <div className="bg-soft p-4 rounded-2xl flex flex-col justify-center items-center text-center">
-                    <span className="text-[12px] font-medium text-muted mb-1">Streak</span>
-                    <span className="text-2xl font-black text-main">{compliance.currentStreak} <span className="text-sm font-bold text-muted">Days</span></span>
+                    <span className="text-[12px] font-medium text-muted mb-1">{t('streak')}</span>
+                    <span className="text-2xl font-black text-main">{compliance.currentStreak} <span className="text-sm font-bold text-muted">{t('days')}</span></span>
                     <div className="mt-2 text-[11px] font-bold text-orange-600 flex items-center gap-1">
-                        <LuFlame size={12} /> Active
-                    </div>
+                        <LuFlame size={12} /> {t('active')}</div>
                 </div>
             </div>
 
             <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100/50 mb-6">
-                <h3 className="text-[13px] font-bold text-blue-900 mb-3 uppercase tracking-wider">Doses History</h3>
+                <h3 className="text-[13px] font-bold text-blue-900 mb-3 uppercase tracking-wider">{t('dosesHistory')}</h3>
                 <div className="flex justify-between items-center text-sm font-medium">
                     <div className="flex items-center gap-2 text-green-700">
-                        <FiCheckCircle size={16} /> Taken: {compliance.totalTaken}
+                        <FiCheckCircle size={16} /> {t('taken')}{compliance.totalTaken}
                     </div>
                     <div className="flex items-center gap-2 text-danger">
-                        <FiAlertCircle size={16} /> Missed: {compliance.totalMissed}
+                        <FiAlertCircle size={16} /> {t('missed')}{compliance.totalMissed}
                     </div>
                 </div>
             </div>
@@ -164,13 +165,13 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                             onClick={() => setActiveTab("active")}
                             className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "active" ? "bg-white text-primary shadow-sm" : "text-muted hover:text-main"}`}
                         >
-                            Active ({compliance.activeMedicationsCount})
+                            {t('active_vt6u')}{compliance.activeMedicationsCount})
                         </button>
                         <button 
                             onClick={() => setActiveTab("past")}
                             className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "past" ? "bg-white text-primary shadow-sm" : "text-muted hover:text-main"}`}
                         >
-                            Past ({compliance.pastMeds?.length || 0})
+                            {t('past')}{compliance.pastMeds?.length || 0})
                         </button>
                     </div>
 
@@ -178,7 +179,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                         <div className="flex flex-col gap-2">
                             <input 
                                 type="text" 
-                                placeholder="Search medicine name..." 
+                                placeholder={t('searchMedicineName')} 
                                 value={filterText}
                                 onChange={(e) => setFilterText(e.target.value)}
                                 className="w-full text-[12px] px-3 py-2 rounded-xl border border-soft outline-none focus:border-primary"
@@ -197,7 +198,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                 <div className="flex-1 overflow-y-auto space-y-3 pe-2 custom-scrollbar">
                     {activeTab === "active" ? (
                         compliance.activeMeds.length === 0 ? (
-                            <p className="text-[13px] text-muted text-center mt-4">No active medications.</p>
+                            <p className="text-[13px] text-muted text-center mt-4">{t('noActiveMedications')}</p>
                         ) : (
                             compliance.activeMeds.map((med, idx) => (
                                 <div key={idx} className="bg-white border border-soft rounded-xl p-3 flex flex-col">
@@ -223,15 +224,14 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                         )
                     ) : (
                         pastMedsFiltered.length === 0 ? (
-                            <p className="text-[13px] text-muted text-center mt-4">No past medications found.</p>
+                            <p className="text-[13px] text-muted text-center mt-4">{t('noPastMedicationsFound')}</p>
                         ) : (
                             pastMedsFiltered.map((med, idx) => (
                                 <div key={idx} className="bg-gray-50/50 border border-soft rounded-xl p-3 flex flex-col opacity-80">
                                     <div className="flex justify-between items-start mb-2">
                                         <h4 className="text-[14px] font-bold text-main line-through">{med.medicineName}</h4>
                                         <span className="text-[10px] font-bold text-muted bg-gray-100 px-2 py-0.5 rounded-md">
-                                            Finished
-                                        </span>
+                                            {t('finished')}</span>
                                     </div>
                                     <div className="text-[12px] text-muted flex flex-wrap gap-x-3 gap-y-1">
                                         <span>{med.dosage}</span>
@@ -239,8 +239,8 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                                         <span>{med.frequency}</span>
                                     </div>
                                     <div className="text-[11px] text-muted mt-2 border-t border-soft pt-2 flex justify-between">
-                                        <span>Start: {new Date(med.startDate).toLocaleDateString()}</span>
-                                        {med.endDate && <span>End: {new Date(med.endDate).toLocaleDateString()}</span>}
+                                        <span>{t('start')}{new Date(med.startDate).toLocaleDateString()}</span>
+                                        {med.endDate && <span>{t('end')}{new Date(med.endDate).toLocaleDateString()}</span>}
                                     </div>
                                 </div>
                             ))

@@ -40,15 +40,15 @@ export default function PayModal({
               <div className="bg-[hsl(var(--color-bg-soft))] rounded-xl p-4 border border-[hsl(var(--color-border))]">
                 <div className="flex justify-between text-[14px] font-semibold text-[hsl(var(--color-text-muted))] mb-1">
                   <span>{t("consultationFee")}</span>
-                  <span className="text-[hsl(var(--color-text))] font-black">EGP 350</span>
+                  <span className="text-[hsl(var(--color-text))] font-black">{t('egp350')}</span>
                 </div>
                 <div className="flex justify-between text-[13px] text-[hsl(var(--color-text-muted))]">
                   <span>{t("platformFee")}</span>
-                  <span>EGP 20</span>
+                  <span>{t('egp20')}</span>
                 </div>
                 <div className="border-t border-[hsl(var(--color-border))] mt-3 pt-3 flex justify-between text-[16px] font-black text-[hsl(var(--color-text))]">
                   <span>{t("total")}</span>
-                  <span className="text-[hsl(var(--color-primary))]">EGP 370</span>
+                  <span className="text-[hsl(var(--color-primary))]">{t('egp370')}</span>
                 </div>
               </div>
               <button

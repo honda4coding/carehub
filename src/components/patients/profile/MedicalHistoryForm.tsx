@@ -8,6 +8,7 @@ import { LuDroplets, LuPlus, LuX, LuCheck, LuChevronDown, LuScissors } from "rea
 import { useState, KeyboardEvent } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 import { MedicalHistoryFormValues, Surgery } from "@/types/profile";
+import { useTranslations } from "next-intl";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
@@ -32,6 +33,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
   label: string; icon: React.ReactNode; placeholder: string;
   tags: string[]; onAdd: (tag: string) => void; onRemove: (i: number) => void;
 }) {
+    const t = useTranslations("auto");
   const [input, setInput] = useState("");
 
   const handleAdd = () => {
@@ -74,7 +76,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
           <LuPlus className="w-4 h-4" />
         </button>
       </div>
-      <p className="text-[11px] text-[hsl(var(--color-text-muted))] ps-1">Press Enter or + to add</p>
+      <p className="text-[11px] text-[hsl(var(--color-text-muted))] ps-1">{t('pressEnterOrTo')}</p>
     </div>
   );
 }
@@ -83,6 +85,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
 function SurgeryCard({ index, surgery, onRemove }: {
   index: number; surgery: Surgery; onRemove: () => void;
 }) {
+    const t = useTranslations("auto");
   const [open, setOpen] = useState(!surgery.operationName);
 
   return (
@@ -112,22 +115,22 @@ function SurgeryCard({ index, surgery, onRemove }: {
       {open && (
         <div className="p-4 space-y-3 bg-white">
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Operation Name *</label>
-            <Field name={`surgeries.${index}.operationName`} placeholder="e.g. Appendectomy"
+            <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('operationName')}</label>
+            <Field name={`surgeries.${index}.operationName`} placeholder={t('egAppendectomy')}
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
             <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-danger text-[11px] ps-1" />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Surgeon Name *</label>
-              <Field name={`surgeries.${index}.surgeonName`} placeholder="Dr. Ahmed Ali"
+              <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('surgeonName_jhj7')}</label>
+              <Field name={`surgeries.${index}.surgeonName`} placeholder={t('drAhmedAli')}
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
               <ErrorMessage name={`surgeries.${index}.surgeonName`} component="p" className="text-danger text-[11px] ps-1" />
             </div>
             <div className="space-y-1">
-              <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Date *</label>
+              <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('date_1s1k')}</label>
               <Field type="date" name={`surgeries.${index}.date`}
                 className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none"
                 style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
@@ -135,9 +138,9 @@ function SurgeryCard({ index, surgery, onRemove }: {
             </div>
           </div>
           <div className="space-y-1">
-            <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Report / Notes *</label>
+            <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('reportNotes')}</label>
             <Field as="textarea" rows={3} name={`surgeries.${index}.report`}
-              placeholder="Brief description..."
+              placeholder={t('briefDescription')}
               className="w-full px-3 py-2.5 rounded-xl text-[13px] outline-none resize-none"
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
             <ErrorMessage name={`surgeries.${index}.report`} component="p" className="text-danger text-[11px] ps-1" />
@@ -155,6 +158,7 @@ interface Props {
 }
 
 export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
+    const t = useTranslations("auto");
   const [serverError,   setServerError]   = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
@@ -211,13 +215,12 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
           {/* Blood Type */}
           <div className="space-y-1.5">
             <label htmlFor="bloodType" className="flex items-center gap-1.5 text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
-              <LuDroplets className="w-3.5 h-3.5" /> Blood Type
-            </label>
+              <LuDroplets className="w-3.5 h-3.5" /> {t('bloodType')}</label>
             <div className="relative">
               <Field as="select" id="bloodType" name="bloodType"
                 className="w-full px-4 py-3 rounded-xl text-[13px] outline-none appearance-none cursor-pointer"
                 style={{ backgroundColor: "white", border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }}>
-                <option value="">Select blood type</option>
+                <option value="">{t('selectBloodType_d8y6')}</option>
                 {BLOOD_TYPES.map((bt) => <option key={bt} value={bt}>{bt}</option>)}
               </Field>
               <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
@@ -226,7 +229,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
 
           {/* Allergies */}
           <TagInput
-            label="Allergies" icon="🤧" placeholder="e.g. Penicillin, Peanuts..."
+            label={t('allergies')} icon="🤧" placeholder={t('egPenicillinPeanuts_x238')}
             tags={values.allergies}
             onAdd={(tag) => setFieldValue("allergies", [...values.allergies, tag])}
             onRemove={(i) => setFieldValue("allergies", values.allergies.filter((_, idx) => idx !== i))}
@@ -234,7 +237,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
 
           {/* Chronic */}
           <TagInput
-            label="Chronic Diseases" icon="🏥" placeholder="e.g. Diabetes, Hypertension..."
+            label={t('chronicDiseases')} icon="🏥" placeholder={t('egDiabetesHypertension')}
             tags={values.chronic}
             onAdd={(tag) => setFieldValue("chronic", [...values.chronic, tag])}
             onRemove={(i) => setFieldValue("chronic", values.chronic.filter((_, idx) => idx !== i))}
@@ -245,8 +248,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
             <div className="flex items-center justify-between">
               <label className="flex items-center gap-1.5 text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
                 <LuScissors className="w-3.5 h-3.5" />
-                Surgeries
-                {values.surgeries.length > 0 && (
+                {t('surgeries')}{values.surgeries.length > 0 && (
                   <span className="ms-1 px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]">
                     {values.surgeries.length}
                   </span>
@@ -258,11 +260,10 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
                   { operationName: "", surgeonName: "", date: "", report: "" }
                 ])}
                 className="flex items-center gap-1 text-[12px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] hover:opacity-80 transition-opacity">
-                <LuPlus className="w-3.5 h-3.5" /> Add Surgery
-              </button>
+                <LuPlus className="w-3.5 h-3.5" /> {t('addSurgery')}</button>
             </div>
             {values.surgeries.length === 0 && (
-              <p className="text-[12px] text-[hsl(var(--color-text-muted))] italic ps-1">No surgeries added yet</p>
+              <p className="text-[12px] text-[hsl(var(--color-text-muted))] italic ps-1">{t('noSurgeriesAddedYet_2au5')}</p>
             )}
             <div className="space-y-2">
               {values.surgeries.map((surgery, index) => (
@@ -279,8 +280,8 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
             className="w-full py-3 text-white text-[13px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
             style={{ background: "hsl(var(--color-primary))" }}>
             {isSubmitting
-              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-              : <><HiOutlineArrowRight className="w-4 h-4" /> Save Medical History</>
+              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t('saving')}</>
+              : <><HiOutlineArrowRight className="w-4 h-4" /> {t('saveMedicalHistory')}</>
             }
           </button>
         </Form>

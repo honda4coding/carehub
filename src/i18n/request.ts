@@ -23,6 +23,7 @@ export default getRequestConfig(async ({requestLocale}) => {
       medicalHistory: (await import(`../messages/${locale}/medicalHistory.json`)).default,
       validation: (await import(`../messages/${locale}/validation.json`)).default,
       landing: (await import(`../messages/${locale}/landing.json`)).default,
+      auto: (await import(`../messages/${locale}/auto.json`)).default,
     }
   };
 });

@@ -11,6 +11,7 @@ import {
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -50,6 +51,7 @@ interface Summary {
 }
 
 export default function MedicationTrackingPage() {
+    const t = useTranslations("auto");
     const [medications, setMedications] = useState<ActiveMedication[]>([]);
     const [pastMedications, setPastMedications] = useState<any[]>([]);
     const [history, setHistory] = useState<HistoryRecord[]>([]);
@@ -185,19 +187,18 @@ export default function MedicationTrackingPage() {
                     className="flex items-center text-sm font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors mb-6 cursor-pointer"
                 >
                     <LuChevronLeft size={16} className="me-1" />
-                    Back to Dashboard
-                </button>
+                    {t('backToDashboard')}</button>
 
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-[hsl(var(--color-text))] mb-2">Medication Organizer</h1>
-                    <p className="text-[hsl(var(--color-text-muted))] text-sm">Track your doses, monitor your adherence, and stay healthy.</p>
+                    <h1 className="text-2xl font-bold text-[hsl(var(--color-text))] mb-2">{t('medicationOrganizer')}</h1>
+                    <p className="text-[hsl(var(--color-text-muted))] text-sm">{t('trackYourDosesMonitor')}</p>
                 </div>
 
                 {summary && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <Card className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">Adherence Rate</p>
+                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">{t('adherenceRate')}</p>
                                 <div className="text-3xl font-black text-[hsl(var(--color-text))]">{summary.adherencePercentage}%</div>
                             </div>
                             <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] flex items-center justify-center">
@@ -207,8 +208,8 @@ export default function MedicationTrackingPage() {
                         
                         <Card className="p-6 flex items-center justify-between">
                             <div>
-                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">Current Streak</p>
-                                <div className="text-3xl font-black text-[hsl(var(--color-text))]">{summary.currentStreak} Days</div>
+                                <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-1">{t('currentStreak')}</p>
+                                <div className="text-3xl font-black text-[hsl(var(--color-text))]">{summary.currentStreak} {t('days')}</div>
                             </div>
                             <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))] flex items-center justify-center">
                                 <LuFlame size={24} />
@@ -217,11 +218,11 @@ export default function MedicationTrackingPage() {
 
                         <Card className="p-6 flex flex-col justify-center">
                             <div className="flex items-center justify-between mb-2">
-                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">Taken Doses</span>
+                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">{t('takenDoses')}</span>
                                 <span className="text-sm font-bold text-[hsl(var(--color-success))]">{summary.totalTaken}</span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">Missed Doses</span>
+                                <span className="text-sm font-medium text-[hsl(var(--color-text-muted))]">{t('missedDoses')}</span>
                                 <span className="text-sm font-bold text-[hsl(var(--color-danger))]">{summary.totalMissed}</span>
                             </div>
                         </Card>
@@ -234,13 +235,11 @@ export default function MedicationTrackingPage() {
                         <div className="space-y-6">
                             <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
                                 <LuPill className="text-[hsl(var(--color-primary))]" size={20} />
-                                Active Medications
-                            </h2>
+                                {t('activeMedications')}</h2>
                         
                         {medications.length === 0 ? (
                             <Card className="p-10 text-center text-[hsl(var(--color-text-muted))]">
-                                You currently have no active medications.
-                            </Card>
+                                {t('youCurrentlyHaveNo')}</Card>
                         ) : (
                             medications.map((med) => (
                                 <Card key={med.medicationId} className="p-6">
@@ -260,8 +259,7 @@ export default function MedicationTrackingPage() {
                                         <div className="flex items-center gap-2">
                                             {med.hasTrackedToday ? (
                                                 <div className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] font-medium rounded-xl border border-[hsl(var(--color-border))]">
-                                                    <FiCheckCircle size={18} /> Tracked Today
-                                                </div>
+                                                    <FiCheckCircle size={18} /> {t('trackedToday')}</div>
                                             ) : (
                                                 <>
                                                     <button 
@@ -269,15 +267,13 @@ export default function MedicationTrackingPage() {
                                                         disabled={actionLoading === med.medicationId}
                                                         className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
                                                     >
-                                                        <FiCheckCircle size={18} /> Taken
-                                                    </button>
+                                                        <FiCheckCircle size={18} /> {t('taken_309l')}</button>
                                                     <button 
                                                         onClick={() => handleTrack(med, 'missed')}
                                                         disabled={actionLoading === med.medicationId}
                                                         className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
                                                     >
-                                                        <FiXCircle size={18} /> Missed
-                                                    </button>
+                                                        <FiXCircle size={18} /> {t('missed_hez5')}</button>
                                                 </>
                                             )}
                                         </div>
@@ -286,7 +282,7 @@ export default function MedicationTrackingPage() {
                                     {/* Progress Bar */}
                                     <div className="space-y-2">
                                         <div className="flex justify-between text-sm">
-                                            <span className="font-medium text-[hsl(var(--color-text))]">Treatment Progress</span>
+                                            <span className="font-medium text-[hsl(var(--color-text))]">{t('treatmentProgress')}</span>
                                             <span className="font-bold text-[hsl(var(--color-primary))]">{med.progress}%</span>
                                         </div>
                                         <div className="h-2 w-full bg-[hsl(var(--color-bg-soft))] rounded-full overflow-hidden">
@@ -296,7 +292,7 @@ export default function MedicationTrackingPage() {
                                             />
                                         </div>
                                         <div className="flex justify-between text-xs text-[hsl(var(--color-text-muted))] mt-1">
-                                            <span>Started: {new Date(med.startDate).toLocaleDateString()}</span>
+                                            <span>{t('started')}{new Date(med.startDate).toLocaleDateString()}</span>
                                             <span>
                                                 {med.isLifelong 
                                                     ? 'Lifelong Treatment' 
@@ -312,8 +308,7 @@ export default function MedicationTrackingPage() {
                             <div className="space-y-6 pt-6 border-t border-[hsl(var(--color-border))]">
                                 <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
                                     <LuHistory className="text-[hsl(var(--color-text-muted))]" size={20} />
-                                    Past Medications
-                                </h2>
+                                    {t('pastMedications')}</h2>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     {pastMedications.map((med: any, idx: number) => {
                                         let durationDays = 0;
@@ -339,7 +334,7 @@ export default function MedicationTrackingPage() {
                                                     <span className="bg-[hsl(var(--color-bg-soft))] px-2 py-0.5 rounded-md">{med.frequency}</span>
                                                 </div>
                                                 <p className="text-[11px] text-[hsl(var(--color-text-muted))] font-medium mt-3 flex items-center gap-1 border-t border-[hsl(var(--color-border-soft))] pt-2">
-                                                    <LuCalendar size={12} /> Ended: {endedAt.toLocaleDateString()}
+                                                    <LuCalendar size={12} /> {t('ended')}{endedAt.toLocaleDateString()}
                                                 </p>
                                             </Card>
                                         );
@@ -354,14 +349,12 @@ export default function MedicationTrackingPage() {
                     <div>
                         <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
                             <LuCalendar className="text-[hsl(var(--color-primary))]" size={20} />
-                            Recent Activity
-                        </h2>
+                            {t('recentActivity')}</h2>
                         
                         <Card className="overflow-hidden">
                             {history.length === 0 ? (
                                 <div className="p-6 text-center text-sm text-[hsl(var(--color-text-muted))]">
-                                    No tracking history yet.
-                                </div>
+                                    {t('noTrackingHistoryYet')}</div>
                             ) : (
                                 <div className="divide-y divide-[hsl(var(--color-border))]">
                                     {history.map((record) => {

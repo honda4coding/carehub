@@ -1,5 +1,6 @@
 import React from "react";
 import { LuSearch } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -27,6 +28,7 @@ export default function ApprovalsFilters({
   totalDoctors,
   tabCounts,
 }: ApprovalsFiltersProps) {
+    const t = useTranslations("auto");
   return (
     <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
@@ -66,7 +68,7 @@ export default function ApprovalsFilters({
           <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
-            placeholder="Filter by name or specialty..."
+            placeholder={t('filterByNameOr')}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"

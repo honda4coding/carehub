@@ -314,7 +314,7 @@ export default function DoctorClinicsPage() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="Al-Shifa Center"
+                  placeholder={t('alshifaCenter')}
                 />
               </div>
 
@@ -326,7 +326,7 @@ export default function DoctorClinicsPage() {
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="New Damietta"
+                  placeholder={t('newDamietta')}
                 />
               </div>
 
@@ -357,7 +357,7 @@ export default function DoctorClinicsPage() {
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="010xxxxxxxx"
+                    placeholder={t('010xxxxxxxx')}
                   />
                 </div>
                 <div>
@@ -368,7 +368,7 @@ export default function DoctorClinicsPage() {
                     value={form.whatsapp}
                     onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="010xxxxxxxx"
+                    placeholder={t('010xxxxxxxx')}
                   />
                 </div>
                 <div>
@@ -379,7 +379,7 @@ export default function DoctorClinicsPage() {
                     value={form.landline}
                     onChange={(e) => setForm({ ...form, landline: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="057xxxxxxx"
+                    placeholder={t('057xxxxxxx')}
                   />
                 </div>
               </div>

@@ -56,7 +56,8 @@
       "Security": "Security",
       "Settings": "Settings"
     },
-    "portal": "{role} Portal"
+    "portal": "{role} Portal",
+    "carehub": "CareHub"
   },
   "specialties": {
     "cardiology": "Cardiology",
@@ -96,5 +97,27 @@
     "Qena": "Qena",
     "North Sinai": "North Sinai",
     "Sohag": "Sohag"
+  },
+  "notificationBell": {
+    "title": "Notifications",
+    "new": "new",
+    "markAllRead": "Mark all read",
+    "pushWarning": "Enable push notifications to receive real-time alerts even when the app is closed.",
+    "enablePush": "Enable Notifications",
+    "loading": "Loading…",
+    "empty": "No notifications yet",
+    "justNow": "just now",
+    "minsAgo": "{mins}m ago",
+    "hrsAgo": "{hrs}h ago",
+    "daysAgo": "{days}d ago"
+  },
+  "days": {
+    "sunday": "Sunday",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday"
   }
 }

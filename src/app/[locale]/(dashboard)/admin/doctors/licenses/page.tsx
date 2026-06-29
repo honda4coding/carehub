@@ -7,6 +7,7 @@ import { adminService, PendingLicenseDoctor } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
 import LicensePendingList from "@/components/admin/licenses/LicensePendingList";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 interface ReviewedItem {
   _id: string;
@@ -15,6 +16,7 @@ interface ReviewedItem {
 }
 
 export default function AdminLicensesPage() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const [doctors, setDoctors]   = useState<PendingLicenseDoctor[]>([]);
   const [loading, setLoading]   = useState(true);
@@ -75,7 +77,7 @@ export default function AdminLicensesPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
-        title="License Updates"
+        title={t('licenseUpdates')}
         subtitle="Review new license submissions from approved doctors"
         backPath="/admin"
       />
@@ -88,7 +90,7 @@ export default function AdminLicensesPage() {
               <LuClock className="w-4 h-4 text-[hsl(var(--color-warning))]" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Pending</p>
+              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('pending')}</p>
               <p className="text-[18px] font-black text-[hsl(var(--color-text))]">{loading ? "—" : doctors.length}</p>
             </div>
           </div>
@@ -101,7 +103,7 @@ export default function AdminLicensesPage() {
               <LuShieldCheck className="w-4 h-4 text-[hsl(var(--color-success))]" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Reviewed</p>
+              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{t('reviewed')}</p>
               <p className="text-[18px] font-black text-[hsl(var(--color-text))]">
                 {reviewedItems === null ? "—" : reviewedItems.length}
               </p>
@@ -113,12 +115,10 @@ export default function AdminLicensesPage() {
         {showReviewed && (
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-6">
             <p className="text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] mb-3">
-              Recently Reviewed
-            </p>
+              {t('recentlyReviewed')}</p>
             {!reviewedItems || reviewedItems.length === 0 ? (
               <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-6">
-                No reviewed license updates yet
-              </p>
+                {t('noReviewedLicenseUpdates')}</p>
             ) : (
               <div className="flex flex-col gap-2">
                 {reviewedItems.map((item) => {
@@ -158,8 +158,7 @@ export default function AdminLicensesPage() {
           <div className="mb-4 px-4 py-3 rounded-xl bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-[13px] font-medium">
             {error}
             <button onClick={fetchDoctors} className="ms-2 underline font-bold text-[12px]">
-              Retry
-            </button>
+              {t('retry')}</button>
           </div>
         )}
 

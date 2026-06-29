@@ -9,6 +9,7 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import ApprovalsFilters, { ApprovalStatus } from "@/components/admin/approvals/ApprovalsFilters";
 import ApprovalsList, { DoctorApproval } from "@/components/admin/approvals/ApprovalsList";
 import RejectDoctorModal from "@/components/admin/approvals/RejectDoctorModal";
+import { useTranslations } from "next-intl";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -17,6 +18,7 @@ const notifyPendingChange = () =>
   window.dispatchEvent(new Event("pending-approvals-changed"));
 
 export default function ApprovalsPage() {
+    const t = useTranslations("auto");
   const { token } = useAuth();
 
   const [doctors, setDoctors] = useState<DoctorApproval[]>([]);
@@ -147,7 +149,7 @@ export default function ApprovalsPage() {
   return (
     <>
       <div className="flex flex-col flex-1 min-h-screen">
-        <DashboardHeader title="Doctor Approvals" subtitle="Review and manage doctor registration requests" backPath="/admin" />
+        <DashboardHeader title={t('doctorApprovals')} subtitle="Review and manage doctor registration requests" backPath="/admin" />
         <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
           <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
 

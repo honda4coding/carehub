@@ -1,6 +1,7 @@
 import React from "react";
 import { LuHardDrive, LuTrash2 } from "react-icons/lu";
 import { Card } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
 
 interface KBInfo {
   sizeMB: string;
@@ -27,28 +28,26 @@ export default function KBStorageInfo({
   onCreateDatabase,
   onClearDB,
 }: KBStorageInfoProps) {
+    const t = useTranslations("auto");
   return (
     <Card className="p-0 overflow-hidden border border-[hsl(var(--color-border))]">
       <div className="p-4 bg-[hsl(var(--color-bg-soft))] border-b border-[hsl(var(--color-border))] font-bold text-xs uppercase tracking-wider text-[hsl(var(--color-text-muted))] flex items-center gap-2">
-        <LuHardDrive className="text-base" /> Storage Information
-      </div>
+        <LuHardDrive className="text-base" /> {t('storageInformation')}</div>
       <div className="p-5 flex flex-col gap-5">
         {/* Size */}
         <div>
           <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1.5">
-            Vector DB Size
-          </p>
+            {t('vectorDbSize')}</p>
           <div className="text-xl md:text-2xl font-black text-[hsl(var(--color-text))]">
             {loading ? "..." : info?.sizeMB}{" "}
-            <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">MB</span>
+            <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">{t('mb')}</span>
           </div>
         </div>
 
         {/* Active DB */}
         <div>
           <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1.5">
-            Active Database
-          </p>
+            {t('activeDatabase')}</p>
           <div className="bg-[hsl(var(--color-bg-soft))] p-2.5 rounded-xl border border-[hsl(var(--color-border))] text-sm font-bold text-[hsl(var(--color-primary))] flex items-center gap-2">
             <LuHardDrive className="text-base shrink-0" />{" "}
             <span className="truncate">{loading ? "..." : info?.activeDb}</span>
@@ -60,8 +59,7 @@ export default function KBStorageInfo({
         {/* Switch DB */}
         <div className="flex flex-col gap-2">
           <p className="text-xs font-bold text-[hsl(var(--color-text-muted))]">
-            Switch Database
-          </p>
+            {t('switchDatabase')}</p>
           <select
             value={info?.activeDb || ""}
             onChange={(e) => onSwitchDatabase(e.target.value)}
@@ -91,8 +89,7 @@ export default function KBStorageInfo({
             onClick={onClearDB}
             className="w-full bg-[hsl(var(--color-danger)/0.1)] hover:bg-[hsl(var(--color-danger)/0.15)] border border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))] font-bold text-sm py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 cursor-pointer"
           >
-            <LuTrash2 className="text-base shrink-0" /> Clear Database
-          </button>
+            <LuTrash2 className="text-base shrink-0" /> {t('clearDatabase')}</button>
         </div>
       </div>
     </Card>
