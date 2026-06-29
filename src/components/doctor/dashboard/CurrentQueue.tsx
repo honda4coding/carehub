@@ -382,8 +382,8 @@ export const CurrentQueue = ({
                             size="sm"
                             icon={LuShieldCheck}
                             onClick={() => {
-                              setSelectedSession(s.id);
-                              setOTPModalOpen(true);
+                              setSelectedSession?.(s.id);
+                              setOTPModalOpen?.(true);
                             }}
                             className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                           >
