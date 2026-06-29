@@ -477,13 +477,13 @@
   "adherenceRate": "معدل الالتزام",
   "currentStreak": "الخط الحالي",
   "takenDoses": "الجرعات المتناولة",
-  "missedDoses": "[AR] Missed Doses",
-  "youCurrentlyHaveNo": "[AR] You currently have no active medications.",
-  "trackedToday": "[AR] Tracked Today",
-  "taken_309l": "[AR] Taken",
-  "missed_hez5": "[AR] Missed",
-  "treatmentProgress": "[AR] Treatment Progress",
-  "started": "[AR] Started:",
-  "ended": "[AR] Ended:",
-  "noTrackingHistoryYet": "[AR] No tracking history yet."
+  "missedDoses": "الجرعات المنسية",
+  "youCurrentlyHaveNo": "ليس لديك حاليا أي أدوية فعالة.",
+  "trackedToday": "تتبع اليوم",
+  "taken_309l": "مأخوذ",
+  "missed_hez5": "مٌفتَقد",
+  "treatmentProgress": "تقدم العلاج",
+  "started": "بدأت:",
+  "ended": "انتهى:",
+  "noTrackingHistoryYet": "لا يوجد سجل تتبع حتى الآن."
 }
