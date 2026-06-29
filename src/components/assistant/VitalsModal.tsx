@@ -15,6 +15,7 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
   const [vitals, setVitals] = useState({
     bloodPressure: '',
     heartRate: '',
+    sugarLevel: '',
     temperature: '',
     weight: '',
     height: '',
@@ -30,18 +31,11 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
     setError('');
 
     try {
-      // Find the active session for this patient to attach vitals to
-      const sessionRes = await fetchClient.get(`/doctor/session`);
-      const activeSessions = sessionRes?.data || [];
-      const session = activeSessions.find((s: any) => 
-        (s.isOfflinePatient ? s.guestPhone === patient.guestPhone : s.patientId?._id === patient.patientId)
-      );
-
-      if (!session) {
-        throw new Error("No active session found for this patient in the queue. Only patients currently in the queue can have vitals recorded.");
+      if (!patient || !patient.id) {
+        throw new Error("Invalid patient session selected.");
       }
 
-      await fetchClient.patch(`/doctor/session/${session._id}/vitals`, vitals);
+      await fetchClient.patch(`/doctor/session/${patient.id}/vitals`, vitals);
       
       onSuccess();
       onClose();
@@ -67,8 +61,8 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
         </div>
 
         <div className="mb-6 p-3 rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))]">
-          <p className="text-sm font-bold text-[hsl(var(--color-text))]">{patient.isOfflinePatient ? patient.guestName : patient.fullName}</p>
-          <p className="text-xs text-[hsl(var(--color-text-muted))]">{patient.isOfflinePatient ? patient.guestPhone : patient.phoneNumber}</p>
+          <p className="text-sm font-bold text-[hsl(var(--color-text))]">{patient.patient}</p>
+          <p className="text-xs text-[hsl(var(--color-text-muted))]">{patient.phone}</p>
         </div>
 
         {error && (
@@ -100,6 +94,16 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
               />
             </div>
             <div>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Sugar Level</label>
+              <input
+                type="text"
+                placeholder="mg/dL"
+                value={vitals.sugarLevel}
+                onChange={(e) => setVitals({ ...vitals, sugarLevel: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
+              />
+            </div>
+            <div>
               <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Temperature</label>
               <input
                 type="text"
@@ -116,6 +120,16 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
                 placeholder="kg / lbs"
                 value={vitals.weight}
                 onChange={(e) => setVitals({ ...vitals, weight: e.target.value })}
+                className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Height</label>
+              <input
+                type="text"
+                placeholder="cm"
+                value={vitals.height}
+                onChange={(e) => setVitals({ ...vitals, height: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
               />
             </div>

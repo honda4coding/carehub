@@ -3,6 +3,7 @@ import { LuPhone, LuHistory, LuSearch, LuCalendar, LuHeartPulse } from "react-ic
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Pagination from "@/components/ui/Pagination";
+import { useAuth } from "@/context/AuthContext";
 
 interface PatientTableProps {
   patients: any[];
@@ -19,6 +20,10 @@ export default function PatientTable({
   onRecordVitals,
   isAssistant,
 }: PatientTableProps) {
+  const { user } = useAuth();
+  const canViewHistory = user?.permissions?.canManagePatientsFull || false;
+  const showActions = !isAssistant || canViewHistory;
+
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   
@@ -113,10 +118,10 @@ export default function PatientTable({
                       {p.totalVisits}
                     </span>
                   </div>
-                  {!isAssistant && (
+                  {showActions && (
                     <button
                       onClick={() => onViewHistory && onViewHistory(p)}
-                      className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1.5  cursor-pointer"
+                      className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-3 w-full"
                     >
                       <LuHistory className="text-sm" /> View History
                     </button>
@@ -139,14 +144,17 @@ export default function PatientTable({
         <table className="w-full min-w-[900px] text-left border-collapse">
           <thead className="bg-[hsl(var(--color-bg-soft))] sticky top-0 z-10 border-b border-[hsl(var(--color-border))]">
             <tr>
-              {(isAssistant ? ["Patient details", "First Visit", "Last Visit", "Visits", "Status"] : ["Patient details", "First Visit", "Last Visit", "Visits", "Status", "Actions"]).map((h, i) => (
+              {(showActions ? ["Patient details", "First Visit", "Last Visit", "Visits", "Status", "Actions"] : ["Patient details", "First Visit", "Last Visit", "Visits", "Status"]).map((h, i) => (
                 <th
                   key={h}
                   className={`py-4 text-sm font-black uppercase tracking-wider text-[hsl(var(--color-text))] border-b border-[hsl(var(--color-border))] ${
-                    i === 0 ? "pl-8 pr-4" : i === 3 ? "text-center px-4" : i === 5 ? "pr-8 text-right" : "px-4"
-                  }`}
+                    h === "Patient details" ? "pl-8 pr-4" : h === "Actions" ? "pr-8 pl-4 text-right" : "px-4"
+                  } ${h === "Visits" ? "text-center" : ""}`}
                 >
-                  {h}
+                  <div className={`flex items-center gap-2 ${h === "Actions" ? "justify-end" : h === "Visits" ? "justify-center" : ""} font-black tracking-wider text-[hsl(var(--color-text-muted))]`}>
+                    {h !== "Actions" && h}
+                    {h === "Actions" && <span className="sr-only">Actions</span>}
+                  </div>
                 </th>
               ))}
             </tr>
@@ -154,7 +162,7 @@ export default function PatientTable({
           <tbody className="divide-y divide-[hsl(var(--color-border))]">
             {loading ? (
               <tr>
-                <td colSpan={isAssistant ? 5 : 6} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
+                <td colSpan={showActions ? 6 : 5} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
                   <p className="text-sm font-bold">Loading patients...</p>
                 </td>
@@ -218,7 +226,7 @@ export default function PatientTable({
                         {status}
                       </Badge>
                     </td>
-                    {!isAssistant && (
+                    {showActions && (
                     <td className="pr-8 pl-4 py-4 text-right">
                         <button
                           onClick={() => onViewHistory && onViewHistory(p)}
@@ -233,7 +241,7 @@ export default function PatientTable({
               })
             ) : (
               <tr>
-                <td colSpan={isAssistant ? 5 : 6} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
+                <td colSpan={showActions ? 6 : 5} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="flex flex-col items-center justify-center">
                     <LuSearch className="text-5xl mb-4 opacity-20" />
                     <p className="text-base font-bold">No patients found</p>

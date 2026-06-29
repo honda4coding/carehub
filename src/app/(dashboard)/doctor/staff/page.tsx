@@ -19,8 +19,8 @@ export default function StaffManagementPage() {
 
     // Form state
     const defaultFormData = {
-        fullName: "", email: "", password: "", phoneNumber: "", clinicId: "", jobTitle: "",
-        permissions: { canManageAppointments: false, canManagePatients: false, canManageBilling: false, canManageReports: false }
+        fullName: "", email: "", password: "", phoneNumber: "", clinicId: "", jobTitle: "", isActive: true,
+        permissions: { canManageAppointments: false, canManagePatientsVitals: false, canManagePatientsFull: false, canManageBilling: false, canManageReports: false }
     };
     const [formData, setFormData] = useState(defaultFormData);
 
@@ -69,6 +69,7 @@ export default function StaffManagementPage() {
             phoneNumber: member.userId?.phoneNumber || "",
             clinicId: member.clinicId?._id || member.clinicId || "",
             jobTitle: member.jobTitle || "",
+            isActive: member.isActive ?? true,
             permissions: member.permissions || defaultFormData.permissions
         });
         setEditingStaffId(member._id);
@@ -142,6 +143,10 @@ export default function StaffManagementPage() {
                                         <p>📧 {member.userId?.email}</p>
                                         <p>📱 {member.userId?.phoneNumber}</p>
                                         <p>🏥 {member.clinicId?.name}</p>
+                                        <p className="flex items-center gap-1 mt-1">
+                                            <span className={`w-2 h-2 rounded-full ${member.isActive !== false ? "bg-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-danger))]"}`}></span>
+                                            {member.isActive !== false ? "Active" : "Suspended"}
+                                        </p>
                                     </div>
                                     <div className="mt-auto pt-4 border-t border-[hsl(var(--color-border))] flex flex-wrap gap-1">
                                         {Object.entries(member.permissions || {})
@@ -168,12 +173,10 @@ export default function StaffManagementPage() {
                         </h2>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="space-y-3">
-                                <input required={!editingStaffId} disabled={!!editingStaffId} placeholder="Full Name" value={formData.fullName} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50" onChange={e => setFormData({...formData, fullName: e.target.value})} />
+                                <input required={!editingStaffId} placeholder="Full Name" value={formData.fullName} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50" onChange={e => setFormData({...formData, fullName: e.target.value})} />
                                 <input required={!editingStaffId} disabled={!!editingStaffId} type="email" placeholder="Email" value={formData.email} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50" onChange={e => setFormData({...formData, email: e.target.value})} />
-                                {!editingStaffId && (
-                                    <input required type="password" placeholder="Password" value={formData.password} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))]" onChange={e => setFormData({...formData, password: e.target.value})} />
-                                )}
-                                <input required={!editingStaffId} disabled={!!editingStaffId} placeholder="Phone Number" value={formData.phoneNumber} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50" onChange={e => setFormData({...formData, phoneNumber: e.target.value})} />
+                                <input required={!editingStaffId} type="password" placeholder={editingStaffId ? "New Password (leave blank to keep current)" : "Password"} value={formData.password} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))]" onChange={e => setFormData({...formData, password: e.target.value})} />
+                                <input required={!editingStaffId} placeholder="Phone Number" value={formData.phoneNumber} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50" onChange={e => setFormData({...formData, phoneNumber: e.target.value})} />
                                 <input required placeholder="Job Title (e.g. Secretary)" value={formData.jobTitle} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))]" onChange={e => setFormData({...formData, jobTitle: e.target.value})} />
                                 
                                 <select required value={formData.clinicId} className="w-full p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))]" onChange={e => setFormData({...formData, clinicId: e.target.value})}>
@@ -183,13 +186,27 @@ export default function StaffManagementPage() {
                             </div>
 
                             <div className="pt-4 border-t border-[hsl(var(--color-border))]">
+                                <h4 className="font-bold text-sm mb-3 text-[hsl(var(--color-text))]">Account Status</h4>
+                                <label className="flex items-center gap-3 mb-4 cursor-pointer">
+                                    <input type="checkbox" checked={formData.isActive} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-success))] focus:ring-[hsl(var(--color-success))]" 
+                                        onChange={e => setFormData({...formData, isActive: e.target.checked})} 
+                                    />
+                                    <span className="text-sm font-semibold text-[hsl(var(--color-text))]">{formData.isActive ? "Active (Can Login)" : "Suspended (Cannot Login)"}</span>
+                                </label>
+
                                 <h4 className="font-bold text-sm mb-3 text-[hsl(var(--color-text))]">Permissions</h4>
-                                {['Appointments', 'Patients', 'Billing', 'Reports'].map(perm => (
-                                    <label key={perm} className="flex items-center gap-3 mb-2 cursor-pointer">
-                                        <input type="checkbox" checked={formData.permissions[`canManage${perm}` as keyof typeof formData.permissions]} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 
-                                            onChange={e => setFormData({...formData, permissions: {...formData.permissions, [`canManage${perm}`]: e.target.checked}})} 
+                                {[
+                                    { key: 'Appointments', label: 'Manage Appointments' },
+                                    { key: 'PatientsVitals', label: 'Manage Patients (Vitals Only)' },
+                                    { key: 'PatientsFull', label: 'Manage Patients (Full Clinical Assessment)' },
+                                    { key: 'Billing', label: 'Manage Billing' },
+                                    { key: 'Reports', label: 'Manage Reports' }
+                                ].map(perm => (
+                                    <label key={perm.key} className="flex items-center gap-3 mb-2 cursor-pointer">
+                                        <input type="checkbox" checked={formData.permissions[`canManage${perm.key}` as keyof typeof formData.permissions]} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 
+                                            onChange={e => setFormData({...formData, permissions: {...formData.permissions, [`canManage${perm.key}`]: e.target.checked}})} 
                                         />
-                                        <span className="text-sm font-semibold text-[hsl(var(--color-text))]">Manage {perm}</span>
+                                        <span className="text-sm font-semibold text-[hsl(var(--color-text))]">{perm.label}</span>
                                     </label>
                                 ))}
                             </div>

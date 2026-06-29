@@ -80,7 +80,13 @@ export default function ClinicScheduleCard({
         </div>
 
         <button
-          onClick={() => router.push(`/doctor/clinics`)}
+          onClick={() => {
+            if (window.location.pathname.includes('/assistant')) {
+              router.push(`/assistant/clinics/${clinicId}`);
+            } else {
+              router.push(`/doctor/clinics/${clinicId}`);
+            }
+          }}
           className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/0.3)] px-3 py-1.5 rounded-xl hover:bg-[hsl(var(--color-primary)/0.08)] transition-colors cursor-pointer shrink-0"
         >
           <LuPencil className="text-[12px]" /> Edit

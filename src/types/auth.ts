@@ -4,7 +4,9 @@ export interface User {
   name: string;
   permissions?: {
     canManageAppointments: boolean;
-    canManagePatients: boolean;
+    canManagePatientsVitals: boolean;
+    canManagePatientsFull: boolean;
+    canManagePatients?: boolean; // Backward compatibility fallback
     canManageBilling: boolean;
     canManageReports: boolean;
   };

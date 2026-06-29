@@ -111,7 +111,9 @@ const [sessions, setSessions] = useState<Session[]>([]);
           avatarStyle: s.isOfflinePatient 
             ? "bg-[hsl(var(--color-primary)/0.1)] text-primary"
             : "bg-[hsl(var(--color-success-bg))] text-success",
-          validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
+          validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined,
+          fees: s.fees || 0,
+          isFeesFinalized: s.isFeesFinalized || false
         };
       });
       setSessions(mappedSessions);
@@ -252,6 +254,20 @@ const [sessions, setSessions] = useState<Session[]>([]);
     }
   };
 
+  const handleUpdateFees = async (sessionId: string, fees: number, isFeesFinalized: boolean = false) => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      await axios.patch(`${baseUrl}/doctor/session/${sessionId}/fees`, { fees, isFeesFinalized }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, fees, isFeesFinalized } : s));
+      alert(isFeesFinalized ? "Fees finalized successfully." : "Fees updated successfully.");
+    } catch (err: any) {
+      console.error("Failed to update fees", err);
+      alert(err.response?.data?.message || err.message || "Failed to update fees");
+    }
+  };
+
   const handleCancelRequest = async (sessionId: string) => {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -388,6 +404,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
             handleCancelRequest={handleCancelRequest}
             setSelectedSession={setSelectedSession}
             setOTPModalOpen={setOTPModalOpen}
+            handleUpdateFees={handleUpdateFees}
           />
         </div>
       </main>

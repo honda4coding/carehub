@@ -7,6 +7,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { User, AuthContextType } from '@/types/auth';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
 import { subscribeToPushNotifications } from '@/services/pushNotificationService';
+import { fetchClient } from '@/services/fetchClient';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -30,6 +31,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(JSON.parse(savedUser));
         // Subscribe to push notifications on mount if authenticated
         subscribeToPushNotifications().catch(err => console.error("Push subscribe error on mount:", err));
+        
+        // Background fetch to update user permissions (without blocking hydration)
+        fetchClient.get('/users/profile')
+          .then(res => {
+            if (res.data) {
+              const updatedUser = { ...JSON.parse(savedUser), ...res.data };
+              // Ensure backend 'fullName' maps correctly to frontend 'name'
+              if (res.data.fullName) {
+                updatedUser.name = res.data.fullName;
+              }
+              setUser(updatedUser);
+              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+            }
+          })
+          .catch(err => console.error("Failed to fetch updated profile:", err));
       }
     } catch (error) {
       console.error("Auth hydration error:", error);

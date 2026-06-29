@@ -7,6 +7,9 @@ import { DoctorStats } from "@/components/doctor/dashboard/DoctorStats";
 import { CurrentQueue } from "@/components/doctor/dashboard/CurrentQueue";
 import { fetchClient } from "@/services/fetchClient";
 import VitalsModal from "@/components/assistant/VitalsModal";
+import { useRouter } from "next/navigation";
+import { DoctorActions } from '@/components/doctor/dashboard/DoctorActions';
+import { DashboardModals } from '@/components/doctor/dashboard/DashboardModals';
 
 export default function AssistantDashboard() {
   const { user, role } = useAuth();
@@ -21,6 +24,149 @@ export default function AssistantDashboard() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
   const [filter, setFilter] = useState("");
+
+  const router = useRouter();
+
+  // Search & Walk-in State
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [realSearchResults, setRealSearchResults] = useState<any[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+  const [searchError, setSearchError] = useState("");
+  
+  const [isWalkInModalOpen, setWalkInModalOpen] = useState(false);
+  const [isOTPModalOpen, setOTPModalOpen] = useState(false);
+  const [currentOtp, setCurrentOtp] = useState("");
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  
+  const [walkInName, setWalkInName] = useState("");
+  const [walkInPhone, setWalkInPhone] = useState("");
+  const [walkInAge, setWalkInAge] = useState("");
+
+  const fetchCurrentQueue = async () => {
+        try {
+            const sessionRes = await fetchClient.get(`/doctor/session`);
+            const completedRes = await fetchClient.get(`/doctor/session?status=completed`);
+            
+            const activeSessions = sessionRes?.data || [];
+            const completedSessions = completedRes?.data || [];
+            
+            const mappedSessions = [...activeSessions, ...completedSessions].map((s: any) => {
+              let name = s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "Unknown";
+              let phone = s.isOfflinePatient ? s.guestPhone : s.patientId?.phoneNumber || "N/A";
+              return {
+                id: s._id,
+                patient: name,
+                type: s.isOfflinePatient ? "Walk-in" : "Online",
+                time: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                status: s.status,
+                initials: name.slice(0, 2).toUpperCase(),
+                phone: phone,
+                order: s.order || 0,
+                fees: s.fees || 0,
+                isFeesFinalized: s.isFeesFinalized || false,
+                avatarStyle: s.isOfflinePatient 
+                  ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]"
+                  : "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
+                validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
+              };
+            });
+            setSessions(mappedSessions);
+          } catch (err) {
+            console.error("Failed to fetch current queue", err);
+          }
+  };
+
+  const handleSearch = async () => {
+    if (searchQuery.trim().length < 3) {
+      setSearchError("Please enter at least 3 characters to search.");
+      return;
+    }
+    setIsSearching(true);
+    setSearchError("");
+    setShowSearchResults(true);
+    try {
+      const response = await fetchClient.get(`/doctor/search-patient?searchTerm=${searchQuery}`);
+      setRealSearchResults(response.data || []);
+    } catch (error: any) {
+      setSearchError(error.message || "Something went wrong!");
+      setRealSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleRequestAccess = async (patient: any) => {
+    try{
+      const responseData = await fetchClient.post(`/doctor/session/request`, { patientId: patient._id });
+      const newSessionData = responseData.data?.session || responseData.data || responseData;
+      const sessionStatus = newSessionData.status || "pending_otp";
+      if (sessionStatus === "pending_otp") {
+        alert("✅ An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
+      } else {
+        alert(`✅ Instant access granted to the patient based on their privacy settings.`);
+      }
+      fetchCurrentQueue();
+    } catch (err: any) {
+      const msg = err.message;
+      if (msg === "Session already exists for this patient" || msg === "Access already granted" || msg === "Access already granted for this patient") {
+        alert("✅ This patient is already in the clinic queue (Active Session).");
+        fetchCurrentQueue();
+      } else {
+        alert("Failed to request access: " + msg);
+      }
+    }
+  };
+
+  const handleCancelRequest = async (sessionId: string) => {
+    try {
+      await fetchClient.delete(`/doctor/session/${sessionId}/cancel`);
+      setSessions((prev) => prev.filter(s => s.id !== sessionId));
+    } catch (err: any) {
+      alert(err.message || "Something went wrong while canceling.");
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    if (!selectedSession || currentOtp.length !== 6) return;
+    try {
+      await fetchClient.post(`/doctor/session/verify`, { sessionId: selectedSession, otp: currentOtp });
+      setSessions(prev => prev.map(s => s.id === selectedSession ? { ...s, status: "in_progress", validUntil: undefined } : s));
+      setOTPModalOpen(false);
+      setCurrentOtp("");
+      alert("OTP Verified Successfully! Patient File Unlocked.");
+    } catch (err: any) {
+      const msg = err.message;
+      if (msg === "Access already granted for this patient") {
+        setSessions(prev => prev.map(s => s.id === selectedSession ? { ...s, status: "in_progress", validUntil: undefined } : s));
+        setOTPModalOpen(false);
+        setCurrentOtp("");
+        alert("Access already granted. Opening Patient File...");
+      } else {
+        alert(msg || "Invalid or Expired OTP!");
+      }
+    }
+  };
+
+  const handleWalkInRegister = async () => {
+    if (!walkInName.trim() || !walkInPhone.trim()) return;
+    try {
+      await fetchClient.post(`/doctor/session/request`, {
+        isOfflinePatient: true,
+        guestName: walkInName,
+        guestPhone: walkInPhone,
+        ...(walkInAge ? { guestAge: Number(walkInAge) } : {})
+      });
+      fetchCurrentQueue();
+      setWalkInModalOpen(false);
+      setWalkInName("");
+      setWalkInPhone("");
+      setWalkInAge("");
+      alert("Walk-in patient registered successfully.");
+    } catch (err: any) {
+      alert(err.message || "Failed to register walk-in patient");
+    }
+  };
 
   const filteredSessions = sessions.filter((s: any) => {
     const matchStatus = statusFilter === "All" || s.status === statusFilter;
@@ -47,34 +193,32 @@ export default function AssistantDashboard() {
           totalPrescriptions: statsRes?.data?.totalPrescriptions || 0
         });
 
-        if (user?.permissions?.canManageAppointments) {
-          const sessionRes = await fetchClient.get(`/doctor/session`);
-          const completedRes = await fetchClient.get(`/doctor/session?status=completed`);
-          
-          const activeSessions = sessionRes?.data || [];
-          const completedSessions = completedRes?.data || [];
-          
-          const mappedSessions = [...activeSessions, ...completedSessions].map((s: any) => {
-            let name = s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "Unknown";
-            let phone = s.isOfflinePatient ? s.guestPhone : s.patientId?.phoneNumber || "N/A";
-            return {
-              id: s._id,
-              patient: name,
-              type: s.isOfflinePatient ? "Walk-in" : "Online",
-              time: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-              status: s.status,
-              initials: name.slice(0, 2).toUpperCase(),
-              phone: phone,
-              order: s.order || 0,
-              fees: s.fees || 0,
-              avatarStyle: s.isOfflinePatient 
-                ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]"
-                : "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
-              validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
-            };
-          });
-          setSessions(mappedSessions);
-        }
+        const sessionRes = await fetchClient.get(`/doctor/session`);
+        const completedRes = await fetchClient.get(`/doctor/session?status=completed`);
+        
+        const activeSessions = sessionRes?.data || [];
+        const completedSessions = completedRes?.data || [];
+        
+        const mappedSessions = [...activeSessions, ...completedSessions].map((s: any) => {
+          let name = s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "Unknown";
+          let phone = s.isOfflinePatient ? s.guestPhone : s.patientId?.phoneNumber || "N/A";
+          return {
+            id: s._id,
+            patient: name,
+            type: s.isOfflinePatient ? "Walk-in" : "Online",
+            time: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            status: s.status,
+            initials: name.slice(0, 2).toUpperCase(),
+            phone: phone,
+            order: s.order || 0,
+            fees: s.fees || 0,
+            avatarStyle: s.isOfflinePatient 
+              ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]"
+              : "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
+            validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
+          };
+        });
+        setSessions(mappedSessions);
       } catch (err) {
         console.error("Failed to fetch assistant dashboard data", err);
       } finally {
@@ -99,12 +243,14 @@ export default function AssistantDashboard() {
     }
   };
 
-  const handleUpdateFees = async (sessionId: string, fees: number) => {
+  const handleUpdateFees = async (sessionId: string, fees: number, isFeesFinalized: boolean = false) => {
     try {
-      await fetchClient.patch(`/doctor/session/${sessionId}/fees`, { fees });
-      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, fees } : s));
-    } catch (err) {
+      await fetchClient.patch(`/doctor/session/${sessionId}/fees`, { fees, isFeesFinalized });
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, fees, isFeesFinalized } : s));
+      alert("Fees updated successfully.");
+    } catch (err: any) {
       console.error("Failed to update fees", err);
+      alert(err.message || "Failed to update fees");
     }
   };
 
@@ -130,7 +276,20 @@ export default function AssistantDashboard() {
           <DoctorStats dashboardStats={dashboardStats} sessions={sessions} />
           
           {user?.permissions?.canManageAppointments && (
-            <div className="mt-8">
+            <div className="flex flex-col gap-6 mt-8">
+              <DoctorActions 
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                handleSearch={handleSearch}
+                isSearching={isSearching}
+                showSearchResults={showSearchResults}
+                setShowSearchResults={setShowSearchResults}
+                searchError={searchError}
+                realSearchResults={realSearchResults}
+                handleRequestAccess={handleRequestAccess}
+                setWalkInModalOpen={setWalkInModalOpen}
+                user={user}
+              />
               <CurrentQueue 
                 statusFilter={statusFilter}
                 setStatusFilter={setStatusFilter}
@@ -139,9 +298,9 @@ export default function AssistantDashboard() {
                 filter={filter}
                 setFilter={setFilter}
                 filteredSessions={filteredSessions}
-                handleCancelRequest={() => {}}
-                setSelectedSession={() => {}}
-                setOTPModalOpen={() => {}}
+                handleCancelRequest={handleCancelRequest}
+                setSelectedSession={setSelectedSession}
+                setOTPModalOpen={setOTPModalOpen}
                 handleReorder={handleReorder}
                 handleUpdateFees={handleUpdateFees}
                 isAssistant={role === "assistant"}
@@ -149,12 +308,30 @@ export default function AssistantDashboard() {
                   setSelectedPatientForVitals(session);
                   setIsVitalsModalOpen(true);
                 }}
+                hideVitalsAction={!user?.permissions?.canManagePatientsVitals && !user?.permissions?.canManagePatientsFull}
+                hideAssessmentAction={true}
               />
             </div>
           )}
         </div>
       </main>
 
+      <DashboardModals 
+        isOTPModalOpen={isOTPModalOpen}
+        setOTPModalOpen={setOTPModalOpen}
+        isWalkInModalOpen={isWalkInModalOpen}
+        setWalkInModalOpen={setWalkInModalOpen}
+        currentOtp={currentOtp}
+        setCurrentOtp={setCurrentOtp}
+        handleVerifyOTP={handleVerifyOTP}
+        walkInName={walkInName}
+        setWalkInName={setWalkInName}
+        walkInPhone={walkInPhone}
+        setWalkInPhone={setWalkInPhone}
+        walkInAge={walkInAge}
+        setWalkInAge={setWalkInAge}
+        handleWalkInRegister={handleWalkInRegister}
+      />
       <VitalsModal
         isOpen={isVitalsModalOpen}
         onClose={() => setIsVitalsModalOpen(false)}
