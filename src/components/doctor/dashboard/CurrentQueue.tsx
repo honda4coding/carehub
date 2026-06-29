@@ -372,7 +372,7 @@ export const CurrentQueue = ({
                       {s.status === "pending_otp" ? (
                         <>
                           <button
-                            onClick={() => handleCancelRequest(s.id)}
+                            onClick={() => handleCancelRequest?.(s.id)}
                             className="w-[28px] h-[28px] rounded-lg flex items-center justify-center bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] hover:opacity-80 transition-colors"
                             title="Cancel Request"
                           >
