@@ -115,7 +115,8 @@ export default function AdminDashboard() {
         rightElement={<NotificationBell basePath="/admin/notifications" />}
       />
 
-      <main className="flex-1 p-5 md:p-8 overflow-auto flex flex-col gap-6 md:gap-8 max-w-[1600px] mx-auto w-full">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
+        <div className="flex flex-col gap-6 md:gap-8 max-w-7xl mx-auto w-full">
         {/* Stats error banner */}
         {statsError && (
           <div className="flex items-center gap-2.5 bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger)/0.2)] rounded-xl px-4 py-3">
@@ -127,7 +128,7 @@ export default function AdminDashboard() {
         )}
 
         {/* ── Metric Cards ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
           <StatCard
             label="New Patients"
             value={totalPatients ?? "—"}
@@ -184,6 +185,7 @@ export default function AdminDashboard() {
           filter={filter}
           setFilter={setFilter}
         />
+        </div>
       </main>
     </div>
   );

@@ -128,6 +128,11 @@ const doctorNav: NavSection[] = [
         href: "/doctor/clinics",
         icon: <LuBuilding2 />,
       },
+      {
+        label: "Staff & Logs",
+        href: "/doctor/staff",
+        icon: <LuShieldCheck />,
+      },
     ],
   },
   {
@@ -137,6 +142,16 @@ const doctorNav: NavSection[] = [
         label: "My Knowledge Base",
         href: "/doctor/knowledge-base",
         icon: <LuBrainCircuit />,
+      },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      {
+        label: "Notifications",
+        href: "/doctor/notifications",
+        icon: <LuBell />,
       },
     ],
   },
@@ -182,10 +197,22 @@ const patientNav: NavSection[] = [
   },
 ];
 
+const assistantNav: NavSection[] = [
+  {
+    title: "Main",
+    items: [
+      { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
+      { label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> },
+      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
+    ],
+  },
+];
+
 const navMap: Record<string, NavSection[]> = {
   admin: adminNav,
   doctor: doctorNav,
   patient: patientNav,
+  assistant: assistantNav,
 };
 
 ////////////////////
@@ -229,6 +256,18 @@ const settingsSub: Record<
     {
       label: "Security",
       href: "/admin/security",
+      icon: <LuLock className="text-sm" />,
+    },
+  ],
+  assistant: [
+    {
+      label: "Profile",
+      href: "/assistant/profile",
+      icon: <LuUser className="text-sm" />,
+    },
+    {
+      label: "Security",
+      href: "/assistant/security",
       icon: <LuLock className="text-sm" />,
     },
   ],
@@ -484,7 +523,7 @@ function SidebarContent({
                   ? pendingApprovals
                   : role === "admin" && item.href === "/admin/doctors/licenses"
                     ? pendingLicenses
-                    : (role === "admin" && item.href === "/admin/notifications") || (role === "patient" && item.href === "/patient/notifications")
+                    : item.href.endsWith("/notifications")
                       ? unreadNotifications
                       : item.badge;
               return (
@@ -614,7 +653,7 @@ export default function Sidebar({ role }: { role: string }) {
 
   // ── Unread notifications badge ───────────────────────────────────────────────
   const fetchUnreadCount = useCallback(async () => {
-    if (role !== "admin" && role !== "patient") return;
+    if (role !== "admin" && role !== "patient" && role !== "doctor") return;
     try {
       const res = await fetchClient.get("/notifications", {
         params: { limit: "100" },
@@ -659,7 +698,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-40 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />

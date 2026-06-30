@@ -111,7 +111,7 @@ export default function DoctorAIChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[350px] sm:w-[450px] h-[550px] max-h-[85vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden">
+        <div className="fixed inset-0 w-full h-[100dvh] rounded-none sm:bottom-6 sm:right-6 sm:inset-auto sm:w-[450px] sm:h-[550px] sm:max-h-[85vh] sm:rounded-2xl bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] flex flex-col z-50 overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-primary text-white">
             <div className="flex items-center gap-2 font-bold">

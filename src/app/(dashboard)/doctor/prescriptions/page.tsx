@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { LuPill, LuSearch, LuCalendar, LuFileText, LuUser, LuEye } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 function PrescriptionsContent() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
@@ -52,16 +53,11 @@ function PrescriptionsContent() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative">
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between z-10">
-        <div>
-          <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-            <LuPill className="text-primary" /> My Prescriptions
-          </h1>
-          <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-1 pl-11 md:pl-0">
-            {filterParam === "today" ? "Prescriptions issued today" : "Your complete archive of issued prescriptions"}
-          </p>
-        </div>
-      </header>
+      <DashboardHeader
+        title="My Prescriptions"
+        subtitle={filterParam === "today" ? "Prescriptions issued today" : "Your complete archive of issued prescriptions"}
+        backPath="/doctor"
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-hidden flex">
         <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">

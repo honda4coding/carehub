@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { fetchClient } from "@/services/fetchClient";
 
 import { Notification, TabValue } from "@/components/patients/notifications/types";
-import NotificationHeader from "@/components/patients/notifications/NotificationHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import NotificationFilters from "@/components/patients/notifications/NotificationFilters";
 import NotificationDesktopTable from "@/components/patients/notifications/NotificationDesktopTable";
 import NotificationMobileList from "@/components/patients/notifications/NotificationMobileList";
@@ -91,9 +91,14 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="flex-1 p-4 md:p-6 overflow-auto bg-[hsl(var(--color-bg))]">
-      <NotificationHeader />
-
+    <div className="flex flex-col flex-1 min-h-screen">
+      <DashboardHeader
+        title="Notifications"
+        subtitle="View and manage all your notifications"
+        backPath="/patient"
+      />
+      <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
         <NotificationFilters
           activeTab={activeTab}
@@ -122,6 +127,8 @@ export default function NotificationsPage() {
           totalPages={totalPages} 
           onPageChange={setPage} 
         />
+      </div>
+        </div>
       </div>
     </div>
   );

@@ -181,7 +181,7 @@ export default function UpdatePasswordForm() {
             {/* Submit */}
             <div className="pt-2 flex justify-end">
               <button type="submit" disabled={isSubmitting}
-                className="py-3 px-6 bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white font-black text-[14px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
+                className="w-full md:w-auto py-3 px-6 bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white font-black text-[14px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
                 {isSubmitting ? (
                   <><ImSpinner2 className="w-5 h-5 animate-spin" /> Updating...</>
                 ) : (

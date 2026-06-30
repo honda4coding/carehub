@@ -10,6 +10,7 @@ import {
   LuX,
   LuTriangleAlert,
 } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 import {
   Clinic,
@@ -164,24 +165,20 @@ export default function DoctorClinicsPage() {
   }
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-            <LuBuilding2 className="text-[hsl(var(--color-primary))]" /> My Clinics
-          </h1>
-          <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-1 pl-11 md:pl-0">
-            Pick a clinic on the left to manage its services and schedule
-          </p>
-        </div>
-        <button
-          onClick={openAddModal}
-          className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.3)] hover:scale-[1.02] transition-transform flex items-center gap-2 cursor-pointer"
-        >
-          <LuPlus className="text-lg" /> Add Clinic
-        </button>
-      </header>
+    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
+      <DashboardHeader
+        title="My Clinics"
+        subtitle="Pick a clinic to manage its services and schedule"
+        backPath="/doctor"
+        rightElement={
+          <button
+            onClick={openAddModal}
+            className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl hover:bg-[hsl(var(--color-primary-strong))] transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <LuPlus className="text-lg" /> Add Clinic
+          </button>
+        }
+      />
 
       <div className="p-4 md:p-6 flex-1">
         {error && (
@@ -222,7 +219,7 @@ export default function DoctorClinicsPage() {
               <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
                 Clinics
               </p>
-              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1">
+              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
                 {clinics.map((clinic) => {
                   const isActive = selectedClinicId === clinic._id;
                   return (
@@ -323,7 +320,7 @@ export default function DoctorClinicsPage() {
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="مركز الشفاء"
+                  placeholder="Al-Shifa Center"
                 />
               </div>
 
@@ -335,7 +332,7 @@ export default function DoctorClinicsPage() {
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="دمياط الجديدة"
+                  placeholder="New Damietta"
                 />
               </div>
 

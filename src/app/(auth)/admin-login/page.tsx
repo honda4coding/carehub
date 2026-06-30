@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-6" 
+      className="min-h-screen flex items-center justify-center pt-24 px-6 pb-6" 
       style={{
         background: `
           radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),

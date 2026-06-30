@@ -6,6 +6,7 @@ import { LuShieldCheck } from "react-icons/lu";
 import Image from "next/image";
 import AdminInfoForm from "@/components/admin/profile/AdminInfoForm";
 import { getAdminProfile, AdminProfile, UpdateAdminProfilePayload } from "@/services/adminService";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 export default function AdminProfilePage() {
   const [profile, setProfile] = useState<AdminProfile | null>(null);
@@ -38,15 +39,11 @@ export default function AdminProfilePage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
 
-      {/* Page title */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-6 py-4">
-        <h1 className="text-[16px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0">
-          Profile Settings
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Manage your account information
-        </p>
-      </header>
+      <DashboardHeader
+        title="Profile Settings"
+        subtitle="Manage your account information"
+        backPath="/admin"
+      />
 
       <main className="flex-1 p-6">
         {/* Loading */}

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { LuStethoscope, LuChevronDown, LuChevronUp } from "react-icons/lu";
+import { LuStethoscope, LuChevronDown, LuChevronUp, LuCalendar, LuHeartPulse, LuActivity, LuThermometer } from "react-icons/lu";
 import { TimelineEntry } from "@/types/patient";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 
@@ -8,56 +8,116 @@ interface Props {
   entry: TimelineEntry;
 }
 
+type Severity = "critical" | "warning" | "normal";
+function getSeverity(diag: string): Severity {
+  const d = diag.toLowerCase();
+  if (d.includes("crisis") || d.includes("emergency") || d.includes("acute") || d.includes("severe")) return "critical";
+  if (d.includes("infection") || d.includes("fever") || d.includes("inflammation") || d.includes("chronic")) return "warning";
+  return "normal";
+}
+const SEVERITY_BAR: Record<Severity, string> = {
+  critical: "bg-[hsl(var(--color-danger))]",
+  warning:  "bg-[hsl(var(--color-warning))]",
+  normal:   "bg-[hsl(var(--color-primary))]",
+};
+const SEVERITY_BADGE: Record<Severity, string> = {
+  critical: "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] border-[hsl(var(--color-danger)/0.2)]",
+  warning:  "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] border-[hsl(var(--color-warning)/0.2)]",
+  normal:   "bg-[hsl(var(--color-primary)/0.08)] text-[hsl(var(--color-primary-strong))] border-[hsl(var(--color-primary)/0.2)]",
+};
+
 export default function TimelineCard({ entry }: Props) {
   const [expanded, setExpanded] = useState(false);
+  const severity = getSeverity(entry.diagnosis || "");
+
+  const record = entry.rawRecord;
+  const tempVal = parseFloat(record?.temperature);
+  const highTemp = !isNaN(tempVal) && tempVal >= 38;
 
   return (
-    <div className="relative group w-full">
-      {/* Timeline Node (Glowing Dot) */}
-      <div className="absolute -left-[22px] md:-left-[38px] top-5 w-3.5 h-3.5 rounded-full bg-[hsl(var(--color-bg-surface))] border-[3px] border-[hsl(var(--color-primary))] -[0_0_10px_hsl(var(--color-primary)/0.4)] group-hover:scale-125 group-hover:bg-[hsl(var(--color-primary))] transition-all duration-300 z-10" />
+    <div className={`bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden transition-all duration-200
+      ${expanded ? "border-[hsl(var(--color-primary)/0.4)] shadow-sm" : "hover:border-[hsl(var(--color-border))]"}`}>
 
-      {/* Card Content */}
-      <div 
+      {/* ── Clickable Header ── */}
+      <div
+        className="flex cursor-pointer select-none"
         onClick={() => setExpanded(!expanded)}
-        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 group-hover:border-[hsl(var(--color-primary)/0.3)] -[0_4px_24px_hsl(var(--color-primary)/0.05)] transition-all duration-300 cursor-pointer"
+        role="button"
+        aria-expanded={expanded}
       >
-        
-        {/* Compact Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <span className="inline-block bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] text-xs font-black uppercase tracking-widest px-2 py-0.5 rounded-md mb-2">
-              {entry.date}
+        {/* Severity bar */}
+        <div className={`w-[3px] shrink-0 rounded-l-2xl ${SEVERITY_BAR[severity]}`} />
+
+        <div className="flex-1 px-4 py-3.5">
+          {/* Date + badge */}
+          <div className="flex items-start justify-between gap-3 mb-1.5">
+            <div className="flex items-center gap-1.5 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
+              <LuCalendar className="text-[11px]" /> {entry.date}
+            </div>
+            <span className={`text-[10px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${SEVERITY_BADGE[severity]}`}>
+              {severity === "critical" ? "Critical" : severity === "warning" ? "Follow-up" : "Routine"}
             </span>
-            <h3 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-1.5">
-              <LuStethoscope className="text-[hsl(var(--color-primary))] flex-shrink-0" /> Encounter with {entry.doctorName}
-            </h3>
-            <p className="text-sm font-bold text-[hsl(var(--color-text-muted))] uppercase mt-1 tracking-wider">{entry.specialty} • {entry.diagnosis || "No diagnosis recorded"}</p>
           </div>
-          
-          <div className="flex flex-col items-end gap-2 shrink-0">
-            <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors self-end mt-1 cursor-pointer">
-              {expanded ? <LuChevronUp className="text-2xl" /> : <LuChevronDown className="text-2xl" />}
-            </button>
-          </div>
+
+          {/* Diagnosis */}
+          <p className="text-[14px] font-semibold text-[hsl(var(--color-text))] leading-snug mb-1">
+            {entry.diagnosis || "No diagnosis recorded"}
+          </p>
+
+          {/* Doctor */}
+          <p className="text-[12px] text-[hsl(var(--color-text-muted))] flex items-center gap-1.5">
+            <LuStethoscope className="text-[11px] shrink-0" />
+            <span className="font-medium text-[hsl(var(--color-text))]">{entry.doctorName}</span>
+            {entry.specialty && <span className="opacity-60">· {entry.specialty}</span>}
+          </p>
+
+          {/* Inline vitals from rawRecord */}
+          {record && (record.bloodPressure || record.pulse || record.temperature) && (
+            <div className="flex flex-wrap gap-1.5 mt-2.5">
+              {record.bloodPressure && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-medium bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]">
+                  <LuHeartPulse className="text-[10px]" /> BP <span className="font-semibold text-[hsl(var(--color-text))]">{record.bloodPressure}</span>
+                </span>
+              )}
+              {record.pulse && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-medium bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]">
+                  <LuActivity className="text-[10px]" /> Pulse <span className="font-semibold text-[hsl(var(--color-text))]">{record.pulse} bpm</span>
+                </span>
+              )}
+              {record.temperature && (
+                <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[11px] font-medium ${
+                  highTemp
+                    ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]"
+                    : "bg-[hsl(var(--color-bg-surface-hover))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+                }`}>
+                  <LuThermometer className="text-[10px]" /> Temp <span className="font-semibold">{record.temperature}°C</span>
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Expanded Area (MedicalHistoryCard) */}
-        {expanded && entry.rawRecord && (
-          <div 
-            className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border-soft))] pt-4" 
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MedicalHistoryCard record={entry.rawRecord} hideHeader={true} />
-          </div>
-        )}
-        
-        {/* Fallback if no rawRecord is attached (shouldn't happen but just in case) */}
-        {expanded && !entry.rawRecord && (
-           <div className="mt-4 pt-4 border-t border-[hsl(var(--color-border-soft))] text-center text-sm text-[hsl(var(--color-text-muted))] italic">
-              Detailed record not available.
-           </div>
-        )}
+        {/* Chevron */}
+        <div className="flex items-center pr-4 pl-1 text-[hsl(var(--color-text-muted))]">
+          {expanded ? <LuChevronUp className="text-[15px]" /> : <LuChevronDown className="text-[15px]" />}
+        </div>
       </div>
+
+      {/* ── Expanded Body ── */}
+      {expanded && (
+        <div
+          className="border-t border-[hsl(var(--color-border))] p-4 animate-in fade-in slide-in-from-top-1 duration-150"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {entry.rawRecord ? (
+            <MedicalHistoryCard record={entry.rawRecord} hideHeader={true} />
+          ) : (
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center py-4 italic">
+              Detailed record not available.
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }

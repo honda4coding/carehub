@@ -15,6 +15,7 @@ import {
 import MedicationSummaryWidget from "@/components/patients/MedicationSummaryWidget";
 import { Card } from "@/components/ui/Card";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -200,14 +201,11 @@ export default function TrackingPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
 
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3">
-        <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 flex items-center gap-2">
-          <LuActivity className="text-[hsl(var(--color-primary))]" /> Personal Tracking
-        </h1>
-        <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 pl-11 md:pl-0">
-          Monitor your vital signs, earn badges, and track your progress!
-        </p>
-      </header>
+      <DashboardHeader
+        title="Personal Tracking"
+        subtitle="Monitor your vital signs, earn badges, and track your progress!"
+        backPath="/patient"
+      />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="max-w-5xl mx-auto space-y-6">
@@ -274,20 +272,21 @@ export default function TrackingPage() {
                 </div>
               </div>
             </Card>
-
-            {/* Medications Tracking Widget (Second Row) */}
-            <div className="md:col-span-12 mt-2">
-              <MedicationSummaryWidget />
-            </div>
           </div>
         )}
 
-        {/* Quick Log Form */}
-        <Card className="p-6">
+        {/* Second Row: Medication & Log Form */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          <div className="lg:col-span-5 flex flex-col">
+            <MedicationSummaryWidget />
+          </div>
+
+          <div className="lg:col-span-7 flex flex-col">
+            <Card className="p-6 h-full">
           <h2 className="text-[16px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
-          <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div className="flex flex-col">
               <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
               <input type="number" step="0.1" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 75" />
@@ -335,13 +334,15 @@ export default function TrackingPage() {
               <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
               <input type="number" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 72" />
             </div>
-            <div className="flex flex-col justify-end md:col-span-2 items-end mt-2">
+            <div className="flex flex-col justify-end col-span-2 md:col-span-3 items-end mt-2">
               <button disabled={isSubmitting} type="submit" className="cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
                 {isSubmitting ? "Saving..." : <><LuPlus /> Log & Earn XP</>}
               </button>
             </div>
           </form>
         </Card>
+      </div>
+    </div>
 
         {/* Filters Section */}
         <Card className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">

@@ -68,7 +68,7 @@ export function ActivityFeed({ activities, loading, className = "" }: ActivityFe
   const router = useRouter();
 
   return (
-    <Card className={`p-6 flex flex-col h-full ${className}`}>
+    <Card className={`p-6 flex flex-col h-full border border-[hsl(var(--color-border-soft))] shadow-sm hover:shadow-md transition-shadow ${className}`}>
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))]">
           Recent Activity

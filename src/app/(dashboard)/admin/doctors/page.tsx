@@ -8,7 +8,8 @@ import { Doctor, DoctorApprovalStatus } from "@/types/doctor";
 import Pagination from "@/components/ui/Pagination";
 import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
 
-import DoctorsHeader from "@/components/admin/doctors/DoctorsHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
+import { LuRefreshCw } from "react-icons/lu";
 import DoctorsFilters from "@/components/admin/doctors/DoctorsFilters";
 import DoctorsList from "@/components/admin/doctors/DoctorsList";
 
@@ -88,14 +89,23 @@ export default function AdminDoctorsPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
-      <DoctorsHeader
-        totalCount={doctors.length}
-        isLoading={isLoading}
-        error={error}
-        onRefresh={fetchDoctors}
+      <DashboardHeader
+        title="Doctor Directory"
+        subtitle="View all registered doctors and their approval status"
+        backPath="/admin"
+        rightElement={
+          <button
+            onClick={fetchDoctors}
+            disabled={isLoading}
+            title="Refresh"
+            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+          >
+            <LuRefreshCw className={`text-[14px] ${isLoading ? "animate-spin" : ""}`} />
+          </button>
+        }
       />
-
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 overflow-auto min-w-0">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           <DoctorsFilters
             search={search}
@@ -149,6 +159,7 @@ export default function AdminDoctorsPage() {
                 &ldquo;{debouncedSearch}&rdquo;
               </p>
             )}
+        </div>
         </div>
       </main>
 

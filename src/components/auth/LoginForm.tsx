@@ -168,11 +168,11 @@ export const LoginForm = () => {
               </div>
 
               {/* Remember + Forgot */}
-              <div className="flex items-center justify-between px-2 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
-                    className="w-5 h-5 rounded-md border-slate-300"
+                    className="w-5 h-5 rounded-md border-slate-300 shrink-0"
                     style={{ accentColor: "hsl(var(--color-primary))" }}
                   />
                   <span
@@ -182,7 +182,7 @@ export const LoginForm = () => {
                     Stay Signed In
                   </span>
                 </label>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3 flex-wrap">
                   <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
                   <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Reset Password</Link>
                 </div>

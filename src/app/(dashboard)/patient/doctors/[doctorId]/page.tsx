@@ -11,6 +11,7 @@ import { DoctorListItem, getApprovedDoctors } from "@/services/appointmentServic
 import { initialsOf } from "@/components/appointments/format";
 
 import DoctorProfileCard from "@/components/patients/doctors/DoctorProfileCard";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 export default function DoctorProfilePage() {
   const { doctorId } = useParams<{ doctorId: string }>();
@@ -51,16 +52,11 @@ export default function DoctorProfilePage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center gap-3">
-        <Link
-          href="/patient/doctors"
-          className="w-9 h-9 rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))] transition-all shrink-0"
-        >
-          <LuArrowLeft className="text-[14px]" />
-        </Link>
-        <h1 className="text-[17px] font-black text-[hsl(var(--color-text))]">Doctor Profile Details</h1>
-      </header>
+      <DashboardHeader
+        title="Doctor Profile Details"
+        subtitle="View doctor information and book an appointment"
+        backPath="/patient/doctors"
+      />
 
       <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col gap-6">
         <DoctorProfileCard

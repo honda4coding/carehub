@@ -22,7 +22,7 @@ interface Message {
 export default function AIChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: "ai", content: "أهلاً بك في نظام CareHub الذكي 🤖. كيف يمكنني مساعدتك اليوم؟ (مثال: محتاج دكتور باطنة شاطر في أكتوبر بكرة)" }
+    { role: "ai", content: "Welcome to CareHub AI 🤖. How can I help you today? (e.g., I need a good internal medicine doctor tomorrow)" }
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -38,7 +38,7 @@ export default function AIChatWidget() {
 
   const handleNewChat = () => {
     setMessages([
-      { role: "ai", content: "أهلاً بك في نظام CareHub الذكي 🤖. كيف يمكنني مساعدتك اليوم؟ (مثال: محتاج دكتور باطنة شاطر في أكتوبر بكرة)" }
+      { role: "ai", content: "Welcome to CareHub AI 🤖. How can I help you today? (e.g., I need a good internal medicine doctor tomorrow)" }
     ]);
   };
 
@@ -63,11 +63,11 @@ export default function AIChatWidget() {
         { headers: authHeaders() }
       );
       
-      const aiReply = res.data?.data?.reply || "عذراً، حدث خطأ أثناء المعالجة.";
+      const aiReply = res.data?.data?.reply || "Sorry, an error occurred during processing.";
       setMessages(prev => [...prev, { role: "ai", content: aiReply }]);
     } catch (error) {
       console.error(error);
-      setMessages(prev => [...prev, { role: "ai", content: "عذراً، لا يمكنني الاتصال بالخادم الآن. يرجى المحاولة لاحقاً." }]);
+      setMessages(prev => [...prev, { role: "ai", content: "Sorry, I cannot connect to the server right now. Please try again later." }]);
     } finally {
       setLoading(false);
     }
@@ -95,10 +95,10 @@ export default function AIChatWidget() {
               CareHub AI Assistant
             </div>
             <div className="flex items-center gap-3">
-              <button onClick={handleNewChat} title="محادثة جديدة" className="hover:text-gray-300 transition-colors">
+              <button onClick={handleNewChat} title="New Chat" className="hover:text-gray-300 transition-colors">
                 <LuPlus size={20} />
               </button>
-              <button onClick={() => setIsOpen(false)} title="إغلاق" className="hover:text-gray-300 transition-colors">
+              <button onClick={() => setIsOpen(false)} title="Close" className="hover:text-gray-300 transition-colors">
                 <LuX size={20} />
               </button>
             </div>
@@ -127,7 +127,7 @@ export default function AIChatWidget() {
             {loading && (
               <div className="flex justify-start">
                 <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-tl-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
-                  <LuLoader className="animate-spin" /> جاري التفكير...
+                  <LuLoader className="animate-spin" /> Thinking...
                 </div>
               </div>
             )}
@@ -141,7 +141,7 @@ export default function AIChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="اكتب رسالتك هنا..."
+              placeholder="Type your message here..."
               className="flex-1 px-4 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-full text-sm focus:outline-none focus:border-[hsl(var(--color-primary))]"
               dir="rtl"
             />

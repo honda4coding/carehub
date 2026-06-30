@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { IoIosHelpCircleOutline } from "react-icons/io";
+import NotificationBell from "@/components/global/NotificationBell";
 import {
   LuUsers,
   LuCalendarDays,
@@ -19,6 +20,7 @@ import {
   LuUserPlus,
   LuSmartphone
 } from "react-icons/lu";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 type SessionStatus = "pending_otp" | "in_progress" | "completed";
 
@@ -197,11 +199,10 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
       // Only show OTP alert if the session actually requires OTP verification
       if (sessionStatus === "pending_otp") {
-        const tempOtp = responseData.temp_otp || response.data.temp_otp || "Not Provided";
-        alert(`Test OTP for ${patient.fullName} is: ${tempOtp}`);
+        alert("✅ An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
       } else {
         // Session is in_progress immediately — no OTP needed
-        alert(`✅ تم السماح بالوصول الفوري للمريض بناءً على إعدادات الخصوصية الخاصة به.`);
+        alert(`✅ Instant access granted to the patient based on their privacy settings.`);
       }
 
      const newActiveSession: Session = {
@@ -243,7 +244,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
         msg === "Access already granted for this patient"
       ) {
         // Session already active — just refresh the queue to show it
-        alert("✅ هذا المريض موجود بالفعل في طابور العيادة (الجلسة نشطة).");
+        alert("✅ This patient is already in the clinic queue (Active Session).");
         fetchCurrentQueue();
       } else {
         alert("Failed to request access: " + (msg || err.message));
@@ -350,53 +351,45 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative min-w-0">
-      {/* Header */}
-      <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center justify-between">
-        <div className="min-w-0">
-          <h1 className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))] pl-11 md:pl-0 truncate">
-            Doctor Workspace
-          </h1>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <button className="w-[34px] h-[34px] rounded-[10px] border border-[hsl(var(--color-border))] flex items-center justify-center relative hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
-            <LuBell className="text-[15px]" />
-            <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-danger" />
-          </button>
-        </div>
-      </header>
+      <DashboardHeader
+        title="Doctor Workspace"
+        subtitle="Manage your daily encounters and patient care"
+        rightElement={<NotificationBell basePath="/doctor/notifications" />}
+      />
 
       {/* Content */}
-      <main className="flex-1 p-4 md:p-6 overflow-x-hidden overflow-y-auto min-w-0 flex flex-col gap-4">
-        
-        <DoctorActions 
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          handleSearch={handleSearch}
-          isSearching={isSearching}
-          showSearchResults={showSearchResults}
-          setShowSearchResults={setShowSearchResults}
-          searchError={searchError}
-          realSearchResults={realSearchResults}
-          handleRequestAccess={handleRequestAccess}
-          setWalkInModalOpen={setWalkInModalOpen}
-          user={user}
-        />
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden overflow-y-auto min-w-0 bg-[hsl(var(--color-bg-base))]">
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-6">
+          
+          <DoctorActions 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            handleSearch={handleSearch}
+            isSearching={isSearching}
+            showSearchResults={showSearchResults}
+            setShowSearchResults={setShowSearchResults}
+            searchError={searchError}
+            realSearchResults={realSearchResults}
+            handleRequestAccess={handleRequestAccess}
+            setWalkInModalOpen={setWalkInModalOpen}
+            user={user}
+          />
 
-        <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
+          <DoctorStats dashboardStats={dashboardStats} sessions={sessions} setStatusFilter={setStatusFilter} />
 
-        <CurrentQueue 
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-          typeFilter={typeFilter}
-          setTypeFilter={setTypeFilter}
-          filter={filter}
-          setFilter={setFilter}
-          filteredSessions={filtered}
-          handleCancelRequest={handleCancelRequest}
-          setSelectedSession={setSelectedSession}
-          setOTPModalOpen={setOTPModalOpen}
-        />
+          <CurrentQueue 
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+            typeFilter={typeFilter}
+            setTypeFilter={setTypeFilter}
+            filter={filter}
+            setFilter={setFilter}
+            filteredSessions={filtered}
+            handleCancelRequest={handleCancelRequest}
+            setSelectedSession={setSelectedSession}
+            setOTPModalOpen={setOTPModalOpen}
+          />
+        </div>
       </main>
 
       <DashboardModals 

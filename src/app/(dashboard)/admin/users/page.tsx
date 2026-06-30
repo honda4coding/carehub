@@ -7,7 +7,8 @@ import { adminService } from "@/services/adminService";
 import { AdminUser, UserRole, UserStatus, UsersPagination } from "@/types/user";
 import Pagination from "@/components/ui/Pagination";
 
-import UsersHeader from "@/components/admin/users/UsersHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
+import { LuRefreshCw } from "react-icons/lu";
 import UsersFilters from "@/components/admin/users/UsersFilters";
 import UsersList from "@/components/admin/users/UsersList";
 
@@ -106,13 +107,24 @@ export default function AdminUserManagementPage() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <UsersHeader
-        pagination={pagination}
-        isLoading={isLoading}
-        onRefresh={fetchUsers}
+      <DashboardHeader
+        title="User Directory"
+        subtitle="Manage all registered accounts and suspension statuses"
+        backPath="/admin"
+        rightElement={
+          <button
+            onClick={fetchUsers}
+            disabled={isLoading}
+            title="Refresh"
+            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+          >
+            <LuRefreshCw className={`text-[14px] ${isLoading ? "animate-spin" : ""}`} />
+          </button>
+        }
       />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 overflow-auto min-w-0">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           <UsersFilters
             search={search}
@@ -156,6 +168,7 @@ export default function AdminUserManagementPage() {
               onPageChange={(page) => setPage(page)}
             />
           )}
+        </div>
         </div>
       </main>
     </div>
