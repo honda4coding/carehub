@@ -36,6 +36,7 @@ interface RxBuilderProps {
   setAttachmentsMetadata?: (meta: { type: string; title: string }[]) => void;
   attachmentsInputRef?: RefObject<HTMLInputElement | null>;
   patientComplaint?: string;
+  patientId?: string;
 }
 
 // Handles writing the prescription, managing drugs, and uploading a paper Rx image
@@ -58,7 +59,8 @@ export default function RxBuilder({
   attachmentsMetadata = [],
   setAttachmentsMetadata,
   attachmentsInputRef,
-  patientComplaint
+  patientComplaint,
+  patientId
 }: RxBuilderProps) {
   
   const handleAddAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,7 +224,7 @@ export default function RxBuilder({
 
       const response = await axios.post(
         `${baseUrl}/ai/interactions`,
-        { currentDrugs, newDrugs, newComplaint: patientComplaint },
+        { currentDrugs, newDrugs, newComplaint: patientComplaint, patientId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
