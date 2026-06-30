@@ -28,9 +28,12 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL(redirectUrl, request.url));
     }
 
-    if (role && !pathWithoutLocale.startsWith(`/${role}`)) {
-      const redirectUrl = localePrefix ? `/${localePrefix}/${role}` : `/${role}`;
-      return NextResponse.redirect(new URL(redirectUrl, request.url));
+    if (role) {
+      const normalizedRole = role.toLowerCase();
+      if (!pathWithoutLocale.startsWith(`/${normalizedRole}`)) {
+        const redirectUrl = localePrefix ? `/${localePrefix}/${normalizedRole}` : `/${normalizedRole}`;
+        return NextResponse.redirect(new URL(redirectUrl, request.url));
+      }
     }
   }
 
@@ -38,7 +41,7 @@ export function proxy(request: NextRequest) {
   const isAuthRoute = authPaths.some(path => pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`));
   
   if (isAuthRoute && token) {
-    const redirectRole = role || 'patient';
+    const redirectRole = role ? role.toLowerCase() : 'patient';
     const redirectUrl = localePrefix ? `/${localePrefix}/${redirectRole}` : `/${redirectRole}`;
     return NextResponse.redirect(new URL(redirectUrl, request.url));
   }
