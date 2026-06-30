@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   LuBuilding2,
@@ -32,7 +32,7 @@ const EMPTY_FORM: ClinicPayload = {
   landline: "",
 };
 
-export default function DoctorClinicsPage() {
+function ClinicsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -450,5 +450,29 @@ export default function DoctorClinicsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function DoctorClinicsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
+        <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="h-6 w-32 bg-[hsl(var(--color-bg-soft))] animate-pulse rounded" />
+        </header>
+        <div className="p-4 md:p-6 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-24 rounded-2xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <ClinicsContent />
+    </Suspense>
   );
 }
