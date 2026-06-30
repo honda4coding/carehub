@@ -8,10 +8,15 @@ import Cookies from "js-cookie";
 import PatientDirectoryFilters from "@/components/doctor/patients/PatientDirectoryFilters";
 import PatientTable from "@/components/doctor/patients/PatientTable";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useAuth } from "@/context/AuthContext";
+import VitalsModal from "@/components/assistant/VitalsModal";
 
 function PatientDirectoryContent() {
   const searchParams = useSearchParams();
   const filterParam = searchParams.get('filter');
+  
+  const [isVitalsModalOpen, setIsVitalsModalOpen] = useState(false);
+  const [selectedPatientForVitals, setSelectedPatientForVitals] = useState<any>(null);
   
   const [searchTerm, setSearchTerm] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -22,6 +27,7 @@ function PatientDirectoryContent() {
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+  const { role } = useAuth();
   const token = Cookies.get("auth_token");
 
   useEffect(() => {
@@ -63,16 +69,17 @@ function PatientDirectoryContent() {
   }, [token, filterParam, startDate, endDate]);
 
   const handleViewHistory = (patient: any) => {
+    const basePath = role === 'assistant' ? '/assistant' : '/doctor';
     if (patient.isOfflinePatient) {
       const queryParams = new URLSearchParams();
       if (patient.guestName) queryParams.set('guestName', patient.guestName);
       if (patient.guestPhone) queryParams.set('guestPhone', patient.guestPhone);
-      router.push(`/doctor/history/walkin?${queryParams.toString()}`);
+      router.push(`${basePath}/history/walkin?${queryParams.toString()}`);
     } else {
       const queryParams = new URLSearchParams();
       if (patient.fullName) queryParams.set('name', patient.fullName);
       if (patient.phoneNumber) queryParams.set('phone', patient.phoneNumber);
-      router.push(`/doctor/history/${patient.patientId}?${queryParams.toString()}`);
+      router.push(`${basePath}/history/${patient.patientId}?${queryParams.toString()}`);
     }
   };
 
@@ -82,7 +89,8 @@ function PatientDirectoryContent() {
     setEndDate("");
     setTypeFilter("All");
     if (filterParam) {
-      router.push('/doctor/patients');
+      const basePath = role === 'assistant' ? '/assistant' : '/doctor';
+      router.push(`${basePath}/patients`);
     }
   };
 
@@ -129,10 +137,24 @@ function PatientDirectoryContent() {
             patients={filteredPatients}
             loading={loading}
             onViewHistory={handleViewHistory}
+            onRecordVitals={(patient: any) => {
+              setSelectedPatientForVitals(patient);
+              setIsVitalsModalOpen(true);
+            }}
+            isAssistant={role === 'assistant'}
           />
 
         </div>
       </main>
+
+      <VitalsModal
+        isOpen={isVitalsModalOpen}
+        onClose={() => setIsVitalsModalOpen(false)}
+        patient={selectedPatientForVitals}
+        onSuccess={() => {
+          alert('Vitals recorded successfully');
+        }}
+      />
     </div>
   );
 }

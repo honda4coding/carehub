@@ -9,19 +9,23 @@ import SectionToggle from "@/components/appointments/SectionToggle";
 import ClinicScheduleCard from "@/components/appointments/ClinicScheduleCard";
 import { getMyClinics, Clinic } from "@/services/clinicService";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DoctorSchedulePage() {
   const router = useRouter();
+  const { user, role } = useAuth();
 
   const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
-
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loadingClinics, setLoadingClinics] = useState(true);
 
   useEffect(() => {
     (async () => {
       try {
-        const data = await getMyClinics();
+        let data = await getMyClinics();
+        if (role === 'assistant' && user?.clinicId) {
+          data = data.filter(c => c._id === user.clinicId);
+        }
         setClinics(data);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load clinics", variant: "error" });
@@ -36,7 +40,7 @@ export default function DoctorSchedulePage() {
       <DashboardHeader
         title="My Schedule"
         subtitle="Your weekly hours for each clinic"
-        backPath="/doctor/appointments"
+        backPath={role === "assistant" ? "/assistant/appointments" : "/doctor/appointments"}
         rightElement={<SectionToggle />}
       />
 
@@ -74,6 +78,9 @@ export default function DoctorSchedulePage() {
                 clinicId={clinic._id}
                 clinicName={clinic.name}
                 clinicAddress={clinic.address}
+                onEdit={() =>
+                  router.push(`/doctor/clinics?selected=${clinic._id}`)
+                }
               />
             ))}
           </div>

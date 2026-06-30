@@ -91,7 +91,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const fetchCurrentQueue = async () => {
     if (!token) return;
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.get(`${baseUrl}/doctor/session`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -111,7 +111,9 @@ const [sessions, setSessions] = useState<Session[]>([]);
           avatarStyle: s.isOfflinePatient 
             ? "bg-[hsl(var(--color-primary)/0.1)] text-primary"
             : "bg-[hsl(var(--color-success-bg))] text-success",
-          validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
+          validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined,
+          fees: s.fees || 0,
+          isFeesFinalized: s.isFeesFinalized || false
         };
       });
       setSessions(mappedSessions);
@@ -154,7 +156,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     setShowSearchResults(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.get(`${baseUrl}/doctor/search-patient?searchTerm=${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -183,7 +185,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const handleRequestAccess = async (patient: any) => {
 
     try{
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.post(`${baseUrl}/doctor/session/request`, {
         patientId: patient._id,
       }, {
@@ -252,9 +254,23 @@ const [sessions, setSessions] = useState<Session[]>([]);
     }
   };
 
-  const handleCancelRequest = async (sessionId: string) => {
+  const handleUpdateFees = async (sessionId: string, fees: number, isFeesFinalized: boolean = false) => {
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      await axios.patch(`${baseUrl}/doctor/session/${sessionId}/fees`, { fees, isFeesFinalized }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, fees, isFeesFinalized } : s));
+      alert(isFeesFinalized ? "Fees finalized successfully." : "Fees updated successfully.");
+    } catch (err: any) {
+      console.error("Failed to update fees", err);
+      alert(err.response?.data?.message || err.message || "Failed to update fees");
+    }
+  };
+
+  const handleCancelRequest = async (sessionId: string) => {
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       await axios.delete(`${baseUrl}/doctor/session/${sessionId}/cancel`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -271,7 +287,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     if (!selectedSession || currentOtp.length !== 6) return;
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       await axios.post(`${baseUrl}/doctor/session/verify`, {
         sessionId: selectedSession,
         otp: currentOtp
@@ -313,7 +329,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     if (!token) return;
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.post(`${baseUrl}/doctor/session/request`, {
         isOfflinePatient: true,
         guestName: walkInName,
@@ -388,6 +404,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
             handleCancelRequest={handleCancelRequest}
             setSelectedSession={setSelectedSession}
             setOTPModalOpen={setOTPModalOpen}
+            handleUpdateFees={handleUpdateFees}
           />
         </div>
       </main>

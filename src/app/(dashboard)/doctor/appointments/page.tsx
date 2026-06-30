@@ -48,7 +48,7 @@ import SectionToggle from "@/components/appointments/SectionToggle";
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function DoctorAppointmentsPage() {
-  const { user } = useAuth();
+  const { user, role } = useAuth();
   const [toast, setToast] = useState<{
     msg: string;
     variant: "success" | "error";
@@ -68,7 +68,7 @@ export default function DoctorAppointmentsPage() {
   // ── Clinics sidebar filter ───────────────────────────────────
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [clinicsLoading, setClinicsLoading] = useState(true);
-  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null); // null = All Clinics
+  const [selectedClinicId, setSelectedClinicId] = useState<string | null>(role === 'assistant' ? (user?.clinicId || null) : null); // null = All Clinics
 
   useEffect(() => {
     (async () => {
@@ -216,8 +216,9 @@ export default function DoctorAppointmentsPage() {
         <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6">
 
         {/* ══════════════════════════════════════════════════════
-            LEFT — Clinics sidebar
+            LEFT — Clinics sidebar (Hidden for Assistants)
         ══════════════════════════════════════════════════════ */}
+        {role !== 'assistant' && (
         <aside className="w-full lg:w-60 shrink-0">
           <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
             Clinics
@@ -278,6 +279,7 @@ export default function DoctorAppointmentsPage() {
             )}
           </div>
         </aside>
+        )}
 
         {/* ══════════════════════════════════════════════════════
             RIGHT — APPOINTMENTS for the selected clinic

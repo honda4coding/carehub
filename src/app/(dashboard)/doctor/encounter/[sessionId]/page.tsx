@@ -27,7 +27,8 @@ export default function PatientDashboardPage() {
   const router = useRouter();
   const params = useParams();
   const sessionId = params.sessionId as string;
-  const { token } = useAuth();
+  const { token, user, role } = useAuth();
+  const canManagePatientsFull = role === "doctor" || (role === "assistant" && user?.permissions?.canManagePatientsFull);
 
   // Tab Navigation
   const [activeTab, setActiveTab] = useState<"profile" | "history" | "assessment" | "prescription">("profile");
@@ -450,8 +451,10 @@ export default function PatientDashboardPage() {
             {[
               { id: "profile", label: "Profile & Vitals", icon: LuUser },
               { id: "history", label: "Medical History", icon: LuHistory },
-              { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
-              { id: "prescription", label: "Prescription", icon: LuPill }
+              ...(canManagePatientsFull ? [
+                { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
+                { id: "prescription", label: "Prescription", icon: LuPill }
+              ] : [])
             ].map((tab) => (
               <button
                 key={tab.id}

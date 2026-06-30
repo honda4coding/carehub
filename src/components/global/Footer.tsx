@@ -5,7 +5,7 @@ import { LuActivity } from "react-icons/lu";
 
 export default function Footer() {
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient");
+  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient") || pathname.startsWith("/assistant");
   if (isDashboard) return null;
 
   return (

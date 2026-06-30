@@ -62,6 +62,9 @@ export const fetchClient = {
   put: (endpoint: string, body: any, options?: FetchOptions) => 
     fetchClient.request(endpoint, { ...options, method: "PUT", body: JSON.stringify(body) }),
     
+  patch: (endpoint: string, body: any, options?: FetchOptions) => 
+    fetchClient.request(endpoint, { ...options, method: "PATCH", body: JSON.stringify(body) }),
+
   delete: (endpoint: string, options?: FetchOptions) => 
     fetchClient.request(endpoint, { ...options, method: "DELETE" }),
 };

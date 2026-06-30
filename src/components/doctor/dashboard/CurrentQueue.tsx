@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { LuSearch, LuSmartphone, LuX, LuShieldCheck, LuEye, LuInbox } from "react-icons/lu";
+import { LuSearch, LuSmartphone, LuX, LuShieldCheck, LuEye, LuInbox, LuLock, LuCheck } from "react-icons/lu";
 import { CountdownTimer } from "./OTPComponents";
 import Pagination from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
+import { useAuth } from "@/context/AuthContext";
 
 const statusConfig: Record<string, { style: string; label: string }> = {
   pending_otp: {
@@ -33,9 +34,36 @@ export const CurrentQueue = ({
   handleCancelRequest,
   setSelectedSession,
   setOTPModalOpen,
-}: any) => {
+  handleReorder,
+  handleUpdateFees,
+  isAssistant,
+  onRecordVitals,
+  hideVitalsAction = false,
+  hideAssessmentAction = false,
+  hideFees = false,
+}: {
+  statusFilter: string;
+  setStatusFilter: (v: string) => void;
+  typeFilter: string;
+  setTypeFilter: (v: string) => void;
+  filter: string;
+  setFilter: (v: string) => void;
+  filteredSessions: any[];
+  handleCancelRequest?: (id: string) => void;
+  setSelectedSession?: (s: any) => void;
+  setOTPModalOpen?: (v: boolean) => void;
+  handleReorder?: (draggedId: string, targetId: string) => void;
+  handleUpdateFees?: (id: string, fees: number, isFinalized: boolean) => void;
+  isAssistant?: boolean;
+  onRecordVitals?: (s: any) => void;
+  hideVitalsAction?: boolean;
+  hideAssessmentAction?: boolean;
+  hideFees?: boolean;
+}) => {
   const router = useRouter();
+  const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
+  const canManagePatientsFull = user?.permissions?.canManagePatientsFull;
 
   // Reset pagination when filters change
   useEffect(() => {
@@ -104,20 +132,25 @@ export const CurrentQueue = ({
           <thead>
             <tr className="border-b border-[hsl(var(--color-border))]">
               {["Patient", "Phone", "Type", "Time", "Status", "Actions"].map((h) => (
-                <th
+                <th 
                   key={h}
-                  className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-3"
+                  className="py-3.5 pr-2 text-left text-[10px] font-black uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.7)]"
                 >
                   {h}
                 </th>
               ))}
+              {!hideFees && (
+                <th className="py-3.5 pr-2 text-left text-[10px] font-black uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.7)]">
+                  Fees
+                </th>
+              )}
             </tr>
           </thead>
 
           <tbody>
             {paginatedSessions.length === 0 ? (
               <tr>
-                <td colSpan={6} className="py-16 text-center">
+                <td colSpan={hideFees ? 6 : 7} className="py-16 text-center">
                   <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
                   <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
                     No patients found in queue.
@@ -134,6 +167,7 @@ export const CurrentQueue = ({
                   >
                     <td className="py-3.5 pr-2 text-left">
                       <div className="flex items-center gap-3">
+
                         <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${s.avatarStyle}`}>
                           {s.initials}
                         </div>
@@ -169,10 +203,33 @@ export const CurrentQueue = ({
 
                     <td className="py-3.5 text-left whitespace-nowrap">
                       <div className="flex items-center gap-2">
-                        {s.status === "pending_otp" ? (
+                        {isAssistant ? (
+                          <>
+                            {!hideVitalsAction && (user?.permissions?.canManagePatientsVitals || user?.permissions?.canManagePatientsFull || user?.permissions?.canManagePatients) && (
+                              <Button
+                                size="sm"
+                                variant="primary"
+                                onClick={() => onRecordVitals && onRecordVitals(s)}
+                                className="!text-[11px] !px-3 !h-[32px] !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+                              >
+                                Update Vitals
+                              </Button>
+                            )}
+                            {!hideAssessmentAction && canManagePatientsFull && (
+                              <Button
+                                size="sm"
+                                icon={LuEye}
+                                onClick={() => router.push(`/${isAssistant ? 'assistant' : 'doctor'}/encounter/${s.id}`)}
+                                className="!text-[11px] !px-3 !h-[32px] !rounded-lg"
+                              >
+                                Open File
+                              </Button>
+                            )}
+                          </>
+                        ) : s.status === "pending_otp" ? (
                           <>
                             <button
-                              onClick={() => handleCancelRequest(s.id)}
+                              onClick={() => handleCancelRequest && handleCancelRequest(s.id)}
                               className="w-[32px] h-[32px] rounded-lg flex items-center justify-center text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] transition-colors cursor-pointer"
                               title="Cancel Request"
                             >
@@ -182,8 +239,8 @@ export const CurrentQueue = ({
                               size="sm"
                               icon={LuShieldCheck}
                               onClick={() => {
-                                setSelectedSession(s.id);
-                                setOTPModalOpen(true);
+                                setSelectedSession && setSelectedSession(s.id);
+                                setOTPModalOpen && setOTPModalOpen(true);
                               }}
                               className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[11px] !px-3 !h-[32px] !rounded-lg"
                             >
@@ -202,6 +259,62 @@ export const CurrentQueue = ({
                         )}
                       </div>
                     </td>
+                    {!hideFees && (
+                      <td className="py-3.5 pr-2 text-left">
+                        {s.isFeesFinalized ? (
+                          <div className="flex items-center gap-1.5 px-2 py-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-lg opacity-70 w-fit">
+                            <LuLock className="text-[hsl(var(--color-text-muted))] text-[12px]" />
+                            <span className="text-[12px] font-bold text-[hsl(var(--color-text))]">{s.fees || 0}</span>
+                            <span className="text-[9px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1 py-0.5 rounded">Paid</span>
+                          </div>
+                        ) : (
+                          <form 
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const feeValue = Number((e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement).value);
+                              if (handleUpdateFees && !isNaN(feeValue)) {
+                                handleUpdateFees(s.id, feeValue, false);
+                              }
+                            }}
+                            className="flex items-center gap-2"
+                          >
+                            <input 
+                              type="number" 
+                              name="feeInput"
+                              defaultValue={s.fees}
+                              disabled={s.isFeesFinalized}
+                              className="w-20 px-2 py-1 text-sm rounded border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] disabled:opacity-50"
+                            />
+                            <div className="flex flex-col gap-1">
+                              <Button 
+                                type="submit" 
+                                size="sm" 
+                                className="h-6 text-[10px] px-2 py-0"
+                                disabled={s.isFeesFinalized}
+                              >
+                                Save
+                              </Button>
+                              <Button 
+                                type="button" 
+                                size="sm"
+                                variant="primary"
+                                className="h-6 text-[10px] px-2 py-0 flex items-center gap-1"
+                                disabled={s.isFeesFinalized}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  const feeValue = Number((e.currentTarget.closest('form')?.elements.namedItem('feeInput') as HTMLInputElement).value);
+                                  if (handleUpdateFees && !isNaN(feeValue)) {
+                                    handleUpdateFees(s.id, feeValue, true);
+                                  }
+                                }}
+                              >
+                                <LuCheck size={10} /> Finish
+                              </Button>
+                            </div>
+                          </form>
+                        )}
+                      </td>
+                    )}
                   </tr>
                 );
               })
@@ -259,7 +372,7 @@ export const CurrentQueue = ({
                       {s.status === "pending_otp" ? (
                         <>
                           <button
-                            onClick={() => handleCancelRequest(s.id)}
+                            onClick={() => handleCancelRequest?.(s.id)}
                             className="w-[28px] h-[28px] rounded-lg flex items-center justify-center bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] hover:opacity-80 transition-colors"
                             title="Cancel Request"
                           >
@@ -269,8 +382,8 @@ export const CurrentQueue = ({
                             size="sm"
                             icon={LuShieldCheck}
                             onClick={() => {
-                              setSelectedSession(s.id);
-                              setOTPModalOpen(true);
+                              setSelectedSession?.(s.id);
+                              setOTPModalOpen?.(true);
                             }}
                             className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                           >
