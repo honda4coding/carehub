@@ -10,8 +10,10 @@ import PatientTable from "@/components/doctor/patients/PatientTable";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { useAuth } from "@/context/AuthContext";
 import VitalsModal from "@/components/assistant/VitalsModal";
+import { useTranslations } from "next-intl";
 
 function PatientDirectoryContent() {
+    const t = useTranslations("auto");
   const searchParams = useSearchParams();
   const filterParam = searchParams.get('filter');
   
@@ -108,12 +110,12 @@ function PatientDirectoryContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))] relative">
       <DashboardHeader
-        title="Patient Directory"
-        subtitle="Your complete archive of all clinic patients"
+        title={t('patientDirectory')}
+        subtitle={t('yourCompleteArchiveOf')}
         backPath="/doctor"
         rightElement={
           <span className="text-sm font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] px-3 py-1.5 rounded-full border border-[hsl(var(--color-primary)/0.2)]">
-            Total: {patients.length}
+            {t('total_sl32')}{patients.length}
           </span>
         }
       />
@@ -160,8 +162,9 @@ function PatientDirectoryContent() {
 }
 
 export default function PatientDirectoryPage() {
+    const t = useTranslations("auto");
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-base font-bold text-[hsl(var(--color-text-muted))]">Loading Patient Directory...</div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen text-base font-bold text-[hsl(var(--color-text-muted))]">{t('loadingPatientDirectory')}</div>}>
       <PatientDirectoryContent />
     </Suspense>
   )

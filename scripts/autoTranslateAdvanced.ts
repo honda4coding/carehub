@@ -1,22 +1,14 @@
-import { Project, SyntaxKind, JsxText, JsxExpression, Node, StringLiteral } from 'ts-morph';
+import { Project, SyntaxKind, Node, StringLiteral } from 'ts-morph';
 import * as fs from 'fs';
 import * as path from 'path';
 
-// Define the target directories and output JSON paths
 const targetDirs = [
-  'src/components/doctor',
-  'src/components/patient',
-  'src/components/admin',
-  'src/components/assistant',
-  'src/components/appointments',
-  'src/components/global',
-  'src/components/ui',
+  'src/components',
   'src/app'
 ];
 const enJsonPath = 'src/messages/en/auto.json';
 const arJsonPath = 'src/messages/ar/auto.json';
 
-// Utility to create a camelCase key from text
 function generateKey(text: string): string {
   const clean = text.replace(/[^a-zA-Z0-9\s]/g, '').trim();
   const words = clean.split(/\s+/).slice(0, 4);
@@ -26,9 +18,7 @@ function generateKey(text: string): string {
 }
 
 async function run() {
-  const project = new Project({
-    tsConfigFilePath: 'tsconfig.json',
-  });
+  const project = new Project({ tsConfigFilePath: 'tsconfig.json' });
 
   const enDict: Record<string, string> = {};
   const arDict: Record<string, string> = {};
@@ -62,35 +52,16 @@ async function run() {
 
   const sourceFiles = project.getSourceFiles();
   console.log(`Found ${sourceFiles.length} files to process.`);
-
   let modifiedFilesCount = 0;
 
   for (const sourceFile of sourceFiles) {
     let modified = false;
 
-    // Find all JSX Text nodes
-    const jsxTexts = sourceFile.getDescendantsOfKind(SyntaxKind.JsxText);
-    for (const textNode of jsxTexts) {
-      const text = textNode.getLiteralText().trim();
-      // Skip if empty, or only symbols/numbers, or looks like code/math
-      if (!text || text.length < 2 || !/[a-zA-Z]/.test(text)) continue;
-      
-      const key = generateKey(text);
-      const uniqueKey = enDict[key] && enDict[key] !== text ? `${key}_${Math.random().toString(36).substr(2, 4)}` : key;
-      
-      enDict[uniqueKey] = text;
-      // Mark for manual AR translation later
-      if (!arDict[uniqueKey]) arDict[uniqueKey] = `[AR] ${text}`;
-
-      textNode.replaceWithText(`{t('${uniqueKey}')}`);
-      modified = true;
-    }
-
-    // Find string literals in specific JSX attributes like placeholder, title
+    // 1. JsxAttributes: label, subtitle, description, title, placeholder
     const jsxAttributes = sourceFile.getDescendantsOfKind(SyntaxKind.JsxAttribute);
     for (const attr of jsxAttributes) {
       const name = attr.getNameNode().getText();
-      if (['placeholder', 'title', 'label', 'alt'].includes(name)) {
+      if (['label', 'subtitle', 'description', 'title', 'placeholder', 'fallback'].includes(name)) {
         const init = attr.getInitializer();
         if (Node.isStringLiteral(init)) {
           const text = init.getLiteralValue().trim();
@@ -102,10 +73,39 @@ async function run() {
           enDict[uniqueKey] = text;
           if (!arDict[uniqueKey]) arDict[uniqueKey] = `[AR] ${text}`;
 
+          // Replace `label="Text"` with `label={t('text')}`
           init.replaceWithText(`{t('${uniqueKey}')}`);
           modified = true;
         }
       }
+    }
+
+    // 2. Toasts and Zod Errors
+    const stringLiterals = sourceFile.getDescendantsOfKind(SyntaxKind.StringLiteral);
+    for (const s of stringLiterals) {
+        const text = s.getLiteralValue().trim();
+        if (!text || text.length < 2 || !/[a-zA-Z]/.test(text)) continue;
+        
+        // Ignore single words if they are lowercase or camelCase
+        if (/^[a-z]+[A-Z]?[a-z]*$/.test(text) && !text.includes(' ')) continue;
+
+        const parent = s.getParent();
+        if (parent && parent.getKind() === SyntaxKind.CallExpression) {
+            const callExp = parent.asKind(SyntaxKind.CallExpression);
+            if (callExp) {
+                const exprText = callExp.getExpression().getText();
+                // Match toast("..."), toast.success("..."), onToast("...")
+                if (exprText.includes('toast') || exprText.includes('onToast') || exprText.includes('setToast') || exprText.includes('setToastMsg') || exprText.includes('setBioToast')) {
+                    const key = generateKey(text);
+                    const uniqueKey = enDict[key] && enDict[key] !== text ? `${key}_${Math.random().toString(36).substr(2, 4)}` : key;
+                    enDict[uniqueKey] = text;
+                    if (!arDict[uniqueKey]) arDict[uniqueKey] = `[AR] ${text}`;
+                    
+                    s.replaceWithText(`t('${uniqueKey}')`);
+                    modified = true;
+                }
+            }
+        }
     }
 
     if (modified) {
@@ -120,19 +120,18 @@ async function run() {
         });
       }
 
-      // We need to insert `const t = useTranslations('auto');` into the main component.
-      // Doing this via AST robustly for all component styles (arrow vs function) is tricky.
-      // We will try to find the default export or the first function that returns JSX.
+      // Inject t safely at top level components (not inner loops)
       const functions = sourceFile.getFunctions();
       const arrowFunctions = sourceFile.getDescendantsOfKind(SyntaxKind.ArrowFunction);
       
       const components = [...functions, ...arrowFunctions].filter(f => {
-         // rough heuristic: contains JSX
          return f.getDescendantsOfKind(SyntaxKind.JsxElement).length > 0 || f.getDescendantsOfKind(SyntaxKind.JsxSelfClosingElement).length > 0;
       });
 
       for (const comp of components) {
-         // Check if 'const t =' already exists
+         // ONLY inject if this component is NOT inside a CallExpression (like .map)
+         if (comp.getFirstAncestorByKind(SyntaxKind.CallExpression)) continue;
+
          const body = comp.getBody();
          if (body && Node.isBlock(body)) {
            const hasT = body.getVariableStatements().some(vs => vs.getText().includes('useTranslations'));
@@ -141,21 +140,15 @@ async function run() {
            }
          }
       }
-
       modifiedFilesCount++;
     }
   }
 
   await project.save();
-
-  // Save the dictionaries
-  if (!fs.existsSync(path.dirname(enJsonPath))) fs.mkdirSync(path.dirname(enJsonPath), { recursive: true });
-  if (!fs.existsSync(path.dirname(arJsonPath))) fs.mkdirSync(path.dirname(arJsonPath), { recursive: true });
-  
   fs.writeFileSync(enJsonPath, JSON.stringify(enDict, null, 2));
   fs.writeFileSync(arJsonPath, JSON.stringify(arDict, null, 2));
 
-  console.log(`Successfully translated ${modifiedFilesCount} files.`);
+  console.log(`Successfully extracted advanced translations from ${modifiedFilesCount} files.`);
 }
 
 run().catch(console.error);

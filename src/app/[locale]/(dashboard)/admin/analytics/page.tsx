@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
         title={t('detailedAnalytics')}
-        subtitle="Deep dive into platform metrics and statistics"
+        subtitle={t('deepDiveIntoPlatform')}
         backPath="/admin"
         rightElement={
           <DateRangeFilter

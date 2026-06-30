@@ -163,7 +163,7 @@ export default function KnowledgeBasePage() {
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
         title={t('knowledgeBase')}
-        subtitle="Manage the documents your Clinical Assistant learns from"
+        subtitle={t('manageTheDocumentsYour_clre')}
         backPath="/doctor"
         rightElement={
           <div className="flex gap-2 w-full md:w-auto no-print">

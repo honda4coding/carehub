@@ -45,9 +45,11 @@ import ApptRow from "@/components/appointments/ApptRow";
 import ApptTab, { TabType as Tab } from "@/components/appointments/ApptTab";
 
 import SectionToggle from "@/components/appointments/SectionToggle";
+import { useTranslations } from "next-intl";
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function DoctorAppointmentsPage() {
+    const t = useTranslations("auto");
   const { user, role } = useAuth();
   const [toast, setToast] = useState<{
     msg: string;
@@ -206,8 +208,8 @@ export default function DoctorAppointmentsPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
-        title="Appointments"
-        subtitle="Manage your schedule and patient visits"
+        title={t('appointments')}
+        subtitle={t('manageYourScheduleAnd')}
         backPath="/doctor"
         rightElement={<SectionToggle />}
       />
@@ -221,8 +223,7 @@ export default function DoctorAppointmentsPage() {
         {role !== 'assistant' && (
         <aside className="w-full lg:w-60 shrink-0">
           <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-            Clinics
-          </p>
+            {t('clinics')}</p>
           <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
             <button
               onClick={() => setSelectedClinicId(null)}
@@ -233,7 +234,7 @@ export default function DoctorAppointmentsPage() {
               }`}
             >
               <LuUsers className="text-[15px] shrink-0" />
-              <span className="flex-1 text-left">All Clinics</span>
+              <span className="flex-1 text-left">{t('allClinics')}</span>
               <span
                 className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
                   selectedClinicId === null
@@ -289,10 +290,10 @@ export default function DoctorAppointmentsPage() {
             {/* Tab bar */}
             <div className="mb-6 w-full flex justify-center">
               <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] w-full lg:w-auto">
-                <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
-                <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-                <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-                <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+                <ApptTab label={t('today')} value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
+                <ApptTab label={t('upcoming')} value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+                <ApptTab label={t('completed')} value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+                <ApptTab label={t('cancelled')} value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
               </div>
             </div>
 
@@ -307,14 +308,13 @@ export default function DoctorAppointmentsPage() {
               grouped.today.length === 0 ? (
                 <EmptyState
                   icon={<LuStethoscope />}
-                  title="No patients today"
-                  description="Your schedule is clear for today. Enjoy the break!"
+                  title={t('noPatientsToday')}
+                  description={t('yourScheduleIsClear')}
                 />
               ) : (
                 <div className="space-y-3">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-3">
-                    {grouped.today.length} patient{grouped.today.length !== 1 ? "s" : ""} today
-                  </p>
+                    {grouped.today.length} {t('patient_kw10')}{grouped.today.length !== 1 ? "s" : ""} {t('today_9fqx')}</p>
                   {grouped.today.map((appt) => (
                     <TodayCard
                       key={appt._id}
@@ -330,8 +330,8 @@ export default function DoctorAppointmentsPage() {
               grouped.upcoming.length === 0 ? (
                 <EmptyState
                   icon={<LuCalendarDays />}
-                  title="No upcoming appointments"
-                  description="Patients will appear here once they book a slot."
+                  title={t('noUpcomingAppointments')}
+                  description={t('patientsWillAppearHere')}
                 />
               ) : (
                 upcomingByDay.map((group) => (
@@ -342,7 +342,7 @@ export default function DoctorAppointmentsPage() {
                         {group.label}
                       </h4>
                       <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
-                        {group.items.length} patient{group.items.length !== 1 ? "s" : ""}
+                        {group.items.length} {t('patient_9md5')}{group.items.length !== 1 ? "s" : ""}
                       </span>
                       <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
                     </div>
@@ -359,7 +359,7 @@ export default function DoctorAppointmentsPage() {
                 <EmptyState
                   icon={<LuCalendarDays />}
                   title={`No ${tab} appointments`}
-                  description="Nothing to show in this tab yet."
+                  description={t('nothingToShowIn')}
                 />
               ) : (
                 <div>

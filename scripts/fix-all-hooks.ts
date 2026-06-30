@@ -2,15 +2,27 @@ import { Project, SyntaxKind, Node } from 'ts-morph';
 
 async function run() {
   const project = new Project({ tsConfigFilePath: 'tsconfig.json' });
-  project.addSourceFilesAtPaths([
-    'src/components/doctor/**/*.tsx',
-    'src/components/patient/**/*.tsx',
-    'src/components/admin/**/*.tsx',
-    'src/components/assistant/**/*.tsx',
-    'src/components/appointments/**/*.tsx',
-    'src/app/[locale]/(dashboard)/**/*.tsx',
-    'src/components/global/**/*.tsx'
-  ]);
+  const fs = require('fs');
+  const path = require('path');
+  function walk(dir: string): string[] {
+    let results: string[] = [];
+    const list = fs.readdirSync(dir);
+    list.forEach((file: string) => {
+      file = path.join(dir, file);
+      const stat = fs.statSync(file);
+      if (stat && stat.isDirectory()) { 
+        results = results.concat(walk(file));
+      } else if (file.endsWith('.tsx')) {
+        results.push(file);
+      }
+    });
+    return results;
+  }
+
+  const filesToProcess = [...walk('src/components'), ...walk('src/app')];
+  for(const file of filesToProcess) {
+     project.addSourceFileAtPath(file);
+  }
 
   const files = project.getSourceFiles();
   let removedCount = 0;

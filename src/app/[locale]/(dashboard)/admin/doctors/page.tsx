@@ -93,7 +93,7 @@ export default function AdminDoctorsPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
         title={t('doctorDirectory')}
-        subtitle="View all registered doctors and their approval status"
+        subtitle={t('viewAllRegisteredDoctors')}
         backPath="/admin"
         rightElement={
           <button

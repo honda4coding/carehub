@@ -127,7 +127,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         {/* Current license */}
         <LicenseCard
           title={t('currentLicense')}
-          subtitle="Active & approved"
+          subtitle={t('activeApproved')}
           url={profile?.licenseimage?.secure_url}
           badge={{ label: "Approved", color: "success" }}
           emptyText="No license on file yet."
@@ -139,7 +139,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
           <div className="space-y-2">
             <LicenseCard
               title={t('pendingLicense')}
-              subtitle="Awaiting admin review"
+              subtitle={t('awaitingAdminReview')}
               url={profile?.pendingLicenseImage?.secure_url}
               badge={{ label: "Under Review", color: "warning" }}
               emptyText=""
@@ -163,7 +163,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         {hasPrevious && !hasPending && (
           <LicenseCard
             title={t('previousLicense')}
-            subtitle="Replaced after last approval"
+            subtitle={t('replacedAfterLastApproval')}
             url={profile?.previousLicenseImage?.secure_url}
             badge={{ label: "Archived", color: "muted" }}
             emptyText=""

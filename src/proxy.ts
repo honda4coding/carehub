@@ -16,7 +16,7 @@ export function proxy(request: NextRequest) {
   const pathWithoutLocale = pathname.replace(/^\/(ar|en)/, '') || '/';
 
   // Handle protected route access control
-  const protectedPaths = ['/admin', '/doctor', '/patient'];
+  const protectedPaths = ['/admin', '/doctor', '/patient', '/assistant'];
   const isProtectedRoute = protectedPaths.some(path => 
     pathWithoutLocale === path || pathWithoutLocale.startsWith(`${path}/`)
   );

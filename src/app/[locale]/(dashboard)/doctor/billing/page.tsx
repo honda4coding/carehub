@@ -5,8 +5,10 @@ import { LuBanknote, LuDownload, LuFilter, LuTrendingUp, LuHistory, LuLock, LuCh
 import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { fetchClient } from "@/services/fetchClient";
+import { useTranslations } from "next-intl";
 
 export default function DoctorBillingPage() {
+    const t = useTranslations("auto");
   const { role } = useAuth();
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,8 +47,8 @@ export default function DoctorBillingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
       <DashboardHeader 
-        title="Billing & Transactions" 
-        subtitle="Manage invoices and financial records" 
+        title={t('billingTransactions')} 
+        subtitle={t('manageInvoicesAndFinancial')} 
         backPath={`/${role}`} 
       />
 
@@ -55,29 +57,28 @@ export default function DoctorBillingPage() {
           
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm flex flex-col min-h-[400px]">
             <div className="p-5 border-b border-[hsl(var(--color-border))] flex items-center justify-between bg-[hsl(var(--color-bg-soft))]">
-              <h2 className="text-lg font-black text-[hsl(var(--color-text))]">Completed Sessions (Needs Billing)</h2>
+              <h2 className="text-lg font-black text-[hsl(var(--color-text))]">{t('completedSessionsNeedsBilling')}</h2>
             </div>
             
             {loading ? (
-              <div className="p-8 text-center text-[hsl(var(--color-text-muted))]">Loading...</div>
+              <div className="p-8 text-center text-[hsl(var(--color-text-muted))]">{t('loading')}</div>
             ) : sessions.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
                 <div className="w-16 h-16 rounded-2xl bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] flex items-center justify-center mb-4 text-[hsl(var(--color-text-muted))]">
                   <LuBanknote className="text-2xl" />
                 </div>
-                <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">No Completed Sessions Yet</h3>
+                <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">{t('noCompletedSessionsYet')}</h3>
                 <p className="text-sm text-[hsl(var(--color-text-muted))] max-w-[250px] mt-2">
-                  Patients who finish their consultation will appear here for billing.
-                </p>
+                  {t('patientsWhoFinishTheir')}</p>
               </div>
             ) : (
               <div className="overflow-x-auto w-full p-4">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[hsl(var(--color-border))]">
-                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Patient Name</th>
-                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Phone Number</th>
-                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Fees Paid</th>
+                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{t('patientName')}</th>
+                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{t('phoneNumber')}</th>
+                      <th className="py-3 pr-2 text-left text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{t('feesPaid')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -90,7 +91,7 @@ export default function DoctorBillingPage() {
                             <div className="flex items-center gap-2 px-3 py-1.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-lg opacity-70">
                               <LuLock className="text-[hsl(var(--color-text-muted))]" />
                               <span className="text-sm font-bold text-[hsl(var(--color-text))]">{s.fees || 0}</span>
-                              <span className="text-[10px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1.5 py-0.5 rounded">Paid</span>
+                              <span className="text-[10px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1.5 py-0.5 rounded">{t('paid')}</span>
                             </div>
                           ) : (
                             <form 
@@ -110,11 +111,9 @@ export default function DoctorBillingPage() {
                                 defaultValue={s.fees || 0}
                               />
                               <button name="submit" type="submit" className="px-3 py-1.5 bg-[hsl(var(--color-primary))] text-white text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-primary-strong))] transition-colors">
-                                Submit
-                              </button>
+                                {t('submit')}</button>
                               <button name="finish" type="submit" className="px-3 py-1.5 bg-[hsl(var(--color-success))] text-white text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-success-strong))] transition-colors flex items-center gap-1">
-                                <LuCheck className="text-sm" /> Finish
-                              </button>
+                                <LuCheck className="text-sm" /> {t('finish')}</button>
                             </form>
                           )}
                         </td>

@@ -10,8 +10,10 @@ import VitalsModal from "@/components/assistant/VitalsModal";
 import { useRouter } from "next/navigation";
 import { DoctorActions } from '@/components/doctor/dashboard/DoctorActions';
 import { DashboardModals } from '@/components/doctor/dashboard/DashboardModals';
+import { useTranslations } from "next-intl";
 
 export default function AssistantDashboard() {
+    const t = useTranslations("auto");
   const { user, role } = useAuth();
   const [dashboardStats, setDashboardStats] = useState({ totalConsultations: 0, totalPatients: 0, totalPrescriptions: 0 });
   const [sessions, setSessions] = useState<any[]>([]);
@@ -259,7 +261,7 @@ export default function AssistantDashboard() {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-[hsl(var(--color-text-muted))]">Loading Dashboard...</div>;
+    return <div className="p-8 text-center text-[hsl(var(--color-text-muted))]">{t('loadingDashboard')}</div>;
   }
 
   return (

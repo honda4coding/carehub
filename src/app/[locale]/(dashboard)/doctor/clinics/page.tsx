@@ -22,6 +22,7 @@ import {
   deleteClinic,
 } from "@/services/clinicService";
 import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
+import { useTranslations } from "next-intl";
 
 const EMPTY_FORM: ClinicPayload = {
   name: "",
@@ -33,6 +34,7 @@ const EMPTY_FORM: ClinicPayload = {
 };
 
 function ClinicsContent() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -167,16 +169,15 @@ function ClinicsContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title="My Clinics"
-        subtitle="Pick a clinic to manage its services and schedule"
+        title={t('myClinics')}
+        subtitle={t('pickAClinicTo')}
         backPath="/doctor"
         rightElement={
           <button
             onClick={openAddModal}
             className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl hover:bg-[hsl(var(--color-primary-strong))] transition-all flex items-center gap-2 cursor-pointer"
           >
-            <LuPlus className="text-lg" /> Add Clinic
-          </button>
+            <LuPlus className="text-lg" /> {t('addClinic')}</button>
         }
       />
 
@@ -200,25 +201,21 @@ function ClinicsContent() {
           <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
             <LuBuilding2 className="text-4xl text-[hsl(var(--color-text-muted))] mb-3" />
             <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))]">
-              No clinics yet
-            </h3>
+              {t('noClinicsYet')}</h3>
             <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mt-1 mb-4">
-              Add your first clinic to start managing services and availability.
-            </p>
+              {t('addYourFirstClinic')}</p>
             <button
               onClick={openAddModal}
               className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer"
             >
-              <LuPlus /> Add Clinic
-            </button>
+              <LuPlus /> {t('addClinic')}</button>
           </div>
         ) : (
           <div className="flex flex-col lg:flex-row gap-5">
             {/* ── LEFT: Clinics list ── */}
             <aside className="w-full lg:w-64 shrink-0">
               <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-                Clinics
-              </p>
+                {t('clinics')}</p>
               <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
                 {clinics.map((clinic) => {
                   const isActive = selectedClinicId === clinic._id;
@@ -254,7 +251,7 @@ function ClinicsContent() {
                               ? "text-white/80 hover:text-white"
                               : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))]"
                           }`}
-                          title="Edit clinic info"
+                          title={t('editClinicInfo')}
                         >
                           <LuPencil className="text-[13px]" />
                         </button>
@@ -268,7 +265,7 @@ function ClinicsContent() {
                               ? "text-white/80 hover:text-white"
                               : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))]"
                           }`}
-                          title="Delete clinic"
+                          title={t('deleteClinic')}
                         >
                           <LuTrash2 className="text-[13px]" />
                         </button>
@@ -287,8 +284,7 @@ function ClinicsContent() {
                 <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
                   <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
                   <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    Select a clinic to manage it
-                  </p>
+                    {t('selectAClinicTo')}</p>
                 </div>
               )}
             </div>
@@ -314,38 +310,35 @@ function ClinicsContent() {
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  Clinic Name *
-                </label>
+                  {t('clinicName')}</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="Al-Shifa Center"
+                  placeholder={t('alshifaCenter')}
                 />
               </div>
 
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  Address *
-                </label>
+                  {t('address_w9nd')}</label>
                 <input
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="New Damietta"
+                  placeholder={t('newDamietta')}
                 />
               </div>
 
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  Governorate *
-                </label>
+                  {t('governorate')}</label>
                 <select
                   value={form.governorate}
                   onChange={(e) => setForm({ ...form, governorate: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
                 >
-                  <option value="">Select governorate</option>
+                  <option value="">{t('selectGovernorate')}</option>
                   {egyptianGovernorates.map((g) => (
                     <option key={g} value={g}>{g}</option>
                   ))}
@@ -354,30 +347,30 @@ function ClinicsContent() {
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Phone</label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">{t('phone_8bxi')}</label>
                   <input
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="010xxxxxxxx"
+                    placeholder={t('010xxxxxxxx')}
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">WhatsApp</label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">{t('whatsapp')}</label>
                   <input
                     value={form.whatsapp}
                     onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="010xxxxxxxx"
+                    placeholder={t('010xxxxxxxx')}
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Landline</label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">{t('landline')}</label>
                   <input
                     value={form.landline}
                     onChange={(e) => setForm({ ...form, landline: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder="057xxxxxxx"
+                    placeholder={t('057xxxxxxx')}
                   />
                 </div>
               </div>
@@ -394,8 +387,7 @@ function ClinicsContent() {
                   onClick={closeModal}
                   className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
                 >
-                  Cancel
-                </button>
+                  {t('cancel')}</button>
                 <button
                   type="submit"
                   disabled={saving}
@@ -425,19 +417,16 @@ function ClinicsContent() {
             </div>
 
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
-              Delete this clinic?
-            </h3>
+              {t('deleteThisClinic')}</h3>
             <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
-              &quot;{deleteTarget.name}&quot; will be deactivated. You can&apos;t undo this from here.
-            </p>
+              {t('quot')}{deleteTarget.name}{t('quotWillBeDeactivated')}</p>
 
             <div className="flex gap-2.5">
               <button
                 onClick={() => setDeleteTarget(null)}
                 className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
               >
-                Keep it
-              </button>
+                {t('keepIt')}</button>
               <button
                 onClick={confirmDelete}
                 disabled={deleting}
@@ -454,6 +443,7 @@ function ClinicsContent() {
 }
 
 export default function DoctorClinicsPage() {
+    const t = useTranslations("auto");
   return (
     <Suspense fallback={
       <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">

@@ -5,8 +5,10 @@ import { useAuth } from "@/context/AuthContext";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { CurrentQueue } from "@/components/doctor/dashboard/CurrentQueue";
 import { fetchClient } from "@/services/fetchClient";
+import { useTranslations } from "next-intl";
 
 export default function AssistantAssessmentPage() {
+    const t = useTranslations("auto");
   const { user } = useAuth();
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +86,7 @@ export default function AssistantAssessmentPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
-      <DashboardHeader title="Clinical Assessment" subtitle="Manage full clinical assessments for patients" />
+      <DashboardHeader title={t('clinicalAssessment')} subtitle={t('manageFullClinicalAssessments')} />
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto space-y-6">
           <CurrentQueue 

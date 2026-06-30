@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { LuTrash2, LuX } from "react-icons/lu";
 import { ImSpinner2 } from "react-icons/im";
+import { useTranslations } from "next-intl";
 
 interface Props {
   onConfirm: () => Promise<void>;
 }
 
 export default function DeleteAccountModal({ onConfirm }: Props) {
+    const t = useTranslations("auto");
   const [open,    setOpen]    = useState(false);
   const [loading, setLoading] = useState(false);
   const [error,   setError]   = useState("");
@@ -33,8 +35,7 @@ export default function DeleteAccountModal({ onConfirm }: Props) {
         className="flex items-center gap-2 text-[13px] font-bold px-4 py-2.5 rounded-xl bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] hover:opacity-80 transition-opacity"
       >
         <LuTrash2 className="w-4 h-4" />
-        Delete Account
-      </button>
+        {t('deleteAccount')}</button>
 
       {/* Modal */}
       {open && (
@@ -54,11 +55,9 @@ export default function DeleteAccountModal({ onConfirm }: Props) {
             </div>
 
             <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] mb-1">
-              Delete Account
-            </h3>
+              {t('deleteAccount')}</h3>
             <p className="text-[13px] text-[hsl(var(--color-text-muted))] mb-5">
-              This action is permanent and cannot be undone. All your data will be deleted.
-            </p>
+              {t('thisActionIsPermanent')}</p>
 
             {error && (
               <p className="text-danger text-xs font-medium mb-4">{error}</p>
@@ -71,8 +70,7 @@ export default function DeleteAccountModal({ onConfirm }: Props) {
                 disabled={loading}
                 className="flex-1 py-2.5 rounded-xl text-[13px] font-bold border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:opacity-80 transition-opacity disabled:opacity-50"
               >
-                Cancel
-              </button>
+                {t('cancel')}</button>
               <button
                 type="button"
                 onClick={handleDelete}
@@ -80,7 +78,7 @@ export default function DeleteAccountModal({ onConfirm }: Props) {
                 className="flex-1 py-2.5 rounded-xl text-[13px] font-bold bg-[hsl(var(--color-danger))] text-white hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Deleting...</>
+                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t('deleting')}</>
                   : "Yes, Delete"
                 }
               </button>

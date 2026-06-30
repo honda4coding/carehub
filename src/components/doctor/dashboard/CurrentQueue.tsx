@@ -5,6 +5,7 @@ import { CountdownTimer } from "./OTPComponents";
 import Pagination from "@/components/ui/Pagination";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslations } from "next-intl";
 
 const statusConfig: Record<string, { style: string; label: string }> = {
   pending_otp: {
@@ -60,6 +61,7 @@ export const CurrentQueue = ({
   hideAssessmentAction?: boolean;
   hideFees?: boolean;
 }) => {
+    const t = useTranslations("auto");
   const router = useRouter();
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
@@ -82,8 +84,8 @@ export const CurrentQueue = ({
       <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
         <div className="flex-1 min-w-[200px]">
           <div>
-            <h2 className="text-[14px] font-black uppercase tracking-[.05em] text-[hsl(var(--color-text))]">Current Queue</h2>
-            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">Patients currently registered or in consultation</p>
+            <h2 className="text-[14px] font-black uppercase tracking-[.05em] text-[hsl(var(--color-text))]">{t('currentQueue')}</h2>
+            <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">{t('patientsCurrentlyRegisteredOr')}</p>
           </div>
         </div>
 
@@ -92,7 +94,7 @@ export const CurrentQueue = ({
             <LuSearch className="absolute left-2.5 text-[13px] text-[hsl(var(--color-text-muted))]" />
             <input
               type="text"
-              placeholder="Search name or phone..."
+              placeholder={t('searchNameOrPhone')}
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
               className="pl-7 pr-3 py-1.5 text-[12px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-1 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
@@ -105,10 +107,10 @@ export const CurrentQueue = ({
               onChange={(e) => setStatusFilter(e.target.value)}
               className="px-2 py-1 text-[12px] font-bold rounded-[8px] bg-transparent text-[hsl(var(--color-text-muted))] outline-none cursor-pointer hover:text-[hsl(var(--color-text))] transition-colors"
             >
-              <option value="All">All Status</option>
-              <option value="pending_otp">Pending OTP</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
+              <option value="All">{t('allStatus')}</option>
+              <option value="pending_otp">{t('pendingOtp')}</option>
+              <option value="in_progress">{t('inProgress')}</option>
+              <option value="completed">{t('completed')}</option>
             </select>
           </div>
 
@@ -118,9 +120,9 @@ export const CurrentQueue = ({
               onChange={(e) => setTypeFilter(e.target.value)}
               className="px-2 py-1 text-[12px] font-bold rounded-[6px] bg-transparent text-[hsl(var(--color-text-muted))] outline-none cursor-pointer hover:text-[hsl(var(--color-text))] transition-colors"
             >
-              <option value="all">All Types</option>
-              <option value="walk_in">Walk-in</option>
-              <option value="online">Online</option>
+              <option value="all">{t('allTypes')}</option>
+              <option value="walk_in">{t('walkin')}</option>
+              <option value="online">{t('online')}</option>
             </select>
           </div>
         </div>
@@ -141,8 +143,7 @@ export const CurrentQueue = ({
               ))}
               {!hideFees && (
                 <th className="py-3.5 pr-2 text-left text-[10px] font-black uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.7)]">
-                  Fees
-                </th>
+                  {t('fees')}</th>
               )}
             </tr>
           </thead>
@@ -153,8 +154,7 @@ export const CurrentQueue = ({
                 <td colSpan={hideFees ? 6 : 7} className="py-16 text-center">
                   <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
                   <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-                    No patients found in queue.
-                  </p>
+                    {t('noPatientsFoundIn')}</p>
                 </td>
               </tr>
             ) : (
@@ -212,8 +212,7 @@ export const CurrentQueue = ({
                                 onClick={() => onRecordVitals && onRecordVitals(s)}
                                 className="!text-[11px] !px-3 !h-[32px] !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
                               >
-                                Update Vitals
-                              </Button>
+                                {t('updateVitals')}</Button>
                             )}
                             {!hideAssessmentAction && canManagePatientsFull && (
                               <Button
@@ -222,8 +221,7 @@ export const CurrentQueue = ({
                                 onClick={() => router.push(`/${isAssistant ? 'assistant' : 'doctor'}/encounter/${s.id}`)}
                                 className="!text-[11px] !px-3 !h-[32px] !rounded-lg"
                               >
-                                Open File
-                              </Button>
+                                {t('openFile')}</Button>
                             )}
                           </>
                         ) : s.status === "pending_otp" ? (
@@ -231,7 +229,7 @@ export const CurrentQueue = ({
                             <button
                               onClick={() => handleCancelRequest && handleCancelRequest(s.id)}
                               className="w-[32px] h-[32px] rounded-lg flex items-center justify-center text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] transition-colors cursor-pointer"
-                              title="Cancel Request"
+                              title={t('cancelRequest')}
                             >
                               <LuX className="text-[16px]" />
                             </button>
@@ -244,8 +242,7 @@ export const CurrentQueue = ({
                               }}
                               className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[11px] !px-3 !h-[32px] !rounded-lg"
                             >
-                              Enter OTP
-                            </Button>
+                              {t('enterOtp')}</Button>
                           </>
                         ) : (
                           <Button
@@ -254,8 +251,7 @@ export const CurrentQueue = ({
                             onClick={() => router.push(`/doctor/encounter/${s.id}`)}
                             className="!text-[11px] !px-3 !h-[32px] !rounded-lg"
                           >
-                            Open File
-                          </Button>
+                            {t('openFile')}</Button>
                         )}
                       </div>
                     </td>
@@ -265,7 +261,7 @@ export const CurrentQueue = ({
                           <div className="flex items-center gap-1.5 px-2 py-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-lg opacity-70 w-fit">
                             <LuLock className="text-[hsl(var(--color-text-muted))] text-[12px]" />
                             <span className="text-[12px] font-bold text-[hsl(var(--color-text))]">{s.fees || 0}</span>
-                            <span className="text-[9px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1 py-0.5 rounded">Paid</span>
+                            <span className="text-[9px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1 py-0.5 rounded">{t('paid')}</span>
                           </div>
                         ) : (
                           <form 
@@ -292,8 +288,7 @@ export const CurrentQueue = ({
                                 className="h-6 text-[10px] px-2 py-0"
                                 disabled={s.isFeesFinalized}
                               >
-                                Save
-                              </Button>
+                                {t('save')}</Button>
                               <Button 
                                 type="button" 
                                 size="sm"
@@ -308,8 +303,7 @@ export const CurrentQueue = ({
                                   }
                                 }}
                               >
-                                <LuCheck size={10} /> Finish
-                              </Button>
+                                <LuCheck size={10} /> {t('finish')}</Button>
                             </div>
                           </form>
                         )}
@@ -328,8 +322,7 @@ export const CurrentQueue = ({
             <div className="py-16 text-center">
               <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
               <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-                No patients found in queue.
-              </p>
+                {t('noPatientsFoundIn')}</p>
             </div>
           ) : (
             paginatedSessions.map((s: any) => {
@@ -374,7 +367,7 @@ export const CurrentQueue = ({
                           <button
                             onClick={() => handleCancelRequest?.(s.id)}
                             className="w-[28px] h-[28px] rounded-lg flex items-center justify-center bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] hover:opacity-80 transition-colors"
-                            title="Cancel Request"
+                            title={t('cancelRequest')}
                           >
                             <LuX className="text-[14px]" />
                           </button>
@@ -387,8 +380,7 @@ export const CurrentQueue = ({
                             }}
                             className="!bg-[hsl(var(--color-warning-bg))] !text-[hsl(var(--color-warning))] hover:!bg-[hsl(var(--color-warning)/0.2)] !text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                           >
-                            Enter OTP
-                          </Button>
+                            {t('enterOtp')}</Button>
                         </>
                       ) : (
                         <Button
@@ -397,8 +389,7 @@ export const CurrentQueue = ({
                           onClick={() => router.push(`/doctor/encounter/${s.id}`)}
                           className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
                         >
-                          Open File
-                        </Button>
+                          {t('openFile')}</Button>
                       )}
                     </div>
                   </div>

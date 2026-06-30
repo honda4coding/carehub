@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LuArrowLeft, LuPrinter, LuSave } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface EncounterHeaderProps {
   loading: boolean;
@@ -23,6 +24,7 @@ export default function EncounterHeader({
   onPrint,
   onEndSession
 }: EncounterHeaderProps) {
+    const t = useTranslations("auto");
   const [fees, setFees] = useState<number | "">("");
 
   return (
@@ -42,8 +44,7 @@ export default function EncounterHeader({
             {sessionData?.status === 'in_progress' && (
               <span className="px-2 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[10px] font-bold bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] rounded-full flex items-center gap-1 shrink-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></div>
-                In Clinic
-              </span>
+                {t('inClinic')}</span>
             )}
           </div>
         </div>
@@ -51,12 +52,12 @@ export default function EncounterHeader({
       
       <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto shrink-0 mt-3 lg:mt-0">
         <button onClick={onPrint} className="flex items-center gap-2 text-[13px] sm:text-sm font-bold bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-[hsl(var(--color-border))] transition-colors shrink-0">
-          <LuPrinter className="text-lg shrink-0" /> <span className="hidden sm:inline">Print Report</span>
+          <LuPrinter className="text-lg shrink-0" /> <span className="hidden sm:inline">{t('printReport')}</span>
         </button>
         {isAssessmentMode && (
           <div className="flex items-center flex-1 sm:flex-none">
             <button onClick={() => onEndSession(0)} disabled={isEnding} className="bg-primary text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
-              {isEnding ? "Saving..." : <><LuSave className="text-lg hidden sm:block shrink-0" /> End Session</>}
+              {isEnding ? "Saving..." : <><LuSave className="text-lg hidden sm:block shrink-0" /> {t('endSession')}</>}
             </button>
           </div>
         )}

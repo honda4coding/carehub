@@ -10,6 +10,7 @@ import {
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { DoctorListItem } from "@/services/appointmentService";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -32,6 +33,7 @@ function initialsOf(name: string) {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 function SkeletonCard() {
+    const t = useTranslations("auto");
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] rounded-[2rem] p-7 flex flex-col gap-4">
       <div className="flex items-center gap-4">
@@ -50,6 +52,7 @@ function SkeletonCard() {
 
 // ─── Doctor Card ───────────────────────────────────────────────────────────────
 function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
+    const t = useTranslations("auto");
   const fullName = doctor.userId.fullName;
   const initials = initialsOf(fullName);
 
@@ -67,7 +70,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
           <span className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-success))] border-2 border-white" />
         </div>
         <div className="min-w-0 flex-1">
-          <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] truncate">Dr. {fullName}</h3>
+          <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] truncate">{t('dr')}{fullName}</h3>
           <p className="text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase tracking-widest mt-0.5">
             {doctor.specialization ?? "General Practice"}
           </p>
@@ -79,7 +82,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
         <div className="mb-4">
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-text-muted)/0.08)]">
             <LuBriefcaseMedical className="w-3 h-3 text-[hsl(var(--color-text-muted))]" />
-            <span className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{doctor.experience} yrs experience</span>
+            <span className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{doctor.experience} {t('yrsExperience')}</span>
           </div>
         </div>
       )}
@@ -92,7 +95,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
       {/* Verified */}
       <div className="flex items-center gap-1.5 text-[hsl(var(--color-success))] mb-4">
         <LuCircleCheck className="w-3.5 h-3.5" />
-        <span className="text-[11px] font-bold uppercase tracking-wider">Verified by CareHub</span>
+        <span className="text-[11px] font-bold uppercase tracking-wider">{t('verifiedByCarehub')}</span>
       </div>
 
       {/* CTA */}
@@ -101,8 +104,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
         className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl bg-[hsl(var(--color-primary))] text-white font-black text-[13px] hover:bg-[hsl(var(--color-primary-strong))] hover:shadow-lg hover:shadow-[hsl(var(--color-primary)/0.25)] transition-all duration-300"
       >
         <LuCalendarPlus className="w-4 h-4" />
-        Book Appointment
-        <LuArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        {t('bookAppointment')}<LuArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </Link>
     </div>
   );
@@ -110,6 +112,7 @@ function DoctorCard({ doctor }: { doctor: DoctorListItem }) {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function DoctorsPublicPage() {
+    const t = useTranslations("auto");
   const [doctors,   setDoctors]   = useState<DoctorListItem[]>([]);
   const [loading,   setLoading]   = useState(true);
   const [error,     setError]     = useState("");
@@ -150,20 +153,19 @@ export default function DoctorsPublicPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-end pb-14 border-b border-[hsl(var(--color-text-muted)/0.08)]">
             <h1 className="text-[clamp(36px,5vw,72px)] font-black tracking-tighter text-[hsl(var(--color-text))] leading-[1.05]">
-              Find the right<br />
-              doctor for<br />
-              <span className="text-[hsl(var(--color-primary))]">your care.</span>
+              {t('findTheRight')}<br />
+              {t('doctorFor')}<br />
+              <span className="text-[hsl(var(--color-primary))]">{t('yourCare')}</span>
             </h1>
             <div>
               <p className="text-lg text-[hsl(var(--color-text-muted))] leading-relaxed mb-8 max-w-md">
-                Every doctor on CareHub is manually verified. Browse by specialty and book your appointment in seconds.
-              </p>
+                {t('everyDoctorOnCarehub')}</p>
               {/* Search */}
               <div className="relative">
                 <LuSearch className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <input
                   type="text"
-                  placeholder="Search by name or specialty..."
+                  placeholder={t('searchByNameOr')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-14 pr-12 py-4 rounded-2xl border border-[hsl(var(--color-text-muted)/0.15)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] text-[15px] outline-none focus:border-[hsl(var(--color-primary))] focus:shadow-[0_0_0_4px_hsl(var(--color-primary)/0.08)] transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] shadow-sm"
@@ -212,8 +214,7 @@ export default function DoctorsPublicPage() {
                   onClick={() => { setSearch(""); setSpecialty("All"); }}
                   className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors flex items-center gap-1"
                 >
-                  <LuX className="w-3.5 h-3.5" /> Clear
-                </button>
+                  <LuX className="w-3.5 h-3.5" /> {t('clear')}</button>
               )}
             </div>
           )}
@@ -238,14 +239,13 @@ export default function DoctorsPublicPage() {
               <div className="w-16 h-16 rounded-2xl bg-[hsl(var(--color-primary)/0.08)] flex items-center justify-center mx-auto mb-5">
                 <LuStethoscope className="w-7 h-7 text-[hsl(var(--color-primary))]" />
               </div>
-              <h3 className="font-black text-[hsl(var(--color-text))] text-xl mb-2">No doctors found</h3>
-              <p className="text-[hsl(var(--color-text-muted))] text-[14px] mb-6">Try a different name or specialty.</p>
+              <h3 className="font-black text-[hsl(var(--color-text))] text-xl mb-2">{t('noDoctorsFound')}</h3>
+              <p className="text-[hsl(var(--color-text-muted))] text-[14px] mb-6">{t('tryADifferentName')}</p>
               <button
                 onClick={() => { setSearch(""); setSpecialty("All"); }}
                 className="px-6 py-3 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] font-bold text-[13px] hover:bg-[hsl(var(--color-primary)/0.15)] transition-colors"
               >
-                Clear filters
-              </button>
+                {t('clearFilters')}</button>
             </div>
           )}
 
@@ -268,14 +268,13 @@ export default function DoctorsPublicPage() {
               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
               <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                 <div>
-                  <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-3">For Doctors</p>
+                  <p className="text-white/60 text-sm font-bold uppercase tracking-widest mb-3">{t('forDoctors')}</p>
                   <h2 className="text-3xl lg:text-5xl font-black text-white tracking-tighter leading-tight">
-                    Are you a doctor?<br />Join CareHub.
-                  </h2>
+                    {t('areYouADoctor')}<br />{t('joinCarehub')}</h2>
                 </div>
                 <Link href="/register?role=doctor" className="shrink-0">
                   <Button size="lg" className="bg-white text-[hsl(var(--color-primary-strong))] hover:bg-white/90 shadow-xl font-black">
-                    Join as Doctor <LuArrowRight className="ml-2 w-4 h-4" />
+                    {t('joinAsDoctor')}<LuArrowRight className="ml-2 w-4 h-4" />
                   </Button>
                 </Link>
               </div>

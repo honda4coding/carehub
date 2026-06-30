@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LuBuilding2, LuCalendarDays, LuClock, LuPencil } from "react-icons/lu";
 
 import { Availability, getClinicAvailability } from "@/services/appointmentService";
+import { useTranslations } from "next-intl";
 
 const DAYS = [
   "sunday", "monday", "tuesday", "wednesday",
@@ -30,6 +31,7 @@ export default function ClinicScheduleCard({
   onLoaded,
   onEdit,
 }: Props) {
+    const t = useTranslations("auto");
   const [availability, setAvailabilityList] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -69,8 +71,7 @@ export default function ClinicScheduleCard({
               </p>
             ) : (
               <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wide">
-                Weekly schedule
-              </p>
+                {t('weeklySchedule')}</p>
             )}
           </div>
         </div>
@@ -79,8 +80,7 @@ export default function ClinicScheduleCard({
           onClick={() => onEdit?.()}
           className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/0.3)] px-3 py-1.5 rounded-xl hover:bg-[hsl(var(--color-primary)/0.08)] transition-colors cursor-pointer shrink-0"
         >
-          <LuPencil className="text-[12px]" /> Edit
-        </button>
+          <LuPencil className="text-[12px]" /> {t('edit')}</button>
       </div>
 
       {/* Body */}
@@ -94,14 +94,12 @@ export default function ClinicScheduleCard({
         <div className="text-center py-6">
           <LuCalendarDays className="text-[22px] text-[hsl(var(--color-text-muted))] mx-auto mb-2" />
           <p className="text-[12.5px] font-semibold text-[hsl(var(--color-text-muted))]">
-            No working days set yet for this clinic.
-          </p>
+            {t('noWorkingDaysSet')}</p>
           <button
             onClick={() => onEdit?.()}
             className="text-[12px] font-bold text-[hsl(var(--color-primary))] mt-2 cursor-pointer"
           >
-            Set it up →
-          </button>
+            {t('setItUp')}</button>
         </div>
       ) : (
         <div className="flex flex-col divide-y divide-[hsl(var(--color-border))]">

@@ -10,6 +10,7 @@ import AdminAvatarSection from "@/components/admin/profile/AdminAvatarSection";
 import DeleteAccountModal from "@/components/shared/DeleteAccountModal";
 import { getAdminProfile, AdminProfile, UpdateAdminProfilePayload, deleteAdminAccount } from "@/services/adminService";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import { useTranslations } from "next-intl";
 
 type Tab = "profile" | "avatar" | "danger";
 
@@ -20,6 +21,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = 
 ];
 
 export default function AdminProfilePage() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const [profile,   setProfile]   = useState<AdminProfile | null>(null);
   const [loading,   setLoading]   = useState(true);
@@ -62,8 +64,8 @@ export default function AdminProfilePage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
 
       <DashboardHeader
-        title="Profile Settings"
-        subtitle="Manage your account information"
+        title={t('profileSettings')}
+        subtitle={t('manageYourAccountInformation')}
         backPath="/admin"
       />
 
@@ -79,7 +81,7 @@ export default function AdminProfilePage() {
         {!loading && error && (
           <div className="bg-danger-light border border-red-200 text-danger text-sm font-medium px-5 py-4 rounded-2xl">
             {error}
-            <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">Try again</button>
+            <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">{t('tryAgain_bsai')}</button>
           </div>
         )}
 
@@ -149,8 +151,7 @@ export default function AdminProfilePage() {
                       <div className="flex items-center gap-2">
                         <h2 className="text-[hsl(var(--color-text))] text-lg font-black">{profile?.fullName ?? "—"}</h2>
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[10px] font-bold">
-                          <LuShieldCheck className="w-3 h-3" /> Admin
-                        </span>
+                          <LuShieldCheck className="w-3 h-3" /> {t('admin')}</span>
                       </div>
                       <p className="text-[hsl(var(--color-text-muted))] text-sm mt-0.5">{profile?.email ?? ""}</p>
                     </div>
@@ -166,10 +167,9 @@ export default function AdminProfilePage() {
 
               {activeTab === "danger" && (
                 <div className="p-6">
-                  <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">Danger Zone</h3>
+                  <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">{t('dangerZone')}</h3>
                   <p className="text-[12px] text-[hsl(var(--color-text-muted))] mb-5">
-                    Permanently delete your account. This cannot be undone.
-                  </p>
+                    {t('permanentlyDeleteYourAccount')}</p>
                   <DeleteAccountModal onConfirm={handleDeleteAccount} />
                 </div>
               )}
