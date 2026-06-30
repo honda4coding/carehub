@@ -5,11 +5,10 @@ import { fetchClient } from "@/services/fetchClient";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { LuArrowLeft, LuClock, LuUser } from "react-icons/lu";
-import { useTranslations } from "next-intl";
+import { LuArrowLeft, LuClock, LuUser, LuExternalLink } from "react-icons/lu";
+import Link from "next/link";
 
 export default function StaffLogsPage() {
-    const t = useTranslations("auto");
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -17,7 +16,7 @@ export default function StaffLogsPage() {
         const fetchLogs = async () => {
             try {
                 const res = await fetchClient.get("/doctor/staff/logs");
-                setLogs(res.data?.data || []);
+                setLogs(res.data || []);
             } catch (err) {
                 console.error("Failed to load logs", err);
             } finally {
@@ -30,11 +29,12 @@ export default function StaffLogsPage() {
     return (
         <div className="flex flex-col min-h-screen">
             <DashboardHeader 
-                title={t('activityLogs')} 
+                title="Activity Logs" 
                 subtitle="Monitor all actions performed by your clinic staff"
                 rightElement={
                     <Button variant="secondary" size="sm" href="/doctor/staff" icon={LuArrowLeft}>
-                        {t('backToStaff')}</Button>
+                        Back to Staff
+                    </Button>
                 }
             />
 
@@ -46,7 +46,8 @@ export default function StaffLogsPage() {
                                 [1, 2, 3].map(i => <div key={i} className="h-16 bg-[hsl(var(--color-bg-soft))] rounded-xl animate-pulse" />)
                             ) : logs.length === 0 ? (
                                 <div className="text-center py-10 text-[hsl(var(--color-text-muted))]">
-                                    {t('noActivityLogsFound')}</div>
+                                    No activity logs found.
+                                </div>
                             ) : (
                                 logs.map((log) => (
                                     <div key={log._id} className="flex items-start gap-4 p-4 border border-[hsl(var(--color-border))] rounded-xl bg-[hsl(var(--color-bg-soft))]">
@@ -56,14 +57,39 @@ export default function StaffLogsPage() {
                                         <div className="flex-1">
                                             <p className="text-sm font-bold text-[hsl(var(--color-text))]">
                                                 {log.assistantId?.fullName || "Unknown Staff"} 
-                                                <span className="text-[hsl(var(--color-text-muted))] font-normal ms-2">{t('performedAction')}</span>
-                                                <span className="ms-2 text-[hsl(var(--color-primary))] uppercase">{log.action}</span>
+                                                <span className="text-[hsl(var(--color-text-muted))] font-normal ml-2">performed action:</span>
+                                                <span className="ml-2 text-[hsl(var(--color-primary))] uppercase">{log.action}</span>
                                             </p>
                                             
                                             {Object.keys(log.details || {}).length > 0 && (
-                                                <pre className="mt-2 text-xs bg-[hsl(var(--color-bg))] p-2 rounded-lg text-[hsl(var(--color-text-muted))] overflow-x-auto">
-                                                    {JSON.stringify(log.details, null, 2)}
-                                                </pre>
+                                                <div className="mt-3 flex flex-wrap gap-2">
+                                                    {Object.entries(log.details).map(([key, value]) => {
+                                                        if (key === 'patientId') return null;
+                                                        if (key === 'sessionId' && log.details.patientName) return null;
+
+                                                        const label = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                                                        
+                                                        if (key === 'patientName' && log.details.patientId) {
+                                                            return (
+                                                                <div key={key} className="flex items-center gap-1.5 text-[11px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] px-2 py-1 rounded-md shadow-sm">
+                                                                    <span className="text-[hsl(var(--color-text-muted))] font-medium">{label}:</span>
+                                                                    <Link href={`/doctor/history/${log.details.patientId}`} className="text-[hsl(var(--color-primary))] hover:underline font-bold flex items-center gap-1">
+                                                                        {String(value)} <LuExternalLink size={10} />
+                                                                    </Link>
+                                                                </div>
+                                                            );
+                                                        }
+
+                                                        return (
+                                                            <div key={key} className="flex items-center gap-1.5 text-[11px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] px-2 py-1 rounded-md shadow-sm">
+                                                                <span className="text-[hsl(var(--color-text-muted))] font-medium">{label}:</span>
+                                                                <span className="text-[hsl(var(--color-text))] font-bold">
+                                                                    {typeof value === 'boolean' ? (value ? 'Yes' : 'No') : typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                                                </span>
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
                                             )}
                                         </div>
                                         <div className="text-xs text-[hsl(var(--color-text-muted))] flex items-center gap-1 whitespace-nowrap shrink-0">

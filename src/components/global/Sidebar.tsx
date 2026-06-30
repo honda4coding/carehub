@@ -8,7 +8,6 @@ import { useAuth } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
 import { FaSquarePollVertical } from "react-icons/fa6";
-import { useTranslations } from 'next-intl';
 
 import {
   LuLayoutDashboard,
@@ -19,6 +18,7 @@ import {
   LuSettings,
   LuUser,
   LuClipboardList,
+  LuHeartPulse,
   LuLogOut,
   LuMenu,
   LuX,
@@ -31,6 +31,7 @@ import {
   LuBrainCircuit,
   LuBuilding2,
   LuFileCheck,
+  LuCreditCard,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -198,16 +199,8 @@ const patientNav: NavSection[] = [
   },
 ];
 
-const assistantNav: NavSection[] = [
-  {
-    title: "Main",
-    items: [
-      { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
-      { label: "Appointments", href: "/doctor/appointments", icon: <LuCalendarDays /> },
-      { label: "Patient Directory", href: "/doctor/patients", icon: <LuUsers /> },
-    ],
-  },
-];
+// Assistant nav will be dynamically built inside the component based on permissions.
+const assistantNav: NavSection[] = [];
 
 const navMap: Record<string, NavSection[]> = {
   admin: adminNav,
@@ -282,7 +275,6 @@ function SettingsGroup({
   onClose?: () => void;
 }) {
   const pathname = usePathname();
-  const t = useTranslations('common.sidebar');
   const subItems = settingsSub[role] ?? [];
   // const anyActive = subItems.some((i) => pathname.startsWith(i.href));
   const anyActive = subItems.some((i) =>
@@ -311,7 +303,7 @@ function SettingsGroup({
         >
           <LuSettings />
         </span>
-        <span className="flex-1 text-start">{t('items.Settings')}</span>
+        <span className="flex-1 text-left">Settings</span>
         <LuChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
@@ -319,7 +311,7 @@ function SettingsGroup({
 
       {/* Sub-items */}
       {open && (
-        <div className="ms-4 mt-0.5 border-s border-[hsl(var(--color-border))] ps-3 space-y-0.5">
+        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
           {subItems.map((item) => {
             // const isActive = pathname.startsWith(item.href);
             const isActive =
@@ -348,7 +340,7 @@ function SettingsGroup({
                 >
                   {item.icon}
                 </span>
-                {t(`items.${item.label}` as any)}
+                {item.label}
               </Link>
             );
           })}
@@ -360,7 +352,6 @@ function SettingsGroup({
 
 function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
   const pathname = usePathname();
-  const t = useTranslations('common.sidebar');
   const subItems = item.subItems ?? [];
   const anyActive = subItems.some((i) =>
     i.href === item.href ? pathname === i.href : pathname.startsWith(i.href),
@@ -383,14 +374,14 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
         >
           {item.icon}
         </span>
-        <span className="flex-1 text-start">{t(`items.${item.label}` as any)}</span>
+        <span className="flex-1 text-left">{item.label}</span>
         <LuChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
 
       {open && (
-        <div className="ms-4 mt-0.5 border-s border-[hsl(var(--color-border))] ps-3 space-y-0.5">
+        <div className="ml-4 mt-0.5 border-l border-[hsl(var(--color-border))] pl-3 space-y-0.5">
           {subItems.map((sub) => {
             const isActive =
               sub.href === item.href
@@ -416,7 +407,7 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
                 >
                   {sub.icon}
                 </span>
-                {t(`items.${sub.label}` as any)}
+                {sub.label}
               </Link>
             );
           })}
@@ -443,9 +434,42 @@ function SidebarContent({
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-    const tAuto = useTranslations("auto");
-  const t = useTranslations('common.sidebar');
-  const sections = navMap[role] ?? [];
+  
+  let sections = navMap[role] ?? [];
+  if (role === "assistant" && user) {
+    const assistantDynamicNav: NavSection[] = [
+      {
+        title: "Main",
+        items: [
+          { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
+          ...(user.permissions?.canManageAppointments ? [{ 
+            label: "Appointments", 
+            href: "/assistant/appointments", 
+            icon: <LuCalendarDays />,
+            subItems: [
+              {
+                label: "Appointments",
+                href: "/assistant/appointments",
+                icon: <LuCalendarDays className="text-sm" />,
+              },
+              {
+                label: "My Schedule",
+                href: "/assistant/appointments/schedule",
+                icon: <LuSettings2 className="text-sm" />,
+              },
+            ],
+          }] : []),
+          ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatients ? [{ label: "Vitals Queue", href: "/assistant/vitals", icon: <LuHeartPulse /> }] : []),
+          ...(user.permissions?.canManagePatientsFull ? [{ label: "Clinical Queue", href: "/assistant/assessment", icon: <LuStethoscope /> }] : []),
+          ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatientsFull || user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/assistant/patients", icon: <LuUsers /> }] : []),
+          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuSettings2 /> }] : []),
+          ...(user.permissions?.canManageReports ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <FaSquarePollVertical /> }] : []),
+        ],
+      },
+    ];
+    sections = assistantDynamicNav;
+  }
+
   const initials = user?.name
     ? user.name
         .split(" ")
@@ -458,6 +482,8 @@ function SidebarContent({
   const [avatarUrl, setAvatarUrl] = useState<string | null>(
     (user as any)?.profilepicture?.secure_url || null,
   );
+
+
 
   useEffect(() => {
     if (!avatarUrl) {
@@ -487,9 +513,10 @@ function SidebarContent({
           <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform shrink-0" />
           <div className="flex flex-col justify-center mt-0.5">
             <span className="text-[19px] font-bold text-[hsl(var(--color-text))] tracking-tight leading-none mb-[3px]">
-              {tAuto('carehub')}</span>
+              CareHub
+            </span>
             <p className="text-[9px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] leading-none">
-              {t('portal', { role: role.toUpperCase() })}
+              {role} Portal
             </p>
           </div>
         </Link>
@@ -509,7 +536,7 @@ function SidebarContent({
         {sections.map((section) => (
           <div key={section.title} className="mb-2">
             <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-              {t(`sections.${section.title}` as any)}
+              {section.title}
             </p>
             {section.items.map((item) => {
               if (item.subItems && item.subItems.length > 0) {
@@ -546,9 +573,9 @@ function SidebarContent({
                   >
                     {item.icon}
                   </span>
-                  <span className="flex-1">{t(`items.${item.label}` as any)}</span>
+                  <span className="flex-1">{item.label}</span>
                   {!!badgeValue && (
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ms-auto">
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ml-auto">
                       {badgeValue}
                     </span>
                   )}
@@ -559,12 +586,14 @@ function SidebarContent({
         ))}
 
         {/* Account — Settings expandable */}
-        <div className="mb-2">
-          <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-            {t('sections.Account')}
-          </p>
-          <SettingsGroup role={role} onClose={onClose} />
-        </div>
+        {role !== "assistant" && (
+          <div className="mb-2">
+            <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
+              Account
+            </p>
+            <SettingsGroup role={role} onClose={onClose} />
+          </div>
+        )}
       </nav>
 
       {/* User footer */}
@@ -574,7 +603,7 @@ function SidebarContent({
             {avatarUrl ? (
               <Image
                 src={avatarUrl}
-                alt={tAuto('avatar')}
+                alt="Avatar"
                 fill
                 className="object-cover"
               />
@@ -593,7 +622,7 @@ function SidebarContent({
           <button
             onClick={logout}
             className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] flex items-center justify-center hover:bg-[hsl(var(--color-danger)/0.2)] transition-all shrink-0"
-            title={tAuto('signOut')}
+            title="Sign out"
           >
             <LuLogOut className="text-[16px]" />
           </button>
@@ -604,7 +633,6 @@ function SidebarContent({
 }
 
 export default function Sidebar({ role }: { role: string }) {
-    const tAuto = useTranslations("auto");
   const [open, setOpen] = useState(false);
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState<number | null>(
@@ -690,7 +718,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* ── Desktop sidebar ── */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-e border-[hsl(var(--color-border))] h-screen sticky top-0">
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}
@@ -703,7 +731,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 start-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />
@@ -717,7 +745,7 @@ export default function Sidebar({ role }: { role: string }) {
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="md:hidden fixed inset-y-0 start-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-e border-[hsl(var(--color-border))]">
+          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))]">
             <SidebarContent
               role={role}
               onClose={() => setOpen(false)}

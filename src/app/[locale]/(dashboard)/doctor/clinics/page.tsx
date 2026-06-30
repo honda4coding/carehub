@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   LuBuilding2,
   LuPlus,
@@ -21,9 +22,6 @@ import {
   deleteClinic,
 } from "@/services/clinicService";
 import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
-import { useTranslations } from "next-intl";
-
-// ─── Empty form state ──────────────────────────────────────────────────────────
 
 const EMPTY_FORM: ClinicPayload = {
   name: "",
@@ -34,40 +32,50 @@ const EMPTY_FORM: ClinicPayload = {
   landline: "",
 };
 
-export default function DoctorClinicsPage() {
-  const t = useTranslations("doctor.clinics");
+function ClinicsContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
 
-  // modal state
   const [modalOpen, setModalOpen] = useState(false);
   const [editingClinic, setEditingClinic] = useState<Clinic | null>(null);
   const [form, setForm] = useState<ClinicPayload>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
-  // delete confirm state
   const [deleteTarget, setDeleteTarget] = useState<Clinic | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  async function loadClinics(selectFirst = false) {
+  async function loadClinics(): Promise<Clinic[]> {
     setLoading(true);
     setError(null);
     try {
       const data = await getMyClinics();
       setClinics(data);
-      if (selectFirst && data.length > 0) setSelectedClinicId(data[0]._id);
+      return data;
     } catch (err: any) {
-      setError(err.message || t("messages.loadFailed"));
+      setError(err.message || "Failed to load clinics");
+      return [];
     } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
-    loadClinics(true);
+    const preselect = searchParams.get("selected");
+    loadClinics().then((data) => {
+      if (preselect && data.some((c) => c._id === preselect)) {
+        setSelectedClinicId(preselect);
+        // clean up URL without full reload
+        router.replace("/doctor/clinics", { scroll: false });
+      } else if (data.length > 0) {
+        setSelectedClinicId(data[0]._id);
+      }
+    });
   }, []);
 
   function openAddModal() {
@@ -101,11 +109,11 @@ export default function DoctorClinicsPage() {
     setFormError(null);
 
     if (!form.name.trim() || !form.address.trim() || !form.governorate) {
-      setFormError(t("messages.requiredFields"));
+      setFormError("Name, address and governorate are required.");
       return;
     }
     if (!form.phone?.trim() && !form.whatsapp?.trim() && !form.landline?.trim()) {
-      setFormError(t("messages.contactRequired"));
+      setFormError("Please provide at least one contact number.");
       return;
     }
 
@@ -132,7 +140,7 @@ export default function DoctorClinicsPage() {
       }
       setModalOpen(false);
     } catch (err: any) {
-      setFormError(err.message || t("messages.generalError"));
+      setFormError(err.message || "Something went wrong");
     } finally {
       setSaving(false);
     }
@@ -150,7 +158,7 @@ export default function DoctorClinicsPage() {
       }
       setDeleteTarget(null);
     } catch (err: any) {
-      setError(err.message || t("messages.deleteFailed"));
+      setError(err.message || "Failed to delete clinic");
     } finally {
       setDeleting(false);
     }
@@ -159,15 +167,15 @@ export default function DoctorClinicsPage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title={t("title")}
-        subtitle={t("subtitle")}
+        title="My Clinics"
+        subtitle="Pick a clinic to manage its services and schedule"
         backPath="/doctor"
         rightElement={
           <button
             onClick={openAddModal}
             className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl hover:bg-[hsl(var(--color-primary-strong))] transition-all flex items-center gap-2 cursor-pointer"
           >
-            <LuPlus className="text-lg" /> {t("addClinic")}
+            <LuPlus className="text-lg" /> Add Clinic
           </button>
         }
       />
@@ -192,16 +200,16 @@ export default function DoctorClinicsPage() {
           <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
             <LuBuilding2 className="text-4xl text-[hsl(var(--color-text-muted))] mb-3" />
             <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))]">
-              {t("noClinics")}
+              No clinics yet
             </h3>
             <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mt-1 mb-4">
-              {t("addFirstClinic")}
+              Add your first clinic to start managing services and availability.
             </p>
             <button
               onClick={openAddModal}
               className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl flex items-center gap-2 cursor-pointer"
             >
-              <LuPlus /> {t("addClinic")}
+              <LuPlus /> Add Clinic
             </button>
           </div>
         ) : (
@@ -209,7 +217,7 @@ export default function DoctorClinicsPage() {
             {/* ── LEFT: Clinics list ── */}
             <aside className="w-full lg:w-64 shrink-0">
               <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-                {t("sidebarTitle")}
+                Clinics
               </p>
               <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
                 {clinics.map((clinic) => {
@@ -229,9 +237,7 @@ export default function DoctorClinicsPage() {
                         <p className="text-[13px] font-bold truncate">{clinic.name}</p>
                         <p
                           className={`text-[10.5px] font-medium truncate ${
-                            isActive
-                              ? "text-white/80"
-                              : "text-[hsl(var(--color-text-muted))]"
+                            isActive ? "text-white/80" : "text-[hsl(var(--color-text-muted))]"
                           }`}
                         >
                           {clinic.governorate}
@@ -248,7 +254,7 @@ export default function DoctorClinicsPage() {
                               ? "text-white/80 hover:text-white"
                               : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))]"
                           }`}
-                          title={t("editTooltip")}
+                          title="Edit clinic info"
                         >
                           <LuPencil className="text-[13px]" />
                         </button>
@@ -262,7 +268,7 @@ export default function DoctorClinicsPage() {
                               ? "text-white/80 hover:text-white"
                               : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))]"
                           }`}
-                          title={t("deleteTooltip")}
+                          title="Delete clinic"
                         >
                           <LuTrash2 className="text-[13px]" />
                         </button>
@@ -273,7 +279,7 @@ export default function DoctorClinicsPage() {
               </div>
             </aside>
 
-            {/* ── RIGHT: Selected clinic's editable data ── */}
+            {/* ── RIGHT: Selected clinic detail ── */}
             <div className="flex-1 min-w-0">
               {selectedClinicId ? (
                 <ClinicDetailsPanel clinicId={selectedClinicId} />
@@ -281,7 +287,7 @@ export default function DoctorClinicsPage() {
                 <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
                   <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
                   <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    {t("selectClinic")}
+                    Select a clinic to manage it
                   </p>
                 </div>
               )}
@@ -296,90 +302,82 @@ export default function DoctorClinicsPage() {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-md overflow-hidden p-6">
             <button
               onClick={closeModal}
-              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
 
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-4">
-              {editingClinic ? t("editClinic") : t("addClinic")}
+              {editingClinic ? "Edit Clinic" : "Add Clinic"}
             </h3>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  {t("clinicNameLabel")}
+                  Clinic Name *
                 </label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder={t('alshifaCenter')}
+                  placeholder="Al-Shifa Center"
                 />
               </div>
 
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  {t("addressLabel")}
+                  Address *
                 </label>
                 <input
                   value={form.address}
                   onChange={(e) => setForm({ ...form, address: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder={t('newDamietta')}
+                  placeholder="New Damietta"
                 />
               </div>
 
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  {t("governorateLabel")}
+                  Governorate *
                 </label>
                 <select
                   value={form.governorate}
                   onChange={(e) => setForm({ ...form, governorate: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
                 >
-                  <option value="">{t("selectGovernorate")}</option>
+                  <option value="">Select governorate</option>
                   {egyptianGovernorates.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
+                    <option key={g} value={g}>{g}</option>
                   ))}
                 </select>
               </div>
 
               <div className="grid grid-cols-1 gap-3">
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    {t("phoneLabel")}
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Phone</label>
                   <input
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder={t('010xxxxxxxx')}
+                    placeholder="010xxxxxxxx"
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    {t("whatsappLabel")}
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">WhatsApp</label>
                   <input
                     value={form.whatsapp}
                     onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder={t('010xxxxxxxx')}
+                    placeholder="010xxxxxxxx"
                   />
                 </div>
                 <div>
-                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                    {t("landlineLabel")}
-                  </label>
+                  <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">Landline</label>
                   <input
                     value={form.landline}
                     onChange={(e) => setForm({ ...form, landline: e.target.value })}
                     className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                    placeholder={t('057xxxxxxx')}
+                    placeholder="057xxxxxxx"
                   />
                 </div>
               </div>
@@ -396,14 +394,14 @@ export default function DoctorClinicsPage() {
                   onClick={closeModal}
                   className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
                 >
-                  {t("cancel")}
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={saving}
                   className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] text-white text-[13px] font-bold hover:opacity-90 disabled:opacity-60 transition-opacity"
                 >
-                  {saving ? t("saving") : editingClinic ? t("saveChanges") : t("addClinic")}
+                  {saving ? "Saving…" : editingClinic ? "Save Changes" : "Add Clinic"}
                 </button>
               </div>
             </form>
@@ -417,7 +415,7 @@ export default function DoctorClinicsPage() {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden text-center p-6">
             <button
               onClick={() => !deleting && setDeleteTarget(null)}
-              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
@@ -427,10 +425,10 @@ export default function DoctorClinicsPage() {
             </div>
 
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
-              {t("deleteTitle")}
+              Delete this clinic?
             </h3>
             <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
-              {t("deleteDesc", { name: deleteTarget.name })}
+              &quot;{deleteTarget.name}&quot; will be deactivated. You can&apos;t undo this from here.
             </p>
 
             <div className="flex gap-2.5">
@@ -438,19 +436,43 @@ export default function DoctorClinicsPage() {
                 onClick={() => setDeleteTarget(null)}
                 className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
               >
-                {t("keepIt")}
+                Keep it
               </button>
               <button
                 onClick={confirmDelete}
                 disabled={deleting}
                 className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-danger))] text-white text-[13px] font-bold hover:opacity-90 disabled:opacity-60 transition-opacity"
               >
-                {deleting ? t("deleting") : t("yesDelete")}
+                {deleting ? "Deleting…" : "Yes, delete"}
               </button>
             </div>
           </div>
         </div>
       )}
     </div>
+  );
+}
+
+export default function DoctorClinicsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
+        <header className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-4 flex items-center justify-between">
+          <div className="h-6 w-32 bg-[hsl(var(--color-bg-soft))] animate-pulse rounded" />
+        </header>
+        <div className="p-4 md:p-6 flex-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-24 rounded-2xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    }>
+      <ClinicsContent />
+    </Suspense>
   );
 }

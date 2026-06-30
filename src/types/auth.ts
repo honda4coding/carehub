@@ -2,6 +2,19 @@ export interface User {
   id: string;
   email: string;
   name: string;
+  permissions?: {
+    canManageAppointments: boolean;
+    canManagePatientsVitals: boolean;
+    canManagePatientsFull: boolean;
+    canManagePatients?: boolean; // Backward compatibility fallback
+    canManageBilling: boolean;
+    canManageReports: boolean;
+  };
+  doctorId?: string;
+  jobTitle?: string;
+  doctorName?: string;
+  clinicId?: string;
+  clinicName?: string;
 }
 
 export interface AuthContextType {

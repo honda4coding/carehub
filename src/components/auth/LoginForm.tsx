@@ -54,6 +54,11 @@ export const LoginForm = () => {
         id: data.id,
         email: email,
         name: data.fullName || data.name || email,
+        permissions: data.permissions,
+        doctorId: data.doctorId,
+        jobTitle: data.jobTitle,
+        doctorName: data.doctorName,
+        clinicName: data.clinicName,
       });
     } catch (err: any) {
       setBioError(err.message || "Biometrics login failed.");
@@ -92,6 +97,11 @@ export const LoginForm = () => {
         id: data.data.id,
         email: values.email,
         name: data.data.fullName || data.data.name || values.email,
+        permissions: data.data.permissions,
+        doctorId: data.data.doctorId,
+        jobTitle: data.data.jobTitle,
+        doctorName: data.data.doctorName,
+        clinicName: data.data.clinicName,
       });
 
     } catch (error) {

@@ -9,18 +9,17 @@ import {
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import DashboardHeader from "@/components/global/DashboardHeader";
-import { useTranslations } from "next-intl";
+import { useAuth } from "@/context/AuthContext";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
-    const t = useTranslations("auto");
   const [expanded, setExpanded] = useState(false);
   const dateStr = new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
   const timeStr = new Date(item.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="relative ps-8 md:pl-10">
+    <div className="relative pl-8 md:pl-10">
       {/* Timeline Node */}
-      <span className={`absolute -start-[9px] top-1 w-4 h-4 rounded-full ring-4 ring-[hsl(var(--color-bg-surface))] flex items-center justify-center ${index === 0 ? 'bg-primary' : 'bg-[hsl(var(--color-text-muted))]'}`}>
+      <span className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full ring-4 ring-[hsl(var(--color-bg-surface))] flex items-center justify-center ${index === 0 ? 'bg-primary' : 'bg-[hsl(var(--color-text-muted))]'}`}>
          {index === 0 && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
       </span>
       
@@ -72,7 +71,6 @@ function HistoryCard({ item, index }: { item: any; index: number }) {
 }
 
 function OnlinePatientHistoryContent() {
-    const t = useTranslations("auto");
   const { id } = useParams();
   const searchParams = useSearchParams();
   const patientName = searchParams.get('name') || "Unknown Patient";
@@ -82,6 +80,7 @@ function OnlinePatientHistoryContent() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const token = Cookies.get("auth_token");
+  const { role } = useAuth();
 
   // Advanced Filters
   const [searchTerm, setSearchTerm] = useState("");
@@ -157,9 +156,9 @@ function OnlinePatientHistoryContent() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
-        title={t('patientMedicalHistory')}
+        title="Patient Medical History"
         subtitle={`Visit timeline for: ${patientName}${patientPhone ? ` (${patientPhone})` : ''}`}
-        backPath="/doctor"
+        backPath={role === "assistant" ? "/assistant/patients" : "/doctor/patients"}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">
@@ -170,24 +169,24 @@ function OnlinePatientHistoryContent() {
             
             {/* Search */}
             <div className="relative flex-1 w-full">
-              <LuSearch className="absolute start-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
+              <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
                 type="text"
-                placeholder={t('searchDiagnosisNotesMedications')}
+                placeholder="Search diagnosis, notes, medications..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full ps-10 pe-4 py-2.5 text-[13px] rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none font-medium text-[hsl(var(--color-text))] focus:border-primary transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-[13px] rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none font-medium text-[hsl(var(--color-text))] focus:border-primary transition-colors"
               />
             </div>
 
             {/* Date Filter */}
             <div className="relative w-full md:w-auto">
-              <LuCalendar className="absolute start-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]" />
+              <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]" />
               <input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full md:w-auto ps-9 pe-3 py-2.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] outline-none cursor-pointer focus:border-primary transition-colors"
+                className="w-full md:w-auto pl-9 pr-3 py-2.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] outline-none cursor-pointer focus:border-primary transition-colors"
               />
             </div>
 
@@ -206,7 +205,8 @@ function OnlinePatientHistoryContent() {
                 onClick={() => { setSearchTerm(""); setDateFilter(""); setSortOrder("newest"); }}
                 className="w-full md:w-auto px-4 py-2.5 bg-danger-light hover:bg-danger-light text-danger font-bold text-[12px] rounded-xl border border-red-100 transition-colors"
               >
-                {t('clear')}</button>
+                Clear
+              </button>
             )}
 
           </div>
@@ -214,10 +214,10 @@ function OnlinePatientHistoryContent() {
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-               <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">{t('loadingMedicalTimeline')}</p>
+               <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Loading medical timeline...</p>
             </div>
           ) : visibleHistory.length > 0 ? (
-            <div className="relative border-s-2 border-[hsl(var(--color-border))] ms-4 md:ml-6 space-y-8 pb-10">
+            <div className="relative border-l-2 border-[hsl(var(--color-border))] ml-4 md:ml-6 space-y-8 pb-10">
               {visibleHistory.map((item, index) => (
                 <HistoryCard key={item._id} item={item} index={index} />
               ))}
@@ -225,9 +225,10 @@ function OnlinePatientHistoryContent() {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl">
               <LuHistory className="text-6xl text-[hsl(var(--color-text-muted))] opacity-20 mb-4" />
-              <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2">{t('noHistoryFound')}</h2>
+              <h2 className="text-xl font-black text-[hsl(var(--color-text))] mb-2">No History Found</h2>
               <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] max-w-sm">
-                {t('thisPatientHasntHad')}</p>
+                This patient hasn't had any completed sessions with you yet, or no medical notes were recorded.
+              </p>
             </div>
           )}
         </div>
@@ -237,7 +238,6 @@ function OnlinePatientHistoryContent() {
 }
 
 export default function OnlinePatientHistoryPage() {
-    const t = useTranslations("auto");
   return (
     <Suspense fallback={<div className="flex flex-col items-center justify-center py-20 min-h-screen"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>}>
       <OnlinePatientHistoryContent />

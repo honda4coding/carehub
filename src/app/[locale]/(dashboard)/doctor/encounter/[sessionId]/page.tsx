@@ -22,14 +22,13 @@ import ProfileTab from "@/components/doctor/encounter/tabs/ProfileTab";
 import HistoryTab from "@/components/doctor/encounter/tabs/HistoryTab";
 import AssessmentTab from "@/components/doctor/encounter/tabs/AssessmentTab";
 import PrescriptionTab from "@/components/doctor/encounter/tabs/PrescriptionTab";
-import { useTranslations } from "next-intl";
 
 export default function PatientDashboardPage() {
-  const t = useTranslations("doctor.encounterDashboard");
   const router = useRouter();
   const params = useParams();
   const sessionId = params.sessionId as string;
-  const { token } = useAuth();
+  const { token, user, role } = useAuth();
+  const canManagePatientsFull = role === "doctor" || (role === "assistant" && user?.permissions?.canManagePatientsFull);
 
   // Tab Navigation
   const [activeTab, setActiveTab] = useState<"profile" | "history" | "assessment" | "prescription">("profile");
@@ -92,9 +91,6 @@ export default function PatientDashboardPage() {
   const [editTemperature, setEditTemperature] = useState("");
   const [editAllergies, setEditAllergies] = useState("");
   const [editChronic, setEditChronic] = useState("");
-  const [isSavingFee, setIsSavingFee] = useState(false);
-
-  // Tabs: "history" | "profile" | "clinical" | "prescriptions" | "attachments"
   const [editSurgeries, setEditSurgeries] = useState<{ operationName: string, surgeonName?: string, date?: string, report?: string }[]>([]);
 
   // Fetch session and medication history on load
@@ -234,7 +230,7 @@ export default function PatientDashboardPage() {
   // Handle adding new prescriptions locally
   const handleAddDrug = () => {
     if (!drugName || !dosage || !frequency || !duration) {
-      alert(t("messages.fillDrugDetails"));
+      alert("Please fill Drug Name, Dosage, Frequency, and Duration");
       return;
     }
     const newDrug = {
@@ -302,7 +298,7 @@ export default function PatientDashboardPage() {
       setIsEditAlertsOpen(false);
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.message || t("messages.failedToSaveAlerts"));
+      alert(err.response?.data?.message || "Failed to save alerts");
     } finally {
       setIsSavingAlerts(false);
     }
@@ -328,7 +324,7 @@ export default function PatientDashboardPage() {
       setIsEditSurgeriesOpen(false);
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.message || t("messages.failedToSaveSurgeries"));
+      alert(err.response?.data?.message || "Failed to save surgeries");
     } finally {
       setIsSavingAlerts(false);
     }
@@ -395,31 +391,13 @@ export default function PatientDashboardPage() {
         }
       });
       
-      alert(t("messages.sessionEndedSuccess"));
+      alert("Session ended successfully. Medical History saved.");
       router.push("/doctor");
 
     } catch (err: any) {
       console.error(err);
-      alert(err.response?.data?.message || t("messages.failedToEndSession"));
+      alert(err.response?.data?.message || "Failed to end session");
       setIsEnding(false);
-    }
-  };
-
-  const handleSaveFee = async (fees: number) => {
-    if (!token) return;
-    setIsSavingFee(true);
-    try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-      await axios.patch(`${baseUrl}/doctor/session/${sessionId}/fees`, { fees }, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert("Fee updated successfully!");
-      // Optionally update local sessionData if needed, though fees is managed via state in EncounterHeader
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.message || "Failed to update fee");
-    } finally {
-      setIsSavingFee(false);
     }
   };
 
@@ -456,14 +434,12 @@ export default function PatientDashboardPage() {
         sessionData={sessionData}
         isAssessmentMode={activeTab !== "profile" && activeTab !== "history"}
         isEnding={isEnding}
-        isSavingFee={isSavingFee}
         onBack={() => {
           if (activeTab !== "history") setActiveTab("history");
           else router.push("/doctor");
         }}
         onPrint={handlePrint}
         onEndSession={handleEndSession}
-        onSaveFee={handleSaveFee}
       />
 
       {/* Main Workspace */}
@@ -473,10 +449,12 @@ export default function PatientDashboardPage() {
         <div className="mb-6 w-full no-print flex justify-center">
           <div className="flex flex-wrap items-center justify-center gap-2 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-2xl border border-[hsl(var(--color-border))] w-full lg:w-auto">
             {[
-              { id: "profile", label: t("tabs.profile"), icon: LuUser },
-              { id: "history", label: t("tabs.history"), icon: LuHistory },
-              { id: "assessment", label: t("tabs.assessment"), icon: LuStethoscope },
-              { id: "prescription", label: t("tabs.prescription"), icon: LuPill }
+              { id: "profile", label: "Profile & Vitals", icon: LuUser },
+              { id: "history", label: "Medical History", icon: LuHistory },
+              ...(canManagePatientsFull ? [
+                { id: "assessment", label: "Clinical Assessment", icon: LuStethoscope },
+                { id: "prescription", label: "Prescription", icon: LuPill }
+              ] : [])
             ].map((tab) => (
               <button
                 key={tab.id}

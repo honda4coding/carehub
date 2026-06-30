@@ -17,7 +17,7 @@ export default function Navbar() {
   const { user, role, isAuthenticated, logout, isLoading } = useAuth();
   const t = useTranslations('common.navbar');
 
-  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient");
+  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient") || pathname.startsWith("/assistant");
   if (isDashboard) return null;
 
   const navLinkClasses = "text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-all duration-300";
@@ -46,6 +46,11 @@ export default function Navbar() {
         return [
           { label: t("dashboard"), href: "/doctor" },
           { label: t("profile"), href: "/doctor/profile" },
+        ];
+      case 'assistant':
+        return [
+          { label: "Dashboard", href: "/assistant" },
+          { label: "Settings", href: "/assistant/settings" },
         ];
       case 'patient':
         return [
