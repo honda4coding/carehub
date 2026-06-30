@@ -21,8 +21,11 @@ export function proxy(request: NextRequest) {
     }
 
     // Role-based access control: Redirect to assigned dashboard if unauthorized
-    if (role && !pathname.startsWith(`/${role}`)) {
-      return NextResponse.redirect(new URL(`/${role}`, request.url));
+    if (role) {
+      const normalizedRole = role.toLowerCase();
+      if (!pathname.startsWith(`/${normalizedRole}`)) {
+        return NextResponse.redirect(new URL(`/${normalizedRole}`, request.url));
+      }
     }
   }
 
@@ -32,7 +35,7 @@ export function proxy(request: NextRequest) {
   
   if (isAuthRoute && token) {
     // If they have a token, redirect to their role dashboard, default to patient if role is somehow missing
-    const redirectRole = role || 'patient';
+    const redirectRole = role ? role.toLowerCase() : 'patient';
     return NextResponse.redirect(new URL(`/${redirectRole}`, request.url));
   }
 
