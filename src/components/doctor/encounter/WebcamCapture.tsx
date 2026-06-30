@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { LuCamera, LuX, LuRefreshCw } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface WebcamCaptureProps {
   onCapture: (file: File) => void;
@@ -8,6 +9,7 @@ interface WebcamCaptureProps {
 }
 
 export default function WebcamCapture({ onCapture, onClose, title = "Take Photo" }: WebcamCaptureProps) {
+    const t = useTranslations("auto");
   const videoRef = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string>("");
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -88,8 +90,7 @@ export default function WebcamCapture({ onCapture, onClose, title = "Take Photo"
             <div className="text-center p-6">
               <p className="text-red-400 font-semibold mb-4">{error}</p>
               <button onClick={startCamera} className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg flex items-center gap-2 mx-auto transition-colors">
-                <LuRefreshCw /> Try Again
-              </button>
+                <LuRefreshCw /> {t('tryAgain')}</button>
             </div>
           ) : (
             <video 

@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/Card";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { LuClock, LuUserPlus, LuStethoscope, LuFileText, LuShieldCheck } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 export interface Activity {
   _id: string;
@@ -33,6 +34,7 @@ function formatRelativeTime(iso: string) {
 }
 
 function getActivityConfig(type?: string) {
+    const t = useTranslations("auto");
   const str = (type || "").toLowerCase();
   if (str.includes("register")) {
     return {
@@ -65,27 +67,25 @@ function getActivityConfig(type?: string) {
 }
 
 export function ActivityFeed({ activities, loading, className = "" }: ActivityFeedProps) {
+    const t = useTranslations("auto");
   const router = useRouter();
 
   return (
     <Card className={`p-6 flex flex-col h-full border border-[hsl(var(--color-border-soft))] shadow-sm hover:shadow-md transition-shadow ${className}`}>
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))]">
-          Recent Activity
-        </h3>
+          {t('recentActivity')}</h3>
       </div>
-      <div className="flex flex-col flex-1 overflow-y-auto pr-2">
+      <div className="flex flex-col flex-1 overflow-y-auto pe-2">
         {loading ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-              Loading activities...
-            </p>
+              {t('loadingActivities')}</p>
           </div>
         ) : activities.length === 0 ? (
           <div className="flex-1 flex items-center justify-center">
             <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
-              No recent activity
-            </p>
+              {t('noRecentActivity')}</p>
           </div>
         ) : (
           <div className="space-y-4">

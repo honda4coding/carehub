@@ -5,8 +5,10 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
 } from "recharts";
 import { LuTrendingUp, LuScale, LuHeart, LuDroplets, LuFilter, LuCalendar } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 export default function DoctorVitalsCharts({ history }: { history: any[] }) {
+    const t = useTranslations("auto");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -80,10 +82,9 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
     return (
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full mt-6">
         <LuTrendingUp className="text-4xl text-[hsl(var(--color-text-muted))] opacity-40 mx-auto mb-3" />
-        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">No Vitals History</h3>
+        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">{t('noVitalsHistory')}</h3>
         <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-1">
-          Historical charts will appear here once vitals are recorded in encounters.
-        </p>
+          {t('historicalChartsWillAppear')}</p>
       </div>
     );
   }
@@ -94,8 +95,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
       {/* Filters Toolbar */}
       <div className="flex flex-col sm:flex-row justify-between items-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 gap-4">
         <h3 className="text-[13px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto uppercase tracking-wider">
-          <LuFilter className="text-[hsl(var(--color-primary))]" /> Filter Charts
-        </h3>
+          <LuFilter className="text-[hsl(var(--color-primary))]" /> {t('filterCharts')}</h3>
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="flex flex-col flex-1 relative">
             <input 
@@ -119,8 +119,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
               onClick={() => { setStartDate(""); setEndDate(""); }} 
               className="px-4 py-2 rounded-xl text-xs font-bold text-danger bg-danger-light hover:bg-danger-light border border-red-200 transition-colors shrink-0"
             >
-              Reset
-            </button>
+              {t('reset')}</button>
           )}
         </div>
       </div>
@@ -128,18 +127,16 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
       {chartData.length === 0 ? (
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-10 text-center col-span-full">
           <LuCalendar className="text-4xl text-[hsl(var(--color-text-muted))] opacity-40 mx-auto mb-3" />
-          <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">No data in this period</h3>
+          <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">{t('noDataInThis')}</h3>
           <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-1">
-            Try adjusting or clearing your date filters.
-          </p>
+            {t('tryAdjustingOrClearing')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Weight & BMI Trends */}
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-              <LuScale className="text-[hsl(var(--color-primary))]" /> Weight & BMI Trends
-            </h3>
+              <LuScale className="text-[hsl(var(--color-primary))]" /> {t('weightBmiTrends')}</h3>
             <div className="flex-1 min-h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -158,8 +155,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
           {/* Blood Pressure History */}
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-              <LuHeart className="text-danger" /> Blood Pressure History
-            </h3>
+              <LuHeart className="text-danger" /> {t('bloodPressureHistory')}</h3>
             <div className="flex-1 min-h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
@@ -178,8 +174,7 @@ export default function DoctorVitalsCharts({ history }: { history: any[] }) {
           {/* Sugar, Pulse & Temp Trends */}
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col lg:col-span-2">
             <h3 className="text-[13px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-              <LuDroplets className="text-primary" /> Sugar, Pulse & Temp Trends
-            </h3>
+              <LuDroplets className="text-primary" /> {t('sugarPulseTempTrends')}</h3>
             <div className="flex-1 min-h-[250px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>

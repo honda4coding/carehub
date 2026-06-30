@@ -1,4 +1,5 @@
 import { LuTriangleAlert, LuX } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 export default function CancelModal({
   open,
@@ -13,6 +14,7 @@ export default function CancelModal({
   onConfirm: () => void;
   onClose: () => void;
 }) {
+  const t = useTranslations("appointments.CancelModal");
   if (!open) return null;
 
   return (
@@ -20,7 +22,7 @@ export default function CancelModal({
       <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden text-center p-6">
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+          className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
         >
           <LuX className="text-lg" />
         </button>
@@ -30,7 +32,7 @@ export default function CancelModal({
         </div>
 
         <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
-          Cancel this appointment?
+          {t("title")}
         </h3>
         <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
           {message}
@@ -41,14 +43,14 @@ export default function CancelModal({
             onClick={onClose}
             className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-text-muted))] transition-colors"
           >
-            Keep it
+            {t("keepIt")}
           </button>
           <button
             onClick={onConfirm}
             disabled={loading}
             className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-danger))] text-white text-[13px] font-bold hover:opacity-90 disabled:opacity-60 transition-opacity"
           >
-            {loading ? "Cancelling…" : "Yes, cancel"}
+            {loading ? t("cancelling") : t("yesCancel")}
           </button>
         </div>
       </div>

@@ -7,6 +7,7 @@ import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuBrainCircuit, LuX, LuSend, LuLoader } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -21,6 +22,7 @@ interface Message {
 }
 
 export default function DoctorAIChatWidget() {
+    const t = useTranslations("auto");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", content: "Welcome, Doctor! 🧠 I am your Clinical AI Assistant. You can ask me medical questions or upload documents to query against your personal knowledge base." }
@@ -102,8 +104,8 @@ export default function DoctorAIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-transform hover:scale-105 z-50"
-          title="Clinical Assistant"
+          className="fixed bottom-6 end-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-transform hover:scale-105 z-50"
+          title={t('clinicalAssistant')}
         >
           <LuBrainCircuit size={28} />
         </button>
@@ -116,8 +118,7 @@ export default function DoctorAIChatWidget() {
           <div className="flex items-center justify-between p-4 bg-primary text-white">
             <div className="flex items-center gap-2 font-bold">
               <LuBrainCircuit size={20} />
-              Clinical Assistant
-            </div>
+              {t('clinicalAssistant')}</div>
             <div className="flex items-center gap-3">
               <button onClick={() => setIsOpen(false)} className="hover:text-white/80 transition-colors">
                 <LuX size={20} />
@@ -132,10 +133,10 @@ export default function DoctorAIChatWidget() {
                 <div 
                   className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${
                     msg.role === "user" 
-                    ? "bg-primary text-white rounded-tr-none" 
+                    ? "bg-primary text-white rounded-se-none" 
                     : msg.role === "system"
                     ? "bg-primary/10 text-primary rounded-lg text-xs w-full text-center border border-primary/20"
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-ss-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
                   }`}
                   dir="auto"
                 >
@@ -149,9 +150,8 @@ export default function DoctorAIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-tl-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
-                  <LuLoader className="animate-spin" /> Analyzing...
-                </div>
+                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-ss-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
+                  <LuLoader className="animate-spin" /> {t('analyzing')}</div>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -164,7 +164,7 @@ export default function DoctorAIChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Ask a clinical question..."
+              placeholder={t('askAClinicalQuestion')}
               className="flex-1 px-4 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-full text-sm focus:outline-none focus:border-primary"
             />
             <button 

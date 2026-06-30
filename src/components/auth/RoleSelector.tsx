@@ -1,5 +1,6 @@
 'use client';
 import { LuUser, LuHeart } from "react-icons/lu";
+import { useTranslations } from 'next-intl';
 
 interface RoleSelectorProps {
   selectedRole: 'doctor' | 'patient';
@@ -7,10 +8,12 @@ interface RoleSelectorProps {
 }
 
 export default function RoleSelector({ selectedRole, onRoleChange }: RoleSelectorProps) {
+  const t = useTranslations('auth.RoleSelector');
+  
   return (
     <div className="mb-10">
       <label className="block text-center text-xs font-bold tracking-widest uppercase text-[hsl(var(--color-text-muted))] mb-6">
-        Identify Your Role
+        {t('title')}
       </label>
       <div
         className="flex p-1.5 rounded-full w-full max-w-sm mx-auto"
@@ -31,7 +34,7 @@ export default function RoleSelector({ selectedRole, onRoleChange }: RoleSelecto
           }
         >
           <LuHeart className="w-4 h-4" />
-          Doctor
+          {t('doctor')}
         </button>
 
         <button
@@ -49,7 +52,7 @@ export default function RoleSelector({ selectedRole, onRoleChange }: RoleSelecto
           }
         >
           <LuUser className="w-4 h-4" />
-          Patient
+          {t('patient')}
         </button>
       </div>
     </div>

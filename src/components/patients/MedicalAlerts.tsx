@@ -1,6 +1,7 @@
 "use client";
 import { LuShieldAlert, LuActivity } from "react-icons/lu";
 import { Card } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
 
 interface Props {
   allergies: string[];
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
+  const t = useTranslations("patient.MedicalAlerts");
   if (allergies.length === 0 && chronicDiseases.length === 0) return null;
 
   return (
@@ -17,7 +19,7 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
         <Card className="p-4 border-[hsl(var(--color-danger-bg))]">
           <div className="flex items-center gap-2 mb-3">
             <LuShieldAlert className="text-[hsl(var(--color-danger))]" />
-            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">Allergies</h3>
+            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">{t("allergies")}</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {allergies.map((a, idx) => (
@@ -34,7 +36,7 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
         <Card className="p-4 border-[hsl(var(--color-warning-bg))]">
           <div className="flex items-center gap-2 mb-3">
             <LuActivity className="text-[hsl(var(--color-warning))]" />
-            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">Chronic Conditions</h3>
+            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">{t("chronicConditions")}</h3>
           </div>
           <div className="flex flex-col gap-2">
             {chronicDiseases.map((c, idx) => (

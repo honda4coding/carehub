@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { LuStethoscope, LuWand, LuX, LuTriangleAlert, LuCheck } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface AIDiagnosisModalProps {
   isOpen: boolean;
@@ -23,6 +24,7 @@ export default function AIDiagnosisModal({
   token,
   onSelectDiagnosis
 }: AIDiagnosisModalProps) {
+    const t = useTranslations("auto");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [diagnoses, setDiagnoses] = useState<{ condition: string; rationale: string }[]>([]);
@@ -80,8 +82,8 @@ export default function AIDiagnosisModal({
               <LuWand className="text-xl" />
             </div>
             <div>
-              <h2 className="text-lg font-black text-gray-900">AI Differential Diagnosis</h2>
-              <p className="text-xs font-semibold text-gray-500">Powered by Medical AI Assistant</p>
+              <h2 className="text-lg font-black text-gray-900">{t('aiDifferentialDiagnosis')}</h2>
+              <p className="text-xs font-semibold text-gray-500">{t('poweredByMedicalAi')}</p>
             </div>
           </div>
           <button 
@@ -98,23 +100,21 @@ export default function AIDiagnosisModal({
           {!hasFetched && !loading && (
             <div className="text-center py-8">
               <LuStethoscope className="text-5xl text-gray-300 mx-auto mb-4" />
-              <h3 className="text-gray-900 font-bold mb-2">Ready to Analyze Symptoms</h3>
+              <h3 className="text-gray-900 font-bold mb-2">{t('readyToAnalyzeSymptoms')}</h3>
               <p className="text-gray-500 text-sm max-w-md mx-auto mb-6">
-                The AI will analyze the patient's chief complaints alongside their medical history to suggest potential differential diagnoses.
-              </p>
+                {t('theAiWillAnalyze')}</p>
               <button 
                 onClick={fetchDiagnoses}
                 className="bg-primary hover:bg-primary-strong text-white px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 mx-auto"
               >
-                <LuWand /> Generate Diagnoses
-              </button>
+                <LuWand /> {t('generateDiagnoses')}</button>
             </div>
           )}
 
           {loading && (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4"></div>
-              <p className="text-[hsl(var(--color-text))] font-bold animate-pulse">Analyzing symptoms and history...</p>
+              <p className="text-[hsl(var(--color-text))] font-bold animate-pulse">{t('analyzingSymptomsAndHistory')}</p>
             </div>
           )}
 
@@ -122,7 +122,7 @@ export default function AIDiagnosisModal({
             <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
               <LuTriangleAlert className="text-red-600 text-xl shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-red-800 font-bold text-sm">Analysis Failed</h4>
+                <h4 className="text-red-800 font-bold text-sm">{t('analysisFailed')}</h4>
                 <p className="text-red-600 text-sm mt-1">{error}</p>
               </div>
             </div>
@@ -131,8 +131,7 @@ export default function AIDiagnosisModal({
           {diagnoses.length > 0 && !loading && (
             <div className="space-y-4">
               <p className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2 flex items-center gap-2">
-                <LuCheck className="text-green-600 text-base" /> AI Suggestions
-              </p>
+                <LuCheck className="text-green-600 text-base" /> {t('aiSuggestions')}</p>
               {diagnoses.map((diag, index) => (
                 <div 
                   key={index}
@@ -151,8 +150,7 @@ export default function AIDiagnosisModal({
                       onClick={() => handleSelect(diag.condition)}
                       className="shrink-0 bg-primary/10 hover:bg-primary hover:text-white text-primary border border-primary/20 px-4 py-2 rounded-xl text-xs font-bold transition-all"
                     >
-                      Select
-                    </button>
+                      {t('select')}</button>
                   </div>
                 </div>
               ))}
@@ -167,15 +165,13 @@ export default function AIDiagnosisModal({
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:text-gray-900 hover:bg-gray-200/50 transition-all"
             >
-              Close
-            </button>
+              {t('close')}</button>
             <button 
               onClick={fetchDiagnoses}
               disabled={loading}
               className="bg-primary hover:bg-primary-strong text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 disabled:opacity-50"
             >
-              <LuWand /> Retry Analysis
-            </button>
+              <LuWand /> {t('retryAnalysis')}</button>
           </div>
         )}
       </div>

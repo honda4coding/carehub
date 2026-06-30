@@ -7,12 +7,15 @@ import { HiMenu, HiX } from "react-icons/hi";
 import { LuActivity } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-import { usePathname } from "next/navigation";
+import { usePathname } from "@/i18n/routing";
+import LanguageSwitcher from "@/components/global/LanguageSwitcher";
+import { useTranslations } from 'next-intl';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { user, role, isAuthenticated, logout, isLoading } = useAuth();
+  const t = useTranslations('common.navbar');
 
   const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient") || pathname.startsWith("/assistant");
   if (isDashboard) return null;
@@ -26,23 +29,23 @@ export default function Navbar() {
 
     if (!isAuthenticated) {
       return [
-        { label: "Home", href: "/" },
-        { label: "About", href: "/about" },
-        { label: "Doctors", href: "/doctors" },
+        { label: t("home"), href: "/" },
+        { label: t("about"), href: "/about" },
+        { label: t("doctors"), href: "/doctors" },
       ];
     }
 
     switch (role) {
       case 'admin':
         return [
-          { label: "Admin Panel", href: "/admin" },
-          { label: "Users Control", href: "/admin/users" },
-          { label: "Approvals", href: "/admin/approvals" },
+          { label: t("adminPanel"), href: "/admin" },
+          { label: t("usersControl"), href: "/admin/users" },
+          { label: t("approvals"), href: "/admin/approvals" },
         ];
       case 'doctor':
         return [
-          { label: "Dashboard", href: "/doctor" },
-          { label: "Profile", href: "/doctor/profile" },
+          { label: t("dashboard"), href: "/doctor" },
+          { label: t("profile"), href: "/doctor/profile" },
         ];
       case 'assistant':
         return [
@@ -51,9 +54,9 @@ export default function Navbar() {
         ];
       case 'patient':
         return [
-          { label: "Dashboard", href: "/patient" },
-          { label: "Medical History", href: "/patient/history" },
-          { label: "Profile", href: "/patient/profile" },
+          { label: t("dashboard"), href: "/patient" },
+          { label: t("medicalHistory"), href: "/patient/history" },
+          { label: t("profile"), href: "/patient/profile" },
         ];
       default:
         return [];
@@ -71,7 +74,7 @@ export default function Navbar() {
           <Link href="/" className="flex items-center gap-2 shrink-0 group">
             <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform" />
             <span className="text-xl font-bold text-[hsl(var(--color-text))] tracking-tight">
-              CareHub
+              {t("brand")}
             </span>
           </Link>
 
@@ -85,29 +88,30 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <LanguageSwitcher />
             {isLoading ? (
               <div className="w-20 h-8 bg-soft animate-pulse rounded-full" />
             ) : !isAuthenticated ? (
               <>
                 <InstallButton />
-                <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors border-r border-[hsl(var(--color-text-muted)/0.2)] pr-4 mr-2">
-                  Sign In
+                <Link href="/login" className="text-[hsl(var(--color-text))] hover:text-[hsl(var(--color-primary))] font-bold text-sm transition-colors border-e border-[hsl(var(--color-text-muted)/0.2)] pe-4 me-2">
+                  {t("signIn")}
                 </Link>
                 <div className="hidden sm:block">
                   <Button variant="primary" size="sm" href="/register">
-                    Sign up
+                    {t("signUp")}
                   </Button>
                 </div>
               </>
             ) : (
               <div className="flex items-center gap-4">
                 <InstallButton />
-                <div className="hidden sm:flex flex-col items-end mr-2">
+                <div className="hidden sm:flex flex-col items-end me-2">
                   <span className="text-xs font-black text-[hsl(var(--color-text))]">{user?.name}</span>
                   <span className="text-[10px] uppercase font-bold text-[hsl(var(--color-primary))] tracking-widest">{role}</span>
                 </div>
                 <Button variant="danger" size="sm" onClick={logout} icon={FaSignOutAlt}>
-                  <span className="hidden sm:inline">Sign Out</span>
+                  <span className="hidden sm:inline">{t("signOut")}</span>
                 </Button>
               </div>
             )}
@@ -144,14 +148,14 @@ export default function Navbar() {
                   onClick={() => setIsOpen(false)}
                   className="block text-center text-sm font-bold py-3 rounded-xl border border-[hsl(var(--color-text-muted)/0.2)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] hover:border-[hsl(var(--color-primary))] transition-colors"
                 >
-                  Sign In
+                  {t("signIn")}
                 </Link>
                 <Link
                   href="/register"
                   onClick={() => setIsOpen(false)}
                   className="block text-center bg-[hsl(var(--color-primary))] text-white font-bold text-sm py-3 rounded-xl hover:opacity-90 active:scale-95 transition-all"
                 >
-                  Sign up
+                  {t("signUp")}
                 </Link>
               </div>
             )}
@@ -165,7 +169,7 @@ export default function Navbar() {
                 className="w-full mt-4"
                 icon={FaSignOutAlt}
               >
-                Sign Out
+                {t("signOut")}
               </Button>
             )}
           </div>

@@ -20,7 +20,7 @@ export default function AppointmentToast({
 
   return (
     <div
-      className={`fixed bottom-5 left-1/2 -translate-x-1/2 z-[60] flex items-center gap-2.5 px-5 py-3 rounded-xl  text-[13px] font-bold ${
+      className={`fixed bottom-5 start-1/2 -translate-x-1/2 z-[60] flex items-center gap-2.5 px-5 py-3 rounded-xl  text-[13px] font-bold ${
         isError
           ? "bg-[hsl(var(--color-danger))] text-white"
           : "bg-[hsl(var(--color-text))] text-[hsl(var(--color-bg-surface))]"
@@ -34,7 +34,7 @@ export default function AppointmentToast({
       {message}
       <button
         onClick={onClose}
-        className="opacity-70 hover:opacity-100 transition-opacity ml-1"
+        className="opacity-70 hover:opacity-100 transition-opacity ms-1"
       >
         ✕
       </button>

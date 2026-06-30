@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { DailyStats } from "@/types/admin";
 import { Card } from "@/components/ui/Card";
+import { useTranslations } from "next-intl";
 
 export interface ActivityOverviewChartProps {
   dailyStats: DailyStats[];
@@ -20,6 +21,7 @@ export default function ActivityOverviewChart({
   totalDoctors,
   totalAppointments,
 }: ActivityOverviewChartProps) {
+    const t = useTranslations("auto");
   const [visibleLines, setVisibleLines] = useState({
     patients: true,
     doctors: true,
@@ -34,8 +36,7 @@ export default function ActivityOverviewChart({
     <Card className="p-6 flex flex-col h-[400px] border border-[hsl(var(--color-border-soft))] shadow-sm hover:shadow-md transition-shadow">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))]">
-          Activity Overview
-        </h3>
+          {t('activityOverview')}</h3>
       </div>
       
       <div className="flex-1 w-full min-h-0 mb-6">
@@ -94,39 +95,36 @@ export default function ActivityOverviewChart({
       <div className="grid grid-cols-3 gap-2 md:gap-4 pt-4 border-t border-[hsl(var(--color-border))] shrink-0">
         <button 
           onClick={() => toggleLine('patients')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.patients ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.patients ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalPatients?.toLocaleString() ?? "—"}
           </p>
           <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-primary))]" />
-            New Patients
-          </p>
+            {t('newPatients')}</p>
         </button>
         <button 
           onClick={() => toggleLine('doctors')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.doctors ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.doctors ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalDoctors?.toLocaleString() ?? "—"}
           </p>
           <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-secondary))]" />
-            New Doctors
-          </p>
+            {t('newDoctors')}</p>
         </button>
         <button 
           onClick={() => toggleLine('appointments')}
-          className={`flex flex-col items-start p-2 rounded-xl text-left transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.appointments ? 'opacity-40 grayscale' : 'opacity-100'}`}
+          className={`flex flex-col items-start p-2 rounded-xl text-start transition-all hover:bg-[hsl(var(--color-bg-soft))] cursor-pointer ${!visibleLines.appointments ? 'opacity-40 grayscale' : 'opacity-100'}`}
         >
           <p className="text-[16px] md:text-[18px] font-black text-[hsl(var(--color-text))]">
             {statsLoading ? "—" : totalAppointments?.toLocaleString() ?? "—"}
           </p>
           <p className="text-[11px] md:text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-[hsl(var(--color-success))]" />
-            New Appointments
-          </p>
+            {t('newAppointments')}</p>
         </button>
       </div>
     </Card>

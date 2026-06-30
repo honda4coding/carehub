@@ -2,6 +2,7 @@ import React from "react";
 import { LuSearch, LuFilter } from "react-icons/lu";
 import { useRouter } from "next/navigation";
 import { DoctorApprovalStatus } from "@/types/doctor";
+import { useTranslations } from "next-intl";
 
 export const STATUS_TABS: { label: string; value: DoctorApprovalStatus | "" }[] = [
   { label: "All", value: "" },
@@ -29,19 +30,20 @@ export default function DoctorsFilters({
   totalDoctors,
   tabCounts,
 }: DoctorsFiltersProps) {
+    const t = useTranslations("auto");
   const router = useRouter();
 
   return (
     <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
         <div className="relative flex items-center w-full max-w-[300px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
+          <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
-            placeholder="Search name, email or specialty…"
+            placeholder={t('searchNameEmailOr')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+            className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
           />
         </div>
       </div>
@@ -86,8 +88,7 @@ export default function DoctorsFilters({
           className="inline-flex items-center justify-center flex-1 sm:flex-none gap-1.5 text-[12px] font-bold px-3 py-2 sm:py-1.5 rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-all whitespace-nowrap cursor-pointer shadow-sm"
         >
           <LuFilter className="text-[12px]" />
-          Manage Approvals
-        </button>
+          {t('manageApprovals')}</button>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
 } from "recharts";
 import { LuTrendingUp } from "react-icons/lu";
 import { adminService } from "@/services/adminService";
+import { useTranslations } from "next-intl";
 
 // Indigo for Users (matches summary card)
 const COLOR_USERS = "hsl(var(--color-indigo))";
@@ -28,6 +29,7 @@ interface UserActivityGrowthChartProps {
 }
 
 export default function UserActivityGrowthChart({ startDate, endDate }: UserActivityGrowthChartProps) {
+    const t = useTranslations("auto");
   const [interval, setInterval_] = useState("week");
   const [data, setData] = useState<ChartDataItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -110,7 +112,7 @@ export default function UserActivityGrowthChart({ startDate, endDate }: UserActi
           <div className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-indigo-bg))] text-[hsl(var(--color-indigo))] flex items-center justify-center">
             <LuTrendingUp className="text-[16px]" />
           </div>
-          <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">User & Activity Growth</h2>
+          <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">{t('userActivityGrowth')}</h2>
         </div>
         
         {/* Interval Selector */}
@@ -134,7 +136,7 @@ export default function UserActivityGrowthChart({ startDate, endDate }: UserActi
       <div className="h-[300px] w-full mt-2 relative">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[hsl(var(--color-bg-surface)/0.7)] z-10 rounded-xl">
-            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">Updating...</p>
+            <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{t('updating')}</p>
           </div>
         )}
         <ResponsiveContainer width="100%" height="100%">

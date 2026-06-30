@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 interface LicenseViewerModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface LicenseViewerModalProps {
 }
 
 export default function LicenseViewerModal({ isOpen, onClose, fileUrl }: LicenseViewerModalProps) {
+    const t = useTranslations("auto");
   if (!isOpen || !fileUrl) return null;
 
   const isPdf = fileUrl.endsWith(".pdf");
@@ -23,7 +25,7 @@ export default function LicenseViewerModal({ isOpen, onClose, fileUrl }: License
       >
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-[hsl(var(--color-border))]">
-          <p className="text-[13px] font-black text-[hsl(var(--color-text))]">License Document</p>
+          <p className="text-[13px] font-black text-[hsl(var(--color-text))]">{t('licenseDocument')}</p>
           <button
             onClick={onClose}
             className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors text-lg"
@@ -37,7 +39,7 @@ export default function LicenseViewerModal({ isOpen, onClose, fileUrl }: License
           {isPdf ? (
             <iframe src={fileUrl} className="w-full h-[65vh] rounded-lg border border-[hsl(var(--color-border))]" />
           ) : (
-            <Image src={fileUrl} alt="License" width={800} height={600} className="w-full rounded-lg object-contain max-h-[65vh]" />
+            <Image src={fileUrl} alt={t('license')} width={800} height={600} className="w-full rounded-lg object-contain max-h-[65vh]" />
           )}
         </div>
       </div>

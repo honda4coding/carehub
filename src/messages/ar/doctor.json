@@ -1,0 +1,215 @@
+{
+  "dashboard": {
+    "title": "مساحة عمل الطبيب",
+    "subtitle": "إدارة لقاءاتك اليومية ورعاية المرضى",
+    "queue": {
+      "title": "قائمة الانتظار الحالية",
+      "subtitle": "المرضى المسجلون حالياً أو في الاستشارة",
+      "searchPlaceholder": "ابحث بالاسم أو الهاتف...",
+      "statusAll": "جميع الحالات",
+      "statusPending": "في انتظار رمز التحقق",
+      "statusInProgress": "قيد التقدم",
+      "statusCompleted": "مكتمل",
+      "typeAll": "جميع الأنواع",
+      "typeWalkIn": "حضور شخصي",
+      "typeOnline": "عن بعد",
+      "columns": {
+        "Patient": "المريض",
+        "Phone": "الهاتف",
+        "Type": "النوع",
+        "Time": "الوقت",
+        "Status": "الحالة",
+        "Actions": "الإجراءات"
+      },
+      "empty": "لم يتم العثور على مرضى في قائمة الانتظار.",
+      "appUser": "مستخدم التطبيق",
+      "cancelRequest": "إلغاء الطلب",
+      "enterOtp": "إدخال رمز التحقق",
+      "openFile": "فتح الملف"
+    },
+    "stats": {
+      "totalPatients": "إجمالي المرضى",
+      "todayPatients": "مرضى اليوم",
+      "totalPrescriptions": "إجمالي الوصفات",
+      "todayPrescriptions": "وصفات اليوم",
+      "activeSessions": "الجلسات النشطة",
+      "currentlyInClinic": "حاليا في العيادة",
+      "pendingOtps": "في انتظار الرمز",
+      "waitingVerification": "في انتظار التحقق"
+    },
+    "actions": {
+      "welcomeBack": "مرحباً بعودتك،",
+      "productiveDay": "نتمنى لك يوماً مثمراً ✨",
+      "startConsultation": "بدء الاستشارة",
+      "searchPlaceholder": "ابحث برقم هاتف المريض أو اسمه...",
+      "searchBtn": "بحث",
+      "searchingBtn": "...",
+      "searchResults": "نتائج البحث",
+      "close": "إغلاق",
+      "searchingDb": "جاري البحث في قاعدة البيانات...",
+      "noPatientsFound": "لم يتم العثور على مرضى. جرب اسماً أو رقماً آخر.",
+      "accessBtn": "الوصول",
+      "walkIn": "حضور شخصي",
+      "offlinePatients": "المرضى غير المسجلين",
+      "registerBtn": "تسجيل"
+    },
+    "modals": {
+      "secureAccess": "وصول آمن",
+      "enterOtp": "أدخل رمز التحقق للمريض",
+      "otpDescription": "لقد أرسلنا رمزاً مكوناً من 6 أرقام إلى المريض. اطلب منه الرمز للوصول الآمن إلى ملفه.",
+      "verifyBtn": "التحقق وفتح الملف",
+      "walkInTitle": "مريض حضور شخصي",
+      "walkInDescription": "تسجيل جلسة سريعة لمريض غير مسجل. لن يحتاجوا إلى التحقق برمز OTP.",
+      "patientName": "اسم المريض",
+      "patientNamePlaceholder": "مثال: أحمد علي",
+      "phoneNumber": "رقم الهاتف",
+      "ageOptional": "العمر (اختياري)",
+      "startSessionBtn": "بدء جلسة الاستشارة"
+    }
+  },
+  "encounterDashboard": {
+    "tabs": {
+      "profile": "الملف الشخصي والحيوية",
+      "history": "التاريخ الطبي",
+      "assessment": "التقييم السريري",
+      "prescription": "الوصفة الطبية"
+    },
+    "messages": {
+      "fillDrugDetails": "يرجى ملء اسم الدواء، الجرعة، التكرار، والمدة",
+      "failedToSaveAlerts": "فشل في حفظ التنبيهات",
+      "failedToSaveSurgeries": "فشل في حفظ العمليات الجراحية",
+      "sessionEndedSuccess": "تم إنهاء الجلسة بنجاح. تم حفظ التاريخ الطبي.",
+      "failedToEndSession": "فشل في إنهاء الجلسة"
+    },
+    "header": {
+      "loadingPatient": "جاري تحميل المريض...",
+      "inClinic": "في العيادة",
+      "printReport": "طباعة التقرير",
+      "fees": "الرسوم:",
+      "feesPlaceholder": "الرسوم",
+      "saveFee": "حفظ الرسوم",
+      "saving": "جاري الحفظ...",
+      "endSession": "إنهاء الجلسة"
+    }
+  },
+  "patientDirectory": {
+    "title": "دليل المرضى",
+    "subtitle": "أرشيفك الكامل لجميع مرضى العيادة",
+    "total": "الإجمالي: {count}",
+    "loading": "جاري تحميل دليل المرضى...",
+    "searchPlaceholder": "ابحث باسم المريض أو رقم الهاتف...",
+    "allVisitTypes": "جميع أنواع الزيارات",
+    "online": "عن بعد",
+    "walkIn": "حضور شخصي",
+    "resetFilters": "إعادة ضبط الفلاتر",
+    "loadingPatients": "جاري تحميل المرضى...",
+    "firstVisit": "الزيارة الأولى",
+    "lastVisit": "الزيارة الأخيرة",
+    "visits": "الزيارات",
+    "viewHistory": "عرض التاريخ",
+    "noPatientsFound": "لم يتم العثور على مرضى",
+    "adjustFilters": "حاول تعديل الفلاتر أو مصطلح البحث.",
+    "showingAll": "عرض جميع المرضى ({count})",
+    "columns": {
+      "patientDetails": "تفاصيل المريض",
+      "firstVisit": "الزيارة الأولى",
+      "lastVisit": "الزيارة الأخيرة",
+      "visits": "الزيارات",
+      "status": "الحالة",
+      "actions": "الإجراءات"
+    }
+  },
+  "appointments": {
+    "title": "المواعيد",
+    "subtitle": "إدارة جدولك وزيارات المرضى",
+    "clinics": "العيادات",
+    "allClinics": "جميع العيادات",
+    "tabs": {
+      "today": "اليوم",
+      "upcoming": "القادمة",
+      "completed": "المكتملة",
+      "cancelled": "الملغاة"
+    },
+    "empty": {
+      "todayTitle": "لا يوجد مرضى اليوم",
+      "todayDesc": "جدولك فارغ اليوم. استمتع بوقت راحتك!",
+      "upcomingTitle": "لا توجد مواعيد قادمة",
+      "upcomingDesc": "سيظهر المرضى هنا بمجرد حجزهم لموعد.",
+      "otherTitle": "لا توجد مواعيد {tab}",
+      "otherDesc": "لا يوجد شيء لعرضه في علامة التبويب هذه بعد."
+    },
+    "messages": {
+      "markedCompleted": "تم وضع علامة مكتمل على الموعد",
+      "completeError": "تعذر إكمال الموعد"
+    },
+    "patientsToday": "{count} مرضى اليوم",
+    "patientToday": "مريض واحد اليوم",
+    "patientsCount": "{count} مرضى",
+    "patientCount": "مريض واحد"
+  },
+  "schedule": {
+    "title": "جدولي",
+    "subtitle": "ساعات العمل الأسبوعية لكل عيادة",
+    "noClinics": "لا توجد عيادات بعد",
+    "addClinicFirst": "أضف عيادة أولاً لتحديد جدولها",
+    "goToClinics": "الذهاب إلى عياداتي",
+    "weeklySchedule": "الجدول الأسبوعي",
+    "edit": "تعديل",
+    "noWorkingDays": "لم يتم تحديد أيام عمل لهذه العيادة بعد.",
+    "setUp": "قم بإعدادها ←",
+    "clinic": "عيادة"
+  },
+  "reports": {
+    "loading": "جاري تحميل التحليلات...",
+    "title": "التقارير والتحليلات",
+    "subtitle": "نظرة عامة على أداء العيادة",
+    "to": "إلى",
+    "resetFilters": "إعادة ضبط الفلاتر",
+    "export": "تصدير",
+    "refreshing": "جاري تحديث البيانات...",
+    "totalRevenue": "إجمالي الإيرادات",
+    "totalVisits": "إجمالي الزيارات",
+    "visitDistribution": "توزيع الزيارات",
+    "online": "عن بعد",
+    "walkIn": "حضور شخصي",
+    "visitTrends": "اتجاهات الزيارات",
+    "visitTrendsDesc": "عدد الزيارات المكتملة يوميا",
+    "patientDemographics": "التركيبة السكانية للمرضى",
+    "patientDemographicsDesc": "توزيع الأعمار للمرضى المسجلين",
+    "noDemographicsData": "لا تتوفر بيانات عن التركيبة السكانية"
+  },
+  "clinics": {
+    "title": "عياداتي",
+    "subtitle": "اختر عيادة لإدارة خدماتها وجدولها",
+    "addClinic": "إضافة عيادة",
+    "noClinics": "لا توجد عيادات بعد",
+    "addFirstClinic": "أضف عيادتك الأولى للبدء في إدارة الخدمات والتوافر.",
+    "sidebarTitle": "العيادات",
+    "editTooltip": "تعديل معلومات العيادة",
+    "deleteTooltip": "حذف العيادة",
+    "selectClinic": "اختر عيادة لإدارتها",
+    "editClinic": "تعديل العيادة",
+    "clinicNameLabel": "اسم العيادة *",
+    "addressLabel": "العنوان *",
+    "governorateLabel": "المحافظة *",
+    "selectGovernorate": "اختر المحافظة",
+    "phoneLabel": "الهاتف",
+    "whatsappLabel": "واتساب",
+    "landlineLabel": "الهاتف الأرضي",
+    "cancel": "إلغاء",
+    "saveChanges": "حفظ التغييرات",
+    "saving": "جاري الحفظ…",
+    "deleteTitle": "حذف هذه العيادة؟",
+    "deleteDesc": "سيتم إيقاف \"{name}\". لا يمكنك التراجع عن هذا الإجراء من هنا.",
+    "keepIt": "الاحتفاظ بها",
+    "yesDelete": "نعم، احذفها",
+    "deleting": "جاري الحذف…",
+    "messages": {
+      "requiredFields": "الاسم والعنوان والمحافظة مطلوبة.",
+      "contactRequired": "يرجى تقديم رقم اتصال واحد على الأقل.",
+      "loadFailed": "فشل في تحميل العيادات",
+      "generalError": "حدث خطأ ما",
+      "deleteFailed": "فشل في حذف العيادة"
+    }
+  }
+}

@@ -20,6 +20,7 @@ import {
   UpdateDoctorProfilePayload,
   updateDoctorProfile,
 } from "@/services/doctorService";
+import { useTranslations } from "next-intl";
 
 // نفس الـ list الموجودة في صفحة الـ signup
 const SPECIALTIES = [
@@ -64,6 +65,7 @@ function ReadOnlyField({
   value: string;
   icon: React.ReactNode;
 }) {
+    const t = useTranslations("auto");
   return (
     <div className="space-y-1.5">
       <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
@@ -95,6 +97,7 @@ function EditField({
   errors: Record<string, string | undefined>;
   touched: Record<string, boolean | undefined>;
 }) {
+    const t = useTranslations("auto");
   const hasError = !!(errors[name] && touched[name]);
   return (
     <div className="space-y-1.5">
@@ -122,7 +125,7 @@ function EditField({
       <ErrorMessage
         name={name}
         component="p"
-        className="text-danger text-xs pl-1 font-medium"
+        className="text-danger text-xs ps-1 font-medium"
       />
     </div>
   );
@@ -138,6 +141,7 @@ export default function ProfessionalInfoForm({
   profile,
   onSaveSuccess,
 }: Props) {
+    const t = useTranslations("auto");
   const [serverError, setServerError] = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
@@ -206,23 +210,23 @@ export default function ProfessionalInfoForm({
               {/* Full Name */}
               <EditField
                 name="fullName"
-                label="Full Name"
+                label={t('fullName')}
                 icon={<LuUser />}
-                placeholder="Dr. Sarah Smith"
+                placeholder={t('drSarahSmith')}
                 errors={errors}
                 touched={touched}
               />
 
               {/* Email — read only */}
               <ReadOnlyField
-                label="Email"
+                label={t('email')}
                 value={profile?.email ?? ""}
                 icon={<LuMail />}
               />
               {/* Phone — editable */}
               <EditField
                 name="phoneNumber"
-                label="Phone"
+                label={t('phone_xeaa')}
                 icon={<LuPhone />}
                 placeholder="01000000000"
                 errors={errors}
@@ -238,8 +242,7 @@ export default function ProfessionalInfoForm({
                     className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
                   >
                     <LuStethoscope className="w-4 h-4" />
-                    Specialization
-                  </label>
+                    {t('specialization')}</label>
                   <div className="relative">
                     <Field
                       as="select"
@@ -258,7 +261,7 @@ export default function ProfessionalInfoForm({
                         color: "hsl(var(--color-text))",
                       }}
                     >
-                      <option value="">Select specialization</option>
+                      <option value="">{t('selectSpecialization')}</option>
                       {SPECIALTIES.map((s) => (
                         <option key={s.value} value={s.value}>
                           {s.label}
@@ -266,21 +269,21 @@ export default function ProfessionalInfoForm({
                       ))}
                     </Field>
                     {/* Dropdown arrow */}
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
+                    <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
                       ▾
                     </span>
                   </div>
                   <ErrorMessage
                     name="specialization"
                     component="p"
-                    className="text-danger text-xs pl-1 font-medium"
+                    className="text-danger text-xs ps-1 font-medium"
                   />
                 </div>
 
                 {/* Experience */}
                 <EditField
                   name="experience"
-                  label="Experience (Years)"
+                  label={t('experienceYears')}
                   icon={<LuBriefcase />}
                   placeholder="5"
                   type="number"
@@ -296,14 +299,13 @@ export default function ProfessionalInfoForm({
                   className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
                 >
                   <LuFileText className="w-4 h-4" />
-                  Bio
-                </label>
+                  {t('bio')}</label>
                 <Field
                   as="textarea"
                   id="bio"
                   name="bio"
                   rows={4}
-                  placeholder="Board-certified internist with 15 years of experience in primary care and chronic disease management."
+                  placeholder={t('boardcertifiedInternistWith15')}
                   className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
                   style={{
                     backgroundColor:
@@ -318,7 +320,7 @@ export default function ProfessionalInfoForm({
                 <ErrorMessage
                   name="bio"
                   component="p"
-                  className="text-danger text-xs pl-1 font-medium"
+                  className="text-danger text-xs ps-1 font-medium"
                 />
               </div>
             </div>
@@ -332,12 +334,10 @@ export default function ProfessionalInfoForm({
               >
                 {isSubmitting ? (
                   <>
-                    <ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...
-                  </>
+                    <ImSpinner2 className="w-4 h-4 animate-spin" /> {t('saving')}</>
                 ) : (
                   <>
-                    <HiOutlineArrowRight className="w-4 h-4" /> Save Changes
-                  </>
+                    <HiOutlineArrowRight className="w-4 h-4" /> {t('saveChanges')}</>
                 )}
               </button>
             </div>

@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuBrainCircuit, LuLoader } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -14,6 +15,7 @@ function authHeaders() {
 }
 
 export default function PatientInsightsCard({ patientId }: { patientId: string }) {
+    const t = useTranslations("auto");
   const [insights, setInsights] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -42,7 +44,7 @@ export default function PatientInsightsCard({ patientId }: { patientId: string }
 
   return (
     <div className="bg-gradient-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-primary))/0.3] rounded-2xl p-6 mb-8 relative overflow-hidden">
-      <div className="absolute -top-10 -right-10 text-[hsl(var(--color-primary))/0.05]">
+      <div className="absolute -top-10 -end-10 text-[hsl(var(--color-primary))/0.05]">
         <LuBrainCircuit size={150} />
       </div>
       
@@ -51,16 +53,15 @@ export default function PatientInsightsCard({ patientId }: { patientId: string }
           <LuBrainCircuit size={20} />
         </div>
         <div>
-          <h3 className="font-bold text-[hsl(var(--color-text))] text-lg">AI Clinical Insights</h3>
-          <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">Powered by CareHub AI</p>
+          <h3 className="font-bold text-[hsl(var(--color-text))] text-lg">{t('aiClinicalInsights')}</h3>
+          <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{t('poweredByCarehubAi')}</p>
         </div>
       </div>
 
       <div className="relative z-10">
         {loading ? (
           <div className="flex items-center gap-2 text-sm font-bold text-[hsl(var(--color-primary))] py-4">
-            <LuLoader className="animate-spin" /> Analyzing patient's medical history...
-          </div>
+            <LuLoader className="animate-spin" /> {t('analyzingPatientsMedicalHistory')}</div>
         ) : (
           <div className="text-sm text-[hsl(var(--color-text))] font-medium leading-relaxed whitespace-pre-wrap bg-white/50 dark:bg-black/20 p-4 rounded-xl border border-[hsl(var(--color-border-soft))]">
             {insights}

@@ -20,10 +20,12 @@ import {
   loginInitialValues,
   type LoginValues,
 } from "../schemas/loginSchema";
+import { useTranslations } from 'next-intl';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 export const LoginForm = () => {
+  const t = useTranslations('auth.LoginForm');
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isBioSubmitting, setIsBioSubmitting] = useState(false);
@@ -31,7 +33,7 @@ export const LoginForm = () => {
 
   const handleBiometricLogin = async (email: string) => {
     if (!email) {
-      setBioError("Please enter your email to sign in with biometrics.");
+      setBioError(t('bioNoEmail'));
       return;
     }
 
@@ -44,7 +46,7 @@ export const LoginForm = () => {
       const actualRole = data.role?.toLowerCase();
 
       if (!actualRole) {
-        setBioError("Unable to determine account role. Please contact support.");
+        setBioError(t('unknownRole'));
         return;
       }
 
@@ -80,14 +82,14 @@ export const LoginForm = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        setStatus(data.message || "Invalid credentials. Please try again.");
+        setStatus(data.message || t('invalidCredentials'));
         return;
       }
 
       const actualRole = data.data.role?.toLowerCase();
 
       if (!actualRole) {
-        setStatus("Unable to determine account role. Please contact support.");
+        setStatus(t('unknownRole'));
         return;
       }
 
@@ -103,7 +105,7 @@ export const LoginForm = () => {
       });
 
     } catch (error) {
-      setStatus("Something went wrong. Please check your connection.");
+      setStatus(t('connectionError'));
       console.error("Login Error:", error);
     } finally {
       setSubmitting(false);
@@ -115,13 +117,13 @@ export const LoginForm = () => {
       <AuthCard>
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold" style={{ color: "hsl(var(--color-text))" }}>
-            Welcome Back
+            {t('title')}
           </h2>
           <p
             className="text-sm mt-1"
             style={{ color: "hsl(var(--color-text-muted))" }}
           >
-            Sign in to your account
+            {t('subtitle')}
           </p>
         </div>
 
@@ -140,30 +142,30 @@ export const LoginForm = () => {
 
               {/* Email */}
               <div>
-                <Label>Email</Label>
+                <Label>{t('emailLabel')}</Label>
                 <Field name="email">
                   {({ field, meta }: FieldProps) => (
                     <Input
                       {...field}
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder={t('emailPlaceholder')}
                       leftIcon={<HiOutlineMail className="w-5 h-5" />}
                       error={!!(meta.touched && meta.error)}
                     />
                   )}
                 </Field>
-                <ErrorMessage name="email" component="p" className="text-[hsl(var(--color-danger))] text-xs pl-2 font-bold mt-1" />
+                <ErrorMessage name="email" component="p" className="text-[hsl(var(--color-danger))] text-xs ps-2 font-bold mt-1" />
               </div>
 
               {/* Password */}
               <div>
-                <Label>Password</Label>
+                <Label>{t('passwordLabel')}</Label>
                 <Field name="password">
                   {({ field, meta }: FieldProps) => (
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
+                      placeholder={t('passwordPlaceholder')}
                       leftIcon={<HiOutlineLockClosed className="w-5 h-5" />}
                       rightIcon={
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="hover:text-[hsl(var(--color-text))] transition-colors">
@@ -174,7 +176,7 @@ export const LoginForm = () => {
                     />
                   )}
                 </Field>
-                <ErrorMessage name="password" component="p" className="text-[hsl(var(--color-danger))] text-xs pl-2 font-bold mt-1" />
+                <ErrorMessage name="password" component="p" className="text-[hsl(var(--color-danger))] text-xs ps-2 font-bold mt-1" />
               </div>
 
               {/* Remember + Forgot */}
@@ -189,12 +191,12 @@ export const LoginForm = () => {
                     className="text-xs font-medium"
                     style={{ color: "hsl(var(--color-text-muted))" }}
                   >
-                    Stay Signed In
+                    {t('staySignedIn')}
                   </span>
                 </label>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
-                  <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Reset Password</Link>
+                  <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>{t('forgotAccess')}</Link>
+                  <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>{t('resetPassword')}</Link>
                 </div>
               </div>
 
@@ -208,14 +210,14 @@ export const LoginForm = () => {
                   icon={HiOutlineArrowRight}
                   iconPosition="right"
                 >
-                  Enter Sanctuary
+                  {t('submitButton')}
                 </Button>
               </div>
 
               {/* Divider */}
               <div className="flex items-center my-4">
                 <div className="flex-grow border-t border-[hsl(var(--color-border))]"></div>
-                <span className="px-3 text-xs text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-widest">or</span>
+                <span className="px-3 text-xs text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-widest">{t('or')}</span>
                 <div className="flex-grow border-t border-[hsl(var(--color-border))]"></div>
               </div>
 
@@ -237,12 +239,12 @@ export const LoginForm = () => {
                   ) : (
                     <>
                       <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" />
-                      <span>Sign in with Biometrics</span>
+                      <span>{t('bioLoginButton')}</span>
                     </>
                   )}
                 </button>
                 <p className="text-[10px] text-center text-[hsl(var(--color-text-muted))] mt-3 px-4 leading-relaxed font-medium">
-                  Enter your email first, then click here to sign in instantly using Touch ID or Face ID.
+                  {t('bioLoginDesc')}
                 </p>
               </div>
             </Form>
@@ -251,19 +253,19 @@ export const LoginForm = () => {
 
         <div className="mt-10 pt-8 border-t border-[hsl(var(--color-border))] text-center space-y-4">
           <p className="text-sm text-[hsl(var(--color-text-muted))]">
-            New to Carehub?{" "}
+            {t('newToCarehub')}{" "}
             <Link href="/register" className="font-bold hover:underline underline-offset-4 transition-all text-[hsl(var(--color-primary))]">
-              Request Enrollment
+              {t('requestEnrollment')}
             </Link>
           </p>
 
           <p className="text-sm text-[hsl(var(--color-text-muted))]">
-            Received an OTP from admin?{" "}
+            {t('receivedOTP')}{" "}
             <Link
               href="/verify-otp?type=confirm"
               className="font-bold hover:underline underline-offset-4 transition-all text-[hsl(var(--color-primary))]"
             >
-              Verify here
+              {t('verifyHere')}
             </Link>
           </p>
         </div>
@@ -273,7 +275,7 @@ export const LoginForm = () => {
       <div className="mt-6 flex items-center justify-center gap-2 opacity-60">
         <HiShieldCheck className="w-4 h-4" style={{ color: "hsl(var(--color-text-muted))" }} />
         <span className="text-[10px] uppercase font-bold tracking-[0.2em]" style={{ color: "hsl(var(--color-text-muted))" }}>
-          HIPAA COMPLIANT ENVIRONMENT
+          {t('hipaa')}
         </span>
       </div>
     </div>

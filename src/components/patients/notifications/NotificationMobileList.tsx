@@ -4,6 +4,7 @@ import { LuCheck, LuBell } from "react-icons/lu";
 import { Notification } from "./types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 interface Props {
   loading: boolean;
@@ -16,6 +17,7 @@ export default function NotificationMobileList({
   filtered,
   handleMarkAsRead,
 }: Props) {
+  const t = useTranslations("patient.NotificationsPage");
   if (loading || filtered.length === 0) {
     return null; // Handled by DesktopTable to avoid duplicate loading/empty states
   }
@@ -29,7 +31,7 @@ export default function NotificationMobileList({
         >
           <div className="flex justify-between items-start mb-3">
             <Badge variant={notification.isRead ? "info" : "warning"}>
-              {notification.isRead ? "Read" : "Unread"}
+              {notification.isRead ? t("read") : t("unread")}
             </Badge>
             <span className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
               {notification.type}
@@ -51,7 +53,7 @@ export default function NotificationMobileList({
                 onClick={() => handleMarkAsRead(notification._id)}
                 className="text-[11px] px-3 py-1.5 min-h-0 h-auto"
               >
-                Mark Read
+                {t("markRead")}
               </Button>
             )}
           </div>

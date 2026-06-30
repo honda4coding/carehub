@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LuShieldX } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface Props {
   isOpen: boolean;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function RejectLicenseModal({ isOpen, onClose, onConfirm, isLoading }: Props) {
+    const t = useTranslations("auto");
   const [reason, setReason] = useState("");
   const [touched, setTouched] = useState(false);
 
@@ -55,10 +57,9 @@ export default function RejectLicenseModal({ isOpen, onClose, onConfirm, isLoadi
             <LuShieldX className="w-4 h-4 text-[hsl(var(--color-danger))]" />
           </div>
           <div>
-            <h2 className="text-[14px] font-black text-[hsl(var(--color-text))]">Reject License</h2>
+            <h2 className="text-[14px] font-black text-[hsl(var(--color-text))]">{t('rejectLicense')}</h2>
             <p className="text-[11px] text-[hsl(var(--color-text-muted))]">
-              The doctor will be notified with your reason.
-            </p>
+              {t('theDoctorWillBe')}</p>
           </div>
         </div>
 
@@ -66,7 +67,7 @@ export default function RejectLicenseModal({ isOpen, onClose, onConfirm, isLoadi
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           onBlur={() => setTouched(true)}
-          placeholder="Enter the reason this license was rejected..."
+          placeholder={t('enterTheReasonThis')}
           rows={4}
           className={`w-full px-3 py-2.5 text-[12px] font-medium rounded-[10px] border bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none transition-colors resize-none ${
             touched && error
@@ -85,8 +86,7 @@ export default function RejectLicenseModal({ isOpen, onClose, onConfirm, isLoadi
             onClick={handleClose}
             className="flex-1 text-[12px] font-bold py-2.5 rounded-[10px] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all cursor-pointer"
           >
-            Cancel
-          </button>
+            {t('cancel')}</button>
           <button
             onClick={handleConfirm}
             disabled={isLoading || !!error}

@@ -1,0 +1,30 @@
+{
+  "PatientApptCard": {
+    "doctor": "طبيب",
+    "dr": "د. {name}",
+    "pay": "دفع"
+  },
+  "StatusBadge": {
+    "upcoming": "قادم",
+    "completed": "مكتمل",
+    "cancelled": "ملغى"
+  },
+  "CancelModal": {
+    "title": "إلغاء هذا الموعد؟",
+    "keepIt": "الاحتفاظ به",
+    "cancelling": "جاري الإلغاء...",
+    "yesCancel": "نعم، إلغاء"
+  },
+  "PayModal": {
+    "title": "دفع رسوم الموعد",
+    "subtitle": "دفع آمن — عنصر نائب مؤقت",
+    "successTitle": "تم الدفع بنجاح!",
+    "successSubtitle": "هذا عنصر نائب — لم يتم خصم أي مبالغ حقيقية.",
+    "consultationFee": "رسوم الاستشارة",
+    "platformFee": "رسوم المنصة",
+    "total": "الإجمالي",
+    "payNow": "ادفع الآن",
+    "close": "إغلاق",
+    "cancel": "إلغاء"
+  }
+}

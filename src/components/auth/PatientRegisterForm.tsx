@@ -10,6 +10,7 @@ import { ImSpinner2 } from 'react-icons/im';
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from 'next-intl';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -26,6 +27,7 @@ async function parseErrorMessage(res: Response): Promise<string> {
 }
 
 export default function PatientRegisterForm() {
+  const t = useTranslations('auth.RegisterForm');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const formik = useFormik<PatientFormValues>({
@@ -62,7 +64,7 @@ export default function PatientRegisterForm() {
         router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=confirm`);
 
       } catch (error) {
-        alert(error instanceof Error ? error.message : "Something went wrong");
+        alert(error instanceof Error ? error.message : t('connectionError'));
       } finally {
         setLoading(false);
       }
@@ -73,53 +75,53 @@ export default function PatientRegisterForm() {
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       {/* Full Name */}
       <div>
-        <Label>Full Name <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('fullNameLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="text" 
           {...formik.getFieldProps('fullName')} 
-          placeholder="Enter full name" 
+          placeholder={t('fullNamePlaceholderPatient')} 
           leftIcon={<MdPerson className="w-5 h-5" />}
           error={!!(formik.touched.fullName && formik.errors.fullName)}
         />
         {formik.touched.fullName && formik.errors.fullName && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.fullName}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.fullName}</p>
         )}
       </div>
 
       {/* Email */}
       <div>
-        <Label>Email <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <Label>{t('emailLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
         <Input 
           type="email" 
           {...formik.getFieldProps('email')} 
-          placeholder="patient@example.com" 
+          placeholder={t('emailPlaceholderPatient')} 
           leftIcon={<MdEmail className="w-5 h-5" />}
           error={!!(formik.touched.email && formik.errors.email)}
         />
         {formik.touched.email && formik.errors.email && (
-          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ml-1 font-bold">{formik.errors.email}</p>
+          <p className="text-[hsl(var(--color-danger))] text-xs mt-1 ms-1 font-bold">{formik.errors.email}</p>
         )}
       </div>
 
       {/* Phone & Age */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>Phone <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('phoneLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="tel" 
             {...formik.getFieldProps('phoneNumber')} 
-            placeholder="0123..." 
+            placeholder={t('phonePlaceholder')} 
             leftIcon={<MdPhone className="w-5 h-5" />}
             error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
           />
           {formik.touched.phoneNumber && formik.errors.phoneNumber && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.phoneNumber}</p>}
         </div>
         <div>
-          <Label>Age <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('ageLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="number" 
             {...formik.getFieldProps('age')} 
-            placeholder="35" 
+            placeholder={t('agePlaceholder')} 
             leftIcon={<MdCake className="w-5 h-5" />}
             error={!!(formik.touched.age && formik.errors.age)}
           />
@@ -130,31 +132,31 @@ export default function PatientRegisterForm() {
       {/* Gender & Blood Type */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
         <div>
-          <Label>Gender <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('genderLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <div className="flex gap-6 py-2">
             <label className="flex items-center gap-2 cursor-pointer group">
               <input type="radio" {...formik.getFieldProps('gender')} value="male" className="w-4 h-4 accent-[hsl(var(--color-primary))] cursor-pointer" />
-              <span className="text-sm font-bold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary))] transition-colors">Male</span>
+              <span className="text-sm font-bold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary))] transition-colors">{t('male')}</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer group">
               <input type="radio" {...formik.getFieldProps('gender')} value="female" className="w-4 h-4 accent-[hsl(var(--color-primary))] cursor-pointer" />
-              <span className="text-sm font-bold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary))] transition-colors">Female</span>
+              <span className="text-sm font-bold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary))] transition-colors">{t('female')}</span>
             </label>
           </div>
         </div>
         <div>
-          <Label>Blood Type (Optional)</Label>
+          <Label>{t('bloodTypeLabel')}</Label>
           <div className="relative">
-            <MdBloodtype className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+            <MdBloodtype className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
             <select 
               {...formik.getFieldProps('bloodType')} 
-              className={`w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
+              className={`w-full py-4 ps-12 pe-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
                 formik.touched.bloodType && formik.errors.bloodType 
                 ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger)/0.05)] focus:ring-4 focus:ring-[hsl(var(--color-danger)/0.1)]'
                 : 'border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]'
               }`}
             >
-              <option value="">Select</option>
+              <option value="">{t('selectPlaceholder')}</option>
               {bloodTypes.map((type) => <option key={type} value={type}>{type}</option>)}
             </select>
           </div>
@@ -164,22 +166,22 @@ export default function PatientRegisterForm() {
       {/* Password & Confirm */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <Label>Password <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('passwordLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="password" 
             {...formik.getFieldProps('password')} 
-            placeholder="********" 
+            placeholder={t('passwordPlaceholder')} 
             leftIcon={<MdLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
           {formik.touched.password && formik.errors.password && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.password}</p>}
         </div>
         <div>
-          <Label>Confirm <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>{t('confirmPasswordLabel')} <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
             type="password" 
             {...formik.getFieldProps('confirmPassword')} 
-            placeholder="********" 
+            placeholder={t('passwordPlaceholder')} 
             leftIcon={<MdLock className="w-5 h-5" />}
             error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
           />
@@ -189,14 +191,14 @@ export default function PatientRegisterForm() {
 
       {/* Address */}
       <div>
-        <Label>Address (Optional)</Label>
+        <Label>{t('addressLabel')}</Label>
         <div className="relative">
-          <MdLocationOn className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <MdLocationOn className="absolute start-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
           <textarea 
             {...formik.getFieldProps('address')} 
             rows={2} 
-            className="w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]" 
-            placeholder="Enter your city and street" 
+            className="w-full py-4 ps-12 pe-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]" 
+            placeholder={t('addressPlaceholderPatient')} 
           />
         </div>
       </div>
@@ -208,7 +210,7 @@ export default function PatientRegisterForm() {
           className="w-full py-4 text-lg"
           isLoading={loading}
         >
-          Register as Patient
+          {t('submitPatient')}
         </Button>
       </div>
     </form>

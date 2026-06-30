@@ -1,8 +1,10 @@
 import React from "react";
 import { LuChevronLeft } from "react-icons/lu";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function NotificationsHeader() {
+    const t = useTranslations("auto");
   const router = useRouter();
 
   return (
@@ -16,11 +18,9 @@ export default function NotificationsHeader() {
 
       <div>
         <h1 className="text-[17px] md:text-[19px] font-black text-[hsl(var(--color-text))] tracking-tight">
-          Notifications
-        </h1>
+          {t('notifications')}</h1>
         <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
-          View and manage all notifications
-        </p>
+          {t('viewAndManageAll')}</p>
       </div>
     </div>
   );

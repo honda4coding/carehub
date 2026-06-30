@@ -7,11 +7,12 @@ import { HiOutlineArrowRight } from "react-icons/hi2";
 import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck, LuShield } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
+import { useTranslations } from "next-intl";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
-const schema = Yup.object({
-  fullName:       Yup.string().min(3, "Min 3 characters").required("Full name is required"),
-  phoneNumber:    Yup.string().min(10, "Min 10 digits").optional(),
+const getSchema = (t: any) => Yup.object({
+  fullName:       Yup.string().min(3, t("errors.minChars")).required(t("errors.requiredName")),
+  phoneNumber:    Yup.string().min(10, t("errors.minDigits")).optional(),
   age:            Yup.number().min(1).max(120).optional(),
   gender:         Yup.string().oneOf(["male", "female"]).optional(),
   address:        Yup.string().optional(),
@@ -49,7 +50,7 @@ function EditField({ name, label, icon, placeholder, type = "text", errors, touc
           color: "hsl(var(--color-text))",
         }}
       />
-      <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
+      <ErrorMessage name={name} component="p" className="text-danger text-xs ps-1 font-medium" />
     </div>
   );
 }
@@ -61,6 +62,7 @@ interface Props {
 }
 
 export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
+  const t = useTranslations("patient.PatientProfilePage");
   const [serverError,   setServerError]   = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
@@ -86,10 +88,10 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
         sharingSetting: (values.sharingSetting || undefined) as "all" | "own_only" | "otp" | undefined,
       };
       await updatePatientProfile(payload);
-      setServerSuccess("Profile updated successfully!");
+      setServerSuccess(t("profileUpdated"));
       onSaveSuccess(payload);
     } catch (err: unknown) {
-      setServerError(err instanceof Error ? err.message : "Something went wrong.");
+      setServerError(err instanceof Error ? err.message : t("somethingWrong"));
     } finally {
       setSubmitting(false);
     }
@@ -98,8 +100,8 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
   return (
     <div className="overflow-hidden">
       <div className="px-6 pt-5 pb-2">
-        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">Basic Information</h3>
-        <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">Update your personal details</p>
+        <h3 className="text-[14px] font-black text-[hsl(var(--color-text))]">{t("basicInfo")}</h3>
+        <p className="text-[11px] text-[hsl(var(--color-text-muted))] mt-0.5">{t("updateDetails")}</p>
       </div>
 
       {(serverError || serverSuccess) && (
@@ -113,18 +115,18 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
         </div>
       )}
 
-      <Formik initialValues={initialValues} validationSchema={schema} onSubmit={handleSubmit} enableReinitialize>
+      <Formik initialValues={initialValues} validationSchema={getSchema(t)} onSubmit={handleSubmit} enableReinitialize>
         {({ errors, touched, isSubmitting, values, setFieldValue }) => (
           <Form>
             <div className="px-6 pb-5 space-y-4">
 
               {/* Full Name */}
-              <EditField name="fullName" label="Full Name" icon={<LuUser />} placeholder="John Doe" errors={errors} touched={touched} />
+              <EditField name="fullName" label={t("fullName")} icon={<LuUser />} placeholder={t("fullNamePlaceholder")} errors={errors} touched={touched} />
 
               {/* Email — read only */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                  <LuMail className="w-4 h-4" /> Email
+                  <LuMail className="w-4 h-4" /> {t("email")}
                 </label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
                   {profile?.email || "—"}
@@ -132,16 +134,16 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
               </div>
 
               {/* Phone */}
-              <EditField name="phoneNumber" label="Phone" icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
+              <EditField name="phoneNumber" label={t("phone")} icon={<LuPhone />} placeholder={t("phonePlaceholder")} errors={errors} touched={touched} />
 
               {/* Age + Gender — 2 cols */}
               <div className="grid grid-cols-2 gap-4">
-                <EditField name="age" label="Age" icon={<LuCalendar />} placeholder="25" type="number" errors={errors} touched={touched} />
+                <EditField name="age" label={t("age")} icon={<LuCalendar />} placeholder="25" type="number" errors={errors} touched={touched} />
 
                 {/* Gender dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="gender" className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    <span className="w-4 h-4 text-base">⚧</span> Gender
+                    <span className="w-4 h-4 text-base">⚧</span> {t("gender")}
                   </label>
                   <div className="relative">
                     <Field
@@ -153,30 +155,30 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                         color: "hsl(var(--color-text))",
                       }}
                     >
-                      <option value="">Select gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
+                      <option value="">{t("selectGender")}</option>
+                      <option value="male">{t("male")}</option>
+                      <option value="female">{t("female")}</option>
                     </Field>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+                    <span className="pointer-events-none absolute end-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
                   </div>
-                  <ErrorMessage name="gender" component="p" className="text-danger text-xs pl-1 font-medium" />
+                  <ErrorMessage name="gender" component="p" className="text-danger text-xs ps-1 font-medium" />
                 </div>
               </div>
 
               {/* Address */}
-              <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St, Cairo" errors={errors} touched={touched} />
+              <EditField name="address" label={t("address")} icon={<LuMapPin />} placeholder={t("addressPlaceholder")} errors={errors} touched={touched} />
 
               {/* Privacy Setting */}
               <div className="space-y-2">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                  <span className="w-4 h-4"><LuShield /></span> Medical Record Privacy
+                  <span className="w-4 h-4"><LuShield /></span> {t("privacy")}
                 </label>
                 
                 <div className="flex bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl p-1.5 gap-1">
                   {[
-                    { val: "all", label: "Public" },
-                    { val: "own_only", label: "Restricted" },
-                    { val: "otp", label: "Protected (OTP)" },
+                    { val: "all", label: t("privacyPublic") },
+                    { val: "own_only", label: t("privacyRestricted") },
+                    { val: "otp", label: t("privacyOtp") },
                   ].map((opt) => {
                     const isActive = values.sharingSetting === opt.val;
                     return (
@@ -196,10 +198,10 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                   })}
                 </div>
                 {errors.sharingSetting && touched.sharingSetting && (
-                  <p className="text-danger text-xs pl-1 font-medium">{errors.sharingSetting}</p>
+                  <p className="text-danger text-xs ps-1 font-medium">{errors.sharingSetting}</p>
                 )}
-                <p className="text-[11px] text-[hsl(var(--color-text-muted))] pl-1">
-                  Controls how doctors access your medical records.
+                <p className="text-[11px] text-[hsl(var(--color-text-muted))] ps-1">
+                  {t("privacyDesc")}
                 </p>
               </div>
             </div>
@@ -211,8 +213,8 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                 className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-                  : <><HiOutlineArrowRight className="w-4 h-4" /> Save Changes</>
+                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t("saving")}</>
+                  : <><HiOutlineArrowRight className="w-4 h-4" /> {t("saveChanges")}</>
                 }
               </button>
             </div>

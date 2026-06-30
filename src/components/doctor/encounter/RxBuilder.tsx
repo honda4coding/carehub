@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import ReactMarkdown from "react-markdown";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useTranslations } from "next-intl";
 
 interface RxBuilderProps {
   prescriptions: any[];
@@ -60,6 +61,7 @@ export default function RxBuilder({
   attachmentsInputRef,
   patientComplaint
 }: RxBuilderProps) {
+    const t = useTranslations("auto");
   
   const handleAddAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -246,32 +248,30 @@ export default function RxBuilder({
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6">
         <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <LuPill className="text-primary text-xl" /> Prescription (Rx)
-          </h2>
+            <LuPill className="text-primary text-xl" /> {t('prescriptionRx')}</h2>
           <button 
             onClick={handleCheckInteractions}
             disabled={checkingInteraction}
             className="text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-primary))] hover:text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors disabled:opacity-50 cursor-pointer"
           >
             {checkingInteraction ? <LuLoader className="animate-spin" /> : <LuShieldAlert />}
-            AI Safety Check
-          </button>
+            {t('aiSafetyCheck')}</button>
         </div>
 
         {interactionResult && (() => {
           const isDanger = interactionResult.severity === "DANGER";
           const isWarning = interactionResult.severity === "WARNING";
           
-          let boxColors = "bg-blue-50/80 border-l-4 border-l-blue-500 border-y border-r border-transparent text-main ";
+          let boxColors = "bg-blue-50/80 border-s-4 border-s-blue-500 border-y border-e border-transparent text-main ";
           let iconColor = "text-primary";
           let btnColor = "text-primary hover:text-blue-900";
           
           if (isDanger) {
-            boxColors = "bg-danger-light/80 border-l-4 border-l-red-500 border-y border-r border-transparent text-main ";
+            boxColors = "bg-danger-light/80 border-s-4 border-s-red-500 border-y border-e border-transparent text-main ";
             iconColor = "text-danger";
             btnColor = "text-red-700 hover:text-red-900";
           } else if (isWarning) {
-            boxColors = "bg-amber-50/80 border-l-4 border-l-amber-500 border-y border-r border-transparent text-main ";
+            boxColors = "bg-amber-50/80 border-s-4 border-s-amber-500 border-y border-e border-transparent text-main ";
             iconColor = "text-amber-500";
             btnColor = "text-amber-700 hover:text-amber-900";
           }
@@ -281,7 +281,7 @@ export default function RxBuilder({
               <LuShieldAlert className={`text-2xl shrink-0 mt-0.5 ${iconColor}`} />
               <div className="font-semibold whitespace-pre-wrap leading-relaxed w-full [&>p]:my-1 [&>ul]:list-disc [&>ul]:ml-6 [&>ol]:list-decimal [&>ol]:ml-6 [&>strong]:font-black [&>strong]:text-main">
                 <ReactMarkdown>{interactionResult.analysis}</ReactMarkdown>
-                <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline cursor-pointer ${btnColor}`}>Dismiss</button>
+                <button onClick={() => setInteractionResult(null)} className={`block mt-3 text-xs font-bold underline cursor-pointer ${btnColor}`}>{t('dismiss')}</button>
               </div>
             </div>
           );
@@ -289,13 +289,13 @@ export default function RxBuilder({
         
         <div className="grid grid-cols-1 md:grid-cols-6 gap-3 mb-6 p-4 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border-soft))] no-print">
           <div className="md:col-span-2 relative" ref={drugInputRef}>
-            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Drug Name</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('drugName')}</label>
             <input 
               value={drugName} 
               onChange={handleDrugNameChange} 
               onFocus={() => { if(filteredDrugs.length > 0 && drugName) setShowSuggestions(true); }}
               type="text" 
-              placeholder="e.g. Amoxicillin" 
+              placeholder={t('egAmoxicillin')} 
               className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" 
               autoComplete="off"
             />
@@ -303,8 +303,7 @@ export default function RxBuilder({
               <ul className="absolute z-50 w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] mt-1 rounded-lg max-h-48 overflow-y-auto">
                 {isSearchingDrugs && filteredDrugs.length === 0 ? (
                   <li className="px-3 py-3 text-sm text-[hsl(var(--color-text-muted))] flex items-center justify-center gap-2">
-                    <LuLoader className="animate-spin" /> Searching...
-                  </li>
+                    <LuLoader className="animate-spin" /> {t('searching')}</li>
                 ) : filteredDrugs.map((drug) => (
                   <li 
                     key={drug} 
@@ -318,56 +317,54 @@ export default function RxBuilder({
             )}
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Dosage</label>
-            <input value={dosage} onChange={e=>setDosage(e.target.value)} type="text" placeholder="500mg" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('dosage')}</label>
+            <input value={dosage} onChange={e=>setDosage(e.target.value)} type="text" placeholder={t('500mg')} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Frequency</label>
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('frequency')}</label>
             <select
               value={frequency}
               onChange={e => setFrequency(e.target.value)}
               className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
             >
-              <option value="">Select Frequency</option>
-              <option value="1 time daily">1 time daily</option>
-              <option value="2 times daily">2 times daily</option>
-              <option value="3 times daily">3 times daily</option>
-              <option value="4 times daily">4 times daily</option>
-              <option value="Every 8 hours">Every 8 hours</option>
-              <option value="Every 12 hours">Every 12 hours</option>
+              <option value="">{t('selectFrequency')}</option>
+              <option value="1 time daily">{t('1TimeDaily')}</option>
+              <option value="2 times daily">{t('2TimesDaily')}</option>
+              <option value="3 times daily">{t('3TimesDaily')}</option>
+              <option value="4 times daily">{t('4TimesDaily')}</option>
+              <option value="Every 8 hours">{t('every8Hours')}</option>
+              <option value="Every 12 hours">{t('every12Hours')}</option>
             </select>
           </div>
           <div>
             <div className="flex justify-between items-center mb-1">
-              <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))]">Duration</label>
+              <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))]">{t('duration')}</label>
               <label className="flex items-center gap-1 cursor-pointer text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase">
                 <input type="checkbox" checked={duration.toLowerCase() === "lifelong"} onChange={(e) => setDuration(e.target.checked ? "Lifelong" : "")} className="accent-primary w-3 h-3" />
-                Lifelong
-              </label>
+                {t('lifelong')}</label>
             </div>
             <div className="flex gap-2">
-              <input disabled={duration.toLowerCase() === "lifelong"} value={durNum} onChange={e=>updateDuration(e.target.value, durUnit)} type="number" min="1" placeholder="e.g. 5" className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
+              <input disabled={duration.toLowerCase() === "lifelong"} value={durNum} onChange={e=>updateDuration(e.target.value, durUnit)} type="number" min="1" placeholder={t('eg5')} className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
               <select disabled={duration.toLowerCase() === "lifelong"} value={durUnit} onChange={e=>updateDuration(durNum, e.target.value)} className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50">
-                <option value="Days">Days</option>
-                <option value="Weeks">Weeks</option>
-                <option value="Months">Months</option>
+                <option value="Days">{t('days')}</option>
+                <option value="Weeks">{t('weeks')}</option>
+                <option value="Months">{t('months')}</option>
               </select>
             </div>
           </div>
           <div className="md:col-span-5 mt-2">
-            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Instructions (Optional)</label>
-            <input value={instructions} onChange={e=>setInstructions(e.target.value)} type="text" placeholder="e.g. After meals" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('instructionsOptional')}</label>
+            <input value={instructions} onChange={e=>setInstructions(e.target.value)} type="text" placeholder={t('egAfterMeals')} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
           </div>
           <div className="flex items-end mt-2 md:col-span-1">
             <button onClick={handleAddDrug} className="w-full bg-[hsl(var(--color-secondary))] text-white hover:bg-[hsl(var(--color-secondary-strong))] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer">
-              <LuPlus /> Add
-            </button>
+              <LuPlus /> {t('add')}</button>
           </div>
         </div>
 
         {prescriptions.length > 0 ? (
           <div className="space-y-3 print-area">
-            <h3 className="text-sm font-bold text-[hsl(var(--color-text))] mb-2 hidden print:block">Prescribed Medications</h3>
+            <h3 className="text-sm font-bold text-[hsl(var(--color-text))] mb-2 hidden print:block">{t('prescribedMedications')}</h3>
             {prescriptions.map((drug) => (
               <div key={drug.id} className="flex items-center justify-between p-3 border border-[hsl(var(--color-border))] rounded-xl hover:border-primary/50 transition-colors group bg-[hsl(var(--color-bg-soft))]">
                 <div className="flex items-center gap-4">
@@ -375,8 +372,8 @@ export default function RxBuilder({
                     <LuPill />
                   </div>
                   <div>
-                    <h4 className="font-bold text-sm text-[hsl(var(--color-text))]">{drug.medicineName} <span className="text-xs font-semibold text-[hsl(var(--color-text-muted))] ml-2">{drug.dosage}</span></h4>
-                    <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mt-0.5">{drug.frequency} for {drug.duration}</p>
+                    <h4 className="font-bold text-sm text-[hsl(var(--color-text))]">{drug.medicineName} <span className="text-xs font-semibold text-[hsl(var(--color-text-muted))] ms-2">{drug.dosage}</span></h4>
+                    <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mt-0.5">{drug.frequency} {t('for')}{drug.duration}</p>
                     {drug.instructions && <p className="text-[11px] text-[hsl(var(--color-primary))] mt-0.5 font-semibold">{drug.instructions}</p>}
                   </div>
                 </div>
@@ -389,7 +386,7 @@ export default function RxBuilder({
         ) : (
           <div className="text-center py-8 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl no-print">
             <LuPill className="text-3xl text-[hsl(var(--color-border-soft))] mx-auto mb-2" />
-            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">No medications prescribed yet.</p>
+            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">{t('noMedicationsPrescribedYet')}</p>
           </div>
         )}
       </div>
@@ -397,14 +394,12 @@ export default function RxBuilder({
       {/* Upload Rx Section */}
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 no-print">
         <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2 mb-5">
-          <LuImage className="text-primary text-xl" /> Alternatively: Upload Paper Prescription
-        </h2>
+          <LuImage className="text-primary text-xl" /> {t('alternativelyUploadPaperPrescription')}</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <p className="text-xs font-medium text-[hsl(var(--color-text-muted))] mb-4">
-              If you prefer to write on paper, simply snap a photo and upload it here instead of typing the drugs above.
-            </p>
+              {t('ifYouPreferTo')}</p>
             
             <input 
               type="file" 
@@ -424,8 +419,8 @@ export default function RxBuilder({
                     <LuUpload className="text-xl" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-bold text-[hsl(var(--color-text))]">Upload File</p>
-                    <p className="text-[11px] mt-1">JPEG, PNG</p>
+                    <p className="text-sm font-bold text-[hsl(var(--color-text))]">{t('uploadFile')}</p>
+                    <p className="text-[11px] mt-1">{t('jpegPng')}</p>
                   </div>
                 </button>
 
@@ -437,14 +432,14 @@ export default function RxBuilder({
                     <LuCamera className="text-xl" />
                   </div>
                   <div className="text-center">
-                    <p className="text-sm font-bold text-[hsl(var(--color-primary))]">Take Photo</p>
-                    <p className="text-[10px] mt-1 text-[hsl(var(--color-primary))/0.7]">Use Camera</p>
+                    <p className="text-sm font-bold text-[hsl(var(--color-primary))]">{t('takePhoto')}</p>
+                    <p className="text-[10px] mt-1 text-[hsl(var(--color-primary))/0.7]">{t('useCamera')}</p>
                   </div>
                 </button>
               </div>
             ) : (
               <div className="relative group rounded-xl overflow-hidden border border-[hsl(var(--color-border))]">
-                <Image src={previewUrl} alt="Prescription preview" width={400} height={160} className="w-full h-40 object-cover" />
+                <Image src={previewUrl} alt={t('prescriptionPreview')} width={400} height={160} className="w-full h-40 object-cover" />
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={removeFile} className="bg-danger text-white p-2 rounded-full hover:scale-110 transition-transform cursor-pointer">
                     <LuTrash2 />
@@ -454,11 +449,11 @@ export default function RxBuilder({
             )}
           </div>
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">Prescription Notes (Optional)</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2">{t('prescriptionNotesOptional')}</label>
             <textarea 
               value={prescriptionText}
               onChange={(e) => setPrescriptionText(e.target.value)}
-              placeholder="Any additional instructions regarding the prescription..."
+              placeholder={t('anyAdditionalInstructionsRegarding')}
               className="w-full h-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
             />
           </div>
@@ -469,21 +464,19 @@ export default function RxBuilder({
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 no-print mt-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
           <h2 className="text-base font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-            <LuFileText className="text-primary text-xl shrink-0" /> <span className="truncate">Medical Attachments (Labs, Scans)</span>
+            <LuFileText className="text-primary text-xl shrink-0" /> <span className="truncate">{t('medicalAttachmentsLabsScans')}</span>
           </h2>
           <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button 
               onClick={() => attachmentsInputRef?.current?.click()}
               className="flex-1 sm:flex-none justify-center text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
             >
-              <LuUpload className="shrink-0" /> Upload
-            </button>
+              <LuUpload className="shrink-0" /> {t('upload')}</button>
             <button 
               onClick={() => setCameraTarget("attachments")}
               className="flex-1 sm:flex-none justify-center text-sm font-bold bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-border-soft))] px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
             >
-              <LuCamera className="shrink-0" /> Camera
-            </button>
+              <LuCamera className="shrink-0" /> {t('camera')}</button>
           </div>
         </div>
         
@@ -505,35 +498,35 @@ export default function RxBuilder({
                 </div>
                 <div className="flex-grow grid grid-cols-1 md:grid-cols-12 gap-3 w-full">
                   <div className="md:col-span-5">
-                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Document Title</label>
+                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('documentTitle')}</label>
                     <input 
                       type="text" 
                       value={attachmentsMetadata[index]?.title || ''} 
                       onChange={(e) => updateAttachmentMeta(index, 'title', e.target.value)}
-                      placeholder="e.g. CBC Results"
+                      placeholder={t('egCbcResults')}
                       className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
                     />
                   </div>
                   <div className={attachmentsMetadata[index]?.type === 'other' ? "md:col-span-3" : "md:col-span-7"}>
-                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Type</label>
+                    <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('type')}</label>
                     <select
                       value={attachmentsMetadata[index]?.type || 'lab'}
                       onChange={(e) => updateAttachmentMeta(index, 'type', e.target.value)}
                       className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-1.5 text-sm focus:border-primary outline-none transition-colors"
                     >
-                      <option value="lab">Lab Test</option>
-                      <option value="xray">X-Ray</option>
-                      <option value="mri">MRI Scan</option>
-                      <option value="ct">CT Scan</option>
-                      <option value="other">Specify Other...</option>
+                      <option value="lab">{t('labTest')}</option>
+                      <option value="xray">{t('xray')}</option>
+                      <option value="mri">{t('mriScan')}</option>
+                      <option value="ct">{t('ctScan')}</option>
+                      <option value="other">{t('specifyOther')}</option>
                     </select>
                   </div>
                   {attachmentsMetadata[index]?.type === 'other' && (
                      <div className="md:col-span-4">
-                      <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Specify Type</label>
+                      <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">{t('specifyType')}</label>
                       <input 
                         type="text" 
-                        placeholder="e.g. ECG"
+                        placeholder={t('egEcg')}
                         onChange={(e) => {
                           const currentTitle = attachmentsMetadata[index]?.title || '';
                           const cleanTitle = currentTitle.includes("]") ? currentTitle.split("] ")[1] || currentTitle : currentTitle;
@@ -555,7 +548,7 @@ export default function RxBuilder({
           </div>
         ) : (
           <div className="text-center py-6 border-2 border-dashed border-[hsl(var(--color-border))] rounded-xl">
-            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">No lab tests or scans attached to this encounter.</p>
+            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">{t('noLabTestsOr')}</p>
           </div>
         )}
       </div>

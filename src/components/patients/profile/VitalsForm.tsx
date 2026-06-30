@@ -8,6 +8,7 @@ import { LuCheck } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 import { VitalsFormValues } from "@/types/profile";
+import { useTranslations } from "next-intl";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 const schema = Yup.object({
@@ -25,6 +26,7 @@ function VitalCard({
   placeholder: string; value: string;
   onChange: (v: string) => void; error?: string;
 }) {
+    const t = useTranslations("auto");
   return (
     <div
       className="flex-1 rounded-2xl p-4 space-y-3 border border-[hsl(var(--color-border))] bg-white"
@@ -67,6 +69,7 @@ interface Props {
 }
 
 export default function VitalsForm({ profile, onSaveSuccess }: Props) {
+    const t = useTranslations("auto");
   const [serverError,   setServerError]   = useState("");
   const [serverSuccess, setServerSuccess] = useState("");
 
@@ -122,27 +125,26 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
 
           {/* Note */}
           <p className="text-[11px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-xl">
-            📅 Update these periodically to help your doctor track your health progress.
-          </p>
+            {t('updateThesePeriodicallyTo')}</p>
 
           {/* Vital Cards */}
           <div className="flex gap-3 flex-wrap">
             <VitalCard
-              name="weight" label="Weight" unit="kg" icon="⚖️"
+              name="weight" label={t('weight')} unit="kg" icon="⚖️"
               placeholder="75"
               value={values.weight}
               onChange={(v) => setFieldValue("weight", v)}
               error={touched.weight && errors.weight ? String(errors.weight) : undefined}
             />
             <VitalCard
-              name="height" label="Height" unit="cm" icon="📏"
+              name="height" label={t('height')} unit="cm" icon="📏"
               placeholder="175"
               value={values.height}
               onChange={(v) => setFieldValue("height", v)}
               error={touched.height && errors.height ? String(errors.height) : undefined}
             />
             <VitalCard
-              name="pulse" label="Pulse" unit="bpm" icon="💓"
+              name="pulse" label={t('pulse')} unit="bpm" icon="💓"
               placeholder="72"
               value={values.pulse}
               onChange={(v) => setFieldValue("pulse", v)}
@@ -157,8 +159,7 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
               style={{ backgroundColor: "hsl(var(--color-primary)/0.07)" }}
             >
               <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
-                BMI (calculated)
-              </span>
+                {t('bmiCalculated')}</span>
               <span className="text-[14px] font-black text-[hsl(var(--color-primary-strong))]">
                 {(
                   Number(values.weight) /
@@ -176,8 +177,8 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
             style={{ background: "hsl(var(--color-primary))" }}
           >
             {isSubmitting
-              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-              : <><HiOutlineArrowRight className="w-4 h-4" /> Save Vitals</>
+              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> {t('saving')}</>
+              : <><HiOutlineArrowRight className="w-4 h-4" /> {t('saveVitals')}</>
             }
           </button>
         </Form>

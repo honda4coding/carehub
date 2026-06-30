@@ -26,6 +26,7 @@ import AppointmentToast from "@/components/appointments/AppointmentToast";
 import ScheduleSetup from "@/components/appointments/ScheduleSetup";
 import GenerateSlotsCard from "@/components/appointments/GenerateSlotsCard";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslations } from "next-intl";
 
 const EMPTY_SERVICE = { name: "", price: "" };
 
@@ -39,6 +40,7 @@ interface Props {
  * /doctor/clinics sidebar layout — pick a clinic on the left, edit it here.
  */
 export default function ClinicDetailsPanel({ clinicId }: Props) {
+    const t = useTranslations("auto");
   const { user } = useAuth();
   const doctorId = (user as any)?._id ?? user?.id ?? "";
 
@@ -217,20 +219,17 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
       <section className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[15px] font-black text-[hsl(var(--color-text))]">
-            Services &amp; Pricing
-          </h2>
+            {t('servicesAmpPricing')}</h2>
           <button
             onClick={openAddModal}
             className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 hover:scale-[1.02] transition-transform cursor-pointer"
           >
-            <LuPlus /> Add Service
-          </button>
+            <LuPlus /> {t('addService')}</button>
         </div>
 
         {clinic.services.length === 0 ? (
           <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] py-6 text-center">
-            No services added yet.
-          </p>
+            {t('noServicesAddedYet')}</p>
         ) : (
           <div className="flex flex-col divide-y divide-[hsl(var(--color-border))]">
             {clinic.services.map((service) => (
@@ -243,8 +242,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
                 </span>
                 <div className="flex items-center gap-4">
                   <span className="text-[13px] font-black text-[hsl(var(--color-primary))]">
-                    {service.price} EGP
-                  </span>
+                    {service.price} {t('egp')}</span>
                   <button
                     onClick={() => openEditModal(service)}
                     className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] cursor-pointer"
@@ -269,8 +267,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
         <div className="flex items-center gap-2 mb-4">
           <LuCalendarClock className="text-[hsl(var(--color-primary))] text-lg" />
           <h2 className="text-[15px] font-black text-[hsl(var(--color-text))]">
-            Availability &amp; Slots
-          </h2>
+            {t('availabilityAmpSlots')}</h2>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -309,7 +306,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden p-6">
             <button
               onClick={() => !saving && setModalOpen(false)}
-              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
@@ -321,19 +318,17 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  Service Name *
-                </label>
+                  {t('serviceName')}</label>
                 <input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   className="mt-1 w-full rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] px-3 py-2 text-[13px] font-medium text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
-                  placeholder="Cardiology Consultation"
+                  placeholder={t('cardiologyConsultation')}
                 />
               </div>
               <div>
                 <label className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                  Price (EGP) *
-                </label>
+                  {t('priceEgp')}</label>
                 <input
                   type="number"
                   min={0}
@@ -356,8 +351,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
                   onClick={() => setModalOpen(false)}
                   className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
                 >
-                  Cancel
-                </button>
+                  {t('cancel')}</button>
                 <button
                   type="submit"
                   disabled={saving}
@@ -381,7 +375,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           <div className="relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-sm overflow-hidden text-center p-6">
             <button
               onClick={() => !deleting && setDeleteTarget(null)}
-              className="absolute top-3 right-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+              className="absolute top-3 end-3 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
             >
               <LuX className="text-lg" />
             </button>
@@ -391,19 +385,16 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             </div>
 
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
-              Delete this service?
-            </h3>
+              {t('deleteThisService')}</h3>
             <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
-              &quot;{deleteTarget.name}&quot; will be removed from this clinic.
-            </p>
+              {t('quot')}{deleteTarget.name}{t('quotWillBeRemoved')}</p>
 
             <div className="flex gap-2.5">
               <button
                 onClick={() => setDeleteTarget(null)}
                 className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
               >
-                Keep it
-              </button>
+                {t('keepIt')}</button>
               <button
                 onClick={confirmDelete}
                 disabled={deleting}

@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export const CountdownTimer = ({ targetTime }: { targetTime: number }) => {
+    const t = useTranslations("auto");
   const [timeLeft, setTimeLeft] = useState(Math.max(0, targetTime - Date.now()));
 
   useEffect(() => {
@@ -10,14 +12,15 @@ export const CountdownTimer = ({ targetTime }: { targetTime: number }) => {
     return () => clearInterval(interval);
   }, [targetTime]);
 
-  if (timeLeft === 0) return <span className="text-[hsl(var(--color-danger))]">Expired</span>;
+  if (timeLeft === 0) return <span className="text-[hsl(var(--color-danger))]">{t('expired')}</span>;
 
   const minutes = Math.floor(timeLeft / 60000);
   const seconds = Math.floor((timeLeft % 60000) / 1000);
-  return <span>Expires in {minutes}:{seconds.toString().padStart(2, '0')}</span>;
+  return <span>{t('expiresIn')}{minutes}:{seconds.toString().padStart(2, '0')}</span>;
 };
 
 export const OTPInput = ({ length = 6, onComplete }: { length?: number, onComplete: (otp: string) => void }) => {
+    const t = useTranslations("auto");
   const [otp, setOtp] = useState<string[]>(new Array(length).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 

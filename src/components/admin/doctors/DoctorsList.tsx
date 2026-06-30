@@ -1,6 +1,7 @@
 import React from "react";
 import { LuInbox, LuEye } from "react-icons/lu";
 import { Doctor, DoctorApprovalStatus } from "@/types/doctor";
+import { useTranslations } from "next-intl";
 
 // --- Helpers & Configs ---
 export const statusConfig: Record<
@@ -52,10 +53,11 @@ export function fmtDate(iso: string) {
 }
 
 function SkeletonRow() {
+    const t = useTranslations("auto");
   return (
     <tr className="border-b border-[hsl(var(--color-border-soft))]">
       {[75, 60, 45, 35, 40, 30, 30].map((w, i) => (
-        <td key={i} className="py-3 pr-4">
+        <td key={i} className="py-3 pe-4">
           <div
             className="h-3 rounded-full bg-[hsl(var(--color-bg-soft))] animate-pulse"
             style={{ width: `${w}%` }}
@@ -85,6 +87,7 @@ export default function DoctorsList({
   setSearch,
   setModal,
 }: DoctorsListProps) {
+    const t = useTranslations("auto");
   return (
     <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
       {/* Desktop Table */}
@@ -103,7 +106,7 @@ export default function DoctorsList({
               <th
                 key={h}
                 className={`pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] ${
-                  i >= 5 ? "text-center px-2" : "text-left pr-4"
+                  i >= 5 ? "text-center px-2" : "text-start pe-4"
                 }`}
               >
                 {h}
@@ -133,8 +136,7 @@ export default function DoctorsList({
                     onClick={() => setSearch("")}
                     className="mt-2 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                   >
-                    Clear search
-                  </button>
+                    {t('clearSearch')}</button>
                 )}
               </td>
             </tr>
@@ -149,7 +151,7 @@ export default function DoctorsList({
                   key={doc._id}
                   className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
                 >
-                  <td className="py-3.5 pr-4 text-left">
+                  <td className="py-3.5 pe-4 text-start">
                     <div className="flex items-center gap-3">
                       <div
                         className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${pickAvatar(
@@ -164,17 +166,17 @@ export default function DoctorsList({
                     </div>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                  <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                     {doc.specialty ?? "—"}
                   </td>
 
-                  <td className="py-3.5 pr-4 max-w-[170px] text-left">
+                  <td className="py-3.5 pe-4 max-w-[170px] text-start">
                     <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
                       {doc.email}
                     </p>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-left">
+                  <td className="py-3.5 pe-4 text-start">
                     <span
                       className={`inline-flex items-center text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                     >
@@ -182,11 +184,11 @@ export default function DoctorsList({
                     </span>
                   </td>
 
-                  <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                  <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                     {fmtDate(doc.createdAt)}
                   </td>
 
-                  <td className="py-3.5 pr-4 text-center">
+                  <td className="py-3.5 pe-4 text-center">
                     {doc.licenseUrl ? (
                       <button
                         onClick={() =>
@@ -194,8 +196,7 @@ export default function DoctorsList({
                         }
                         className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-[7px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary-strong))] hover:border-[hsl(var(--color-primary)/0.3)] transition-all mx-auto cursor-pointer"
                       >
-                        <LuEye className="text-[12px]" /> View
-                      </button>
+                        <LuEye className="text-[12px]" /> {t('view')}</button>
                     ) : (
                       <span className="text-[11px] text-[hsl(var(--color-text-muted))]">
                         —
@@ -211,8 +212,7 @@ export default function DoctorsList({
                         }
                         className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-[7px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary-strong))] hover:border-[hsl(var(--color-primary)/0.3)] transition-all mx-auto cursor-pointer"
                       >
-                        <LuEye className="text-[12px]" /> View
-                      </button>
+                        <LuEye className="text-[12px]" /> {t('view')}</button>
                     ) : (
                       <span className="text-[11px] text-[hsl(var(--color-text-muted))]">
                         —
@@ -284,24 +284,21 @@ export default function DoctorsList({
                 <div className="grid grid-cols-2 gap-3 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
                   <div>
                     <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                      Specialty
-                    </p>
+                      {t('specialty')}</p>
                     <p className="font-semibold text-[hsl(var(--color-text))]">
                       {doc.specialty ?? "—"}
                     </p>
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                      Joined
-                    </p>
+                      {t('joined')}</p>
                     <p className="font-semibold text-[hsl(var(--color-text))]">
                       {fmtDate(doc.createdAt)}
                     </p>
                   </div>
                   <div className="col-span-2 flex items-center gap-3 mt-1 pt-2 border-t border-[hsl(var(--color-border-soft))]">
                     <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
-                      Docs:
-                    </span>
+                      {t('docs')}</span>
                     {doc.licenseUrl && (
                       <button
                         onClick={() =>
@@ -309,8 +306,7 @@ export default function DoctorsList({
                         }
                         className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                       >
-                        <LuEye className="text-[12px]" /> License
-                      </button>
+                        <LuEye className="text-[12px]" /> {t('license')}</button>
                     )}
                     {doc.nationalIdUrl && (
                       <button
@@ -322,8 +318,7 @@ export default function DoctorsList({
                         }
                         className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                       >
-                        <LuEye className="text-[12px]" /> ID
-                      </button>
+                        <LuEye className="text-[12px]" /> {t('id')}</button>
                     )}
                     {!doc.licenseUrl && !doc.nationalIdUrl && (
                       <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">

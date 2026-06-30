@@ -1,6 +1,7 @@
 import React from "react";
 import { LuSearch, LuFilter } from "react-icons/lu";
 import { UserRole, UserStatus } from "@/types/user";
+import { useTranslations } from "next-intl";
 
 export const ROLE_OPTIONS: { label: string; value: UserRole | "" }[] = [
   { label: "All Roles", value: "" },
@@ -34,17 +35,18 @@ export default function UsersFilters({
   statusFilter,
   setStatusFilter,
 }: UsersFiltersProps) {
+    const t = useTranslations("auto");
   return (
     <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
       <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
         <div className="relative flex items-center w-full max-w-[300px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
+          <LuSearch className="absolute start-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
           <input
             type="text"
-            placeholder="Search name or email…"
+            placeholder={t('searchNameOrEmail')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+            className="ps-8 pe-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
           />
         </div>
       </div>
@@ -53,11 +55,11 @@ export default function UsersFilters({
         {/* Role & Status filters */}
         <div className="flex items-center gap-2 flex-1 sm:flex-none">
           <div className="relative flex items-center w-full sm:w-auto">
-            <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+            <LuFilter className="absolute start-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value as UserRole | "")}
-              className="pl-7 pr-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
+              className="ps-7 pe-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
             >
               {ROLE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -65,18 +67,18 @@ export default function UsersFilters({
                 </option>
               ))}
             </select>
-            <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+            <span className="absolute end-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
               ▾
             </span>
           </div>
 
           {/* Status filter */}
           <div className="relative flex items-center w-full sm:w-auto">
-            <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+            <LuFilter className="absolute start-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as UserStatus | "")}
-              className="pl-7 pr-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
+              className="ps-7 pe-7 py-1.5 text-[12px] font-semibold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] appearance-none cursor-pointer transition-all w-full sm:w-auto"
             >
               {STATUS_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -84,7 +86,7 @@ export default function UsersFilters({
                 </option>
               ))}
             </select>
-            <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+            <span className="absolute end-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
               ▾
             </span>
           </div>

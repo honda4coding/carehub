@@ -1,6 +1,7 @@
 import React from "react";
 import { LuTrendingUp, LuActivity, LuCalendarDays, LuRotateCcw, LuDownload } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 interface ReportsHeaderProps {
   startDate: string;
@@ -17,6 +18,7 @@ export default function ReportsHeader({
   setEndDate,
   onExport,
 }: ReportsHeaderProps) {
+    const t = useTranslations("auto");
   return (
     <header className="no-print bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 md:p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
       <div className="flex items-center gap-3">
@@ -25,19 +27,16 @@ export default function ReportsHeader({
         </div>
         <div>
           <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] tracking-tight">
-            Reports & Analytics
-          </h1>
+            {t('reportsAnalytics')}</h1>
           <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-            <LuActivity className="text-[hsl(var(--color-primary))]" /> Clinic
-            Performance Overview
-          </p>
+            <LuActivity className="text-[hsl(var(--color-primary))]" /> {t('clinicPerformanceOverview')}</p>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
         {/* Date Range Picker */}
         <div className="flex items-center bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.15)] focus-within:border-[hsl(var(--color-primary)/0.5)] transition-all flex-1 sm:flex-none">
-          <div className="flex items-center px-3 py-2 bg-[hsl(var(--color-bg-soft))] border-r border-[hsl(var(--color-border))]">
+          <div className="flex items-center px-3 py-2 bg-[hsl(var(--color-bg-soft))] border-e border-[hsl(var(--color-border))]">
             <LuCalendarDays className="text-[hsl(var(--color-primary))] text-lg shrink-0" />
           </div>
           <input
@@ -48,8 +47,7 @@ export default function ReportsHeader({
           />
           <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border-x border-[hsl(var(--color-border))] h-full">
             <span className="text-[10px] font-black uppercase tracking-wider opacity-85">
-              To
-            </span>
+              {t('to_6th3')}</span>
           </div>
           <input
             type="date"
@@ -70,7 +68,7 @@ export default function ReportsHeader({
               }}
               icon={LuRotateCcw}
               className="!px-3.5 !py-2 !h-[42px] !rounded-xl !text-[hsl(var(--color-text-muted))] hover:!text-[hsl(var(--color-danger))]"
-              title="Reset Filters"
+              title={t('resetFilters')}
             />
           )}
           <Button
@@ -78,8 +76,7 @@ export default function ReportsHeader({
             icon={LuDownload}
             className="!px-5 !py-2 !h-[42px] !rounded-xl !text-[13px] !bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))] hover:!text-white border border-transparent hover:border-transparent shrink-0"
           >
-            Export
-          </Button>
+            {t('export')}</Button>
         </div>
       </div>
     </header>

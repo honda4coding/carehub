@@ -5,6 +5,7 @@ import { Appointment, getDisplayStatus } from "@/services/appointmentService";
 import { initialsOf, isoTo12Hour } from "@/components/appointments/format";
 import StatusBadge from "@/components/appointments/StatusBadge";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 export default function TodayCard({
   appt,
@@ -15,6 +16,7 @@ export default function TodayCard({
   onComplete: (id: string) => void;
   completing: boolean;
 }) {
+    const t = useTranslations("auto");
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
   const timeLabel =
@@ -23,7 +25,7 @@ export default function TodayCard({
 
   return (
     <div className="group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-      <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[hsl(var(--color-secondary))] rounded-l-2xl" />
+      <div className="absolute top-0 bottom-0 start-0 w-[4px] bg-[hsl(var(--color-secondary))] rounded-s-2xl" />
       
       <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
         {/* Avatar */}
@@ -44,7 +46,7 @@ export default function TodayCard({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-1 sm:mt-0 pl-14 sm:pl-0">
+      <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-1 sm:mt-0 ps-14 sm:pl-0">
         <StatusBadge status={status} />
         {status === "upcoming" && (
           <Button
@@ -53,8 +55,7 @@ export default function TodayCard({
             icon={LuCheck}
             className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-success-bg))] !text-[hsl(var(--color-success))] hover:!bg-[hsl(var(--color-success))]"
           >
-            Complete
-          </Button>
+            {t('complete')}</Button>
         )}
       </div>
     </div>

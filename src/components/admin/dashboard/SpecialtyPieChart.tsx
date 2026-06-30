@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer } from "recharts";
 import { LuFileChartPie } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface SpecialtyData {
   name: string;
@@ -13,13 +14,14 @@ interface SpecialtyPieChartProps {
 }
 
 export default function SpecialtyPieChart({ data, colors }: SpecialtyPieChartProps) {
+    const t = useTranslations("auto");
   return (
     <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col h-full">
       <div className="flex items-center gap-2 mb-6">
         <div className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-success)/0.15)] text-[hsl(var(--color-success))] flex items-center justify-center">
           <LuFileChartPie className="text-[16px]" />
         </div>
-        <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">Doctors by Specialty</h2>
+        <h2 className="text-[14px] font-black uppercase tracking-[.04em] text-[hsl(var(--color-text))]">{t('doctorsBySpecialty')}</h2>
       </div>
 
       <div className="flex-1 w-full min-h-[250px] flex items-center justify-center relative">

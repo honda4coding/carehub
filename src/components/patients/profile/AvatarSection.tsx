@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LuCamera, LuTrash2 } from "react-icons/lu";
 import { ImSpinner2 } from "react-icons/im";
 import { PatientProfile, uploadPatientAvatar, deletePatientAvatar } from "@/services/patientService";
+import { useTranslations } from "next-intl";
 
 interface AvatarSectionProps {
   profile: PatientProfile | null;
@@ -12,6 +13,7 @@ interface AvatarSectionProps {
 }
 
 export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps) {
+  const t = useTranslations("patient.PatientProfilePage");
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [deleting,  setDeleting]  = useState(false);
@@ -28,7 +30,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
       const pic = await uploadPatientAvatar(file);
       onUpdate(pic);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Upload failed");
+      setError(err instanceof Error ? err.message : t("uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -41,7 +43,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
       await deletePatientAvatar();
       onUpdate(null);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Delete failed");
+      setError(err instanceof Error ? err.message : t("deleteFailed"));
     } finally {
       setDeleting(false);
     }
@@ -58,7 +60,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
             {hasImage ? (
               <Image
                 src={profile!.profilepicture!.secure_url}
-                alt={profile?.fullName || "Avatar"}
+                alt={profile?.fullName || t("avatar")}
                 fill
                 className="object-cover"
               />
@@ -74,7 +76,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center hover:opacity-80 transition-opacity disabled:opacity-50"
+            className="absolute bottom-0 end-0 w-7 h-7 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center hover:opacity-80 transition-opacity disabled:opacity-50"
           >
             {uploading
               ? <ImSpinner2 className="w-3.5 h-3.5 animate-spin" />
@@ -111,7 +113,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
               disabled={uploading}
               className="text-[12px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] hover:opacity-80 transition-opacity disabled:opacity-50"
             >
-              {uploading ? "Uploading..." : hasImage ? "Change Photo" : "Upload Photo"}
+              {uploading ? t("uploading") : hasImage ? t("changePhoto") : t("uploadPhoto")}
             </button>
 
             {hasImage && (
@@ -125,7 +127,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
                   ? <ImSpinner2 className="w-3 h-3 animate-spin" />
                   : <LuTrash2 className="w-3 h-3" />
                 }
-                {deleting ? "Removing..." : "Remove"}
+                {deleting ? t("removing") : t("remove")}
               </button>
             )}
           </div>

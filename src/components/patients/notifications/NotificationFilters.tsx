@@ -3,6 +3,7 @@
 import { LuCheckCheck, LuSearch } from "react-icons/lu";
 import { TABS, TabValue } from "./types";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 interface Props {
   activeTab: TabValue;
@@ -21,6 +22,7 @@ export default function NotificationFilters({
   unreadCount,
   handleMarkAllAsRead,
 }: Props) {
+  const t = useTranslations("patient.NotificationsPage");
   return (
     <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
       <div className="flex gap-1 flex-wrap w-full sm:w-auto">
@@ -34,7 +36,7 @@ export default function NotificationFilters({
                 : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))]"
             }`}
           >
-            {tab.label}
+            {t(`tabs.${tab.value}`)}
           </button>
         ))}
       </div>
@@ -47,19 +49,19 @@ export default function NotificationFilters({
             icon={LuCheckCheck}
             className="text-[11px] px-3 py-1.5 flex-1 sm:flex-none whitespace-nowrap min-h-0 h-auto"
           >
-            Mark All Read
+            {t("markAllRead")}
           </Button>
         )}
 
         <div className="relative flex items-center flex-1 sm:flex-none">
-          <LuSearch className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
+          <LuSearch className="absolute start-2.5 text-[12px] text-[hsl(var(--color-text-muted))]" />
 
           <input
             type="text"
-            placeholder="Search notifications..."
+            placeholder={t("searchPlaceholder")}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="pl-7 pr-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full sm:w-[220px] outline-none transition-colors focus:border-[hsl(var(--color-primary)/0.5)]"
+            className="ps-7 pe-3 py-1.5 text-[11px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full sm:w-[220px] outline-none transition-colors focus:border-[hsl(var(--color-primary)/0.5)]"
           />
         </div>
       </div>

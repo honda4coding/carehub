@@ -6,6 +6,7 @@ import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuBot, LuX, LuSend, LuLoader, LuPlus } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
+import { useTranslations } from "next-intl";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -20,6 +21,7 @@ interface Message {
 }
 
 export default function AIChatWidget() {
+    const t = useTranslations("auto");
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", content: "Welcome to CareHub AI 🤖. How can I help you today? (e.g., I need a good internal medicine doctor tomorrow)" }
@@ -79,7 +81,7 @@ export default function AIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-dark))] transition-transform hover:scale-105 z-50"
+          className="fixed bottom-6 end-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-dark))] transition-transform hover:scale-105 z-50"
         >
           <LuBot size={28} />
         </button>
@@ -87,18 +89,17 @@ export default function AIChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col">
+        <div className="fixed bottom-6 end-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-[hsl(var(--color-primary))] text-white">
             <div className="flex items-center gap-2 font-bold">
               <LuBot size={20} />
-              CareHub AI Assistant
-            </div>
+              {t('carehubAiAssistant')}</div>
             <div className="flex items-center gap-3">
-              <button onClick={handleNewChat} title="New Chat" className="hover:text-gray-300 transition-colors">
+              <button onClick={handleNewChat} title={t('newChat')} className="hover:text-gray-300 transition-colors">
                 <LuPlus size={20} />
               </button>
-              <button onClick={() => setIsOpen(false)} title="Close" className="hover:text-gray-300 transition-colors">
+              <button onClick={() => setIsOpen(false)} title={t('close')} className="hover:text-gray-300 transition-colors">
                 <LuX size={20} />
               </button>
             </div>
@@ -111,8 +112,8 @@ export default function AIChatWidget() {
                 <div 
                   className={`max-w-[85%] p-3 rounded-2xl text-sm ${
                     msg.role === "user" 
-                    ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none whitespace-pre-wrap" 
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none rtl:prose-reverse prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-ul:list-disc prose-ol:list-decimal prose-li:my-0"
+                    ? "bg-[hsl(var(--color-primary))] text-white rounded-se-none whitespace-pre-wrap" 
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-ss-none  prose prose-sm max-w-none rtl:prose-reverse prose-p:leading-relaxed prose-pre:bg-transparent prose-pre:p-0 prose-ul:list-disc prose-ol:list-decimal prose-li:my-0"
                   }`}
                   dir="auto"
                 >
@@ -126,9 +127,8 @@ export default function AIChatWidget() {
             ))}
             {loading && (
               <div className="flex justify-start">
-                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-tl-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
-                  <LuLoader className="animate-spin" /> Thinking...
-                </div>
+                <div className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] p-3 rounded-2xl rounded-ss-none text-[hsl(var(--color-text-muted))] flex items-center gap-2">
+                  <LuLoader className="animate-spin" /> {t('thinking')}</div>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -141,7 +141,7 @@ export default function AIChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              placeholder="Type your message here..."
+              placeholder={t('typeYourMessageHere')}
               className="flex-1 px-4 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-full text-sm focus:outline-none focus:border-[hsl(var(--color-primary))]"
               dir="rtl"
             />

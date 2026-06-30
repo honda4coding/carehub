@@ -48,15 +48,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const innerContent = (
       <>
         {isLoading ? (
-          <span className="mr-2 animate-spin border-2 border-current border-t-transparent rounded-full w-4 h-4" />
+          <span className="me-2 animate-spin border-2 border-current border-t-transparent rounded-full w-4 h-4" />
         ) : Icon && iconPosition === 'left' ? (
-          <Icon className={`${children ? 'mr-2' : ''} w-5 h-5 shrink-0`} />
+          <Icon className={`${children ? 'me-2' : ''} w-5 h-5 shrink-0`} />
         ) : null}
         
         {children}
 
         {!isLoading && Icon && iconPosition === 'right' && (
-          <Icon className={`${children ? 'ml-2' : ''} w-5 h-5 shrink-0`} />
+          <Icon className={`${children ? 'ms-2' : ''} w-5 h-5 shrink-0`} />
         )}
       </>
     );

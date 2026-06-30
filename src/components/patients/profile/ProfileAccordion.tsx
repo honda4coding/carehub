@@ -31,7 +31,7 @@ function AccordionItem({
       <button
         type="button"
         onClick={onToggle}
-        className="w-full flex items-center justify-between px-5 py-4 text-left transition-colors duration-150"
+        className="w-full flex items-center justify-between px-5 py-4 text-start transition-colors duration-150"
         style={{
           backgroundColor: isOpen
             ? "hsl(var(--color-primary)/0.05)"

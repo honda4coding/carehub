@@ -1,6 +1,7 @@
 import React from "react";
 import { LuCheck, LuX, LuClock, LuEye } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
+import { useTranslations } from "next-intl";
 
 type ApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -63,19 +64,18 @@ export default function ApprovalsList({
   handleApprove,
   handleResetToPending,
 }: ApprovalsListProps) {
+    const t = useTranslations("auto");
   if (loading) {
     return (
       <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-10">
-        Loading...
-      </p>
+        {t('loading')}</p>
     );
   }
 
   if (doctors.length === 0) {
     return (
       <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-10">
-        No doctors found
-      </p>
+        {t('noDoctorsFound')}</p>
     );
   }
 
@@ -96,7 +96,7 @@ export default function ApprovalsList({
             ].map((h) => (
               <th
                 key={h}
-                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-left pr-4"
+                className="pb-3 text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] text-start pe-4"
               >
                 {h}
               </th>
@@ -113,7 +113,7 @@ export default function ApprovalsList({
                 key={doc._id}
                 className="border-b border-[hsl(var(--color-border-soft))] last:border-b-0 hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
               >
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   <div className="flex items-center gap-3">
                     <div
                       className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${avatarStyle}`}
@@ -131,15 +131,15 @@ export default function ApprovalsList({
                   </div>
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                   {doc.specialty ?? "—"}
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pe-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-start">
                   {new Date(doc.createdAt).toLocaleDateString()}
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   <span
                     className={`inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                   >
@@ -147,7 +147,7 @@ export default function ApprovalsList({
                   </span>
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   {doc.licenseUrl ? (
                     <Button
                       variant="outline"
@@ -158,8 +158,7 @@ export default function ApprovalsList({
                       icon={LuEye}
                       className="!text-[11px] !px-2 !py-1 !h-auto !rounded-[7px] text-[hsl(var(--color-text-muted))] border-[hsl(var(--color-border))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary-strong))] hover:border-[hsl(var(--color-primary)/0.3)]"
                     >
-                      View
-                    </Button>
+                      {t('view')}</Button>
                   ) : (
                     <span className="text-[13px] text-[hsl(var(--color-text-muted))]">
                       —
@@ -167,7 +166,7 @@ export default function ApprovalsList({
                   )}
                 </td>
 
-                <td className="py-3.5 pr-4 text-left">
+                <td className="py-3.5 pe-4 text-start">
                   {doc.nationalIdUrl ? (
                     <Button
                       variant="outline"
@@ -181,8 +180,7 @@ export default function ApprovalsList({
                       icon={LuEye}
                       className="!text-[11px] !px-2 !py-1 !h-auto !rounded-[7px] text-[hsl(var(--color-text-muted))] border-[hsl(var(--color-border))] hover:bg-[hsl(var(--color-primary)/0.1)] hover:text-[hsl(var(--color-primary-strong))] hover:border-[hsl(var(--color-primary)/0.3)]"
                     >
-                      View
-                    </Button>
+                      {t('view')}</Button>
                   ) : (
                     <span className="text-[13px] text-[hsl(var(--color-text-muted))]">
                       —
@@ -190,7 +188,7 @@ export default function ApprovalsList({
                   )}
                 </td>
 
-                <td className="py-3.5 pr-4">
+                <td className="py-3.5 pe-4">
                   <div className="flex items-center gap-1.5 w-[140px]">
                     {doc.status === "pending" ? (
                       <>
@@ -202,8 +200,7 @@ export default function ApprovalsList({
                           isLoading={actionLoadingId === doc._id}
                           className="flex-1 !text-[11px] !px-0 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)]"
                         >
-                          Approve
-                        </Button>
+                          {t('approve')}</Button>
                         <Button
                           variant="outline"
                           size="sm"
@@ -213,8 +210,7 @@ export default function ApprovalsList({
                           disabled={actionLoadingId === doc._id}
                           className="flex-1 !text-[11px] !px-0 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-danger))] border-[hsl(var(--color-danger)/0.3)] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.5)]"
                         >
-                          Reject
-                        </Button>
+                          {t('reject')}</Button>
                       </>
                     ) : (
                       <Button
@@ -225,8 +221,7 @@ export default function ApprovalsList({
                         isLoading={actionLoadingId === doc._id}
                         className="w-full !text-[11px] !px-0 !py-1.5 !h-auto !rounded-[8px] text-[hsl(var(--color-warning))] border-[hsl(var(--color-warning)/0.3)] hover:bg-[hsl(var(--color-warning-bg))] hover:text-[hsl(var(--color-warning))] hover:border-[hsl(var(--color-warning)/0.5)]"
                       >
-                        Reset
-                      </Button>
+                        {t('reset')}</Button>
                     )}
                   </div>
                 </td>
@@ -273,24 +268,21 @@ export default function ApprovalsList({
               <div className="grid grid-cols-2 gap-3 mb-4 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
                 <div>
                   <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                    Specialty
-                  </p>
+                    {t('specialty')}</p>
                   <p className="font-semibold text-[hsl(var(--color-text))]">
                     {doc.specialty ?? "—"}
                   </p>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">
-                    Submitted
-                  </p>
+                    {t('submitted')}</p>
                   <p className="font-semibold text-[hsl(var(--color-text))]">
                     {new Date(doc.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="col-span-2 flex items-center gap-3 mt-1 pt-2 border-t border-[hsl(var(--color-border-soft))]">
                   <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
-                    Docs:
-                  </span>
+                    {t('docs')}</span>
                   {doc.licenseUrl && (
                     <button
                       onClick={() =>
@@ -298,8 +290,7 @@ export default function ApprovalsList({
                       }
                       className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                     >
-                      <LuEye className="text-[12px]" /> License
-                    </button>
+                      <LuEye className="text-[12px]" /> {t('license')}</button>
                   )}
                   {doc.nationalIdUrl && (
                     <button
@@ -311,8 +302,7 @@ export default function ApprovalsList({
                       }
                       className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                     >
-                      <LuEye className="text-[12px]" /> ID
-                    </button>
+                      <LuEye className="text-[12px]" /> {t('id')}</button>
                   )}
                   {!doc.licenseUrl && !doc.nationalIdUrl && (
                     <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
@@ -332,8 +322,7 @@ export default function ApprovalsList({
                       className="flex-1 text-[12px] !py-2 !h-auto !rounded-[10px] text-[hsl(var(--color-success))] border-[hsl(var(--color-success)/0.3)] hover:bg-[hsl(var(--color-success-bg))] hover:text-[hsl(var(--color-success))] hover:border-[hsl(var(--color-success)/0.5)]"
                       variant="outline"
                     >
-                      Approve
-                    </Button>
+                      {t('approve')}</Button>
                     <Button
                       onClick={() =>
                         setRejectModal({ open: true, doctorId: doc._id })
@@ -342,8 +331,7 @@ export default function ApprovalsList({
                       className="flex-1 text-[12px] !py-2 !h-auto !rounded-[10px] text-[hsl(var(--color-danger))] border-[hsl(var(--color-danger)/0.3)] hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.5)]"
                       variant="outline"
                     >
-                      Reject
-                    </Button>
+                      {t('reject')}</Button>
                   </>
                 ) : (
                   <Button
@@ -353,8 +341,7 @@ export default function ApprovalsList({
                     className="w-full text-[12px] !py-2 !h-auto !rounded-[10px] text-[hsl(var(--color-warning))] border-[hsl(var(--color-warning)/0.3)] hover:bg-[hsl(var(--color-warning-bg))] hover:text-[hsl(var(--color-warning))] hover:border-[hsl(var(--color-warning)/0.5)]"
                     variant="outline"
                   >
-                    Reset to Pending
-                  </Button>
+                    {t('resetToPending')}</Button>
                 )}
               </div>
             </div>

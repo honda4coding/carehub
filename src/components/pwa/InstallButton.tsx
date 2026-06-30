@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { LuDownload } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -14,6 +15,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export default function InstallButton() {
+    const t = useTranslations("auto");
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -69,7 +71,7 @@ export default function InstallButton() {
       size="icon"
       icon={LuDownload}
       onClick={handleInstallClick}
-      title="Install App"
+      title={t('installApp')}
       className="hidden md:flex bg-[hsl(var(--color-primary)/0.1)] border-[hsl(var(--color-primary)/0.3)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white rounded-xl w-10 h-10 items-center justify-center !p-0 shrink-0"
     />
   );

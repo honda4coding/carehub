@@ -9,6 +9,7 @@ import {
 } from "@/services/appointmentService";
 import { formatFullDate, groupSlotsByDate, slotTimeRangeLabel } from "@/components/appointments/format";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import { useTranslations } from "next-intl";
 
 interface GenerateSlotsCardProps {
   clinicId?: string;
@@ -25,6 +26,7 @@ export default function GenerateSlotsCard({
   onToast,
    slotsVersion,
 }: GenerateSlotsCardProps) {
+    const t = useTranslations("auto");
   const [generateRange, setGenerateRange] = useState({ startDate: "", endDate: "" });
   const [generating, setGenerating] = useState(false);
   const [mySlots, setMySlots] = useState<Slot[]>([]);
@@ -104,12 +106,10 @@ export default function GenerateSlotsCard({
         <div className="flex items-center gap-2 mb-1">
           <LuRefreshCw className="text-[hsl(var(--color-primary))] text-base" />
           <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
-            Generate slots
-          </p>
+            {t('generateSlots')}</p>
         </div>
         <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mb-4">
-          Pick a date range and we'll create all slots from your saved weekly schedule
-          {clinicId ? " for this clinic" : ""}
+          {t('pickADateRange')}{clinicId ? " for this clinic" : ""}
         </p>
 
         <div className="mb-4">
@@ -130,13 +130,11 @@ export default function GenerateSlotsCard({
           icon={LuRefreshCw}
           className="w-full !py-3 !h-[44px] !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-bg-base))] hover:!bg-[hsl(var(--color-primary-strong))]"
         >
-          Generate Slots
-        </Button>
+          {t('generateSlots_7xb6')}</Button>
 
         {!hasSelectedDays && (
           <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] text-center mt-2">
-            Select at least one working day first
-          </p>
+            {t('selectAtLeastOne')}</p>
         )}
       </div>
 
@@ -146,13 +144,11 @@ export default function GenerateSlotsCard({
           <div className="flex items-center gap-2">
             <LuClock className="text-[hsl(var(--color-primary))] text-base" />
             <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
-              Open slots
-            </p>
+              {t('openSlots')}</p>
           </div>
           {!slotsLoading && mySlots.length > 0 && (
             <span className="text-sm font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-primary">
-              {mySlots.length} total
-            </span>
+              {mySlots.length} {t('total')}</span>
           )}
         </div>
 
@@ -164,8 +160,7 @@ export default function GenerateSlotsCard({
           </div>
         ) : slotGroups.length === 0 ? (
           <p className="text-base font-semibold text-[hsl(var(--color-text-muted))] text-center py-6">
-            No open slots yet — generate some above.
-          </p>
+            {t('noOpenSlotsYet')}</p>
         ) : (
           <div className="space-y-2">
             {slotGroups.map((group) => {
@@ -175,7 +170,7 @@ export default function GenerateSlotsCard({
                   <div className="w-full flex items-center justify-between px-4 py-3">
                     <button
                       onClick={() => setOpenSlotDay(isOpen ? null : group.dateKey)}
-                      className="flex items-center gap-3 flex-1 text-left hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
+                      className="flex items-center gap-3 flex-1 text-start hover:bg-[hsl(var(--color-bg-soft))] transition-colors cursor-pointer"
                     >
                       <div className="w-8 h-8 rounded-lg bg-[hsl(var(--color-primary)/0.1)] text-primary flex items-center justify-center shrink-0">
                         <LuCalendarDays className="text-base" />
@@ -185,15 +180,14 @@ export default function GenerateSlotsCard({
                           {formatFullDate(group.dateObj)}
                         </p>
                         <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">
-                          {group.slots.length} slot{group.slots.length !== 1 ? "s" : ""} available
-                        </p>
+                          {group.slots.length} {t('slot')}{group.slots.length !== 1 ? "s" : ""} {t('available')}</p>
                       </div>
                     </button>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDeleteDaySlots(group.slots); }}
                         className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors p-1 cursor-pointer"
-                        title="Delete all slots for this day"
+                        title={t('deleteAllSlotsFor')}
                       >
                         <LuTrash2 className="text-base" />
                       </button>
@@ -222,7 +216,7 @@ export default function GenerateSlotsCard({
                               onClick={() => handleDeleteSlot(slot._id)}
                               disabled={deletingSlot === slot._id}
                               className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] p-1.5 rounded-md transition-all duration-300 disabled:opacity-40 shrink-0 cursor-pointer"
-                              title="Delete this slot"
+                              title={t('deleteThisSlot')}
                             >
                               <LuTrash2 className="text-base" />
                             </button>
