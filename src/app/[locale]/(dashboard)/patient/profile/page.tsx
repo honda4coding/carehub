@@ -7,8 +7,10 @@ import DeleteAccountModal from "@/components/shared/DeleteAccountModal";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { usePatientProfile } from "@/context/PatientProfileContext";
 import { deletePatientAccount } from "@/services/patientService";
+import { useTranslations } from "next-intl";
 
 export default function PatientProfilePage() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const { profile, loading, updateProfile, updateAvatar } = usePatientProfile();
 
@@ -20,8 +22,8 @@ export default function PatientProfilePage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
-        title="Profile"
-        subtitle="Update your personal information and profile picture"
+        title={t('profile')}
+        subtitle={t('updateYourPersonalInformation')}
         backPath="/patient"
       />
 
@@ -42,10 +44,9 @@ export default function PatientProfilePage() {
           {/* Danger Zone — مضاف */}
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
             <div className="p-6">
-              <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">Danger Zone</h3>
+              <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">{t('dangerZone')}</h3>
               <p className="text-[12px] text-[hsl(var(--color-text-muted))] mb-5">
-                Permanently delete your account. This cannot be undone.
-              </p>
+                {t('permanentlyDeleteYourAccount')}</p>
               <DeleteAccountModal onConfirm={handleDeleteAccount} />
             </div>
           </div>

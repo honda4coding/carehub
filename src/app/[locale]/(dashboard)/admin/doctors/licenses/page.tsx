@@ -78,7 +78,7 @@ export default function AdminLicensesPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
         title={t('licenseUpdates')}
-        subtitle="Review new license submissions from approved doctors"
+        subtitle={t('reviewNewLicenseSubmissions')}
         backPath="/admin"
       />
 

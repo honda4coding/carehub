@@ -33,6 +33,7 @@ import {
   LuFileCheck,
   LuCreditCard,
 } from "react-icons/lu";
+import { useTranslations } from "next-intl";
 
 interface NavItem {
   label: string;
@@ -274,6 +275,7 @@ function SettingsGroup({
   role: string;
   onClose?: () => void;
 }) {
+    const t = useTranslations("auto");
   const pathname = usePathname();
   const subItems = settingsSub[role] ?? [];
   // const anyActive = subItems.some((i) => pathname.startsWith(i.href));
@@ -340,7 +342,7 @@ function SettingsGroup({
                 >
                   {item.icon}
                 </span>
-                {item.label}
+                {t(item.label.replace(/[^a-zA-Z0-9]/g, "") as any)}
               </Link>
             );
           })}
@@ -351,6 +353,7 @@ function SettingsGroup({
 }
 
 function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
+    const t = useTranslations("auto");
   const pathname = usePathname();
   const subItems = item.subItems ?? [];
   const anyActive = subItems.some((i) =>
@@ -374,7 +377,7 @@ function NavGroup({ item, onClose }: { item: NavItem; onClose?: () => void }) {
         >
           {item.icon}
         </span>
-        <span className="flex-1 text-left">{item.label}</span>
+        <span className="flex-1 text-left">{t(item.label.replace(/[^a-zA-Z0-9]/g, "") as any)}</span>
         <LuChevronDown
           className={`w-3.5 h-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
@@ -432,6 +435,7 @@ function SidebarContent({
   unreadNotifications: number | null;
   pendingLicenses: number | null;
 }) {
+    const t = useTranslations("auto");
   const pathname = usePathname();
   const { user, logout } = useAuth();
   
@@ -534,9 +538,9 @@ function SidebarContent({
       {/* Nav */}
       <nav className="flex-1 px-2.5 py-3 overflow-y-auto">
         {sections.map((section) => (
-          <div key={section.title} className="mb-2">
+          <div key={t(section.title.replace(/[^a-zA-Z0-9]/g, "") as any)} className="mb-2">
             <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
-              {section.title}
+              {t(section.title.replace(/[^a-zA-Z0-9]/g, "") as any)}
             </p>
             {section.items.map((item) => {
               if (item.subItems && item.subItems.length > 0) {
@@ -573,7 +577,7 @@ function SidebarContent({
                   >
                     {item.icon}
                   </span>
-                  <span className="flex-1">{item.label}</span>
+                  <span className="flex-1">{t(item.label.replace(/[^a-zA-Z0-9]/g, "") as any)}</span>
                   {!!badgeValue && (
                     <span className="text-[10px] font-black px-2 py-0.5 rounded-[6px] bg-[hsl(var(--color-secondary))] text-white ml-auto">
                       {badgeValue}
@@ -633,6 +637,7 @@ function SidebarContent({
 }
 
 export default function Sidebar({ role }: { role: string }) {
+    const t = useTranslations("auto");
   const [open, setOpen] = useState(false);
   const [pendingApprovals, setPendingApprovals] = useState<number | null>(null);
   const [unreadNotifications, setUnreadNotifications] = useState<number | null>(

@@ -14,7 +14,7 @@ export default function ClinicDetailsPage() {
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
       <DashboardHeader
         title={t('clinicDetails')}
-        subtitle="View and manage clinic information"
+        subtitle={t('viewAndManageClinic_hfo5')}
         backPath="/doctor/clinics"
       />
       <div className="p-4 md:p-6 flex-1 overflow-auto">

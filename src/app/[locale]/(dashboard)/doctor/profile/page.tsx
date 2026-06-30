@@ -17,6 +17,7 @@ import {
   UpdateDoctorProfilePayload,
   deleteDoctorAccount,
 } from "@/services/doctorService";
+import { useTranslations } from "next-intl";
 
 type Tab = "profile" | "license" | "avatar" | "danger";
 
@@ -28,6 +29,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = 
 ];
 
 export default function DoctorProfilePage() {
+    const t = useTranslations("auto");
   const router = useRouter();
   const [profile,   setProfile]   = useState<DoctorProfile | null>(null);
   const [loading,   setLoading]   = useState(true);
@@ -65,8 +67,8 @@ export default function DoctorProfilePage() {
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
-        title="Profile Settings"
-        subtitle="Manage your personal information and license"
+        title={t('profileSettings')}
+        subtitle={t('manageYourPersonalInformation')}
         backPath="/doctor"
       />
 
@@ -83,8 +85,7 @@ export default function DoctorProfilePage() {
           <div className="bg-[hsl(var(--color-danger-bg))] border border-red-200 text-[hsl(var(--color-danger))] text-sm font-medium px-5 py-4 rounded-2xl">
             {error}
             <button onClick={fetchProfile} className="block mt-2 text-xs underline font-bold">
-              Try again
-            </button>
+              {t('tryAgain_vmyc')}</button>
           </div>
         )}
 
@@ -165,10 +166,9 @@ export default function DoctorProfilePage() {
               )}
               {activeTab === "danger" && (
                 <div className="p-6">
-                  <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">Danger Zone</h3>
+                  <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">{t('dangerZone')}</h3>
                   <p className="text-[12px] text-[hsl(var(--color-text-muted))] mb-5">
-                    Permanently delete your account. This cannot be undone.
-                  </p>
+                    {t('permanentlyDeleteYourAccount')}</p>
                   <DeleteAccountModal onConfirm={handleDeleteAccount} />
                 </div>
               )}

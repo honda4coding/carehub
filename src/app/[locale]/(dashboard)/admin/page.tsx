@@ -113,7 +113,7 @@ export default function AdminDashboard() {
     <div className="flex flex-col flex-1 min-h-screen">
       <Topbar 
         title={t('dashboardOverview')} 
-        subtitle="Welcome back. Here is what's happening today."
+        subtitle={t('welcomeBackHereIs')}
         rightElement={<NotificationBell basePath="/admin/notifications" />}
       />
 

@@ -6,8 +6,10 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import { CurrentQueue } from "@/components/doctor/dashboard/CurrentQueue";
 import { fetchClient } from "@/services/fetchClient";
 import VitalsModal from "@/components/assistant/VitalsModal";
+import { useTranslations } from "next-intl";
 
 export default function AssistantVitalsPage() {
+    const t = useTranslations("auto");
   const { user } = useAuth();
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -88,7 +90,7 @@ export default function AssistantVitalsPage() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
-      <DashboardHeader title="Update Vitals" subtitle="Record vitals for patients in the queue" />
+      <DashboardHeader title={t('updateVitals')} subtitle={t('recordVitalsForPatients')} />
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
         <div className="max-w-7xl mx-auto space-y-6">
           <CurrentQueue 

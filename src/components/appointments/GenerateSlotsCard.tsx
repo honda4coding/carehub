@@ -53,7 +53,7 @@ export default function GenerateSlotsCard({
 
   async function handleGenerate() {
     if (!generateRange.startDate || !generateRange.endDate) {
-      onToast("Please pick a start and end date", "error");
+      onToast(t('pleasePickAStart'), "error");
       return;
     }
     setGenerating(true);
@@ -77,7 +77,7 @@ export default function GenerateSlotsCard({
     try {
       await deleteSlot(slotId);
       setMySlots((prev) => prev.filter((s) => s._id !== slotId));
-      onToast("Slot removed", "success");
+      onToast(t('slotRemoved'), "success");
     } catch (err: any) {
       onToast(err.message || "Could not delete slot", "error");
     } finally {
@@ -90,7 +90,7 @@ export default function GenerateSlotsCard({
       await Promise.all(slots.map((s) => deleteSlot(s._id)));
       const deletedIds = new Set(slots.map((s) => s._id));
       setMySlots((prev) => prev.filter((s) => !deletedIds.has(s._id)));
-      onToast("All slots for this day removed", "success");
+      onToast(t('allSlotsForThis'), "success");
     } catch (err: any) {
        await loadSlots();
        onToast(err.message || "Could not delete some slots", "error");

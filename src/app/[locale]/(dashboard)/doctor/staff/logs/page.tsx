@@ -7,8 +7,10 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LuArrowLeft, LuClock, LuUser, LuExternalLink } from "react-icons/lu";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function StaffLogsPage() {
+    const t = useTranslations("auto");
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -29,12 +31,11 @@ export default function StaffLogsPage() {
     return (
         <div className="flex flex-col min-h-screen">
             <DashboardHeader 
-                title="Activity Logs" 
-                subtitle="Monitor all actions performed by your clinic staff"
+                title={t('activityLogs')} 
+                subtitle={t('monitorAllActionsPerformed')}
                 rightElement={
                     <Button variant="secondary" size="sm" href="/doctor/staff" icon={LuArrowLeft}>
-                        Back to Staff
-                    </Button>
+                        {t('backToStaff')}</Button>
                 }
             />
 
@@ -46,8 +47,7 @@ export default function StaffLogsPage() {
                                 [1, 2, 3].map(i => <div key={i} className="h-16 bg-[hsl(var(--color-bg-soft))] rounded-xl animate-pulse" />)
                             ) : logs.length === 0 ? (
                                 <div className="text-center py-10 text-[hsl(var(--color-text-muted))]">
-                                    No activity logs found.
-                                </div>
+                                    {t('noActivityLogsFound')}</div>
                             ) : (
                                 logs.map((log) => (
                                     <div key={log._id} className="flex items-start gap-4 p-4 border border-[hsl(var(--color-border))] rounded-xl bg-[hsl(var(--color-bg-soft))]">
@@ -57,7 +57,7 @@ export default function StaffLogsPage() {
                                         <div className="flex-1">
                                             <p className="text-sm font-bold text-[hsl(var(--color-text))]">
                                                 {log.assistantId?.fullName || "Unknown Staff"} 
-                                                <span className="text-[hsl(var(--color-text-muted))] font-normal ml-2">performed action:</span>
+                                                <span className="text-[hsl(var(--color-text-muted))] font-normal ml-2">{t('performedAction')}</span>
                                                 <span className="ml-2 text-[hsl(var(--color-primary))] uppercase">{log.action}</span>
                                             </p>
                                             

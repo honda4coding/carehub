@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Pagination from "@/components/ui/Pagination";
 import { useAuth } from "@/context/AuthContext";
+import { useTranslations } from "next-intl";
 
 interface PatientTableProps {
   patients: any[];
@@ -20,6 +21,7 @@ export default function PatientTable({
   onRecordVitals,
   isAssistant,
 }: PatientTableProps) {
+    const t = useTranslations("auto");
   const { user } = useAuth();
   const canViewHistory = user?.permissions?.canManagePatientsFull || false;
   const showActions = !isAssistant || canViewHistory;
@@ -45,7 +47,7 @@ export default function PatientTable({
         {loading ? (
           <div className="py-12 text-center text-[hsl(var(--color-text-muted))]">
             <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-sm font-bold">Loading patients...</p>
+            <p className="text-sm font-bold">{t('loadingPatients')}</p>
           </div>
         ) : paginatedPatients.length > 0 ? (
           paginatedPatients.map((p) => {
@@ -88,8 +90,7 @@ export default function PatientTable({
                 <div className="grid grid-cols-2 gap-2 mt-2">
                   <div className="bg-[hsl(var(--color-bg-soft))] p-2.5 rounded-xl border border-[hsl(var(--color-border))] border-dashed">
                     <p className="text-[10px] text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-wider mb-1">
-                      First Visit
-                    </p>
+                      {t('firstVisit')}</p>
                     <p className="text-sm font-bold text-[hsl(var(--color-text))] flex items-center gap-1">
                       <LuCalendar className="text-[hsl(var(--color-primary))]" />
                       {p.firstVisit ? new Date(p.firstVisit).toLocaleDateString() : "N/A"}
@@ -97,8 +98,7 @@ export default function PatientTable({
                   </div>
                   <div className="bg-[hsl(var(--color-bg-soft))] p-2.5 rounded-xl border border-[hsl(var(--color-border))] border-dashed">
                     <p className="text-[10px] text-[hsl(var(--color-text-muted))] uppercase font-bold tracking-wider mb-1">
-                      Last Visit
-                    </p>
+                      {t('lastVisit_auzl')}</p>
                     <p className="text-sm font-bold text-[hsl(var(--color-text))] flex items-center gap-1">
                       <LuCalendar className="text-[hsl(var(--color-primary))]" />
                       {p.lastVisit ? new Date(p.lastVisit).toLocaleDateString() : "N/A"}
@@ -112,8 +112,7 @@ export default function PatientTable({
                 <div className="flex items-center justify-between pt-3 mt-1 border-t border-[hsl(var(--color-border-soft))]">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">
-                      Visits:
-                    </span>
+                      {t('visits')}</span>
                     <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-sm font-black text-[hsl(var(--color-text))]">
                       {p.totalVisits}
                     </span>
@@ -123,8 +122,7 @@ export default function PatientTable({
                       onClick={() => onViewHistory && onViewHistory(p)}
                       className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-3 w-full"
                     >
-                      <LuHistory className="text-sm" /> View History
-                    </button>
+                      <LuHistory className="text-sm" /> {t('viewHistory')}</button>
                   )}
                 </div>
               </div>
@@ -133,8 +131,8 @@ export default function PatientTable({
         ) : (
           <div className="py-12 text-center text-[hsl(var(--color-text-muted))]">
             <LuSearch className="text-4xl mb-3 opacity-20 mx-auto" />
-            <p className="text-base font-bold">No patients found</p>
-            <p className="text-sm mt-1">Try adjusting your filters or search term.</p>
+            <p className="text-base font-bold">{t('noPatientsFound')}</p>
+            <p className="text-sm mt-1">{t('tryAdjustingYourFilters')}</p>
           </div>
         )}
       </div>
@@ -153,7 +151,7 @@ export default function PatientTable({
                 >
                   <div className={`flex items-center gap-2 ${h === "Actions" ? "justify-end" : h === "Visits" ? "justify-center" : ""} font-black tracking-wider text-[hsl(var(--color-text-muted))]`}>
                     {h !== "Actions" && h}
-                    {h === "Actions" && <span className="sr-only">Actions</span>}
+                    {h === "Actions" && <span className="sr-only">{t('actions')}</span>}
                   </div>
                 </th>
               ))}
@@ -164,7 +162,7 @@ export default function PatientTable({
               <tr>
                 <td colSpan={showActions ? 6 : 5} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-sm font-bold">Loading patients...</p>
+                  <p className="text-sm font-bold">{t('loadingPatients')}</p>
                 </td>
               </tr>
             ) : paginatedPatients.length > 0 ? (
@@ -232,8 +230,7 @@ export default function PatientTable({
                           onClick={() => onViewHistory && onViewHistory(p)}
                           className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2.5 rounded-xl transition-all inline-flex items-center gap-1.5 ml-auto cursor-pointer"
                         >
-                          <LuHistory className="text-sm" /> View History
-                        </button>
+                          <LuHistory className="text-sm" /> {t('viewHistory')}</button>
                     </td>
                     )}
                   </tr>
@@ -244,8 +241,8 @@ export default function PatientTable({
                 <td colSpan={showActions ? 6 : 5} className="px-5 py-16 text-center text-[hsl(var(--color-text-muted))]">
                   <div className="flex flex-col items-center justify-center">
                     <LuSearch className="text-5xl mb-4 opacity-20" />
-                    <p className="text-base font-bold">No patients found</p>
-                    <p className="text-sm mt-1">Try adjusting your filters or search term.</p>
+                    <p className="text-base font-bold">{t('noPatientsFound')}</p>
+                    <p className="text-sm mt-1">{t('tryAdjustingYourFilters')}</p>
                   </div>
                 </td>
               </tr>
@@ -263,7 +260,7 @@ export default function PatientTable({
         />
         {patients.length > 0 && totalPages <= 1 && (
           <div className="text-center py-2">
-             <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">Showing all {patients.length} patients</span>
+             <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">{t('showingAll')}{patients.length} {t('patients')}</span>
           </div>
         )}
       </div>

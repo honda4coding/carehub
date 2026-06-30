@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { LuX, LuHeartPulse } from 'react-icons/lu';
 import { fetchClient } from '@/services/fetchClient';
+import { useTranslations } from "next-intl";
 
 interface VitalsModalProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface VitalsModalProps {
 }
 
 export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: VitalsModalProps) {
+    const t = useTranslations("auto");
   const [vitals, setVitals] = useState({
     bloodPressure: '',
     heartRate: '',
@@ -53,7 +55,7 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-2 text-[hsl(var(--color-primary))]">
             <LuHeartPulse className="text-xl" />
-            <h2 className="text-xl font-black text-[hsl(var(--color-text))]">Record Vitals</h2>
+            <h2 className="text-xl font-black text-[hsl(var(--color-text))]">{t('recordVitals')}</h2>
           </div>
           <button onClick={onClose} className="p-2 rounded-full hover:bg-[hsl(var(--color-bg-soft))]">
             <LuX />
@@ -74,7 +76,7 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Blood Pressure</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('bloodPressure_ulls')}</label>
               <input
                 type="text"
                 placeholder="120/80"
@@ -84,50 +86,50 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Heart Rate</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('heartRate')}</label>
               <input
                 type="text"
-                placeholder="bpm"
+                placeholder={t('bpm')}
                 value={vitals.heartRate}
                 onChange={(e) => setVitals({ ...vitals, heartRate: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Sugar Level</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('sugarLevel_bg1y')}</label>
               <input
                 type="text"
-                placeholder="mg/dL"
+                placeholder={t('mgdl')}
                 value={vitals.sugarLevel}
                 onChange={(e) => setVitals({ ...vitals, sugarLevel: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Temperature</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('temperature')}</label>
               <input
                 type="text"
-                placeholder="°C / °F"
+                placeholder={t('cF')}
                 value={vitals.temperature}
                 onChange={(e) => setVitals({ ...vitals, temperature: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Weight</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('weight')}</label>
               <input
                 type="text"
-                placeholder="kg / lbs"
+                placeholder={t('kgLbs')}
                 value={vitals.weight}
                 onChange={(e) => setVitals({ ...vitals, weight: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">Height</label>
+              <label className="block text-xs font-bold text-[hsl(var(--color-text-muted))] mb-1 uppercase tracking-wider">{t('height')}</label>
               <input
                 type="text"
-                placeholder="cm"
+                placeholder={t('cm')}
                 value={vitals.height}
                 onChange={(e) => setVitals({ ...vitals, height: e.target.value })}
                 className="w-full px-3 py-2 rounded-xl bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
@@ -137,8 +139,7 @@ export default function VitalsModal({ isOpen, onClose, patient, onSuccess }: Vit
           
           <div className="pt-4 border-t border-[hsl(var(--color-border-soft))] flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={onClose}>
-              Cancel
-            </Button>
+              {t('cancel')}</Button>
             <Button type="submit" variant="primary" disabled={loading}>
               {loading ? 'Saving...' : 'Save Vitals'}
             </Button>

@@ -111,7 +111,7 @@ export default function AdminUserManagementPage() {
     <div className="flex flex-col flex-1 min-h-screen">
       <DashboardHeader
         title={t('userDirectory')}
-        subtitle="Manage all registered accounts and suspension statuses"
+        subtitle={t('manageAllRegisteredAccounts')}
         backPath="/admin"
         rightElement={
           <button
