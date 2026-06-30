@@ -2,6 +2,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { LuChevronLeft } from "react-icons/lu";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface DashboardHeaderProps {
   title: string | React.ReactNode;
@@ -45,11 +46,14 @@ export default function DashboardHeader({
         </div>
       </div>
 
-      {rightElement && (
-        <div className="flex items-center gap-2 shrink-0 w-auto max-w-full overflow-visible pb-1 md:pb-0">
-          {rightElement}
-        </div>
-      )}
+      <div className="flex items-center gap-2 shrink-0 w-auto max-w-full overflow-visible pb-1 md:pb-0">
+        <ThemeToggle />
+        {rightElement && (
+          <div className="flex items-center gap-2">
+            {rightElement}
+          </div>
+        )}
+      </div>
     </header>
   );
 }

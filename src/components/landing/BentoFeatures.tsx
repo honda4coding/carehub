@@ -39,12 +39,13 @@ export default function BentoFeatures() {
               <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
               
               {/* Center AI Brain Image */}
-              <div className="absolute inset-0 mix-blend-multiply opacity-90 group-hover:scale-105 transition-transform duration-500 pointer-events-none">
+              <div className="absolute inset-0 opacity-80 group-hover:scale-100 transition-transform duration-700 pointer-events-none">
                 <Image 
                   src="/images/ai_brain.png" 
                   alt="AI Medical Brain" 
                   fill 
-                  className="object-cover object-center"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover object-center rounded-3xl"
                 />
               </div>
 
@@ -52,9 +53,9 @@ export default function BentoFeatures() {
               <div className="absolute top-0 left-1/2 w-full h-full bg-linear-to-b from-transparent to-[hsl(var(--color-primary)/0.2)] border-b-2 border-[hsl(var(--color-primary))] -translate-x-1/2 -translate-y-full group-hover:translate-y-full transition-transform duration-[3s] ease-in-out repeat-infinite pointer-events-none" />
               
               {/* Floating Safe Badge */}
-              <div className="absolute bottom-6 right-6 bg-white px-4 py-2 rounded-full flex items-center gap-2 border border-green-100 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-500">
+              <div className="absolute bottom-6 right-6 bg-[hsl(var(--color-bg-surface))] px-4 py-2 rounded-full flex items-center gap-2 border border-[hsl(var(--color-border))] opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500 delay-500 shadow-sm">
                 <LuCircleCheck className="w-4 h-4 text-success" />
-                <span className="text-xs font-bold text-main">100% Safe</span>
+                <span className="text-xs font-bold text-[hsl(var(--color-text))]">100% Safe</span>
               </div>
             </div>
 
