@@ -45,16 +45,21 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
   const [clinic, setClinic] = useState<Clinic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
+  const [slotsVersion, setSlotsVersion] = useState(0);
   // toast
-  const [toast, setToast] = useState<{ msg: string; variant: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    msg: string;
+    variant: "success" | "error";
+  } | null>(null);
 
   // schedule state
   const [hasSelectedDays, setHasSelectedDays] = useState(false);
 
   // service modal
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingService, setEditingService] = useState<ClinicService | null>(null);
+  const [editingService, setEditingService] = useState<ClinicService | null>(
+    null,
+  );
   const [form, setForm] = useState(EMPTY_SERVICE);
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -103,7 +108,12 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
     setFormError(null);
 
     const priceNum = Number(form.price);
-    if (!form.name.trim() || !form.price.trim() || isNaN(priceNum) || priceNum < 0) {
+    if (
+      !form.name.trim() ||
+      !form.price.trim() ||
+      isNaN(priceNum) ||
+      priceNum < 0
+    ) {
       setFormError("Please enter a valid service name and price.");
       return;
     }
@@ -120,10 +130,10 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             ? {
                 ...prev,
                 services: prev.services.map((s) =>
-                  s._id === editingService._id ? updated : s
+                  s._id === editingService._id ? updated : s,
                 ),
               }
-            : prev
+            : prev,
         );
       } else {
         const created = await addService(clinicId, {
@@ -131,7 +141,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           price: priceNum,
         });
         setClinic((prev) =>
-          prev ? { ...prev, services: [...prev.services, created] } : prev
+          prev ? { ...prev, services: [...prev.services, created] } : prev,
         );
       }
       setModalOpen(false);
@@ -149,8 +159,11 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
       await deleteService(clinicId, deleteTarget._id);
       setClinic((prev) =>
         prev
-          ? { ...prev, services: prev.services.filter((s) => s._id !== deleteTarget._id) }
-          : prev
+          ? {
+              ...prev,
+              services: prev.services.filter((s) => s._id !== deleteTarget._id),
+            }
+          : prev,
       );
       setDeleteTarget(null);
     } catch (err: any) {
@@ -185,7 +198,8 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
       {/* Clinic info header */}
       <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
         <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-          <LuBuilding2 className="text-[hsl(var(--color-primary))]" /> {clinic.name}
+          <LuBuilding2 className="text-[hsl(var(--color-primary))]" />{" "}
+          {clinic.name}
         </h1>
         <div className="flex flex-wrap items-center gap-4 mt-2 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
           <span className="flex items-center gap-1.5">
@@ -263,8 +277,10 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           {/* Left: weekly schedule */}
           <ScheduleSetup
             clinicId={clinicId}
+            doctorId={doctorId}
             onToast={(msg, variant) => setToast({ msg, variant })}
             onSelectedDaysChange={setHasSelectedDays}
+            onDayDeleted={() => setSlotsVersion((v) => v + 1)}
           />
 
           {/* Right: generate + open slots */}
@@ -273,6 +289,7 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             doctorId={doctorId}
             hasSelectedDays={hasSelectedDays}
             onToast={(msg, variant) => setToast({ msg, variant })}
+            slotsVersion={slotsVersion}
           />
         </div>
       </section>
@@ -346,7 +363,11 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
                   disabled={saving}
                   className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] text-white text-[13px] font-bold hover:opacity-90 disabled:opacity-60 transition-opacity"
                 >
-                  {saving ? "Saving…" : editingService ? "Save Changes" : "Add Service"}
+                  {saving
+                    ? "Saving…"
+                    : editingService
+                      ? "Save Changes"
+                      : "Add Service"}
                 </button>
               </div>
             </form>

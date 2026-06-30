@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { LuBuilding2, LuCalendarDays, LuClock, LuPencil } from "react-icons/lu";
 
 import { Availability, getClinicAvailability } from "@/services/appointmentService";
@@ -21,19 +20,16 @@ interface Props {
   clinicName?: string;
   clinicAddress?: string;
   onLoaded?: (hasAvailability: boolean) => void;
+  onEdit?: () => void;
 }
 
-/**
- * Read-only summary of a clinic's weekly schedule.
- * Editing happens on the clinic details page — this card just links there.
- */
 export default function ClinicScheduleCard({
   clinicId,
   clinicName,
   clinicAddress,
   onLoaded,
+  onEdit,
 }: Props) {
-  const router = useRouter();
   const [availability, setAvailabilityList] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -46,7 +42,7 @@ export default function ClinicScheduleCard({
         setAvailabilityList(data);
         if (onLoaded) onLoaded(data.length > 0);
       } catch {
-        // silent — this is just a summary view
+        // silent
       } finally {
         setLoading(false);
       }
@@ -80,13 +76,7 @@ export default function ClinicScheduleCard({
         </div>
 
         <button
-          onClick={() => {
-            if (window.location.pathname.includes('/assistant')) {
-              router.push(`/assistant/clinics/${clinicId}`);
-            } else {
-              router.push(`/doctor/clinics/${clinicId}`);
-            }
-          }}
+          onClick={() => onEdit?.()}
           className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/0.3)] px-3 py-1.5 rounded-xl hover:bg-[hsl(var(--color-primary)/0.08)] transition-colors cursor-pointer shrink-0"
         >
           <LuPencil className="text-[12px]" /> Edit
@@ -107,7 +97,7 @@ export default function ClinicScheduleCard({
             No working days set yet for this clinic.
           </p>
           <button
-            onClick={() => router.push(`/doctor/clinics/${clinicId}`)}
+            onClick={() => onEdit?.()}
             className="text-[12px] font-bold text-[hsl(var(--color-primary))] mt-2 cursor-pointer"
           >
             Set it up →

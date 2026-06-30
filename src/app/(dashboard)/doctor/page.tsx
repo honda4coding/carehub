@@ -91,7 +91,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const fetchCurrentQueue = async () => {
     if (!token) return;
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.get(`${baseUrl}/doctor/session`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -156,7 +156,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     setShowSearchResults(true);
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.get(`${baseUrl}/doctor/search-patient?searchTerm=${searchQuery}`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -185,7 +185,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
   const handleRequestAccess = async (patient: any) => {
 
     try{
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.post(`${baseUrl}/doctor/session/request`, {
         patientId: patient._id,
       }, {
@@ -270,7 +270,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
   const handleCancelRequest = async (sessionId: string) => {
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       await axios.delete(`${baseUrl}/doctor/session/${sessionId}/cancel`, {
         headers: {
           Authorization: `Bearer ${token}`
@@ -287,7 +287,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     if (!selectedSession || currentOtp.length !== 6) return;
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       await axios.post(`${baseUrl}/doctor/session/verify`, {
         sessionId: selectedSession,
         otp: currentOtp
@@ -329,7 +329,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
     if (!token) return;
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.post(`${baseUrl}/doctor/session/request`, {
         isOfflinePatient: true,
         guestName: walkInName,
