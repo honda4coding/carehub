@@ -681,5 +681,16 @@
   "Vitals": "العناصر الحيوية",
   "Encounter": "يقابل",
   "Main": "رئيسي",
-  "Settings": "إعدادات"
+  "Settings": "إعدادات",
+  "Management": "إدارة",
+  "System": "نظام",
+  "Resources": "موارد",
+  "Medical": "طبي",
+  "Directory": "دليل",
+  "DoctorLicenses": "تراخيص الطبيب",
+  "Reports": "التقارير",
+  "PersonalTracking": "تتبع شخصي",
+  "VitalsQueue": "قائمة الانتظار الحيوية",
+  "ClinicalQueue": "قائمة الانتظار السريرية",
+  "ReportsAnalytics": "التقارير والتحليلات"
 }

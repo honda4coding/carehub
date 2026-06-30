@@ -681,5 +681,16 @@
   "Vitals": "Vitals",
   "Encounter": "Encounter",
   "Main": "Main",
-  "Settings": "Settings"
+  "Settings": "Settings",
+  "Management": "Management",
+  "System": "System",
+  "Resources": "Resources",
+  "Medical": "Medical",
+  "Directory": "Directory",
+  "DoctorLicenses": "Doctor Licenses",
+  "Reports": "Reports",
+  "PersonalTracking": "Personal Tracking",
+  "VitalsQueue": "Vitals Queue",
+  "ClinicalQueue": "Clinical Queue",
+  "ReportsAnalytics": "Reports & Analytics"
 }
