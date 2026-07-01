@@ -91,7 +91,7 @@ export default function DoctorProfilePage() {
         )}
 
         {/* Content */}
-        {!loading && !error && (
+        {!loading && !error && profile && (
           <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
             {/* ── Left sidebar ── */}
@@ -167,7 +167,7 @@ export default function DoctorProfilePage() {
               )}
               {activeTab === "certificates" && (
                 <CertificateSection
-                  profile={profile}
+                  profile={profile!}
                   onUpdate={(updated) => setProfile(updated)}
                 />
               )}
