@@ -55,6 +55,7 @@ export default function AdminUserManagementPage() {
         limit: PAGE_SIZE,
         ...(roleFilter ? { role: roleFilter } : {}),
         ...(statusFilter ? { status: statusFilter } : {}),
+        ...(debouncedSearch ? { search: debouncedSearch } : {}),
       });
       setUsers(res.data.users);
       setPagination(res.data.pagination);
@@ -63,19 +64,13 @@ export default function AdminUserManagementPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [page, roleFilter, statusFilter]);
+  }, [page, roleFilter, statusFilter, debouncedSearch]);
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
 
-  const visible = debouncedSearch
-    ? users.filter(
-        (u) =>
-          u.fullName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-          u.email.toLowerCase().includes(debouncedSearch.toLowerCase())
-      )
-    : users;
+
 
   async function handleActivate(id: string) {
     setActionBusy((p) => ({ ...p, [id]: true }));
@@ -151,7 +146,7 @@ export default function AdminUserManagementPage() {
           )}
 
           <UsersList
-            users={visible}
+            users={users}
             isLoading={isLoading}
             error={error}
             debouncedSearch={debouncedSearch}

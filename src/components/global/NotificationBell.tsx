@@ -72,9 +72,13 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
       const res = await fetchClient.get("/notifications", {
         params: { limit: "20" },
       });
-      const data = res.data?.notifications ?? [];
+      const resData = res.data ?? {};
+      const data = resData.notifications ?? [];
       setNotifications(data);
-      setUnreadCount(data.filter((n: Notification) => !n.isRead).length);
+      
+      const count = resData.unreadCount ?? data.filter((n: Notification) => !n.isRead).length;
+      setUnreadCount(count);
+      window.dispatchEvent(new CustomEvent("notifications-updated", { detail: count }));
     } catch (err) {
       console.error("Failed to fetch notifications", err);
     } finally {
@@ -90,7 +94,11 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, isRead: true } : n)),
       );
-      setUnreadCount((c) => Math.max(0, c - 1));
+      setUnreadCount((c) => {
+        const newCount = Math.max(0, c - 1);
+        window.dispatchEvent(new CustomEvent("notifications-updated", { detail: newCount }));
+        return newCount;
+      });
       window.dispatchEvent(new Event("notifications-changed"));
     } catch (err) {
       console.error("Failed to mark notification as read", err);
@@ -102,6 +110,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
       await fetchClient.request("/notifications/read-all", { method: "PATCH" });
       setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
       setUnreadCount(0);
+      window.dispatchEvent(new CustomEvent("notifications-updated", { detail: 0 }));
       window.dispatchEvent(new Event("notifications-changed"));
     } catch (err) {
       console.error("Failed to mark all as read", err);

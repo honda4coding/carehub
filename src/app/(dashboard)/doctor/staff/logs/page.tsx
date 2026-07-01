@@ -7,16 +7,21 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LuArrowLeft, LuClock, LuUser, LuExternalLink } from "react-icons/lu";
 import Link from "next/link";
+import Pagination from "@/components/ui/Pagination";
 
 export default function StaffLogsPage() {
     const [logs, setLogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
         const fetchLogs = async () => {
+            setLoading(true);
             try {
-                const res = await fetchClient.get("/doctor/staff/logs");
+                const res = await fetchClient.get(`/doctor/staff/logs?page=${page}&limit=10`);
                 setLogs(res.data || []);
+                setTotalPages(res.pages || 1);
             } catch (err) {
                 console.error("Failed to load logs", err);
             } finally {
@@ -24,7 +29,7 @@ export default function StaffLogsPage() {
             }
         };
         fetchLogs();
-    }, []);
+    }, [page]);
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -97,6 +102,16 @@ export default function StaffLogsPage() {
                                         </div>
                                     </div>
                                 ))
+                            )}
+
+                            {!loading && totalPages > 1 && (
+                                <div className="mt-8">
+                                    <Pagination 
+                                        currentPage={page} 
+                                        totalPages={totalPages} 
+                                        onPageChange={(p) => setPage(p)} 
+                                    />
+                                </div>
                             )}
                         </div>
                     </Card>

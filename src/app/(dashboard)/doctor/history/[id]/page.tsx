@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { 
-  LuArrowLeft, LuHistory, LuCalendar, LuStethoscope, LuFileText, LuChevronDown, LuChevronUp, LuSearch, LuArrowDownUp
+  LuArrowLeft, LuHistory, LuCalendar, LuStethoscope, LuFileText, LuChevronDown, LuChevronUp, LuSearch, LuArrowDownUp, LuLoader
 } from "react-icons/lu";
 import MedicalHistoryCard from "@/components/shared/MedicalHistoryCard";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { useAuth } from "@/context/AuthContext";
+import { useDebounce } from "@/hooks/useDebounce";
 
 function HistoryCard({ item, index }: { item: any; index: number }) {
   const [expanded, setExpanded] = useState(false);
@@ -79,79 +80,81 @@ function OnlinePatientHistoryContent() {
   const router = useRouter();
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const token = Cookies.get("auth_token");
   const { role } = useAuth();
 
-  // Advanced Filters
+  // Server-side Filters
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateFilter, setDateFilter] = useState("");
-  const [sortOrder, setSortOrder] = useState<"newest" | "oldest">("newest");
-  const [visibleCount, setVisibleCount] = useState(10);
+  const debouncedSearch = useDebounce(searchTerm, 400);
+  const [startDateFilter, setStartDateFilter] = useState("");
+  const [endDateFilter, setEndDateFilter] = useState("");
+  const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
 
+  // Pagination state
+  const [page, setPage] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
+  const LIMIT = 10;
+
+  // Reset and refetch when filters change
   useEffect(() => {
+    setPage(1);
+    setHistory([]);
+  }, [debouncedSearch, startDateFilter, endDateFilter, sortOrder]);
+
+  const fetchHistory = useCallback(async (pageNum: number, append: boolean = false) => {
     if (!token || !id) return;
-
-    const fetchHistory = async () => {
-      try {
+    try {
+      if (append) {
+        setLoadingMore(true);
+      } else {
         setLoading(true);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const res = await axios.get(`${baseUrl}/doctor/patient/history?patientId=${id}&limit=1000`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-        setHistory(res.data.data.history || []);
-      } catch (err) {
-        console.error("Failed to fetch history:", err);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchHistory();
-  }, [id, token]);
-
-  const filteredAndSortedHistory = history
-    .filter(item => {
-      const diagMatch = item.diagnosis?.toLowerCase().includes(searchTerm.toLowerCase());
-      const notesMatch = item.notes?.toLowerCase().includes(searchTerm.toLowerCase());
-      const rxTextMatch = item.prescriptionText?.toLowerCase().includes(searchTerm.toLowerCase());
-      const medMatch = item.prescriptions?.some((rx: any) => 
-         rx.medications?.some((m: any) => m.medicineName?.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      let url = `${baseUrl}/doctor/patient/history?patientId=${id}&page=${pageNum}&limit=${LIMIT}&sortOrder=${sortOrder}`;
       
-      const searchMatch = !searchTerm || diagMatch || notesMatch || rxTextMatch || medMatch;
-
-      let dateMatch = true;
-      if (dateFilter) {
-         // item.createdAt is ISO string
-         const itemDate = new Date(item.createdAt).toISOString().split('T')[0];
-         dateMatch = itemDate === dateFilter;
+      if (debouncedSearch) {
+        url += `&search=${encodeURIComponent(debouncedSearch)}`;
+      }
+      if (startDateFilter) {
+        url += `&startDate=${startDateFilter}T00:00:00.000Z`;
+      }
+      if (endDateFilter) {
+        url += `&endDate=${endDateFilter}T23:59:59.999Z`;
       }
 
-      return searchMatch && dateMatch;
-    })
-    .sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
-    });
+      const res = await axios.get(url, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const newHistory = res.data.data.history || [];
+      const pagination = res.data.data.pagination || {};
+      
+      if (append) {
+        setHistory(prev => [...prev, ...newHistory]);
+      } else {
+        setHistory(newHistory);
+      }
+      setTotalRecords(pagination.total || 0);
+      setTotalPages(pagination.totalPages || 1);
+    } catch (err) {
+      console.error("Failed to fetch history:", err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  }, [id, token, debouncedSearch, startDateFilter, endDateFilter, sortOrder]);
 
-  const visibleHistory = filteredAndSortedHistory.slice(0, visibleCount);
-
-  // Infinite Scroll Observer
   useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + document.documentElement.scrollTop 
-        >= document.documentElement.offsetHeight - 200
-      ) {
-        if (visibleCount < filteredAndSortedHistory.length) {
-          setVisibleCount(prev => prev + 10);
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [visibleCount, filteredAndSortedHistory.length]);
+    fetchHistory(page, page > 1);
+  }, [page, fetchHistory]);
+
+  const handleLoadMore = () => {
+    if (page < totalPages) {
+      setPage(prev => prev + 1);
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
@@ -165,45 +168,57 @@ function OnlinePatientHistoryContent() {
         <div className="max-w-4xl mx-auto w-full">
           
           {/* Smart Toolbar */}
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-8 flex flex-col md:flex-row gap-4 items-center">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-8 flex flex-col md:flex-row gap-4 items-center flex-wrap">
             
             {/* Search */}
-            <div className="relative flex-1 w-full">
+            <div className="relative flex-1 min-w-[200px]">
               <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
                 type="text"
-                placeholder="Search diagnosis, notes, medications..."
+                placeholder="Search diagnosis, notes, or medicines..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-[13px] rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] outline-none font-medium text-[hsl(var(--color-text))] focus:border-primary transition-colors"
               />
             </div>
 
-            {/* Date Filter */}
-            <div className="relative w-full md:w-auto">
-              <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]" />
-              <input
-                type="date"
-                value={dateFilter}
-                onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full md:w-auto pl-9 pr-3 py-2.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] outline-none cursor-pointer focus:border-primary transition-colors"
-              />
+            {/* Date Range Filters */}
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]" />
+                <input
+                  type="date"
+                  value={startDateFilter}
+                  onChange={(e) => setStartDateFilter(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] outline-none cursor-pointer focus:border-primary transition-colors"
+                />
+              </div>
+              <span className="text-[hsl(var(--color-text-muted))] font-bold">-</span>
+              <div className="relative">
+                <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]" />
+                <input
+                  type="date"
+                  value={endDateFilter}
+                  onChange={(e) => setEndDateFilter(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] outline-none cursor-pointer focus:border-primary transition-colors"
+                />
+              </div>
             </div>
 
             {/* Sort Toggle */}
             <button 
-              onClick={() => setSortOrder(prev => prev === "newest" ? "oldest" : "newest")}
-              className="w-full md:w-auto flex items-center justify-center gap-2 px-4 py-2.5 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-border))] text-[hsl(var(--color-text))] font-bold text-[12px] rounded-xl border border-[hsl(var(--color-border))] transition-colors"
+              onClick={() => setSortOrder(prev => prev === "desc" ? "asc" : "desc")}
+              className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-border))] text-[hsl(var(--color-text))] font-bold text-[12px] rounded-xl border border-[hsl(var(--color-border))] transition-colors whitespace-nowrap"
             >
               <LuArrowDownUp />
-              {sortOrder === "newest" ? "Newest First" : "Oldest First"}
+              {sortOrder === "desc" ? "Newest First" : "Oldest First"}
             </button>
 
             {/* Clear Filters */}
-            {(searchTerm || dateFilter || sortOrder !== "newest") && (
+            {(searchTerm || startDateFilter || endDateFilter || sortOrder !== "desc") && (
               <button 
-                onClick={() => { setSearchTerm(""); setDateFilter(""); setSortOrder("newest"); }}
-                className="w-full md:w-auto px-4 py-2.5 bg-danger-light hover:bg-danger-light text-danger font-bold text-[12px] rounded-xl border border-red-100 transition-colors"
+                onClick={() => { setSearchTerm(""); setStartDateFilter(""); setEndDateFilter(""); setSortOrder("desc"); }}
+                className="px-4 py-2.5 bg-danger-light hover:bg-danger-light text-danger font-bold text-[12px] rounded-xl border border-red-100 transition-colors whitespace-nowrap"
               >
                 Clear
               </button>
@@ -211,17 +226,46 @@ function OnlinePatientHistoryContent() {
 
           </div>
 
+          {/* Record count indicator */}
+          {!loading && totalRecords > 0 && (
+            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-4">
+              Showing {history.length} of {totalRecords} records
+            </p>
+          )}
+
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
                <p className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Loading medical timeline...</p>
             </div>
-          ) : visibleHistory.length > 0 ? (
-            <div className="relative border-l-2 border-[hsl(var(--color-border))] ml-4 md:ml-6 space-y-8 pb-10">
-              {visibleHistory.map((item, index) => (
-                <HistoryCard key={item._id} item={item} index={index} />
-              ))}
-            </div>
+          ) : history.length > 0 ? (
+            <>
+              <div className="relative border-l-2 border-[hsl(var(--color-border))] ml-4 md:ml-6 space-y-8 pb-10">
+                {history.map((item, index) => (
+                  <HistoryCard key={item._id} item={item} index={index} />
+                ))}
+              </div>
+
+              {/* Load More Button */}
+              {page < totalPages && (
+                <div className="flex justify-center mt-6 pb-8">
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                    className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 cursor-pointer text-white font-bold text-[13px] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <LuLoader className="animate-spin" />
+                        Loading...
+                      </>
+                    ) : (
+                      `Load More (${totalRecords - history.length} remaining)`
+                    )}
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl">
               <LuHistory className="text-6xl text-[hsl(var(--color-text-muted))] opacity-20 mb-4" />

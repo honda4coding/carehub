@@ -43,9 +43,11 @@ export default function NotificationsPage() {
           search: debouncedFilter
         },
       });
-      setNotifications(res.data?.notifications ?? []);
-      setServerUnreadCount(res.data?.unreadCount ?? 0);
-      setTotalPages(res.data?.pagination?.totalPages || 1);
+      const resData = res.data ?? {};
+      setNotifications(resData.notifications ?? []);
+      const pagination = resData.pagination ?? {};
+      setServerUnreadCount(resData.unreadCount ?? 0);
+      setTotalPages(pagination.totalPages || 1);
     } catch (err) {
       console.error("Failed to fetch notifications", err);
     } finally {
@@ -122,11 +124,15 @@ export default function NotificationsPage() {
           />
         </div>
         
-        <Pagination 
-          currentPage={page} 
-          totalPages={totalPages} 
-          onPageChange={setPage} 
-        />
+        {!loading && totalPages > 1 && (
+          <div className="mt-8">
+            <Pagination 
+              currentPage={page} 
+              totalPages={totalPages} 
+              onPageChange={setPage} 
+            />
+          </div>
+        )}
       </div>
         </div>
       </div>
