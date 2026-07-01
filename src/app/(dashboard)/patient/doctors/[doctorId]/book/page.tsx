@@ -106,7 +106,7 @@ export default function BookAppointmentPage() {
         // Only block days where the patient already has a non-cancelled
         // appointment with THIS SAME doctor — other doctors are unaffected.
         const booked = new Set(
-          (myAppts as any[])
+          (myAppts.data || [])
             .filter((a) => {
               const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
               return apptDoctorId === doctorId && a.status !== "cancelled";
