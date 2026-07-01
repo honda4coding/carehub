@@ -45,7 +45,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
             }
           })
-          .catch(err => console.error("Failed to fetch updated profile:", err));
+          .catch(err => {
+            console.error("Failed to fetch updated profile:", err);
+            if (err.message.includes("jwt") || err.message.includes("expired") || err.message.includes("401")) {
+              Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
+              Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
+              localStorage.removeItem(USER_STORAGE_KEY);
+              setToken(null);
+              setRole(null);
+              setUser(null);
+              router.push('/login');
+            }
+          });
       }
     } catch (error) {
       console.error("Auth hydration error:", error);

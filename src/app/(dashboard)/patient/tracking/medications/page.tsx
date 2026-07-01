@@ -11,6 +11,7 @@ import {
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
+import MedicationScheduleModal from "@/components/patients/MedicationScheduleModal";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -56,6 +57,7 @@ export default function MedicationTrackingPage() {
     const [summary, setSummary] = useState<Summary | null>(null);
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
+    const [scheduleModalData, setScheduleModalData] = useState<any>(null);
     const router = useRouter();
 
     const fetchAllData = async () => {
@@ -257,7 +259,7 @@ export default function MedicationTrackingPage() {
                                             </div>
                                         </div>
                                         
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex flex-wrap items-center gap-2">
                                             {med.hasTrackedToday ? (
                                                 <div className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] font-medium rounded-xl border border-[hsl(var(--color-border))]">
                                                     <FiCheckCircle size={18} /> Tracked Today
@@ -280,6 +282,13 @@ export default function MedicationTrackingPage() {
                                                     </button>
                                                 </>
                                             )}
+                                            
+                                            <button 
+                                                onClick={() => setScheduleModalData(med)}
+                                                className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold rounded-xl transition-colors cursor-pointer border border-[hsl(var(--color-border))] shadow-sm"
+                                            >
+                                                ⏰ Set Alarm
+                                            </button>
                                         </div>
                                     </div>
 
@@ -401,6 +410,25 @@ export default function MedicationTrackingPage() {
                     </div>
                 </div>
             </div>
+            
+            <MedicationScheduleModal 
+                isOpen={!!scheduleModalData}
+                onClose={() => setScheduleModalData(null)}
+                medication={scheduleModalData}
+                onSave={async (schedule) => {
+                    try {
+                        const token = Cookies.get(AUTH_COOKIE_NAME);
+                        if (!token) return;
+                        await axios.post(`${BASE_URL}/patient/medication-schedule`, schedule, {
+                            headers: { Authorization: `Bearer ${token}` }
+                        });
+                        // Optional: Show success toast
+                    } catch (err) {
+                        console.error("Failed to save schedule", err);
+                        throw err; // Pass error to modal so it stops saving state
+                    }
+                }}
+            />
         </div>
     );
 }
