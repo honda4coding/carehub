@@ -10,8 +10,8 @@ export interface DoctorApproval {
   email: string;
   status: ApprovalStatus;
   specialty?: string | null;
-  licenseUrl?: string;
-  nationalIdUrl?: string;
+  licenseUrl?: string | null;
+  nationalIdUrl?: string | null;
   createdAt: string;
 }
 
