@@ -8,6 +8,7 @@ import { LuActivity } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -85,6 +86,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
             {isLoading ? (
               <div className="w-20 h-8 bg-soft animate-pulse rounded-full" />
             ) : !isAuthenticated ? (

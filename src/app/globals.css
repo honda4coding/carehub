@@ -38,6 +38,226 @@
     --color-border-soft: 215 16% 47% / 0.07;
   }
 
+  .dark {
+    /* Backgrounds */
+    --color-bg: 222 47% 5%; /* very dark blue app background */
+    --color-bg-surface: 222 47% 8%; /* cards / sections slightly lighter */
+    --color-bg-surface-hover: 222 47% 12%; /* hover state */
+
+    /* Text */
+    --color-text: 210 40% 98%; /* white text */
+    --color-text-muted: 215 20% 65%; /* light gray secondary text */
+    --color-text-inverse: 222 47% 11%; /* dark text for contrast */
+
+    /* Primary (kept similar cyan but slightly adjusted for dark mode) */
+    --color-primary: 195 75% 50%;
+    --color-primary-strong: 195 85% 60%;
+
+    /* Secondary */
+    --color-secondary: 330 80% 65%;
+    --color-secondary-strong: 330 85% 75%;
+
+    /* Status colors */
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 12%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 15%;
+    --color-danger: 0 84% 65%;
+    --color-danger-bg: 0 80% 15%;
+
+    /* Indigo */
+    --color-indigo: 245 58% 65%;
+    --color-indigo-bg: 245 58% 15%;
+
+    /* Borders */
+    --color-border: 215 16% 47% / 0.25;
+    --color-border-soft: 215 16% 47% / 0.15;
+  }
+
+  .theme-nature {
+    --color-bg: 120 20% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 120 20% 95%;
+    --color-text: 120 30% 15%;
+    --color-text-muted: 120 15% 45%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 140 60% 45%;
+    --color-primary-strong: 140 65% 35%;
+    --color-secondary: 30 70% 55%;
+    --color-secondary-strong: 30 75% 45%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 120 15% 45% / 0.15;
+    --color-border-soft: 120 15% 45% / 0.08;
+  }
+
+  .theme-ocean {
+    --color-bg: 210 50% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 210 50% 95%;
+    --color-text: 220 50% 15%;
+    --color-text-muted: 220 20% 50%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 210 90% 50%;
+    --color-primary-strong: 210 95% 40%;
+    --color-secondary: 180 70% 45%;
+    --color-secondary-strong: 180 75% 35%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 220 20% 50% / 0.15;
+    --color-border-soft: 220 20% 50% / 0.08;
+  }
+
+  .theme-sunset {
+    --color-bg: 30 50% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 30 50% 95%;
+    --color-text: 20 50% 15%;
+    --color-text-muted: 20 20% 50%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 15 90% 55%;
+    --color-primary-strong: 15 95% 45%;
+    --color-secondary: 40 90% 50%;
+    --color-secondary-strong: 40 95% 40%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 20 20% 50% / 0.15;
+    --color-border-soft: 20 20% 50% / 0.08;
+  }
+
+  .theme-rose {
+    --color-bg: 340 50% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 340 50% 95%;
+    --color-text: 340 50% 15%;
+    --color-text-muted: 340 20% 50%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 340 80% 60%;
+    --color-primary-strong: 340 85% 50%;
+    --color-secondary: 310 70% 55%;
+    --color-secondary-strong: 310 75% 45%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 340 20% 50% / 0.15;
+    --color-border-soft: 340 20% 50% / 0.08;
+  }
+
+  .theme-violet {
+    --color-bg: 270 50% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 270 50% 95%;
+    --color-text: 270 50% 15%;
+    --color-text-muted: 270 20% 50%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 270 80% 60%;
+    --color-primary-strong: 270 85% 50%;
+    --color-secondary: 300 70% 55%;
+    --color-secondary-strong: 300 75% 45%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 270 20% 50% / 0.15;
+    --color-border-soft: 270 20% 50% / 0.08;
+  }
+
+  .theme-monochrome {
+    --color-bg: 0 0% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 0 0% 95%;
+    --color-text: 0 0% 15%;
+    --color-text-muted: 0 0% 50%;
+    --color-text-inverse: 0 0% 100%;
+    --color-primary: 0 0% 20%;
+    --color-primary-strong: 0 0% 10%;
+    --color-secondary: 0 0% 40%;
+    --color-secondary-strong: 0 0% 30%;
+    --color-success: 142 60% 45%;
+    --color-success-bg: 142 60% 94%;
+    --color-warning: 38 90% 50%;
+    --color-warning-bg: 38 90% 93%;
+    --color-danger: 0 84% 60%;
+    --color-danger-bg: 0 100% 95%;
+    --color-indigo: 245 58% 60%;
+    --color-indigo-bg: 245 58% 95%;
+    --color-border: 0 0% 50% / 0.15;
+    --color-border-soft: 0 0% 50% / 0.08;
+  }
+
+  .theme-cyberpunk {
+    --color-bg: 280 80% 5%;
+    --color-bg-surface: 280 80% 10%;
+    --color-bg-surface-hover: 280 80% 15%;
+    --color-text: 60 100% 80%;
+    --color-text-muted: 60 50% 60%;
+    --color-text-inverse: 280 80% 5%;
+    --color-primary: 320 100% 60%;
+    --color-primary-strong: 320 100% 50%;
+    --color-secondary: 180 100% 50%;
+    --color-secondary-strong: 180 100% 40%;
+    --color-success: 142 100% 50%;
+    --color-success-bg: 142 100% 15%;
+    --color-warning: 40 100% 50%;
+    --color-warning-bg: 40 100% 15%;
+    --color-danger: 0 100% 60%;
+    --color-danger-bg: 0 100% 15%;
+    --color-indigo: 280 100% 70%;
+    --color-indigo-bg: 280 100% 15%;
+    --color-border: 320 100% 60% / 0.3;
+    --color-border-soft: 320 100% 60% / 0.1;
+  }
+
+  .theme-midnight {
+    --color-bg: 230 60% 4%;
+    --color-bg-surface: 230 60% 7%;
+    --color-bg-surface-hover: 230 60% 11%;
+    --color-text: 210 20% 90%;
+    --color-text-muted: 210 20% 60%;
+    --color-text-inverse: 230 60% 4%;
+    --color-primary: 210 100% 60%;
+    --color-primary-strong: 210 100% 70%;
+    --color-secondary: 260 100% 65%;
+    --color-secondary-strong: 260 100% 75%;
+    --color-success: 142 70% 50%;
+    --color-success-bg: 142 70% 15%;
+    --color-warning: 38 90% 55%;
+    --color-warning-bg: 38 90% 15%;
+    --color-danger: 0 84% 65%;
+    --color-danger-bg: 0 100% 15%;
+    --color-indigo: 245 58% 65%;
+    --color-indigo-bg: 245 58% 15%;
+    --color-border: 210 20% 50% / 0.2;
+    --color-border-soft: 210 20% 50% / 0.1;
+  }
+
   body {
     background-color: hsl(var(--color-bg));
     color: hsl(var(--color-text));
