@@ -44,6 +44,7 @@ export const adminService = {
     if (params.limit) query.limit = String(params.limit);
     if (params.role) query.role = params.role;
     if(params.status) query.status = params.status;
+    if(params.search) query.search = params.search;
     return fetchClient.get("/admin/users", { method: "GET" , params: query });
   },
 
@@ -70,10 +71,13 @@ export const adminService = {
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
-  getDoctors: (status?:DoctorApprovalStatus | ""): Promise<GetDoctorsResponse> =>{
-    const params : Record<string,string> = {};
-    if(status) params.status = status;
-    return fetchClient.get("/admin/doctors", { params });
+  getDoctors: (params: { status?: string, page?: number, limit?: number, search?: string } = {}): Promise<GetDoctorsResponse> => {
+    const query: Record<string, string> = {};
+    if (params.status) query.status = params.status;
+    if (params.page) query.page = String(params.page);
+    if (params.limit) query.limit = String(params.limit);
+    if (params.search) query.search = params.search;
+    return fetchClient.get("/admin/doctors", { params: query });
   },
 
   getPendingDoctors: (startDate?: string, endDate?: string): Promise<GetPendingDoctorsResponse> => {

@@ -9,6 +9,7 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import ApprovalsFilters, { ApprovalStatus } from "@/components/admin/approvals/ApprovalsFilters";
 import ApprovalsList, { DoctorApproval } from "@/components/admin/approvals/ApprovalsList";
 import RejectDoctorModal from "@/components/admin/approvals/RejectDoctorModal";
+import { adminService } from "@/services/adminService";
 
 const ITEMS_PER_PAGE = 10;
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -41,14 +42,20 @@ export default function ApprovalsPage() {
     url: null,
   });
 
+  const [pagination, setPagination] = useState<{ totalPages: number; currentPage: number; totalRecords: number } | null>(null);
+
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/admin/doctors`, {
-          headers: { Authorization: `Bearer ${token}` },
+        setLoading(true);
+        const res = await adminService.getDoctors({
+          status: activeTab === "all" ? undefined : activeTab,
+          page: currentPage,
+          limit: ITEMS_PER_PAGE,
+          search: filter,
         });
-        const json = await res.json();
-        setDoctors(json.data || []);
+        setDoctors(res.data || []);
+        setPagination(res.pagination ?? null);
       } catch (err) {
         console.error("Failed to fetch doctors", err);
       } finally {
@@ -57,7 +64,7 @@ export default function ApprovalsPage() {
     };
 
     if (token) fetchDoctors();
-  }, [token]);
+  }, [token, activeTab, currentPage, filter]);
 
   const handleApprove = async (id: string) => {
     setActionLoadingId(id);
@@ -125,20 +132,6 @@ export default function ApprovalsPage() {
     }
   };
 
-  const filtered = doctors
-    .filter((d) => activeTab === "all" || d.status === activeTab)
-    .filter(
-      (d) =>
-        (d.fullName ?? "").toLowerCase().includes(filter.toLowerCase()) ||
-        (d.specialty ?? "").toLowerCase().includes(filter.toLowerCase())
-    );
-
-  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
-  const paginatedVisible = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
   const tabCounts = doctors.reduce<Record<string, number>>(
     (acc, d) => ({ ...acc, [d.status]: (acc[d.status] ?? 0) + 1 }),
     {}
@@ -157,12 +150,12 @@ export default function ApprovalsPage() {
             setActiveTab={setActiveTab}
             filter={filter}
             setFilter={setFilter}
-            totalDoctors={doctors.length}
+            totalDoctors={pagination?.totalRecords ?? 0}
             tabCounts={tabCounts}
           />
 
           <ApprovalsList
-            doctors={paginatedVisible}
+            doctors={doctors}
             loading={loading}
             actionLoadingId={actionLoadingId}
             setLicenseModal={setLicenseModal}
@@ -171,11 +164,11 @@ export default function ApprovalsPage() {
             handleResetToPending={handleResetToPending}
           />
 
-          {!loading && filtered.length > ITEMS_PER_PAGE && (
+          {!loading && pagination && pagination.totalPages > 1 && (
             <div className="mt-4">
               <Pagination
                 currentPage={currentPage}
-                totalPages={totalPages}
+                totalPages={pagination.totalPages}
                 onPageChange={setCurrentPage}
               />
             </div>

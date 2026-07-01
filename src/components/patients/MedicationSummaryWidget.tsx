@@ -56,12 +56,18 @@ export default function MedicationSummaryWidget() {
 
     if (!summary || summary.activeMedicationsCount === 0) {
         return (
-            <Card className="p-5 flex flex-col items-center justify-center text-center">
+            <Card 
+                className="p-5 flex flex-col items-center justify-center text-center cursor-pointer hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                onClick={() => router.push("/patient/tracking/medications")}
+            >
                 <div className="w-16 h-16 bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center rounded-full mb-3">
                     <LuPill size={32} />
                 </div>
                 <h3 className="text-[hsl(var(--color-text))] font-bold text-lg mb-1">Medications</h3>
                 <p className="text-sm text-[hsl(var(--color-text-muted))] mb-4">You have no active medications.</p>
+                <div className="text-[hsl(var(--color-primary))] text-sm font-bold flex items-center gap-1 mt-2">
+                    View Medication History <LuArrowRight />
+                </div>
             </Card>
         );
     }

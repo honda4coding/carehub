@@ -18,6 +18,7 @@ const ITEMS_PER_PAGE = 10;
 
 export default function AdminDoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [pagination, setPagination] = useState<{ totalPages: number; currentPage: number; totalRecords: number } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -51,41 +52,26 @@ export default function AdminDoctorsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await adminService.getDoctors("");
+      const res = await adminService.getDoctors({
+        status: statusFilter,
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        search: debouncedSearch,
+      });
       setDoctors(res.data ?? []);
+      setPagination(res.pagination ?? null);
     } catch (err: any) {
       setError(err?.message ?? "Failed to load doctors. Please try again.");
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [statusFilter, currentPage, debouncedSearch]);
 
   useEffect(() => {
     fetchDoctors();
   }, [fetchDoctors]);
 
-  const visible = doctors.filter((d) => {
-    const matchesSearch = debouncedSearch
-      ? d.fullName.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        (d.specialty ?? "").toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        d.email.toLowerCase().includes(debouncedSearch.toLowerCase())
-      : true;
-
-    const matchesStatus = statusFilter ? d.status === statusFilter : true;
-
-    return matchesSearch && matchesStatus;
-  });
-
-  const totalPages = Math.ceil(visible.length / ITEMS_PER_PAGE);
-  const paginatedVisible = visible.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
-  const tabCounts = doctors.reduce<Record<string, number>>(
-    (acc, d) => ({ ...acc, [d.status]: (acc[d.status] ?? 0) + 1 }),
-    {}
-  );
+  const tabCounts = doctors.reduce<Record<string, number>>((acc, d) => ({ ...acc, [d.status]: (acc[d.status] ?? 0) + 1 }), {});
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
@@ -113,7 +99,7 @@ export default function AdminDoctorsPage() {
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             isLoading={isLoading}
-            totalDoctors={doctors.length}
+            totalDoctors={pagination?.totalRecords ?? 0}
             tabCounts={tabCounts}
           />
 
@@ -133,7 +119,7 @@ export default function AdminDoctorsPage() {
           )}
 
           <DoctorsList
-            doctors={paginatedVisible}
+            doctors={doctors}
             isLoading={isLoading}
             error={error}
             debouncedSearch={debouncedSearch}
@@ -142,20 +128,19 @@ export default function AdminDoctorsPage() {
             setModal={setModal}
           />
 
-          {!isLoading && visible.length > ITEMS_PER_PAGE && (
+          {!isLoading && pagination && pagination.totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={pagination.totalPages}
               onPageChange={setCurrentPage}
             />
           )}
 
           {!isLoading &&
             debouncedSearch &&
-            visible.length > 0 &&
-            visible.length < doctors.length && (
+            pagination && (
               <p className="mt-4 text-[11px] font-semibold text-[hsl(var(--color-text-muted))] text-center">
-                Showing {visible.length} of {doctors.length} doctors matching
+                Showing {pagination.totalRecords} doctors matching
                 &ldquo;{debouncedSearch}&rdquo;
               </p>
             )}

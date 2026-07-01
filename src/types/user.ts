@@ -36,6 +36,7 @@ export interface GetUsersResponse {
 export interface GetUsersParams {
   page?: number;
   limit?: number;
-  role?: UserRole | "",
-  status?: UserStatus | ""
+  role?: UserRole | "";
+  status?: UserStatus | "";
+  search?: string;
 }

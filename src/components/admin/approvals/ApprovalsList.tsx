@@ -9,9 +9,9 @@ export interface DoctorApproval {
   fullName: string;
   email: string;
   status: ApprovalStatus;
-  specialty?: string;
-  licenseUrl?: string;
-  nationalIdUrl?: string;
+  specialty?: string | null;
+  licenseUrl?: string | null;
+  nationalIdUrl?: string | null;
   createdAt: string;
 }
 
