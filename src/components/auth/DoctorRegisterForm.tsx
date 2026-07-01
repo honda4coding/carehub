@@ -28,6 +28,9 @@ async function parseErrorMessage(res: Response): Promise<string> {
   const raw = await res.text();
   try {
     const json = JSON.parse(raw);
+    if (json.message === "validation error" && Array.isArray(json.error)) {
+      return json.error.map((e: any) => e.message).join(", ");
+    }
     return json.message || "Something went wrong";
   } catch {
     return raw || "Something went wrong";
@@ -36,6 +39,7 @@ async function parseErrorMessage(res: Response): Promise<string> {
 
 export default function DoctorRegisterForm() {
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   const formik = useFormik<DoctorFormValues>({
     initialValues: {
@@ -54,6 +58,7 @@ export default function DoctorRegisterForm() {
     onSubmit: async (values) => {
       setLoading(true);
       try {
+        setSubmitError("");
         const formData = new FormData();
         formData.append("fullName", values.fullName);
         formData.append("email", values.email);
@@ -80,7 +85,7 @@ export default function DoctorRegisterForm() {
         alert("Registration submitted successfully! Awaiting admin approval.");
 
       } catch (error) {
-        alert(error instanceof Error ? error.message : "Something went wrong");
+        setSubmitError(error instanceof Error ? error.message : "Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -89,6 +94,11 @@ export default function DoctorRegisterForm() {
 
   return (
     <form onSubmit={formik.handleSubmit} className="space-y-6">
+      {submitError && (
+        <div className="p-4 rounded-xl bg-[hsl(var(--color-danger-bg))] border border-[hsl(var(--color-danger))/20] text-[hsl(var(--color-danger))] text-sm font-semibold mb-4">
+          {submitError}
+        </div>
+      )}
       {/* Full Name */}
       <div>
         <Label>Full Name <span className="text-[hsl(var(--color-danger))]">*</span></Label>

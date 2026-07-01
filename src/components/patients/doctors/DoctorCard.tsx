@@ -30,8 +30,8 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 border border-[hsl(var(--color-primary)/0.2)] overflow-hidden">
-          {doctor.profilepicture?.secure_url
-            ? <img src={doctor.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
+          {doctor.userId.profilepicture?.secure_url
+            ? <img src={doctor.userId.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
             : <span className="text-[20px] font-black text-[hsl(var(--color-primary))]">{initials}</span>}
         </div>
         <div className="min-w-0 flex-1">

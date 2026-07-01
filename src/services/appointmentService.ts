@@ -14,11 +14,18 @@ export interface BasicProfile {
 
 export interface DoctorListItem {
   _id: string;
-  userId: { _id: string; fullName: string; email: string; confirmed: boolean; phone?: string; phoneNumber?: string };
+  userId: { _id: string; fullName: string; email: string; confirmed: boolean; phone?: string; phoneNumber?: string; profilepicture?: { secure_url: string; public_id: string } };
   specialization?: string | null;
   experience?: number | null;
   bio?: string | null;
   profilepicture?: { secure_url: string; public_id: string };
+  certificates?: Array<{
+    _id: string;
+    title: string;
+    issuer: string;
+    issueDate?: string;
+    secure_url: string;
+  }>;
 }
 
 // ── CHANGED: أضفنا clinicId populated ────────────────────────────────────────

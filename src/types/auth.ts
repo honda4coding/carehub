@@ -15,6 +15,7 @@ export interface User {
   doctorName?: string;
   clinicId?: string;
   clinicName?: string;
+  profilepicture?: { secure_url: string; public_id: string };
 }
 
 export interface AuthContextType {

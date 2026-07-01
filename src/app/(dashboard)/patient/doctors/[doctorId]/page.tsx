@@ -13,15 +13,24 @@ import { initialsOf } from "@/components/appointments/format";
 import DoctorProfileCard from "@/components/patients/doctors/DoctorProfileCard";
 import DashboardHeader from "@/components/global/DashboardHeader";
 
+import { Clinic, getDoctorClinics } from "@/services/clinicService";
+
 export default function DoctorProfilePage() {
   const { doctorId } = useParams<{ doctorId: string }>();
   const router = useRouter();
   const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
+  const [clinics, setClinics] = useState<Clinic[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getApprovedDoctors()
-      .then((list) => setDoctor(list.find((d) => d.userId._id === doctorId) ?? null))
+    Promise.all([
+      getApprovedDoctors(),
+      getDoctorClinics(doctorId).catch(() => []) // Gracefully fail if no clinics
+    ])
+      .then(([list, fetchedClinics]) => {
+        setDoctor(list.find((d) => d.userId._id === doctorId) ?? null);
+        setClinics(fetchedClinics);
+      })
       .finally(() => setLoading(false));
   }, [doctorId]);
 
@@ -61,6 +70,7 @@ export default function DoctorProfilePage() {
       <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col gap-6">
         <DoctorProfileCard
           doctor={doctor}
+          clinics={clinics}
           onBook={() => router.push(`/patient/doctors/${doctorId}/book`)}
         />
       </main>

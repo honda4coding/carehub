@@ -3,12 +3,13 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ImSpinner2 } from "react-icons/im";
-import { LuUser, LuShieldCheck, LuCamera, LuTrash2 } from "react-icons/lu";
+import { LuUser, LuShieldCheck, LuCamera, LuTrash2, LuAward } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
 import ProfessionalInfoForm from "@/components/doctor/profile/ProfessionalInfoForm";
 import LicenseSection from "@/components/doctor/profile/LicenseSection";
 import DoctorAvatarSection from "@/components/doctor/profile/DoctorAvatarSection";
+import CertificateSection from "@/components/doctor/profile/CertificateSection";
 import DeleteAccountModal from "@/components/shared/DeleteAccountModal";
 
 import {
@@ -18,12 +19,13 @@ import {
   deleteDoctorAccount,
 } from "@/services/doctorService";
 
-type Tab = "profile" | "license" | "avatar" | "danger";
+type Tab = "profile" | "license" | "avatar" | "certificates" | "danger";
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = [
   { id: "profile", label: "Profile",  icon: <LuUser className="w-4 h-4" />,        desc: "Personal info" },
   { id: "license", label: "License",  icon: <LuShieldCheck className="w-4 h-4" />, desc: "Manage license" },
   { id: "avatar",  label: "Photo",    icon: <LuCamera className="w-4 h-4" />,       desc: "Profile picture" },
+  { id: "certificates", label: "Certificates", icon: <LuAward className="w-4 h-4" />, desc: "Achievements" },
   { id: "danger",  label: "Danger",   icon: <LuTrash2 className="w-4 h-4" />,       desc: "Delete account" },
 ];
 
@@ -89,7 +91,7 @@ export default function DoctorProfilePage() {
         )}
 
         {/* Content */}
-        {!loading && !error && (
+        {!loading && !error && profile && (
           <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
             {/* ── Left sidebar ── */}
@@ -162,6 +164,12 @@ export default function DoctorProfilePage() {
               )}
               {activeTab === "avatar" && (
                 <DoctorAvatarSection profile={profile} onUpdate={handleAvatarUpdate} />
+              )}
+              {activeTab === "certificates" && (
+                <CertificateSection
+                  profile={profile!}
+                  onUpdate={(updated) => setProfile(updated)}
+                />
               )}
               {activeTab === "danger" && (
                 <div className="p-6">
