@@ -80,7 +80,11 @@ export const LoginForm = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        setStatus(data.message || "Invalid credentials. Please try again.");
+        let errorMsg = data.message || "Invalid credentials. Please try again.";
+        if (data.message === "validation error" && Array.isArray(data.error)) {
+          errorMsg = data.error.map((e: any) => e.message).join(", ");
+        }
+        setStatus(errorMsg);
         return;
       }
 
@@ -95,6 +99,7 @@ export const LoginForm = () => {
         id: data.data.id,
         email: values.email,
         name: data.data.fullName || data.data.name || values.email,
+        profilepicture: data.data.profilepicture,
         permissions: data.data.permissions,
         doctorId: data.data.doctorId,
         jobTitle: data.data.jobTitle,

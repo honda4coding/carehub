@@ -19,6 +19,13 @@ export interface DoctorListItem {
   experience?: number | null;
   bio?: string | null;
   profilepicture?: { secure_url: string; public_id: string };
+  certificates?: Array<{
+    _id: string;
+    title: string;
+    issuer: string;
+    issueDate?: string;
+    secure_url: string;
+  }>;
 }
 
 // ── CHANGED: أضفنا clinicId populated ────────────────────────────────────────

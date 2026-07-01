@@ -21,8 +21,12 @@ export const DoctorActions = ({
         <div className="bg-gradient-doctor rounded-xl p-5 h-full flex items-center gap-4 text-white relative overflow-hidden">
           <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-2xl"></div>
           <div className="absolute right-12 top-2 w-16 h-16 bg-white/5 rounded-full blur-xl"></div>
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-[22px] font-black border-2 border-white/25 shrink-0">
-            {user?.name?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || "D"}
+          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-[22px] font-black border-2 border-white/25 shrink-0 overflow-hidden relative">
+            {user?.profilepicture?.secure_url ? (
+              <img src={user.profilepicture.secure_url} alt="Doctor" className="w-full h-full object-cover" />
+            ) : (
+              user?.name?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || "D"
+            )}
           </div>
           <div className="flex-1 relative z-10">
             <p className="text-[13px] font-semibold text-white/70 mb-0.5">Welcome back,</p>
