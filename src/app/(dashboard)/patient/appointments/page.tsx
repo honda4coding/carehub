@@ -22,6 +22,7 @@ import ApptTab, { TabType as Tab } from "@/components/appointments/ApptTab";
 import PatientApptCard from "@/components/appointments/PatientApptCard";
 import PayModal from "@/components/appointments/PayModal";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import Pagination from "@/components/ui/Pagination";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -54,21 +55,26 @@ export default function PatientAppointmentsPage() {
   const [cancelling, setCancelling] = useState(false);
   const [payTarget, setPayTarget] = useState<Appointment | null>(null);
 
+  const [paginationInfo, setPaginationInfo] = useState<any>(null);
+  const [page, setPage] = useState(1);
+
   // which "Doctor + Clinic" pair is selected in the left sidebar — null = All
   const [selectedGroupKey, setSelectedGroupKey] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
+      setLoading(true);
       try {
-        const data = await getMyAppointments();
-        setAppointments(data as any);
+        const response = await getMyAppointments({ page, limit: 10 });
+        setAppointments(response.data as any);
+        setPaginationInfo(response.pagination);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [page]);
 
   // Group ALL appointments by doctor + clinic, for the sidebar
   const bookingGroups = useMemo<BookingGroup[]>(() => {
@@ -254,6 +260,16 @@ export default function PatientAppointmentsPage() {
               />
             ) : (
               <div>{grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
+            )}
+
+            {!loading && paginationInfo && paginationInfo.totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={paginationInfo.currentPage}
+                  totalPages={paginationInfo.totalPages}
+                  onPageChange={(p) => setPage(p)}
+                />
+              </div>
             )}
           </div>
         </div>

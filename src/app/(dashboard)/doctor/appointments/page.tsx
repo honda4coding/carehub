@@ -15,6 +15,7 @@ import {
   LuUsers,
 } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import Pagination from "@/components/ui/Pagination";
 
 import { useAuth } from "@/context/AuthContext";
 import {
@@ -65,6 +66,9 @@ export default function DoctorAppointmentsPage() {
   const [tab, setTab] = useState<Tab>("today");
   const [completing, setCompleting] = useState<string | null>(null);
 
+  const [paginationInfo, setPaginationInfo] = useState<any>(null);
+  const [page, setPage] = useState(1);
+
   // ── Clinics sidebar filter ───────────────────────────────────
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [clinicsLoading, setClinicsLoading] = useState(true);
@@ -85,16 +89,18 @@ export default function DoctorAppointmentsPage() {
 
   useEffect(() => {
     (async () => {
+      setApptLoading(true);
       try {
-        const data = await getDoctorAppointments();
-        setAppointments(data);
+        const response = await getDoctorAppointments({ page, limit: 10 });
+        setAppointments(response.data);
+        setPaginationInfo(response.pagination);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
         setApptLoading(false);
       }
     })();
-  }, []);
+  }, [page]);
 
   // Appointments filtered to the selected clinic (or all, if none selected)
   const filteredAppointments = useMemo(() => {
@@ -368,6 +374,16 @@ export default function DoctorAppointmentsPage() {
                   ))}
                 </div>
               )
+            )}
+            
+            {!apptLoading && paginationInfo && paginationInfo.totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={paginationInfo.currentPage}
+                  totalPages={paginationInfo.totalPages}
+                  onPageChange={(p) => setPage(p)}
+                />
+              </div>
             )}
           </>
           </div>

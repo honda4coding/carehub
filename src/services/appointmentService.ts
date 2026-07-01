@@ -168,14 +168,31 @@ export async function bookAppointment(slotId: string, reason?: string): Promise<
   return res.data ?? res;
 }
 
-export async function getMyAppointments(): Promise<MyAppointment[]> {
-  const res = await fetchClient.get(`${APPOINTMENTS_BASE}/my-appointments`);
-  return res.data ?? res;
+export interface AppointmentsResponse<T> {
+  data: T[];
+  pagination?: {
+    totalPages: number;
+    currentPage: number;
+    totalRecords: number;
+  };
 }
 
-export async function getDoctorAppointments(): Promise<Appointment[]> {
-  const res = await fetchClient.get(`${APPOINTMENTS_BASE}/doctor-appointments`);
-  return res.data ?? res;
+export async function getMyAppointments(params?: { page?: number; limit?: number }): Promise<AppointmentsResponse<MyAppointment>> {
+  const query = new URLSearchParams();
+  if (params?.page) query.append("page", params.page.toString());
+  if (params?.limit) query.append("limit", params.limit.toString());
+  
+  const res = await fetchClient.get(`${APPOINTMENTS_BASE}/my-appointments?${query.toString()}`);
+  return { data: res.data ?? res, pagination: res.pagination };
+}
+
+export async function getDoctorAppointments(params?: { page?: number; limit?: number }): Promise<AppointmentsResponse<Appointment>> {
+  const query = new URLSearchParams();
+  if (params?.page) query.append("page", params.page.toString());
+  if (params?.limit) query.append("limit", params.limit.toString());
+
+  const res = await fetchClient.get(`${APPOINTMENTS_BASE}/doctor-appointments?${query.toString()}`);
+  return { data: res.data ?? res, pagination: res.pagination };
 }
 
 export async function cancelAppointment(appointmentId: string): Promise<void> {

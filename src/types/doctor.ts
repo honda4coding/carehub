@@ -51,4 +51,9 @@ export interface Doctor {
 export interface GetDoctorsResponse {
   message?: string;
   data: Doctor[];
+  pagination?: {
+    totalPages: number;
+    currentPage: number;
+    totalRecords: number;
+  };
 }

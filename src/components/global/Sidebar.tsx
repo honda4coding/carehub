@@ -706,12 +706,19 @@ export default function Sidebar({ role }: { role: string }) {
     // Poll every 30s as a fallback (mirrors NotificationBell's polling interval)
     const interval = setInterval(fetchUnreadCount, 30_000);
 
+    const handleNotificationsUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<number>;
+      setUnreadNotifications(customEvent.detail > 0 ? customEvent.detail : null);
+    };
+
     // Also re-fetch instantly whenever NotificationBell or the notifications
     // page emits "notifications-changed" after a mark-as-read action
     window.addEventListener("notifications-changed", fetchUnreadCount);
+    window.addEventListener("notifications-updated", handleNotificationsUpdated);
     return () => {
       clearInterval(interval);
       window.removeEventListener("notifications-changed", fetchUnreadCount);
+      window.removeEventListener("notifications-updated", handleNotificationsUpdated);
     };
   }, [fetchUnreadCount]);
 
