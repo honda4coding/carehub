@@ -9,6 +9,7 @@ export interface PrescriptionTabProps {
   frequency: string; setFrequency: (val: string) => void;
   duration: string; setDuration: (val: string) => void;
   patientComplaint: string;
+  patientId?: string;
   instructions: string; setInstructions: (val: string) => void;
   handleAddDrug: () => void;
   removeDrug: (id: string) => void;
@@ -31,6 +32,7 @@ export default function PrescriptionTab({
   frequency, setFrequency,
   duration, setDuration,
   patientComplaint,
+  patientId,
   instructions, setInstructions,
   handleAddDrug,
   removeDrug,
@@ -55,6 +57,7 @@ export default function PrescriptionTab({
         frequency={frequency} setFrequency={setFrequency}
         duration={duration} setDuration={setDuration}
         patientComplaint={patientComplaint}
+        patientId={patientId}
         instructions={instructions} setInstructions={setInstructions}
         handleAddDrug={handleAddDrug}
         removeDrug={removeDrug}

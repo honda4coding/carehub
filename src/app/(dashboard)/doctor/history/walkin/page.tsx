@@ -12,64 +12,7 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import { useAuth } from "@/context/AuthContext";
 import { useDebounce } from "@/hooks/useDebounce";
 
-function HistoryCard({ item, index }: { item: any; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const dateStr = new Date(item.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
-  const timeStr = new Date(item.createdAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-
-  return (
-    <div className="relative pl-8 md:pl-10">
-      {/* Timeline Node */}
-      <span className={`absolute -left-[9px] top-1 w-4 h-4 rounded-full ring-4 ring-[hsl(var(--color-bg-surface))] flex items-center justify-center ${index === 0 ? 'bg-primary' : 'bg-[hsl(var(--color-text-muted))]'}`}>
-         {index === 0 && <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />}
-      </span>
-      
-      {/* Card Content */}
-      <div 
-        onClick={() => setExpanded(!expanded)}
-        className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 transition-all cursor-pointer group"
-      >
-        
-        {/* Top Bar */}
-        <div className={`flex flex-wrap items-center justify-between gap-4 ${expanded ? 'border-b border-[hsl(var(--color-border))] pb-4 mb-4' : ''}`}>
-          <div className="flex items-center gap-3">
-            <span className="p-2 rounded-lg bg-[hsl(var(--color-bg-soft))] text-primary group-hover:bg-primary group-hover:text-white transition-colors">
-              <LuCalendar className="text-lg" />
-            </span>
-            <div>
-              <p className="text-[14px] font-black text-[hsl(var(--color-text))]">{dateStr}</p>
-              <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">{timeStr}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3">
-            <button className="text-[hsl(var(--color-text-muted))] p-1 rounded-md hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
-              {expanded ? <LuChevronUp className="text-xl" /> : <LuChevronDown className="text-xl" />}
-            </button>
-          </div>
-        </div>
-
-        {/* Collapsed Preview */}
-        {!expanded && (
-          <div className="mt-3">
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] line-clamp-1 flex items-center gap-2">
-              <LuStethoscope className="text-primary flex-shrink-0" /> 
-              {item.diagnosis || "No diagnosis recorded"}
-            </p>
-          </div>
-        )}
-
-        {/* Expanded Details */}
-        {expanded && (
-          <div className="animate-in fade-in slide-in-from-top-2 duration-200 mt-4 cursor-auto border-t border-[hsl(var(--color-border))] pt-4" onClick={(e) => e.stopPropagation()}>
-            <MedicalHistoryCard record={item} hideHeader={true} />
-          </div>
-        )}
-
-      </div>
-    </div>
-  );
-}
+import TimelineAccordionCard from "@/components/shared/TimelineAccordionCard";
 
 function WalkinHistoryContent() {
   const searchParams = useSearchParams();
@@ -243,7 +186,9 @@ function WalkinHistoryContent() {
             <>
               <div className="relative border-l-2 border-[hsl(var(--color-border))] ml-4 md:ml-6 space-y-8 pb-10">
                 {history.map((item, index) => (
-                  <HistoryCard key={item._id} item={item} index={index} />
+                  <div key={item._id} className="relative pl-4 md:pl-6">
+                    <TimelineAccordionCard record={item} />
+                  </div>
                 ))}
               </div>
 
@@ -253,7 +198,7 @@ function WalkinHistoryContent() {
                   <button
                     onClick={handleLoadMore}
                     disabled={loadingMore}
-                    className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 cursor-pointer text-white font-bold text-[13px] rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 cursor-pointer text-white font-bold text-[13px] rounded-xl transition-colors disabled:opacity-50"
                   >
                     {loadingMore ? (
                       <>
@@ -267,6 +212,7 @@ function WalkinHistoryContent() {
                 </div>
               )}
             </>
+
           ) : (
             <div className="flex flex-col items-center justify-center py-20 text-center bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl">
               <LuHistory className="text-6xl text-[hsl(var(--color-text-muted))] opacity-20 mb-4" />
