@@ -9,7 +9,7 @@ export interface DoctorApproval {
   fullName: string;
   email: string;
   status: ApprovalStatus;
-  specialty?: string;
+  specialty?: string | null;
   licenseUrl?: string;
   nationalIdUrl?: string;
   createdAt: string;
