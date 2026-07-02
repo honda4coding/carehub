@@ -53,3 +53,18 @@ export async function subscribeToPushNotifications() {
     console.error("Failed to register Web Push subscription:", error);
   }
 }
+export async function unsubscribeFromPushNotifications() {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
+    return;
+  }
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      await subscription.unsubscribe();
+      console.log("Unsubscribed from push notifications successfully.");
+    }
+  } catch (error) {
+    console.error("Failed to unsubscribe from push notifications:", error);
+  }
+}

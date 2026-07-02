@@ -6,7 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 
 import { User, AuthContextType } from '@/types/auth';
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
-import { subscribeToPushNotifications } from '@/services/pushNotificationService';
+import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from '@/services/pushNotificationService';
 import { fetchClient } from '@/services/fetchClient';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -85,6 +85,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const logout = () => {
+    // Unsubscribe from push notifications before clearing user data
+    unsubscribeFromPushNotifications().catch(err => console.error("Push unsubscribe error on logout:", err));
+
     setToken(null);
     setRole(null);
     setUser(null);
