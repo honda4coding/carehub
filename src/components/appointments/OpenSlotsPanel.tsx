@@ -138,7 +138,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                  {/* Week Content (Days) */}
                  {expandedWeeks.includes(week.weekNum) && (
                    <div className="p-3 flex flex-col gap-3 border-t border-[hsl(var(--color-border))]">
-                     {week.days.map(day => (
+                     {week.days.map((day: any) => (
                        <div key={day.dayStr} className="border border-[hsl(var(--color-border))] rounded-md overflow-hidden">
                          {/* Day Header */}
                          <button 
