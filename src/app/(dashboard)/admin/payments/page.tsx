@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { 
   LuCreditCard as LuCreditCardIcon, 
   LuTrendingUp as LuTrendingUpIcon, 
-  LuPieChart as LuPieChartIcon, 
+  LuChartPie as LuPieChartIcon, 
   LuActivity as LuActivityIcon, 
   LuCircleAlert as LuCircleAlertIcon 
 } from "react-icons/lu";
