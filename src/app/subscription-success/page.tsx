@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { fetchClient } from "@/services/fetchClient";
 import { LuCircleCheck, LuTriangleAlert } from "react-icons/lu";
 
-export default function SubscriptionSuccessPage() {
+function SubscriptionSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user, updateUser, token, role } = useAuth();
@@ -75,5 +75,13 @@ export default function SubscriptionSuccessPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function SubscriptionSuccessPage() {
+    return (
+        <Suspense fallback={<div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))] items-center justify-center p-4"><div className="w-10 h-10 border-4 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin"></div></div>}>
+            <SubscriptionSuccessContent />
+        </Suspense>
     );
 }

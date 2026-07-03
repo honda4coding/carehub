@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { LuCircleCheck, LuTriangleAlert } from "react-icons/lu";
 
-export default function PaymentCallbackPage() {
+function CallbackContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     
@@ -48,5 +48,17 @@ export default function PaymentCallbackPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function PaymentCallbackPage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))] items-center justify-center p-4">
+                <div className="w-10 h-10 border-4 border-[hsl(var(--color-primary))] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        }>
+            <CallbackContent />
+        </Suspense>
     );
 }
