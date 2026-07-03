@@ -284,7 +284,7 @@ export default function PatientAppointmentsPage() {
         onClose={() => setCancelTarget(null)}
       />
 
-      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} appointmentId={payTarget?._id} />
+      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} appointmentId={payTarget?._id} amount={payTarget?.amount} />
 
       {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
     </div>

@@ -45,6 +45,7 @@ export const fetchClient = {
       ...options,
       credentials: "include",
       headers,
+      cache: "no-store",
     };
 
     let fullUrlString = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint}`;
@@ -54,7 +55,8 @@ export const fetchClient = {
     let finalParams = options.params ? { ...options.params } : {};
     if (typeof window !== "undefined") {
       const activeClinicId = localStorage.getItem('carehub_active_clinic_id');
-      if (activeClinicId && activeClinicId !== "all" && !finalParams.clinicId && !urlObj.searchParams.has('clinicId')) {
+      const isPatientRoute = window.location.pathname.startsWith('/patient');
+      if (!isPatientRoute && activeClinicId && activeClinicId !== "all" && activeClinicId !== "undefined" && activeClinicId !== "null" && !finalParams.clinicId && !urlObj.searchParams.has('clinicId')) {
         finalParams.clinicId = activeClinicId;
       }
     }

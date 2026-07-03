@@ -12,8 +12,17 @@ export default function DoctorCard({ doctor, onBook }: { doctor: DoctorListItem;
   const fullName = doctor.userId.fullName;
 
   useEffect(() => {
-    getAvailableSlots(userId).then(setSlots).catch(() => setSlots([])).finally(() => setLoadingSlots(false));
-  }, [userId]);
+    getAvailableSlots(userId)
+      .then((res) => {
+        console.log(`[Slots for ${doctor.userId?.fullName || userId}]`, res);
+        setSlots(res);
+      })
+      .catch((err) => {
+        console.error(`[Error fetching slots for ${doctor.userId?.fullName || userId}]`, err);
+        setSlots([]);
+      })
+      .finally(() => setLoadingSlots(false));
+  }, [userId, doctor]);
 
   // Count how many unique weekdays this doctor has slots on
   const activeDaysCount = useMemo(() => {

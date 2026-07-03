@@ -26,6 +26,8 @@ export interface DoctorListItem {
     issueDate?: string;
     secure_url: string;
   }>;
+  consultationFee?: number;
+  followUpFee?: number;
 }
 
 // ── CHANGED: أضفنا clinicId populated ────────────────────────────────────────
@@ -62,6 +64,7 @@ export interface Appointment {
   reason?: string;
   status: AppointmentStatus;
   createdAt: string;
+  amount?: number;
 }
 
 export type DisplayStatus = "upcoming" | "completed" | "cancelled";
@@ -108,7 +111,7 @@ export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
 export async function getAvailableSlots(doctorId: string, clinicId?: string): Promise<Slot[]> {
   const res = await fetchClient.get(
     `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
-    clinicId ? { params: { clinicId } } : undefined
+    { params: { ...(clinicId ? { clinicId } : {}), cb: Date.now().toString() } }
   );
   return res.data ?? res;
 }
@@ -215,3 +218,20 @@ export async function completeAppointment(appointmentId: string): Promise<void> 
 export async function deleteSlot(slotId: string): Promise<void> {
   await fetchClient.request(`${APPOINTMENTS_BASE}/slot/${slotId}`, { method: "DELETE" });
 }
+
+export async function releaseReservation(slotId: string): Promise<void> {
+  await fetchClient.post(`${APPOINTMENTS_BASE}/release-reservation`, { slotId });
+}
+
+export async function holdSlot(slotId: string): Promise<void> {
+  await fetchClient.post(`${APPOINTMENTS_BASE}/hold`, { slotId });
+}
+
+export async function confirmAppointment(slotId: string, paymentId: string, reason?: string): Promise<Appointment> {
+  const res = await fetchClient.post(`${APPOINTMENTS_BASE}/confirm`, {
+    slotId,
+    paymentId,
+    ...(reason && { reason }),
+  });
+  return res.data ?? res;
+}

@@ -1,18 +1,20 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
-  LuChevronLeft, LuChevronRight, LuPhone, LuPhoneCall, LuMapPin, LuBuilding2,
+  LuChevronLeft, LuChevronRight, LuPhone, LuPhoneCall, LuMapPin, LuBuilding2, LuStar,
 } from "react-icons/lu";
 import { FaWhatsapp } from "react-icons/fa";
 
 import {
   DoctorListItem, Slot,
-  bookAppointment, getApprovedDoctors, getAvailableSlots, getMyAppointments,
+  bookAppointment, getApprovedDoctors, getAvailableSlots, getMyAppointments, releaseReservation, holdSlot
 } from "@/services/appointmentService";
+import { walletService, Wallet } from "@/services/walletService";
+import { createCheckout, payWithWallet } from "@/services/paymentService";
 import { getDoctorClinics, Clinic } from "@/services/clinicService";
 import {
   formatFullDate, groupSlotsByDate, initialsOf, slotTimeRangeLabel,
@@ -78,6 +80,7 @@ export default function BookAppointmentPage() {
   const [slots, setSlots] = useState<Slot[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
 
   const [bookedDates, setBookedDates] = useState<Set<string>>(new Set());
 
@@ -97,13 +100,15 @@ export default function BookAppointmentPage() {
   useEffect(() => {
     (async () => {
       try {
-        const [doctors, doctorClinics, myAppts] = await Promise.all([
+        const [doctors, doctorClinics, myAppts, myWallet] = await Promise.all([
           getApprovedDoctors(),
           getDoctorClinics(doctorId),
           getMyAppointments(),
+          walletService.getMyWallet().catch(() => null), // If no wallet, ignore
         ]);
         setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
         setClinics(doctorClinics);
+        setWallet(myWallet);
 
         // Only block days where the patient already has a non-cancelled
         // appointment with THIS SAME doctor — other doctors are unaffected.
@@ -111,7 +116,7 @@ export default function BookAppointmentPage() {
           (myAppts.data || [])
             .filter((a) => {
               const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
-              return apptDoctorId === doctorId && a.status !== "cancelled";
+              return apptDoctorId === doctorId && a.status === "booked";
             })
             .map((a) => localDateKey(new Date(a.startDateTime)))
         );
@@ -132,6 +137,17 @@ export default function BookAppointmentPage() {
       }
     })();
   }, [doctorId]);
+
+  // Abort reservation on page unload
+  useEffect(() => {
+    const unloadHandler = async (e: BeforeUnloadEvent) => {
+      if (selectedSlot) {
+        await releaseReservation(selectedSlot._id);
+      }
+    };
+    window.addEventListener('beforeunload', unloadHandler);
+    return () => window.removeEventListener('beforeunload', unloadHandler);
+  }, [selectedSlot]);
 
   // When a clinic is selected, load its slots
   useEffect(() => {
@@ -206,18 +222,89 @@ export default function BookAppointmentPage() {
     setBookingMode("online");
   }
 
-  async function handleConfirm() {
-    if (!selectedSlot) return;
+  async function handleConfirmCard() {
+    if (!selectedSlot || !doctor) return;
     setConfirming(true);
     setConfirmError(null);
     try {
-      await bookAppointment(selectedSlot._id);
-      setStep("success");
+      const res = await createCheckout({
+        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        purpose: "appointment",
+        referenceId: selectedSlot._id,
+        paymentMethod: "card"
+      });
+      if (res && res.url) {
+        window.location.href = res.url;
+      } else {
+        throw new Error("Could not get payment URL");
+      }
     } catch (err: any) {
-      setConfirmError(err.message || "This slot was just booked. Please choose another time.");
+      setConfirmError(err.message || "Failed to initiate payment.");
     } finally {
       setConfirming(false);
     }
+  }
+
+  async function handleConfirmWallet() {
+    if (!selectedSlot || !doctor) return;
+    setConfirming(true);
+    setConfirmError(null);
+    try {
+      await payWithWallet({
+        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        purpose: "appointment",
+        referenceId: selectedSlot._id
+      });
+      setStep("success");
+    } catch (err: any) {
+      setConfirmError(err.message || "Failed to process wallet payment.");
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  async function handleConfirmSplit() {
+    if (!selectedSlot || !doctor) return;
+    setConfirming(true);
+    setConfirmError(null);
+    try {
+      const res = await createCheckout({
+        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        purpose: "appointment",
+        referenceId: selectedSlot._id,
+        paymentMethod: "card",
+        useWallet: true
+      });
+      if (res && res.url) {
+        window.location.href = res.url;
+      } else {
+        throw new Error("Could not get payment URL");
+      }
+    } catch (err: any) {
+      setConfirmError(err.message || "Failed to initiate payment.");
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  async function handleHold() {
+    if (!selectedSlot) return;
+    setConfirming(true);
+    try {
+      await holdSlot(selectedSlot._id);
+      setStep("confirm");
+    } catch (err: any) {
+      alert(err.message || "Could not hold slot. Please try another.");
+    } finally {
+      setConfirming(false);
+    }
+  }
+
+  async function handleCancel() {
+    if (selectedSlot) {
+      await releaseReservation(selectedSlot._id);
+    }
+    router.push(`/patient/doctors/${doctorId}`);
   }
 
   // ── Doctor info ────────────────────────────────────────────────────────────
@@ -235,7 +322,23 @@ export default function BookAppointmentPage() {
   // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
+    <div className={`flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]`}>
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none; /* Chrome, Safari and Opera */
+        }
+
+        .slot-available-in {
+          font-size: 0.85rem;
+          color: var(--color-text-muted);
+          animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+      `}</style>
 
       <DashboardHeader
         title={step === "clinic" ? "Choose a clinic"
@@ -261,6 +364,9 @@ export default function BookAppointmentPage() {
                   )}
                 </div>
               ))}
+              <button onClick={handleCancel} className="py-2 px-4 rounded-xl border border-red-500 bg-red-50 text-red-700 text-[12px] font-bold hover:bg-red-100">
+                Cancel
+              </button>
             </div>
           ) : undefined
         }
@@ -507,11 +613,18 @@ export default function BookAppointmentPage() {
                               }}
                               className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-sky-50 text-[13px] font-bold text-sky-800 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
                             >
-                              {sortedDaySlots.map((s) => (
-                                <option key={s._id} value={s._id}>
-                                  {slotTimeRangeLabel(s)}
-                                </option>
-                              ))}
+                              {sortedDaySlots.map((s) => {
+                                const remainingMs = s.isReserved && s.reservedAt
+                                  ? Math.max(0, 5 * 60 * 1000 - (Date.now() - new Date(s.reservedAt).getTime()))
+                                  : 0;
+                                const remainingMin = Math.ceil(remainingMs / 60000);
+                                return (
+                                  <option key={s._id} value={s._id} disabled={remainingMs > 0}>
+                                    {slotTimeRangeLabel(s)}
+                                    {remainingMs > 0 ? ` (Available in ${remainingMin} min)` : ''}
+                                  </option>
+                                );
+                              })}
                             </select>
                             <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mb-4">
                               We've pre-selected the next available time — pick another from the list if you'd prefer.
@@ -524,10 +637,11 @@ export default function BookAppointmentPage() {
                                 ← Back
                               </button>
                               <button
-                                onClick={() => setStep("confirm")}
-                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[12.5px] font-black transition-all"
+                                onClick={handleHold}
+                                disabled={confirming}
+                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[12.5px] font-black transition-all disabled:opacity-50"
                               >
-                                Continue →
+                                {confirming ? "Holding..." : "Continue →"}
                               </button>
                             </div>
                           </div>
@@ -631,13 +745,55 @@ export default function BookAppointmentPage() {
                   </div>
                 )}
 
-                <button
-                  onClick={handleConfirm}
-                  disabled={confirming}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[14px] font-black hover:scale-[1.01] disabled:opacity-60 disabled:scale-100 transition-all"
-                >
-                  {confirming ? "Booking…" : "Confirm Booking ✓"}
-                </button>
+                {doctor && (
+                  <div className="flex flex-col gap-2 bg-[hsl(var(--color-bg-soft))] p-4 rounded-xl border border-[hsl(var(--color-border))]">
+                    <div className="flex justify-between items-center text-[13px] font-bold">
+                      <span className="text-[hsl(var(--color-text-muted))]">Consultation Fee</span>
+                      <span className="text-[hsl(var(--color-text))]">
+                        {isEligibleForFollowUpDiscount
+                          ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5)
+                          : (doctor.consultationFee ?? 0)} EGP
+                        {isEligibleForFollowUpDiscount && <span className="ml-1 text-[10px] text-sky-600">(Follow-up)</span>}
+                      </span>
+                    </div>
+                    {wallet && wallet.availableBalance > 0 && (
+                      <div className="flex justify-between items-center text-[13px] font-bold">
+                        <span className="text-[hsl(var(--color-text-muted))]">Wallet Balance</span>
+                        <span className="text-emerald-600">{wallet.availableBalance} EGP</span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="flex flex-col gap-2.5 pt-2">
+                  {wallet && wallet.availableBalance >= (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                    <button
+                      onClick={handleConfirmWallet}
+                      disabled={confirming}
+                      className="w-full py-3.5 rounded-xl bg-emerald-600 text-white text-[14px] font-black hover:bg-emerald-700 transition-all disabled:opacity-60"
+                    >
+                      {confirming ? "Processing…" : "Pay with Wallet ✓"}
+                    </button>
+                  )}
+
+                  {wallet && wallet.availableBalance > 0 && wallet.availableBalance < (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                    <button
+                      onClick={handleConfirmSplit}
+                      disabled={confirming}
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white text-[14px] font-black hover:opacity-90 transition-all disabled:opacity-60"
+                    >
+                      {confirming ? "Processing…" : `Use Wallet & Pay ${(isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) - wallet.availableBalance} EGP`}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleConfirmCard}
+                    disabled={confirming}
+                    className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-bg))] border-2 border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] text-[14px] font-black hover:border-sky-500 hover:text-sky-700 transition-all disabled:opacity-60"
+                  >
+                    {confirming ? "Processing…" : "Pay with Card"}
+                  </button>
+                </div>
                 <button
                   onClick={() => setStep("calendar")}
                   className="w-full py-3 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
