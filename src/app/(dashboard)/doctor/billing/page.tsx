@@ -83,7 +83,16 @@ export default function DoctorBillingPage() {
                   <tbody>
                     {sessions.map(s => (
                       <tr key={s._id} className="border-b border-[hsl(var(--color-border-soft))]">
-                        <td className="py-4 pr-2 font-bold text-[hsl(var(--color-text))]">{s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "App User"}</td>
+                        <td className="py-4 pr-2">
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-[hsl(var(--color-text))]">{s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "App User"}</span>
+                            {s.isFollowUp && (
+                              <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[hsl(var(--color-primary-bg))] text-[hsl(var(--color-primary))] rounded flex items-center gap-1">
+                                Follow-Up
+                              </span>
+                            )}
+                          </div>
+                        </td>
                         <td className="py-4 pr-2 text-[hsl(var(--color-text-muted))]">{s.isOfflinePatient ? s.guestPhone || "N/A" : s.patientId?.phoneNumber || s.phone || "N/A"}</td>
                         <td className="py-4 pr-2">
                           {s.isFeesFinalized ? (
@@ -115,6 +124,27 @@ export default function DoctorBillingPage() {
                               <button name="finish" type="submit" className="px-3 py-1.5 bg-[hsl(var(--color-success))] text-white text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-success-strong))] transition-colors flex items-center gap-1">
                                 <LuCheck className="text-sm" /> Finish
                               </button>
+                              
+                              {s.isFollowUp && s.appointmentId && (
+                                <button 
+                                  type="button" 
+                                  onClick={async () => {
+                                    if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
+                                      try {
+                                        await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`);
+                                        alert("Follow-up discount cancelled.");
+                                        window.location.reload();
+                                      } catch (err) {
+                                        console.error(err);
+                                        alert("Failed to override follow-up.");
+                                      }
+                                    }
+                                  }}
+                                  className="ml-2 px-3 py-1.5 bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-danger-soft))] transition-colors border border-[hsl(var(--color-danger-soft))]"
+                                >
+                                  Override Discount
+                                </button>
+                              )}
                             </form>
                           )}
                         </td>

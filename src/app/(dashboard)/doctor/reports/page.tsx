@@ -21,11 +21,18 @@ interface AnalyticsData {
   ageDemographics: { name: string; count: number }[];
 }
 
+import { useClinicContext } from "@/context/ClinicContext";
+import { walletService, Wallet, Transaction } from "@/services/walletService";
+import { LuWallet, LuArrowDownToLine } from "react-icons/lu";
+
 export default function DoctorReportsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
+  const { activeClinicId } = useClinicContext();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -38,6 +45,9 @@ export default function DoctorReportsPage() {
         const params = new URLSearchParams();
         if (startDate) params.append("startDate", startDate);
         if (endDate) params.append("endDate", endDate);
+        if (activeClinicId && activeClinicId !== "all") {
+          params.append("clinicId", activeClinicId);
+        }
 
         const res = await axios.get(
           `${baseUrl}/doctor/reports/analytics?${params.toString()}`,
@@ -46,6 +56,18 @@ export default function DoctorReportsPage() {
           }
         );
         setData(res.data.data);
+
+        // Fetch wallet
+        try {
+            const [walletData, transactionsData] = await Promise.all([
+                walletService.getMyWallet(),
+                walletService.getMyTransactions()
+            ]);
+            setWallet(walletData);
+            setTransactions(transactionsData);
+        } catch (e) {
+            console.error("Failed to load wallet for analytics", e);
+        }
       } catch (err) {
         console.error("Failed to fetch analytics", err);
       } finally {
@@ -53,7 +75,7 @@ export default function DoctorReportsPage() {
       }
     };
     fetchAnalytics();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, activeClinicId]);
 
   const handleExport = () => {
     window.print();
@@ -145,6 +167,50 @@ export default function DoctorReportsPage() {
         )}
 
         <ReportsKPIs kpis={data?.kpis} />
+
+        {wallet && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+            {/* Wallet Section */}
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Wallet Balance</span>
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))]">
+                  <LuWallet className="text-xl" />
+                </div>
+              </div>
+              <div className="flex justify-between items-end">
+                <div>
+                  <p className="text-[32px] font-black text-[hsl(var(--color-text))]">{wallet.availableBalance.toFixed(2)} EGP</p>
+                  <p className="text-[12px] font-semibold text-[hsl(var(--color-success))] mt-1 flex items-center gap-1">
+                    Available for Withdrawal
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-[18px] font-bold text-[hsl(var(--color-warning))]">{wallet.pendingBalance.toFixed(2)} EGP</p>
+                  <p className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] uppercase">Pending</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Transferred Section */}
+            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between mb-4">
+                <span className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Total Transferred / Withdrawn</span>
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-success-bg))] flex items-center justify-center text-[hsl(var(--color-success))]">
+                  <LuArrowDownToLine className="text-xl" />
+                </div>
+              </div>
+              <div>
+                <p className="text-[32px] font-black text-[hsl(var(--color-text))]">
+                  {transactions.filter(t => t.type === 'payout_withdrawal').reduce((acc, t) => acc + t.amount, 0).toFixed(2)} EGP
+                </p>
+                <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1">
+                  Lifetime Payouts
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <ReportsCharts
           visitTrends={data?.visitTrends}

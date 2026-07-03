@@ -8,9 +8,11 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { LuPlus, LuTrash2, LuUserX, LuShieldCheck, LuPencil } from "react-icons/lu";
 import Link from "next/link";
+import { useClinicContext } from "@/context/ClinicContext";
 
 export default function StaffManagementPage() {
     const { user } = useAuth();
+    const { activeClinicId } = useClinicContext();
     const [staff, setStaff] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +42,7 @@ export default function StaffManagementPage() {
             }
         };
         fetchData();
-    }, []);
+    }, [activeClinicId]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

@@ -98,6 +98,11 @@ export default function PatientApptCard({
         </div>
 
         <div className="flex items-center justify-end gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
+          {(appt as any).isFollowUp && (
+            <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[hsl(var(--color-primary-bg))] text-[hsl(var(--color-primary))] rounded flex items-center gap-1">
+              Follow-Up
+            </span>
+          )}
           <StatusBadge status={status} />
           {status === "upcoming" && (
             <>

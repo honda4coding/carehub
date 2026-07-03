@@ -85,7 +85,6 @@ export interface Availability {
   createdAt: string;
 }
 
-// ── CHANGED: أضفنا clinicId في MyAppointment ─────────────────────────────────
 export interface MyAppointment {
   _id: string;
   status: "booked" | "cancelled" | "completed";
@@ -94,6 +93,9 @@ export interface MyAppointment {
   appointmentDate: string;
   doctorId: { _id?: string; fullName: string; email: string; profilepicture?: { secure_url: string }; phoneNumber?: string };
   clinicId?: { name: string; address: string; governorate: string; phone?: string; whatsapp?: string; landline?: string } | null;
+  isFollowUp?: boolean;
+  followUpStatus?: "none" | "scheduled" | "used" | "expired" | "overridden";
+  followUpDeadline?: string;
 }
 
 // ─── API Calls ────────────────────────────────────────────────────────────────
@@ -138,11 +140,12 @@ export async function updateAvailability(
     startTime: string;
     endTime: string;
     appointmentDuration: number;
+    force: boolean;
   }>
 ): Promise<Availability> {
-  const res = await fetchClient.request(
+  const res = await fetchClient.patch(
     `${APPOINTMENTS_BASE}/availability/${availabilityId}`,
-    { method: "PATCH", body: JSON.stringify(payload) }
+    payload
   );
   return res.data ?? res;
 }
@@ -152,15 +155,14 @@ export async function getClinicAvailability(clinicId: string): Promise<Availabil
   return all.filter((a) => (a as any).clinicId === clinicId || (a as any).clinicId?._id === clinicId);
 }
 
-export async function deleteAvailability(availabilityId: string): Promise<void> {
-  await fetchClient.request(`${APPOINTMENTS_BASE}/availability/${availabilityId}`, { method: "DELETE" });
+export async function deleteAvailability(availabilityId: string, force?: boolean): Promise<void> {
+  const url = force ? `${APPOINTMENTS_BASE}/availability/${availabilityId}?force=true` : `${APPOINTMENTS_BASE}/availability/${availabilityId}`;
+  await fetchClient.request(url, { method: "DELETE" });
 }
 
-// ── CHANGED: بيقبل clinicId مع startDate/endDate ─────────────────────────────
 export async function generateSlots(payload: {
   clinicId?: string;
-  startDate: string;
-  endDate: string;
+  dates: string[];
 }): Promise<{ message: string; totalSlots?: number; count?: number }> {
   const res = await fetchClient.post(`${APPOINTMENTS_BASE}/generate-slots`, payload);
   return res.data ?? res;

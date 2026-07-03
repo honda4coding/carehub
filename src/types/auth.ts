@@ -16,6 +16,9 @@ export interface User {
   clinicId?: string;
   clinicName?: string;
   profilepicture?: { secure_url: string; public_id: string };
+  subscriptionPlan?: string;
+  subscriptionFeatures?: { code: string; name: string; enabled: boolean }[];
+  clinicLimit?: number;
 }
 
 export interface AuthContextType {
@@ -26,4 +29,5 @@ export interface AuthContextType {
   isLoading: boolean;
   login: (token: string, role: string, user: User) => void;
   logout: () => void;
+  updateUser: (partialUser: Partial<User>) => void;
 }

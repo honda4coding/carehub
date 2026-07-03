@@ -90,6 +90,8 @@ export default function BookAppointmentPage() {
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
+  const [isEligibleForFollowUpDiscount, setIsEligibleForFollowUpDiscount] = useState(false);
+
   // ── Data fetching ──────────────────────────────────────────────────────────
 
   useEffect(() => {
@@ -114,6 +116,15 @@ export default function BookAppointmentPage() {
             .map((a) => localDateKey(new Date(a.startDateTime)))
         );
         setBookedDates(booked);
+
+        const hasFollowUp = (myAppts.data || []).some(a => {
+          const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
+          return apptDoctorId === doctorId && 
+                 a.status === "completed" && 
+                 a.followUpStatus === "scheduled" && 
+                 a.followUpDeadline && new Date(a.followUpDeadline) >= new Date();
+        });
+        setIsEligibleForFollowUpDiscount(hasFollowUp);
       } catch (err: any) {
         setLoadError(err.message || "Failed to load doctor information");
       } finally {
@@ -257,6 +268,14 @@ export default function BookAppointmentPage() {
 
       {/* ── Main ── */}
       <main className="flex-1 overflow-auto">
+        {isEligibleForFollowUpDiscount && step !== "success" && (
+          <div className="bg-sky-50 border-b border-sky-100 p-3 flex items-center justify-center gap-2">
+            <LuStar className="text-sky-500 shrink-0" />
+            <p className="text-sky-800 text-sm font-semibold text-center">
+              You are eligible for a follow-up discount with this doctor! Discount will be automatically applied at checkout.
+            </p>
+          </div>
+        )}
 
         {loading ? (
           <div className="p-6 max-w-2xl mx-auto">

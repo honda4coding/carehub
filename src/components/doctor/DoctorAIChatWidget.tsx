@@ -7,6 +7,7 @@ import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { LuBrainCircuit, LuX, LuSend, LuLoader } from "react-icons/lu";
 import ReactMarkdown from "react-markdown";
 import { useParams } from "next/navigation";
+import UpgradeModal from "@/components/doctor/subscriptions/UpgradeModal";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -22,6 +23,7 @@ interface Message {
 
 export default function DoctorAIChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     { role: "ai", content: "Welcome, Doctor! 🧠 I am your Clinical AI Assistant. You can ask me medical questions or upload documents to query against your personal knowledge base." }
   ]);
@@ -61,9 +63,14 @@ export default function DoctorAIChatWidget() {
       
       const aiReply = res.data?.data?.response || "An error occurred while processing the request.";
       setMessages(prev => [...prev, { role: "ai", content: aiReply }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setMessages(prev => [...prev, { role: "system", content: "Error connecting to Clinical Assistant." }]);
+      if (error.response?.status === 403) {
+        setMessages(prev => [...prev, { role: "system", content: "Access denied. Premium subscription required." }]);
+        setUpgradeModalOpen(true);
+      } else {
+        setMessages(prev => [...prev, { role: "system", content: "Error connecting to Clinical Assistant." }]);
+      }
     } finally {
       setLoading(false);
     }
@@ -177,6 +184,12 @@ export default function DoctorAIChatWidget() {
           </div>
         </div>
       )}
+
+      <UpgradeModal 
+        isOpen={upgradeModalOpen} 
+        onClose={() => setUpgradeModalOpen(false)} 
+        featureName="AI Clinical Assistant" 
+      />
     </>
   );
 }

@@ -59,6 +59,9 @@ export default function PatientDashboardPage() {
   const [diagnosis, setDiagnosis] = useState("");
   const [prescriptionText, setPrescriptionText] = useState("");
   
+  // Follow-up State
+  const [followUpDate, setFollowUpDate] = useState("");
+  
   // Rx Builder State
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
   const [drugName, setDrugName] = useState("");
@@ -349,6 +352,7 @@ export default function PatientDashboardPage() {
       formData.append("sugarLevel", editSugarLevel);
       formData.append("pulse", editPulse);
       formData.append("temperature", editTemperature);
+      if (followUpDate) formData.append("followUpDays", followUpDate);
 
       let medsToSave = prescriptions.map(p => ({
         medicineName: p.medicineName,
@@ -549,6 +553,7 @@ export default function PatientDashboardPage() {
               attachments={attachments} setAttachments={setAttachments}
               attachmentsMetadata={attachmentsMetadata} setAttachmentsMetadata={setAttachmentsMetadata}
               attachmentsInputRef={attachmentsInputRef}
+              followUpDate={followUpDate} setFollowUpDate={setFollowUpDate}
             />
           )}
           

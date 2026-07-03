@@ -22,7 +22,11 @@ async function handleResponse(response: Response) {
     }
 
     const error = await response.json().catch(() => ({ message: "Unknown error" }));
-    throw new Error(error.message || "Request failed");
+    const finalError = new Error(error.message || "Request failed");
+    (finalError as any).status = response.status;
+    (finalError as any).data = error.data;
+    (finalError as any).error = error.error; // Backend validation array
+    throw finalError;
   }
   return response.json();
 }
@@ -43,13 +47,25 @@ export const fetchClient = {
       headers,
     };
 
-    let url = `${BASE_URL}${endpoint}`;
-    if (options.params) {
-      const searchParams = new URLSearchParams(options.params);
-      url += `?${searchParams.toString()}`;
+    let fullUrlString = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint}`;
+    let urlObj = new URL(fullUrlString);
+    
+    // Automatically inject active clinic context if present
+    let finalParams = options.params ? { ...options.params } : {};
+    if (typeof window !== "undefined") {
+      const activeClinicId = localStorage.getItem('carehub_active_clinic_id');
+      if (activeClinicId && activeClinicId !== "all" && !finalParams.clinicId && !urlObj.searchParams.has('clinicId')) {
+        finalParams.clinicId = activeClinicId;
+      }
     }
 
-    const response = await fetch(url, config);
+    Object.entries(finalParams).forEach(([key, value]) => {
+      urlObj.searchParams.append(key, value as string);
+    });
+
+    const finalUrl = urlObj.toString();
+
+    const response = await fetch(finalUrl, config);
     return handleResponse(response);
   },
 

@@ -23,10 +23,11 @@ export default function DoctorSchedulePage() {
     (async () => {
       try {
         let data = await getMyClinics();
+        let clinicsList = data.clinics?.filter((c: Clinic) => c.isActive) || [];
         if (role === 'assistant' && user?.clinicId) {
-          data = data.filter(c => c._id === user.clinicId);
+          clinicsList = clinicsList.filter(c => c._id === user.clinicId);
         }
-        setClinics(data);
+        setClinics(clinicsList);
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load clinics", variant: "error" });
       } finally {

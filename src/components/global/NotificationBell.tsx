@@ -55,9 +55,14 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
     fetchNotifications();
     const interval = setInterval(fetchNotifications, 30_000);
     window.addEventListener("notifications-changed", fetchNotifications);
+    
+    // Listen for custom clinic change event since this component sits outside the ClinicProvider sometimes
+    window.addEventListener("clinic-changed", fetchNotifications);
+
     return () => {
         clearInterval(interval);
         window.removeEventListener("notifications-changed", fetchNotifications);
+        window.removeEventListener("clinic-changed", fetchNotifications);
     }
   }, []);
 

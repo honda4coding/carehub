@@ -61,12 +61,14 @@ const statusConfig: Record<SessionStatus, { style: string; label: string }> = {
 
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import { useClinicContext } from "@/context/ClinicContext";
 
 export default function DoctorDashboard() {
-const [sessions, setSessions] = useState<Session[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [filter, setFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
+  const { activeClinicId } = useClinicContext();
 
   
   // UI States for Modals
@@ -92,7 +94,8 @@ const [sessions, setSessions] = useState<Session[]>([]);
     if (!token) return;
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const response = await axios.get(`${baseUrl}/doctor/session`, {
+      const clinicParamQuery = activeClinicId && activeClinicId !== "all" ? `?clinicId=${activeClinicId}` : "";
+      const response = await axios.get(`${baseUrl}/doctor/session${clinicParamQuery}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const activeSessions = response.data.data;
@@ -124,8 +127,9 @@ const [sessions, setSessions] = useState<Session[]>([]);
         today.setHours(0, 0, 0, 0);
         const endOfDay = new Date();
         endOfDay.setHours(23, 59, 59, 999);
+        const clinicParamUrl = activeClinicId && activeClinicId !== "all" ? `&clinicId=${activeClinicId}` : "";
 
-        const statsRes = await axios.get(`${baseUrl}/doctor/dashboard?startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}`, {
+        const statsRes = await axios.get(`${baseUrl}/doctor/dashboard?startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}${clinicParamUrl}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setDashboardStats({ 
@@ -143,7 +147,7 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
   useEffect(() => {
     fetchCurrentQueue();
-  }, [token]);
+  }, [token, activeClinicId]);
 
   const handleSearch = async () => {
     if (searchQuery.trim().length < 3) {
@@ -186,9 +190,11 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
     try{
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const response = await axios.post(`${baseUrl}/doctor/session/request`, {
-        patientId: patient._id,
-      }, {
+      const requestData: any = { patientId: patient._id };
+      if (activeClinicId && activeClinicId !== "all") {
+        requestData.clinicId = activeClinicId;
+      }
+      const response = await axios.post(`${baseUrl}/doctor/session/request`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -330,12 +336,17 @@ const [sessions, setSessions] = useState<Session[]>([]);
 
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const response = await axios.post(`${baseUrl}/doctor/session/request`, {
+      const requestData: any = {
         isOfflinePatient: true,
         guestName: walkInName,
         guestPhone: walkInPhone,
         ...(walkInAge ? { guestAge: Number(walkInAge) } : {})
-      }, {
+      };
+      if (activeClinicId && activeClinicId !== "all") {
+        requestData.clinicId = activeClinicId;
+      }
+      
+      const response = await axios.post(`${baseUrl}/doctor/session/request`, requestData, {
         headers: { Authorization: `Bearer ${token}` }
       });
 

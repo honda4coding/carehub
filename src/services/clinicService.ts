@@ -20,6 +20,8 @@ export interface Clinic {
   whatsapp?: string;
   landline?: string;
   services: ClinicService[];
+  consultationFee: number;
+  followUpFee: number;
   isActive: boolean;
   createdAt: string;
 }
@@ -39,6 +41,8 @@ export interface ClinicPayload {
   phone?: string;
   whatsapp?: string;
   landline?: string;
+  consultationFee: number;
+  followUpFee: number;
 }
 
 export interface ServicePayload {
@@ -49,9 +53,26 @@ export interface ServicePayload {
 // ─── Clinic CRUD (doctor) ──────────────────────────────────────────────────────
 
 /** GET /clinics — doctor's own clinics */
-export async function getMyClinics(): Promise<Clinic[]> {
+export interface MyClinicsResponse {
+  clinics: Clinic[];
+  limitExceeded: boolean;
+  maxClinics: number;
+}
+
+export async function getMyClinics(): Promise<MyClinicsResponse> {
   const res = await fetchClient.get(CLINICS_BASE);
-  return res.data ?? res;
+  
+  const payload = res?.data ?? res;
+  
+  if (Array.isArray(payload)) {
+      return { clinics: payload, limitExceeded: false, maxClinics: -1 };
+  }
+  
+  if (payload && Array.isArray(payload.clinics)) {
+      return { clinics: payload.clinics, limitExceeded: !!payload.limitExceeded, maxClinics: payload.maxClinics || 1 };
+  }
+  
+  return { clinics: [], limitExceeded: false, maxClinics: 1 };
 }
 
 /** POST /clinics */
@@ -79,8 +100,8 @@ export async function deleteClinic(clinicId: string): Promise<void> {
 
 /** Single clinic helper — derived from getMyClinics until a dedicated GET /:id exists */
 export async function getClinicById(clinicId: string): Promise<Clinic | undefined> {
-  const clinics = await getMyClinics();
-  return clinics.find((c) => c._id === clinicId);
+  const response = await getMyClinics();
+  return response.clinics.find((c) => c._id === clinicId);
 }
 
 // ─── Patient side ───────────────────────────────────────────────────────────────

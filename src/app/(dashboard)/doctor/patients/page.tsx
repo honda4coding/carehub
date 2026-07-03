@@ -12,6 +12,8 @@ import VitalsModal from "@/components/assistant/VitalsModal";
 import Pagination from "@/components/ui/Pagination";
 import { useDebounce } from "@/hooks/useDebounce";
 
+import { useClinicContext } from "@/context/ClinicContext";
+
 function PatientDirectoryContent() {
   const searchParams = useSearchParams();
   const filterParam = searchParams.get('filter');
@@ -34,12 +36,13 @@ function PatientDirectoryContent() {
 
   const router = useRouter();
   const { role } = useAuth();
+  const { activeClinicId } = useClinicContext();
   const token = Cookies.get("auth_token");
 
   // Reset page when filters change
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearchTerm, startDate, endDate, typeFilter, filterParam]);
+  }, [debouncedSearchTerm, startDate, endDate, typeFilter, filterParam, activeClinicId]);
 
   useEffect(() => {
     if(!token) return;
@@ -54,6 +57,9 @@ function PatientDirectoryContent() {
         }
         if (typeFilter !== "All") {
           url += `&typeFilter=${encodeURIComponent(typeFilter)}`;
+        }
+        if (activeClinicId && activeClinicId !== "all") {
+          url += `&clinicId=${activeClinicId}`;
         }
 
         if (filterParam === 'today') {

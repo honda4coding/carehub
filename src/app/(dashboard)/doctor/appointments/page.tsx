@@ -78,7 +78,7 @@ export default function DoctorAppointmentsPage() {
     (async () => {
       try {
         const data = await getMyClinics();
-        setClinics(data);
+        setClinics(data.clinics || []);
       } catch {
         // sidebar fails silently — appointments still load below
       } finally {

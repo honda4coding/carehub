@@ -436,6 +436,34 @@ function SidebarContent({
   const { user, logout } = useAuth();
   
   let sections = navMap[role] ?? [];
+
+  // Filter doctorNav based on subscription
+  if (role === "doctor") {
+    const isFree = user?.subscriptionPlan?.toLowerCase().includes("free") ?? true;
+    const hasStaff = user?.subscriptionFeatures?.some(f => f.code === 'staff' && f.enabled) ?? !isFree;
+    const hasAI = user?.subscriptionFeatures?.some(f => f.code === 'ai' && f.enabled) ?? false;
+    const clinicLimit = user?.clinicLimit ?? (isFree ? 0 : 1);
+
+    const hiddenLabels: string[] = [];
+
+    // Clinics requires at least 1 clinic limit
+    if (clinicLimit === 0) hiddenLabels.push("Clinics");
+
+    // Staff requires staff feature
+    if (!hasStaff) hiddenLabels.push("Staff & Logs");
+
+    // AI requires AI feature
+    if (!hasAI) hiddenLabels.push("My Knowledge Base");
+
+    // Free users can't see Patient Directory
+    if (isFree) hiddenLabels.push("Patient Directory");
+
+    sections = sections.map((section) => ({
+      ...section,
+      items: section.items.filter((item) => !hiddenLabels.includes(item.label)),
+    })).filter((section) => section.items.length > 0);
+  }
+
   if (role === "assistant" && user) {
     const assistantDynamicNav: NavSection[] = [
       {

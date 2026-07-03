@@ -76,6 +76,15 @@ export default function ScheduleSetup({
   const [savingDay, setSavingDay] = useState<Day | null>(null);
   const [deletingDay, setDeletingDay] = useState<Day | null>(null);
 
+  interface ConflictState {
+    type: "update" | "delete";
+    day: Day;
+    payload?: DayConfig;
+    appointments: any[];
+  }
+  const [conflict, setConflict] = useState<ConflictState | null>(null);
+  const [forcingAction, setForcingAction] = useState(false);
+
   // Load existing availability for this clinic on mount
   useEffect(() => {
     if (!clinicId) return;
@@ -175,6 +184,15 @@ export default function ScheduleSetup({
       }
       setExpandedDay(null);
     } catch (err: any) {
+      if (err.status === 409 && err.data?.affectedAppointments) {
+        setConflict({
+          type: "update",
+          day,
+          payload: tc,
+          appointments: err.data.affectedAppointments,
+        });
+        return;
+      }
       onToast(
         err.response?.data?.message ||
           err.message ||
@@ -232,6 +250,14 @@ export default function ScheduleSetup({
       onToast(`${DAY_LABELS[day]} availability removed`, "success");
       onDayDeleted?.();
     } catch (err: any) {
+      if (err.status === 409 && err.data?.affectedAppointments) {
+        setConflict({
+          type: "delete",
+          day,
+          appointments: err.data.affectedAppointments,
+        });
+        return;
+      }
       onToast(
         err.response?.data?.message ||
           err.message ||
@@ -432,6 +458,87 @@ export default function ScheduleSetup({
           );
         })}
       </div>
+
+      {conflict && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-lg overflow-hidden p-6">
+            <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-2 flex items-center gap-2">
+              <span className="text-[hsl(var(--color-danger))]">⚠️</span> Conflicting Appointments
+            </h3>
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] mb-4">
+              You are trying to {conflict.type === "update" ? "update" : "delete"} your schedule for <strong>{DAY_LABELS[conflict.day]}</strong>, but you already have {conflict.appointments.length} booked appointment(s). If you proceed, these appointments will be automatically cancelled and refunded.
+            </p>
+
+            <div className="max-h-40 overflow-y-auto border border-[hsl(var(--color-border))] rounded-lg p-2 mb-4">
+              {conflict.appointments.map((appt: any) => (
+                <div key={appt._id} className="flex justify-between items-center text-[12px] p-2 border-b border-[hsl(var(--color-border))] last:border-0">
+                  <span className="font-bold text-[hsl(var(--color-text))]">
+                    {appt.patientId?.fullName || "Patient"}
+                  </span>
+                  <span className="text-[hsl(var(--color-text-muted))]">
+                    {new Date(appt.startDateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConflict(null)}
+                className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+                disabled={forcingAction}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setForcingAction(true);
+                  try {
+                    const id = savedIds[conflict.day];
+                    if (conflict.type === "update" && id && conflict.payload) {
+                      await updateAvailability(id, {
+                        day: conflict.day,
+                        startTime: conflict.payload.startTime,
+                        endTime: conflict.payload.endTime,
+                        appointmentDuration: conflict.payload.appointmentDuration,
+                        force: true,
+                      });
+                      onToast(`Schedule updated and appointments cancelled`, "success");
+                    } else if (conflict.type === "delete" && id) {
+                      await deleteAvailability(id, true);
+                      
+                      // Also delete all open slots for this day visually
+                      const daySlots = await getAvailableSlots(doctorId ?? "", clinicId).catch(() => []);
+                      const toDelete = daySlots.filter((s: any) => {
+                        const slotDay = new Date(s.startTime).toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+                        return slotDay === conflict.day;
+                      });
+                      await Promise.all(toDelete.map((s: any) => deleteSlot(s._id))).catch(() => {});
+                      
+                      setSelectedDays(prev => { const n = new Set(prev); n.delete(conflict.day); return n; });
+                      setTimeConfig(prev => { const n = { ...prev }; delete n[conflict.day]; return n; });
+                      setSavedIds(prev => { const n = { ...prev }; delete n[conflict.day]; return n; });
+                      
+                      onToast(`Schedule deleted and appointments cancelled`, "success");
+                      onDayDeleted?.();
+                    }
+                    setExpandedDay(null);
+                    setConflict(null);
+                  } catch (err: any) {
+                    onToast(err.message || "Failed to force action", "error");
+                  } finally {
+                    setForcingAction(false);
+                  }
+                }}
+                disabled={forcingAction}
+                className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-danger))] text-white text-[13px] font-bold hover:opacity-90 disabled:opacity-60 transition-opacity"
+              >
+                {forcingAction ? "Processing..." : "Force Proceed"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -71,6 +71,9 @@ export const adminService = {
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
+  getPaymentAnalytics: (): Promise<{ data: any }> =>
+    fetchClient.get("/admin/stats/payments"),
+
   getDoctors: (params: { status?: string, page?: number, limit?: number, search?: string } = {}): Promise<GetDoctorsResponse> => {
     const query: Record<string, string> = {};
     if (params.status) query.status = params.status;

@@ -115,6 +115,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace('/login');
   };
 
+  const updateUser = (partialUser: Partial<User>) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      const updatedUser = { ...prevUser, ...partialUser };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   // Client-side route guard for cached back-navigations
   const pathname = usePathname();
   useEffect(() => {
@@ -134,7 +143,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isAuthenticated: !!token, 
       isLoading,
       login, 
-      logout 
+      logout,
+      updateUser
     }}>
       {children}
     </AuthContext.Provider>
