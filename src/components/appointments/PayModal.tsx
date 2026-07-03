@@ -9,10 +9,12 @@ export default function PayModal({
   open,
   onClose,
   appointmentId,
+  amount,
 }: {
   open: boolean;
   onClose: () => void;
   appointmentId?: string;
+  amount?: number;
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -81,7 +83,7 @@ export default function PayModal({
           <div className="bg-[hsl(var(--color-bg-soft))] rounded-xl p-4 border border-[hsl(var(--color-border))]">
             <div className="flex justify-between text-[14px] font-semibold text-[hsl(var(--color-text-muted))] mb-1">
               <span>Consultation fee</span>
-              <span className="text-[hsl(var(--color-text))] font-black">--</span>
+              <span className="text-[hsl(var(--color-text))] font-black">{amount !== undefined ? `${amount} EGP` : "--"}</span>
             </div>
             <div className="border-t border-[hsl(var(--color-border))] mt-3 pt-3 flex justify-between items-center text-[16px] font-black text-[hsl(var(--color-text))]">
               <span>Your Wallet Balance</span>

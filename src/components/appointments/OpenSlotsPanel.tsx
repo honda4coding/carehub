@@ -138,7 +138,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                  {/* Week Content (Days) */}
                  {expandedWeeks.includes(week.weekNum) && (
                    <div className="p-3 flex flex-col gap-3 border-t border-[hsl(var(--color-border))]">
-                     {week.days.map(day => (
+                     {week.days.map((day: any) => (
                        <div key={day.dayStr} className="border border-[hsl(var(--color-border))] rounded-md overflow-hidden">
                          {/* Day Header */}
                          <button 
@@ -156,7 +156,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                          {expandedDays.includes(day.dayStr) && (
                            <div className="p-3 bg-[hsl(var(--color-bg-subtle))] border-t border-[hsl(var(--color-border))]">
                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                               {day.slots.map(slot => (
+                               {day.slots.map((slot: any) => (
                                  <div key={slot._id} className="flex items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded p-2 shadow-sm">
                                    <LuClock className="w-3.5 h-3.5 text-primary" />
                                    <span className="text-xs font-semibold text-[hsl(var(--color-text))]">{format(new Date(slot.startDateTime), "hh:mm a")}</span>

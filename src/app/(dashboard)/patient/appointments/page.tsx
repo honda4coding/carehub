@@ -107,6 +107,14 @@ export default function PatientAppointmentsPage() {
   const grouped = useMemo(() => {
     const result: Record<Tab, Appointment[]> = { upcoming: [], completed: [], cancelled: [], today: [] };
     scopedAppointments.forEach((a) => {
+      const myAppt = a as any;
+      if (myAppt.status === "completed" && myAppt.followUpStatus === "scheduled") {
+        result.upcoming.push({
+          ...a,
+          isFollowUpAction: true,
+          appointmentDate: myAppt.followUpDeadline,
+        });
+      }
       const status = getDisplayStatus(a);
       if (status === "upcoming" || status === "completed" || status === "cancelled") {
         result[status].push(a);
@@ -284,7 +292,7 @@ export default function PatientAppointmentsPage() {
         onClose={() => setCancelTarget(null)}
       />
 
-      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} appointmentId={payTarget?._id} />
+      <PayModal open={!!payTarget} onClose={() => setPayTarget(null)} appointmentId={payTarget?._id} amount={payTarget?.amount} />
 
       {toast && <AppointmentToast message={toast.msg} variant={toast.variant} onClose={() => setToast(null)} />}
     </div>

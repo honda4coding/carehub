@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { LuClock, LuPhone, LuMapPin, LuCreditCard, LuX, LuBuilding2 } from "react-icons/lu";
+import { LuClock, LuPhone, LuMapPin, LuCreditCard, LuX, LuBuilding2, LuCalendarDays } from "react-icons/lu";
 import type { Appointment } from "@/services/appointmentService";
 import { getDisplayStatus } from "@/services/appointmentService";
 import { initialsOf, isoTo12Hour } from "@/components/appointments/format";
@@ -18,8 +18,11 @@ export default function PatientApptCard({
   // ── CHANGED: استخرجنا clinicId ────────────────────────────────────────────
   const clinic = typeof appt.clinicId === "object" ? (appt.clinicId as any) : null;
 
-  const status = getDisplayStatus(appt);
-  const timeLabel = isoTo12Hour(appt.startDateTime) + (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
+  const isFollowUpAction = (appt as any).isFollowUpAction;
+  const status = isFollowUpAction ? "upcoming" : getDisplayStatus(appt);
+  const timeLabel = isFollowUpAction 
+    ? "Pending Time Selection" 
+    : isoTo12Hour(appt.startDateTime) + (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
   const dateObj = new Date(appt.appointmentDate);
 
   const docName = doctor?.fullName || doctor?.userId?.fullName;
@@ -46,7 +49,7 @@ export default function PatientApptCard({
           {dateObj.getDate()}
         </span>
         <span className="text-[13px] font-bold mt-1 text-[hsl(var(--color-text-muted))]">
-          {isoTo12Hour(appt.startDateTime)}
+          {isFollowUpAction ? "--:--" : isoTo12Hour(appt.startDateTime)}
         </span>
         <span className="absolute -right-[10px] -top-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
         <span className="absolute -right-[10px] -bottom-[10px] w-5 h-5 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))]" />
@@ -98,13 +101,18 @@ export default function PatientApptCard({
         </div>
 
         <div className="flex items-center justify-end gap-2 shrink-0 w-full sm:w-auto mt-2 sm:mt-0">
-          {(appt as any).isFollowUp && (
+          {(appt as any).isFollowUp && !isFollowUpAction && (
             <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[hsl(var(--color-primary-bg))] text-[hsl(var(--color-primary))] rounded flex items-center gap-1">
               Follow-Up
             </span>
           )}
+          {isFollowUpAction && (
+            <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))] rounded flex items-center gap-1">
+              Follow-Up Needed
+            </span>
+          )}
           <StatusBadge status={status} />
-          {status === "upcoming" && (
+          {status === "upcoming" && !isFollowUpAction && appt.paymentStatus === "pending" && (
             <>
               <button
                 onClick={() => onPayClick(appt)}
@@ -119,6 +127,14 @@ export default function PatientApptCard({
                 <LuX className="text-[14px]" />
               </button>
             </>
+          )}
+          {isFollowUpAction && (
+            <Link
+              href={doctor?._id ? `/patient/doctors/${doctor._id}/book` : "#"}
+              className="flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:-translate-y-[1px] cursor-pointer transition-all"
+            >
+              <LuCalendarDays className="text-[14px]" /> Book Now
+            </Link>
           )}
         </div>
       </div>

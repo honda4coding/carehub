@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import {
   LuBuilding2,
   LuCalendarDays,
@@ -49,7 +51,8 @@ import SectionToggle from "@/components/appointments/SectionToggle";
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function DoctorAppointmentsPage() {
-  const { user, role } = useAuth();
+  const router = useRouter();
+  const { user, token, role } = useAuth();
   const [toast, setToast] = useState<{
     msg: string;
     variant: "success" | "error";
@@ -189,18 +192,24 @@ export default function DoctorAppointmentsPage() {
     return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
   }, [grouped.upcoming]);
 
-  async function handleComplete(appointmentId: string) {
-    setCompleting(appointmentId);
+  async function handleStartSession(appointment: Appointment) {
+    setCompleting(appointment._id);
     try {
-      await completeAppointment(appointmentId);
-      setAppointments((prev) =>
-        prev.map((a) =>
-          a._id === appointmentId ? { ...a, status: "completed" } : a
-        )
+      const patientId = typeof appointment.patientId === "string" ? appointment.patientId : appointment.patientId._id;
+      const clinicId = typeof appointment.clinicId === "string" ? appointment.clinicId : appointment.clinicId?._id;
+      
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      
+      await axios.post(
+        `${baseUrl}/doctor/session/request`,
+        { patientId, clinicId },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setToast({ msg: "Appointment marked as completed", variant: "success" });
+      
+      setToast({ msg: "Session requested successfully!", variant: "success" });
+      router.push("/doctor");
     } catch (err: any) {
-      setToast({ msg: err.message || "Could not complete appointment", variant: "error" });
+      setToast({ msg: err.response?.data?.message || err.message || "Could not start session", variant: "error" });
     } finally {
       setCompleting(null);
     }
@@ -325,8 +334,8 @@ export default function DoctorAppointmentsPage() {
                     <TodayCard
                       key={appt._id}
                       appt={appt}
-                      onComplete={handleComplete}
-                      completing={completing === appt._id}
+                      onStart={handleStartSession}
+                      starting={completing === appt._id}
                     />
                   ))}
                 </div>

@@ -8,12 +8,12 @@ import { Button } from "@/components/ui/Button";
 
 export default function TodayCard({
   appt,
-  onComplete,
-  completing,
+  onStart,
+  starting,
 }: {
   appt: Appointment;
-  onComplete: (id: string) => void;
-  completing: boolean;
+  onStart: (appt: Appointment) => void;
+  starting: boolean;
 }) {
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
@@ -48,12 +48,12 @@ export default function TodayCard({
         <StatusBadge status={status} />
         {status === "upcoming" && (
           <Button
-            onClick={() => onComplete(appt._id)}
-            isLoading={completing}
+            onClick={() => onStart(appt)}
+            isLoading={starting}
             icon={LuCheck}
-            className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-success-bg))] !text-[hsl(var(--color-success))] hover:!bg-[hsl(var(--color-success))]"
+            className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-primary-bg))] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
           >
-            Complete
+            Start Session
           </Button>
         )}
       </div>
