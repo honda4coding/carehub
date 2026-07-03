@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService, Wallet, Transaction, PayoutRequest } from "@/services/walletService";
-import { LuWallet, LuHistory, LuArrowDownToLine, LuCheckCircle, LuXCircle, LuClock } from "react-icons/lu";
+import { LuWallet, LuHistory, LuArrowDownToLine, LuCircleCheck as LuCircleCheck, LuCircleX as LuCircleX, LuClock } from "react-icons/lu";
 
 export default function DoctorWalletPage() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
@@ -165,8 +165,8 @@ export default function DoctorWalletPage() {
                             <td className="p-4 font-bold">{p.amount} EGP</td>
                             <td className="p-4">
                               {p.status === "pending" && <span className="flex items-center gap-1 text-amber-600 bg-amber-50 px-2 py-1 rounded-md text-[12px] w-fit"><LuClock/> Pending</span>}
-                              {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-[12px] w-fit"><LuCheckCircle/> Paid</span>}
-                              {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 bg-rose-50 px-2 py-1 rounded-md text-[12px] w-fit"><LuXCircle/> Rejected</span>}
+                              {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md text-[12px] w-fit"><LuCircleCheck/> Paid</span>}
+                              {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 bg-rose-50 px-2 py-1 rounded-md text-[12px] w-fit"><LuCircleX/> Rejected</span>}
                             </td>
                           </tr>
                         ))}

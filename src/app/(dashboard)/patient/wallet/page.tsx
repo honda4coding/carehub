@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService, Wallet, Transaction, PayoutRequest } from "@/services/walletService";
-import { LuWallet, LuHistory, LuArrowDownToLine, LuCheckCircle, LuXCircle, LuClock } from "react-icons/lu";
+import { LuWallet, LuHistory, LuArrowDownToLine, LuCircleCheck as LuCircleCheck, LuCircleX as LuCircleX, LuClock } from "react-icons/lu";
 import toast from "react-hot-toast";
 import dayjs from "dayjs";
 
@@ -146,8 +146,8 @@ export default function PatientWalletPage() {
                             <p className="text-[11px] font-bold text-slate-400">{dayjs(req.createdAt).format('MMM D, YYYY h:mm A')}</p>
                           </div>
                           {req.status === 'pending' && <span className="flex items-center gap-1 text-[12px] font-bold text-amber-600 bg-amber-50 px-2 py-1 rounded-md"><LuClock/> Pending</span>}
-                          {req.status === 'paid' && <span className="flex items-center gap-1 text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md"><LuCheckCircle/> Paid</span>}
-                          {req.status === 'rejected' && <span className="flex items-center gap-1 text-[12px] font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-md"><LuXCircle/> Rejected</span>}
+                          {req.status === 'paid' && <span className="flex items-center gap-1 text-[12px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md"><LuCircleCheck/> Paid</span>}
+                          {req.status === 'rejected' && <span className="flex items-center gap-1 text-[12px] font-bold text-rose-600 bg-rose-50 px-2 py-1 rounded-md"><LuCircleX/> Rejected</span>}
                         </div>
                         <div className="bg-white border border-slate-100 rounded-lg p-3 text-[12px] font-medium text-slate-600">
                           <p className="mb-1"><span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">Method:</span> {req.paymentMethod.replace(/_/g, ' ')}</p>

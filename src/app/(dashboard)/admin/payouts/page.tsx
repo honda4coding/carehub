@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService, PayoutRequest } from "@/services/walletService";
-import { LuArrowDownToLine, LuCheckCircle, LuXCircle, LuClock, LuExternalLink, LuAlertCircle } from "react-icons/lu";
+import { LuArrowDownToLine, LuCircleCheck as LuCircleCheck, LuCircleX as LuCircleX, LuClock, LuExternalLink, LuAlertCircle } from "react-icons/lu";
 
 export default function AdminPayoutsPage() {
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
@@ -64,7 +64,7 @@ export default function AdminPayoutsPage() {
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
             {payouts.length === 0 ? (
               <div className="p-12 text-center flex flex-col items-center">
-                <LuCheckCircle className="text-[48px] text-emerald-300 mb-4" />
+                <LuCircleCheck className="text-[48px] text-emerald-300 mb-4" />
                 <p className="text-slate-500 text-[16px] font-bold">No pending withdrawal requests.</p>
               </div>
             ) : (
@@ -101,8 +101,8 @@ export default function AdminPayoutsPage() {
                         </td>
                         <td className="p-4">
                           {p.status === "pending" && <span className="flex items-center gap-1 text-amber-600 font-bold text-[13px]"><LuClock/> Pending</span>}
-                          {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCheckCircle/> Paid</span>}
-                          {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuXCircle/> Rejected</span>}
+                          {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCircleCheck/> Paid</span>}
+                          {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuCircleX/> Rejected</span>}
                         </td>
                         <td className="p-4 text-right">
                           {p.status === 'pending' && (
