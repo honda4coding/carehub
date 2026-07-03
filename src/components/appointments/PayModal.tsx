@@ -9,6 +9,7 @@ export default function PayModal({
   open,
   onClose,
   appointmentId,
+  amount,
 }: {
   open: boolean;
   onClose: () => void;
