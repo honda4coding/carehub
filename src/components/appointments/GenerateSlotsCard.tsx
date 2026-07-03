@@ -5,7 +5,6 @@ import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { format } from "date-fns";
 import { generateSlots } from "@/services/appointmentService";
-import { useAuth } from "@/context/AuthContext";
 import { CheckCircle, AlertCircle, Calendar as CalendarIcon, Loader2 } from "lucide-react";
 
 interface GenerateSlotsCardProps {
@@ -14,7 +13,6 @@ interface GenerateSlotsCardProps {
 }
 
 export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlotsCardProps) {
-  const { getToken } = useAuth();
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
