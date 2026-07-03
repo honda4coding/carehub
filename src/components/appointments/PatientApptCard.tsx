@@ -104,7 +104,7 @@ export default function PatientApptCard({
             </span>
           )}
           <StatusBadge status={status} />
-          {status === "upcoming" && (
+          {status === "upcoming" && appt.paymentStatus === "pending" && (
             <>
               <button
                 onClick={() => onPayClick(appt)}

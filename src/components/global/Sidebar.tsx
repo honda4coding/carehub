@@ -32,6 +32,7 @@ import {
   LuBuilding2,
   LuFileCheck,
   LuCreditCard,
+  LuWallet,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -97,6 +98,11 @@ const doctorNav: NavSection[] = [
         label: "Reports",
         href: "/doctor/reports",
         icon: <FaSquarePollVertical />,
+      },
+      {
+        label: "Wallet",
+        href: "/doctor/wallet",
+        icon: <LuWallet />,
       },
     ],
   },
@@ -168,6 +174,11 @@ const patientNav: NavSection[] = [
         label: "Personal Tracking",
         href: "/patient/tracking",
         icon: <LuActivity />,
+      },
+      {
+        label: "Wallet",
+        href: "/patient/wallet",
+        icon: <LuWallet />,
       },
     ],
   },

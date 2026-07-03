@@ -66,6 +66,8 @@ export interface Appointment {
   endDateTime: string;
   reason?: string;
   status: AppointmentStatus;
+  paymentStatus?: "pending" | "paid" | "failed" | "refunded";
+  isFollowUp?: boolean;
   createdAt: string;
   amount?: number;
 }
