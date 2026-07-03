@@ -65,7 +65,7 @@ export default function PatientWalletPage() {
 
   return (
     <div className="flex-1 flex flex-col h-screen bg-[#f8fafc] overflow-y-auto">
-      <DashboardHeader />
+      <DashboardHeader title="My Wallet" subtitle="Manage your balance and withdrawals" />
       <div className="p-6 md:p-8 max-w-5xl mx-auto w-full space-y-8">
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-2">

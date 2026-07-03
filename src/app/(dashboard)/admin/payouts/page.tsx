@@ -49,7 +49,7 @@ export default function AdminPayoutsPage() {
 
   return (
     <div className="flex-1 flex flex-col h-screen bg-[#f8fafc] overflow-y-auto">
-      <DashboardHeader />
+      <DashboardHeader title="Withdrawal Requests" subtitle="Review and process payout requests" />
       <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8">
         <div className="flex flex-col gap-2">
           <h1 className="text-[24px] font-black text-slate-800 flex items-center gap-2">
