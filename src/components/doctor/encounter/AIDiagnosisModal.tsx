@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { LuStethoscope, LuWand, LuX, LuTriangleAlert, LuCheck, LuSparkles, LuAlertCircle, LuFileText } from "react-icons/lu";
+import { LuStethoscope, LuWand, LuX, LuTriangleAlert, LuCheck, LuSparkles, LuCircleAlert, LuFileText } from "react-icons/lu";
 import UpgradeModal from "@/components/doctor/subscriptions/UpgradeModal";
 
 interface AIDiagnosisModalProps {
