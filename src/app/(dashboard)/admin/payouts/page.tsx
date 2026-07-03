@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService, PayoutRequest } from "@/services/walletService";
-import { LuArrowDownToLine, LuCircleCheck as LuCircleCheck, LuCircleX as LuCircleX, LuClock, LuExternalLink, LuAlertCircle } from "react-icons/lu";
+import { LuArrowDownToLine, LuCircleCheck as LuCircleCheck, LuCircleX as LuCircleX, LuClock, LuExternalLink, LuCircleAlert } from "react-icons/lu";
 
 export default function AdminPayoutsPage() {
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
