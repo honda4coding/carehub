@@ -38,6 +38,9 @@ export interface Slot {
   startDateTime: string;
   endDateTime: string;
   isBooked: boolean;
+  isReserved?: boolean;
+  reservedAt?: string;
+  reservedBy?: string;
   createdAt: string;
 }
 
