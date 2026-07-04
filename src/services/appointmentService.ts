@@ -172,7 +172,11 @@ export async function updateAvailability(
 
 export async function getClinicAvailability(clinicId: string): Promise<Availability[]> {
   const all = await getMyAvailability();
-  return all.filter((a) => (a as any).clinicId === clinicId || (a as any).clinicId?._id === clinicId);
+  return all.filter((a) => {
+    const cId = (a as any).clinicId;
+    if (!cId) return false;
+    return cId === clinicId || cId._id === clinicId || cId.toString() === clinicId;
+  });
 }
 
 export async function deleteAvailability(availabilityId: string, force?: boolean): Promise<void> {
