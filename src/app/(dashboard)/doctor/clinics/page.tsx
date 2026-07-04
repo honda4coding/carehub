@@ -26,6 +26,7 @@ import {
 } from "@/services/clinicService";
 import { subscriptionService } from "@/services/subscriptionService";
 import ClinicDetailsPanel from "@/components/clinics/ClinicDetailsPanel";
+import { useClinicContext } from "@/context/ClinicContext";
 
 const EMPTY_FORM: ClinicPayload = {
   name: "",
@@ -41,6 +42,7 @@ const EMPTY_FORM: ClinicPayload = {
 function ClinicsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { setActiveClinicId: setGlobalActiveClinicId } = useClinicContext();
 
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [subscription, setSubscription] = useState<any>(null);
@@ -138,7 +140,9 @@ function ClinicsContent() {
         router.replace("/doctor/clinics", { scroll: false });
       } else if (data.length > 0) {
         const firstActive = data.find(c => c.isActive);
-        setSelectedClinicId(firstActive ? firstActive._id : null);
+        const selected = firstActive ? firstActive._id : null;
+        setSelectedClinicId(selected);
+        if (selected) setGlobalActiveClinicId(selected);
       }
     });
   }, []);
@@ -340,7 +344,12 @@ function ClinicsContent() {
                   return (
                     <div
                       key={clinic._id}
-                      onClick={() => clinic.isActive ? setSelectedClinicId(clinic._id) : undefined}
+                      onClick={() => {
+                        if (clinic.isActive) {
+                          setSelectedClinicId(clinic._id);
+                          setGlobalActiveClinicId(clinic._id);
+                        }
+                      }}
                       className={`group flex items-center gap-2.5 px-3.5 py-3 rounded-xl border transition-all shrink-0 lg:w-full ${
                         clinic.isActive ? "cursor-pointer" : "opacity-60 bg-[hsl(var(--color-bg-base))] border-[hsl(var(--color-border))] cursor-not-allowed"
                       } ${
