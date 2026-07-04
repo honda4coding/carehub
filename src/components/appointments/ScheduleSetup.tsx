@@ -170,12 +170,12 @@ export default function ScheduleSetup({
     });
 
     if (changedDays.length > 0) {
-      const timer = setTimeout(() => {
-        changedDays.forEach(async (day) => {
+      const timer = setTimeout(async () => {
+        for (const day of changedDays) {
           if (selectedDays.has(day)) {
             await handleSaveDay(day, true);
           }
-        });
+        }
       }, 600);
       return () => clearTimeout(timer);
     }
