@@ -137,8 +137,10 @@ export default function BookAppointmentPage() {
           const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
           return apptDoctorId === doctorId && 
                  a.status === "completed" && 
-                 a.followUpStatus === "scheduled" && 
-                 a.followUpDeadline && new Date(a.followUpDeadline) >= new Date();
+                 (
+                   a.followUpStatus === "overridden" ||
+                   (a.followUpStatus === "scheduled" && a.followUpDeadline && new Date(a.followUpDeadline) >= new Date())
+                 );
         });
         setIsEligibleForFollowUpDiscount(hasFollowUp);
       } catch (err: any) {
