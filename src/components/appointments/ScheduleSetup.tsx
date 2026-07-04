@@ -75,6 +75,7 @@ export default function ScheduleSetup({
   const [expandedDay, setExpandedDay] = useState<Day | null>(null);
   const [savingDay, setSavingDay] = useState<Day | null>(null);
   const [deletingDay, setDeletingDay] = useState<Day | null>(null);
+  const prevTimeConfigRef = useRef<Partial<Record<Day, DayConfig>>>(timeConfig);
 
   interface ConflictState {
     type: "update" | "delete";
@@ -107,6 +108,7 @@ export default function ScheduleSetup({
         });
         setSelectedDays(days);
         setTimeConfig(config);
+        prevTimeConfigRef.current = config;
         setSavedIds(ids);
       } catch {
         // silently fail
@@ -145,19 +147,51 @@ export default function ScheduleSetup({
         return n;
       });
       if (!timeConfig[day]) {
+        const initialConfig = {
+          startTime: "09:00",
+          endTime: "17:00",
+          appointmentDuration: 30,
+        };
         setTimeConfig((tc) => ({
           ...tc,
-          [day]: {
-            startTime: "09:00",
-            endTime: "17:00",
-            appointmentDuration: 30,
-          },
+          [day]: initialConfig,
         }));
+        // Auto-save will pick this up!
       }
+      setExpandedDay(day);
     }
   }
 
-  async function handleSaveDay(day: Day) {
+  // Auto-save effect
+  useEffect(() => {
+    if (loadingAvailability) return;
+    
+    const changedDays = DAYS.filter(day => {
+      const prev = prevTimeConfigRef.current[day];
+      const curr = timeConfig[day];
+      if (!prev && curr) return true;
+      if (prev && curr) {
+        return prev.startTime !== curr.startTime || 
+               prev.endTime !== curr.endTime || 
+               prev.appointmentDuration !== curr.appointmentDuration;
+      }
+      return false;
+    });
+
+    if (changedDays.length > 0) {
+      const timer = setTimeout(() => {
+        changedDays.forEach(async (day) => {
+          if (selectedDays.has(day)) {
+            await handleSaveDay(day, true);
+          }
+        });
+        prevTimeConfigRef.current = { ...timeConfig };
+      }, 600);
+      return () => clearTimeout(timer);
+    }
+  }, [timeConfig, selectedDays, loadingAvailability]);
+
+  async function handleSaveDay(day: Day, isSilent: boolean = false) {
     const tc = timeConfig[day];
     if (!tc?.startTime || !tc?.endTime) return;
     setSavingDay(day);
@@ -170,7 +204,7 @@ export default function ScheduleSetup({
           endTime: tc.endTime,
           appointmentDuration: tc.appointmentDuration,
         });
-        onToast(`${DAY_LABELS[day]} availability updated`, "success");
+        if (!isSilent) onToast(`${DAY_LABELS[day]} availability updated`, "success");
       } else {
         const saved = await setAvailability({
           ...(clinicId ? { clinicId } : {}),
@@ -180,9 +214,8 @@ export default function ScheduleSetup({
           appointmentDuration: tc.appointmentDuration,
         });
         setSavedIds((prev) => ({ ...prev, [day]: saved._id }));
-        onToast(`${DAY_LABELS[day]} availability saved`, "success");
+        if (!isSilent) onToast(`${DAY_LABELS[day]} availability saved`, "success");
       }
-      setExpandedDay(null);
     } catch (err: any) {
       if (err.status === 409 && err.data?.affectedAppointments) {
         setConflict({
@@ -437,20 +470,19 @@ export default function ScheduleSetup({
                   </div>
 
                   <div className="pt-2">
-                    <Button
-                      onClick={() => handleSaveDay(day)}
-                      isLoading={savingDay === day}
-                      className="w-full !py-3.5 !rounded-xl !bg-[hsl(var(--color-primary))] !text-[hsl(var(--color-text-inverse))] hover:!bg-[hsl(var(--color-primary-strong))]"
-                    >
-                      {isSaved ? (
+                    <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] font-bold text-sm">
+                      {savingDay === day ? (
                         <>
-                          <LuPencil className="inline mr-1.5" />
-                          Update Schedule
+                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                          Saving...
                         </>
-                      ) : (
-                        "Save Schedule"
-                      )}
-                    </Button>
+                      ) : isSaved ? (
+                        <>
+                          <LuCheck className="text-lg" />
+                          Saved Automatically
+                        </>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               )}
