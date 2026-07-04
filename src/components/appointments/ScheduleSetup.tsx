@@ -176,7 +176,6 @@ export default function ScheduleSetup({
             await handleSaveDay(day, true);
           }
         });
-        prevTimeConfigRef.current = { ...timeConfig };
       }, 600);
       return () => clearTimeout(timer);
     }
@@ -207,6 +206,7 @@ export default function ScheduleSetup({
         setSavedIds((prev) => ({ ...prev, [day]: saved._id }));
         if (!isSilent) onToast(`${DAY_LABELS[day]} availability saved`, "success");
       }
+      prevTimeConfigRef.current[day] = { ...tc };
     } catch (err: any) {
       onToast(
         err.response?.data?.message ||
@@ -233,20 +233,6 @@ export default function ScheduleSetup({
     try {
       await deleteAvailability(id);
 
-      // Delete all open slots for this day
-      const daySlots = await getAvailableSlots(doctorId ?? "", clinicId).catch(
-        () => [],
-      );
-      const toDelete = daySlots.filter((s: any) => {
-        const slotDay = new Date(s.startTime)
-          .toLocaleDateString("en-US", { weekday: "long" })
-          .toLowerCase();
-        return slotDay === day;
-      });
-      await Promise.all(toDelete.map((s: any) => deleteSlot(s._id))).catch(
-        () => {},
-      );
-
       setSelectedDays((prev) => {
         const n = new Set(prev);
         n.delete(day);
@@ -262,6 +248,7 @@ export default function ScheduleSetup({
         delete n[day];
         return n;
       });
+      prevTimeConfigRef.current[day] = undefined;
       onToast(`${DAY_LABELS[day]} availability removed`, "success");
       onDayDeleted?.();
     } catch (err: any) {
