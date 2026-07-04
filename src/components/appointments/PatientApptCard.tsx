@@ -130,7 +130,7 @@ export default function PatientApptCard({
           )}
           {isFollowUpAction && (
             <Link
-              href={doctor?._id ? `/patient/doctors/${doctor._id}/book` : "#"}
+              href={doctor?._id ? `/patient/doctors/${doctor._id}/book?clinicId=${clinic?._id || ""}` : "#"}
               className="flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:-translate-y-[1px] cursor-pointer transition-all"
             >
               <LuCalendarDays className="text-[14px]" /> Book Now

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
@@ -74,6 +74,7 @@ function byStartTime(a: Slot, b: Slot) {
 export default function BookAppointmentPage() {
   const { doctorId } = useParams<{ doctorId: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
   const [clinics, setClinics] = useState<Clinic[]>([]);
@@ -109,6 +110,16 @@ export default function BookAppointmentPage() {
         setDoctor(doctors.find((d) => d.userId._id === doctorId) ?? null);
         setClinics(doctorClinics);
         setWallet(myWallet);
+
+        const urlClinicId = searchParams.get("clinicId");
+        if (urlClinicId) {
+          const matchedClinic = doctorClinics.find((c: any) => c._id === urlClinicId);
+          if (matchedClinic) {
+            setSelectedClinic(matchedClinic);
+            setStep("calendar");
+            fetchCalendar(matchedClinic._id);
+          }
+        }
 
         // Only block days where the patient already has a non-cancelled
         // appointment with THIS SAME doctor — other doctors are unaffected.
