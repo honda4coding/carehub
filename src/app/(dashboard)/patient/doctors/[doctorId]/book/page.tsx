@@ -94,7 +94,7 @@ export default function BookAppointmentPage() {
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
-  const [isEligibleForFollowUpDiscount, setIsEligibleForFollowUpDiscount] = useState(false);
+  const [validFollowUp, setValidFollowUp] = useState<Appointment | null>(null);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
 
@@ -133,16 +133,13 @@ export default function BookAppointmentPage() {
         );
         setBookedDates(booked);
 
-        const hasFollowUp = (myAppts.data || []).some(a => {
+        const validFollowUpAppt = (myAppts.data || []).find((a: any) => {
           const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
           return apptDoctorId === doctorId && 
                  a.status === "completed" && 
-                 (
-                   a.followUpStatus === "overridden" ||
-                   (a.followUpStatus === "scheduled" && a.followUpDeadline && new Date(a.followUpDeadline) >= new Date())
-                 );
+                 (a.followUpStatus === "overridden" || a.followUpStatus === "scheduled");
         });
-        setIsEligibleForFollowUpDiscount(hasFollowUp);
+        setValidFollowUp(validFollowUpAppt || null);
       } catch (err: any) {
         setLoadError(err.message || "Failed to load doctor information");
       } finally {
@@ -176,6 +173,28 @@ export default function BookAppointmentPage() {
   }, [selectedClinic, doctorId]);
 
   // ── Derived state ──────────────────────────────────────────────────────────
+
+  const isEligibleForFollowUpDiscount = useMemo(() => {
+    if (!validFollowUp) return false;
+    if (validFollowUp.followUpStatus === "overridden") return true;
+    if (!validFollowUp.followUpDeadline) return false;
+    
+    // If a slot is selected, check against the slot date exactly like the backend
+    if (selectedSlot) {
+      const slotDate = new Date(selectedSlot.startDateTime);
+      slotDate.setHours(0, 0, 0, 0);
+      const deadline = new Date(validFollowUp.followUpDeadline);
+      deadline.setHours(0, 0, 0, 0);
+      return slotDate <= deadline;
+    }
+    
+    // If no slot is selected yet, check against today so we can show the banner if they MIGHT be eligible
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const deadline = new Date(validFollowUp.followUpDeadline);
+    deadline.setHours(0, 0, 0, 0);
+    return today <= deadline;
+  }, [validFollowUp, selectedSlot]);
 
   const dateGroups = useMemo(() => groupSlotsByDate(slots), [slots]);
 
