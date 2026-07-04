@@ -186,9 +186,9 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
              {groupedSlots.map((week) => (
                <div key={week.weekNum} className="border border-[hsl(var(--color-border))] rounded-lg overflow-hidden bg-[hsl(var(--color-bg-base))]">
                  {/* Week Header */}
-                 <button 
+                 <div 
                    onClick={() => toggleWeek(week.weekNum)}
-                   className="w-full px-4 py-3 flex items-center justify-between bg-[hsl(var(--color-bg-subtle))] hover:bg-[hsl(var(--color-border))] transition-colors"
+                   className="w-full px-4 py-3 flex items-center justify-between bg-[hsl(var(--color-bg-subtle))] hover:bg-[hsl(var(--color-border))] transition-colors cursor-pointer"
                  >
                    <div className="flex flex-col items-start">
                      <span className="font-bold text-sm text-[hsl(var(--color-text))]">Week {week.weekNum}</span>
@@ -209,7 +209,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                      </button>
                      {expandedWeeks.includes(week.weekNum) ? <LuChevronUp className="text-[hsl(var(--color-text-muted))]" /> : <LuChevronDown className="text-[hsl(var(--color-text-muted))]" />}
                    </div>
-                 </button>
+                 </div>
                  
                  {/* Week Content (Days) */}
                  {expandedWeeks.includes(week.weekNum) && (
@@ -217,9 +217,9 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                      {week.days.map((day: any) => (
                        <div key={day.dayStr} className="border border-[hsl(var(--color-border))] rounded-md overflow-hidden">
                          {/* Day Header */}
-                         <button 
+                         <div 
                            onClick={() => toggleDay(day.dayStr)}
-                           className="w-full px-3 py-2 flex items-center justify-between hover:bg-[hsl(var(--color-bg-subtle))] transition-colors"
+                           className="w-full px-3 py-2 flex items-center justify-between hover:bg-[hsl(var(--color-bg-subtle))] transition-colors cursor-pointer"
                          >
                            <span className="font-semibold text-sm text-[hsl(var(--color-text))]">{format(day.date, "EEEE, MMM d")}</span>
                            <div className="flex items-center gap-3">
@@ -233,7 +233,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                              </button>
                              {expandedDays.includes(day.dayStr) ? <LuChevronUp className="w-4 h-4 text-[hsl(var(--color-text-muted))]" /> : <LuChevronDown className="w-4 h-4 text-[hsl(var(--color-text-muted))]" />}
                            </div>
-                         </button>
+                         </div>
                          
                          {/* Day Content (Slots) */}
                          {expandedDays.includes(day.dayStr) && (
