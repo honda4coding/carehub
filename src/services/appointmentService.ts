@@ -128,6 +128,11 @@ export async function deleteDoctorSlot(slotId: string): Promise<void> {
   return res.data ?? res;
 }
 
+export async function deleteMultipleDoctorSlots(slotIds: string[]): Promise<void> {
+  const res = await fetchClient.post(`${APPOINTMENTS_BASE}/slots/delete-multiple`, { slotIds });
+  return res.data ?? res;
+}
+
 // ── CHANGED: method كان PATCH — الصح POST ────────────────────────────────────
 export async function setAvailability(payload: {
   clinicId?: string;
