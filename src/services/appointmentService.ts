@@ -115,11 +115,16 @@ export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
   return res.data ?? res;
 }
 
-export async function getAvailableSlots(doctorId: string, clinicId?: string): Promise<Slot[]> {
+export async function getAvailableSlots(doctorId: string, clinicId?: string, includeBooked?: boolean): Promise<Slot[]> {
   const res = await fetchClient.get(
     `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
-    { params: { ...(clinicId ? { clinicId } : {}), cb: Date.now().toString() } }
+    { params: { ...(clinicId ? { clinicId } : {}), ...(includeBooked ? { includeBooked: 'true' } : {}), cb: Date.now().toString() } }
   );
+  return res.data ?? res;
+}
+
+export async function deleteDoctorSlot(slotId: string): Promise<void> {
+  const res = await fetchClient.delete(`${APPOINTMENTS_BASE}/slots/${slotId}`);
   return res.data ?? res;
 }
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useMemo } from "react";
 import { fetchClient } from "@/services/fetchClient";
-import { LuCalendarClock, LuChevronLeft, LuChevronRight, LuChevronDown, LuChevronUp, LuClock } from "react-icons/lu";
+import { LuCalendarClock, LuChevronLeft, LuChevronRight, LuChevronDown, LuChevronUp, LuClock, LuTrash2 } from "react-icons/lu";
 import { format, startOfMonth, endOfMonth, addMonths, subMonths, isSameDay, getWeekOfMonth, startOfWeek, endOfWeek, isSameMonth } from "date-fns";
 
 export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { clinicId: string, slotsVersion: number, doctorId: string }) {
@@ -19,7 +19,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
         const startStr = startOfMonth(currentMonth).toISOString();
         const endStr = endOfMonth(currentMonth).toISOString();
         const res = await fetchClient.get(`/appointmens/available-slots/${doctorId}`, {
-          params: { clinicId, startDate: startStr, endDate: endStr }
+          params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: true }
         });
         setSlots(res.data ?? res);
       } catch (err: any) {
@@ -30,6 +30,38 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
     }
     if (doctorId && clinicId) load();
   }, [clinicId, doctorId, slotsVersion, currentMonth]);
+
+  const handleDeleteSlot = async (e: React.MouseEvent, slot: any) => {
+    e.stopPropagation();
+    
+    if (slot.isBooked) {
+      const patientName = slot.appointmentDetails?.patientName || 'المريض';
+      const patientPhone = slot.appointmentDetails?.patientPhone || '';
+      const confirmed = window.confirm(`سوف تقوم بإلغاء الحجز مع ${patientName} - ${patientPhone}.\nهل أنت متأكد؟\n\nستتم إعادة المبلغ كاملاً لحساب المريض.`);
+      if (!confirmed) return;
+    } else {
+      const confirmed = window.confirm("Are you sure you want to delete this open slot?");
+      if (!confirmed) return;
+    }
+
+    try {
+      setLoading(true);
+      await fetchClient.delete(`/appointmens/slots/${slot._id}`);
+      
+      // Refresh slots
+      const startStr = startOfMonth(currentMonth).toISOString();
+      const endStr = endOfMonth(currentMonth).toISOString();
+      const res = await fetchClient.get(`/appointmens/available-slots/${doctorId}`, {
+        params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: true }
+      });
+      setSlots(res.data ?? res);
+    } catch (err: any) {
+      console.error("Failed to delete slot", err);
+      alert(err.response?.data?.message || "Failed to delete slot");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handlePrevMonth = () => setCurrentMonth(prev => subMonths(prev, 1));
   const handleNextMonth = () => setCurrentMonth(prev => addMonths(prev, 1));
@@ -157,9 +189,21 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                            <div className="p-3 bg-[hsl(var(--color-bg-subtle))] border-t border-[hsl(var(--color-border))]">
                              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
                                {day.slots.map((slot: any) => (
-                                 <div key={slot._id} className="flex items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded p-2 shadow-sm">
-                                   <LuClock className="w-3.5 h-3.5 text-primary" />
-                                   <span className="text-xs font-semibold text-[hsl(var(--color-text))]">{format(new Date(slot.startDateTime), "hh:mm a")}</span>
+                                 <div key={slot._id} className={`flex items-center justify-between gap-1.5 border rounded p-2 shadow-sm ${slot.isBooked ? 'bg-red-50 border-red-200' : 'bg-[hsl(var(--color-bg-base))] border-[hsl(var(--color-border))]'}`}>
+                                   <div className="flex items-center gap-1.5">
+                                       <LuClock className={`w-3.5 h-3.5 ${slot.isBooked ? 'text-red-500' : 'text-primary'}`} />
+                                       <span className={`text-xs font-semibold ${slot.isBooked ? 'text-red-700' : 'text-[hsl(var(--color-text))]'}`}>
+                                           {format(new Date(slot.startDateTime), "hh:mm a")}
+                                           {slot.isBooked && " (Booked)"}
+                                       </span>
+                                   </div>
+                                   <button 
+                                       onClick={(e) => handleDeleteSlot(e, slot)}
+                                       className="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                       title="Delete Slot"
+                                   >
+                                       <LuTrash2 className="w-3.5 h-3.5" />
+                                   </button>
                                  </div>
                                ))}
                              </div>
