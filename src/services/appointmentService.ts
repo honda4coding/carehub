@@ -183,6 +183,7 @@ export async function deleteAvailability(availabilityId: string, force?: boolean
 export async function generateSlots(payload: {
   clinicId?: string;
   dates: string[];
+  force?: boolean;
 }): Promise<{ message: string; totalSlots?: number; count?: number }> {
   const res = await fetchClient.post(`${APPOINTMENTS_BASE}/generate-slots`, payload);
   return res.data ?? res;

@@ -18,7 +18,10 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const handleGenerate = async () => {
+  const [conflict, setConflict] = useState<any | null>(null);
+  const [forcingAction, setForcingAction] = useState(false);
+
+  const handleGenerate = async (force: boolean = false) => {
     if (selectedDates.length === 0) {
       setError("Please select at least one date.");
       return;
@@ -34,18 +37,24 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
       const payload = {
         clinicId,
         dates: datesStringArray,
+        ...(force && { force: true }),
       };
 
       const res = await generateSlots(payload);
       
       setSuccess(res.message || `Generated slots successfully.`);
       setSelectedDates([]);
+      setConflict(null);
       
       if (onSuccess && res.totalSlots !== undefined) {
         onSuccess(res.totalSlots);
       }
     } catch (err: any) {
-      setError(err.message || "Failed to generate slots");
+      if (err.status === 409 && err.data?.conflicts) {
+        setConflict(err.data);
+      } else {
+        setError(err.response?.data?.message || err.message || "Failed to generate slots");
+      }
     } finally {
       setLoading(false);
     }
@@ -101,11 +110,11 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
         )}
 
         <button
-          onClick={handleGenerate}
+          onClick={() => handleGenerate(false)}
           disabled={loading || selectedDates.length === 0}
-          className="mt-6 w-full py-2.5 px-4 bg-primary text-white font-bold rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+          className="mt-6 w-full py-2.5 px-4 bg-[hsl(var(--color-primary))] text-white font-bold rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
         >
-          {loading ? (
+          {loading && !forcingAction ? (
             <>
               <Loader2 className="w-5 h-5 animate-spin" />
               Generating...
@@ -115,6 +124,53 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
           )}
         </button>
       </div>
+
+      {conflict && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl w-full max-w-lg overflow-hidden p-6">
+            <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-2 flex items-center gap-2">
+              <span className="text-[hsl(var(--color-danger))]">⚠️</span> Conflicting Appointments Found
+            </h3>
+            <p className="text-[13px] text-[hsl(var(--color-text-muted))] mb-4">
+              You already have booked appointments in other clinics on the following dates. Are you sure you want to generate slots here as well?
+            </p>
+
+            <div className="max-h-40 overflow-y-auto border border-[hsl(var(--color-border))] rounded-lg p-2 mb-4 space-y-2">
+              {conflict.conflictAppointments?.map((appt: any) => (
+                <div key={appt._id} className="flex flex-col text-[12px] p-2 bg-[hsl(var(--color-bg-subtle))] rounded">
+                  <span className="font-bold text-[hsl(var(--color-text))]">
+                    {appt.clinicId?.name || "Another Clinic"}
+                  </span>
+                  <span className="text-[hsl(var(--color-text-muted))]">
+                    {format(new Date(appt.startDateTime), "MMM d, yyyy - h:mm a")}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConflict(null)}
+                className="flex-1 py-2.5 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
+                disabled={forcingAction}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setForcingAction(true);
+                  await handleGenerate(true);
+                  setForcingAction(false);
+                }}
+                disabled={forcingAction}
+                className="flex-1 py-2.5 rounded-xl bg-[hsl(var(--color-danger))] text-white text-[13px] font-bold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-60 transition-opacity"
+              >
+                {forcingAction ? "Processing..." : "Force Generate"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
