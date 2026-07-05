@@ -25,8 +25,8 @@ export default function DoctorEarningsPage() {
                 walletService.getMyPayouts()
             ]);
             setWallet(walletData);
-            setTransactions(transData);
-            setPayoutRequests(payoutsData);
+            setTransactions(transData.transactions || []);
+            setPayoutRequests(payoutsData.payouts || []);
         } catch (error) {
             toast.error("Failed to load earnings data");
         } finally {

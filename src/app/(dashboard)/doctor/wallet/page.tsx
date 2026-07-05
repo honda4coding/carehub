@@ -384,7 +384,7 @@ export default function DoctorWalletPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {transactionsData.transactions.map(t => {
-                      const isCredit = t.type === 'credit';
+                      const isCredit = t.amount > 0 || ['online_booking_payment', 'refund'].includes(t.type);
                       return (
                         <tr key={t._id} className="text-[14px] font-medium text-slate-700">
                           <td className="p-4 whitespace-nowrap">{new Date(t.createdAt).toLocaleDateString()}</td>
