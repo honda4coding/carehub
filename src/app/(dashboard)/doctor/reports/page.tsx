@@ -64,7 +64,7 @@ export default function DoctorReportsPage() {
                 walletService.getMyTransactions()
             ]);
             setWallet(walletData);
-            setTransactions(transactionsData);
+            setTransactions(transactionsData.transactions || []);
         } catch (e) {
             console.error("Failed to load wallet for analytics", e);
         }

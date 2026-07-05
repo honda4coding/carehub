@@ -19,7 +19,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
         const startStr = startOfMonth(currentMonth).toISOString();
         const endStr = endOfMonth(currentMonth).toISOString();
         const res = await fetchClient.get(`/appointmens/available-slots/${doctorId}`, {
-          params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: true }
+          params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: "true" }
         });
         setSlots(res.data ?? res);
       } catch (err: any) {
@@ -50,7 +50,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
       const startStr = startOfMonth(currentMonth).toISOString();
       const endStr = endOfMonth(currentMonth).toISOString();
       const res = await fetchClient.get(`/appointmens/available-slots/${doctorId}`, {
-        params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: true }
+        params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: "true" }
       });
       setSlots(res.data ?? res);
     } catch (err: any) {
@@ -84,7 +84,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
       const startStr = startOfMonth(currentMonth).toISOString();
       const endStr = endOfMonth(currentMonth).toISOString();
       const res = await fetchClient.get(`/appointmens/available-slots/${doctorId}`, {
-        params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: true }
+        params: { clinicId, startDate: startStr, endDate: endStr, includeBooked: "true" }
       });
       setSlots(res.data ?? res);
     } catch (err: any) {

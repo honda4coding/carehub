@@ -15,8 +15,6 @@ export default function DoctorEarningsPage() {
 
     // Form states
     const [amount, setAmount] = useState<number | ''>('');
-    const [paymentMethod, setPaymentMethod] = useState('instapay');
-    const [paymentDetails, setPaymentDetails] = useState('');
 
     const fetchData = async () => {
         try {
@@ -42,7 +40,7 @@ export default function DoctorEarningsPage() {
 
     const handleWithdraw = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!amount || amount <= 0 || !paymentDetails) return;
+        if (!amount || amount <= 0) return;
         if (wallet && Number(amount) > wallet.availableBalance) {
             toast.error("Insufficient available balance");
             return;
@@ -50,14 +48,11 @@ export default function DoctorEarningsPage() {
 
         try {
             await walletService.requestPayout({
-                amount: Number(amount),
-                paymentMethod,
-                paymentDetails
+                amount: Number(amount)
             });
             toast.success("Payout request submitted successfully");
             setShowWithdraw(false);
             setAmount('');
-            setPaymentDetails('');
             fetchData();
         } catch (error: any) {
             toast.error(error.response?.data?.message || "Failed to submit request");
@@ -117,29 +112,7 @@ export default function DoctorEarningsPage() {
                                 />
                                 <span className="text-xs text-base-content/60 mt-1">Max available: {wallet?.availableBalance} EGP</span>
                             </div>
-                            <div>
-                                <label className="label">Payment Method</label>
-                                <select 
-                                    className="select select-bordered w-full"
-                                    value={paymentMethod}
-                                    onChange={(e) => setPaymentMethod(e.target.value)}
-                                >
-                                    <option value="instapay">InstaPay</option>
-                                    <option value="vodafone_cash">Vodafone Cash</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label className="label">Account Details</label>
-                                <input 
-                                    type="text" 
-                                    className="input input-bordered w-full" 
-                                    value={paymentDetails}
-                                    onChange={(e) => setPaymentDetails(e.target.value)}
-                                    placeholder="e.g. 010xxxxxxxx or user@instapay or IBAN"
-                                    required
-                                />
-                            </div>
+
                             <div className="flex justify-end gap-2 mt-6">
                                 <button type="button" className="btn btn-ghost" onClick={() => setShowWithdraw(false)}>Cancel</button>
                                 <button type="submit" className="btn btn-primary">Submit Request</button>

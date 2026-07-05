@@ -10,7 +10,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 
 import {
-  DoctorListItem, Slot,
+  DoctorListItem, Slot, Appointment,
   bookAppointment, getApprovedDoctors, getAvailableSlots, getMyAppointments, releaseReservation, holdSlot
 } from "@/services/appointmentService";
 import { walletService, Wallet } from "@/services/walletService";
@@ -94,7 +94,7 @@ export default function BookAppointmentPage() {
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
-  const [validFollowUp, setValidFollowUp] = useState<Appointment | null>(null);
+  const [validFollowUp, setValidFollowUp] = useState<any | null>(null);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
 
@@ -117,7 +117,6 @@ export default function BookAppointmentPage() {
           if (matchedClinic) {
             setSelectedClinic(matchedClinic);
             setStep("calendar");
-            fetchCalendar(matchedClinic._id);
           }
         }
 
@@ -196,6 +195,15 @@ export default function BookAppointmentPage() {
     return today <= deadline;
   }, [validFollowUp, selectedSlot]);
 
+  const currentFee = useMemo(() => {
+    if (!selectedClinic) return 0;
+    const baseFee = selectedClinic.consultationFee || 0;
+    if (isEligibleForFollowUpDiscount) {
+      return selectedClinic.followUpFee ?? (baseFee * 0.5);
+    }
+    return baseFee;
+  }, [selectedClinic, isEligibleForFollowUpDiscount]);
+
   const dateGroups = useMemo(() => groupSlotsByDate(slots), [slots]);
 
   const groupsByLocalKey = useMemo(() => {
@@ -260,7 +268,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       const res = await createCheckout({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id,
         paymentMethod: "card"
@@ -283,7 +291,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       await payWithWallet({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id
       });
@@ -301,7 +309,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       const res = await createCheckout({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id,
         paymentMethod: "card",
@@ -596,7 +604,7 @@ export default function BookAppointmentPage() {
                         <span className="w-4 h-4 rounded-full border-2 border-emerald-500 bg-emerald-50 inline-block relative">
                           <LuStar className="absolute -top-1 -right-1 text-emerald-500" style={{ fontSize: 8 }} />
                         </span>
-                        Follow-up discount ({doctor?.followUpFee ?? ((doctor?.consultationFee ?? 0) * 0.5)} EGP)
+                        Follow-up discount ({selectedClinic?.followUpFee ?? ((selectedClinic?.consultationFee ?? 0) * 0.5)} EGP)
                         {validFollowUp.followUpStatus !== "overridden" && validFollowUp.followUpDeadline && (
                           <span className="text-[10px] text-emerald-500 font-normal">
                             — until {new Date(validFollowUp.followUpDeadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
@@ -650,11 +658,11 @@ export default function BookAppointmentPage() {
                       </div>
 
                       {/* Follow-up fee note on selected date */}
-                      {isEligibleForFollowUpDiscount && selectedGroup && (
+                      {isEligibleForFollowUpDiscount && selectedGroup && selectedClinic && (
                         <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 mb-4">
                           <LuStar className="text-emerald-500 shrink-0 text-[13px]" />
                           <p className="text-[11.5px] font-bold text-emerald-700 leading-tight">
-                            Follow-up discount applies — you'll pay {doctor?.followUpFee ?? ((doctor?.consultationFee ?? 0) * 0.5)} EGP instead of {doctor?.consultationFee ?? 0} EGP
+                            Follow-up discount applies — you'll pay {selectedClinic.followUpFee ?? ((selectedClinic.consultationFee ?? 0) * 0.5)} EGP instead of {selectedClinic.consultationFee ?? 0} EGP
                           </p>
                         </div>
                       )}
@@ -827,9 +835,7 @@ export default function BookAppointmentPage() {
                     <div className="flex justify-between items-center text-[13px] font-bold">
                       <span className="text-[hsl(var(--color-text-muted))]">Consultation Fee</span>
                       <span className="text-[hsl(var(--color-text))]">
-                        {isEligibleForFollowUpDiscount
-                          ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5)
-                          : (doctor.consultationFee ?? 0)} EGP
+                        {currentFee} EGP
                         {isEligibleForFollowUpDiscount && <span className="ml-1 text-[10px] text-sky-600">(Follow-up)</span>}
                       </span>
                     </div>
@@ -843,7 +849,7 @@ export default function BookAppointmentPage() {
                 )}
 
                 <div className="flex flex-col gap-2.5 pt-2">
-                  {wallet && wallet.availableBalance >= (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                  {wallet && wallet.availableBalance >= currentFee && (
                     <button
                       onClick={handleConfirmWallet}
                       disabled={confirming}
@@ -853,13 +859,13 @@ export default function BookAppointmentPage() {
                     </button>
                   )}
 
-                  {wallet && wallet.availableBalance > 0 && wallet.availableBalance < (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                  {wallet && wallet.availableBalance > 0 && wallet.availableBalance < currentFee && (
                     <button
                       onClick={handleConfirmSplit}
                       disabled={confirming}
                       className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white text-[14px] font-black hover:opacity-90 transition-all disabled:opacity-60"
                     >
-                      {confirming ? "Processing…" : `Use Wallet & Pay ${(isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) - wallet.availableBalance} EGP`}
+                      {confirming ? "Processing…" : `Use Wallet & Pay ${currentFee - wallet.availableBalance} EGP`}
                     </button>
                   )}
 

@@ -75,6 +75,28 @@ const adminNav: NavSection[] = [
         href: "/admin/doctors/licenses",
         icon: <LuFileCheck />,
       },
+      {
+        label: "Finance",
+        href: "/admin/finance",
+        icon: <LuWallet />,
+        subItems: [
+          {
+            label: "Overview",
+            href: "/admin/finance",
+            icon: <LuWallet className="text-sm" />,
+          },
+          {
+            label: "Commission Settings",
+            href: "/admin/finance/settings",
+            icon: <LuSettings2 className="text-sm" />,
+          },
+        ],
+      },
+      {
+        label: "Payouts",
+        href: "/admin/payouts",
+        icon: <LuCreditCard />,
+      },
     ],
   },
   {

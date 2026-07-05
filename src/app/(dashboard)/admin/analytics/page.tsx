@@ -19,6 +19,7 @@ import SpecialtyPieChart from "@/components/admin/dashboard/SpecialtyPieChart";
 import SystemActivityBarChart from "@/components/admin/dashboard/SystemActivityBarChart";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import FinancialOverview from "@/components/admin/dashboard/FinancialOverview";
 
 const COLORS = [
   "hsl(var(--color-primary))", 
@@ -96,6 +97,8 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <>
+          <FinancialOverview />
+          
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <SummaryCard

@@ -108,7 +108,7 @@ export default function PatientAppointmentsPage() {
     const result: Record<Tab, Appointment[]> = { upcoming: [], completed: [], cancelled: [], today: [] };
     scopedAppointments.forEach((a) => {
       const myAppt = a as any;
-      if (myAppt.status === "completed" && myAppt.followUpStatus === "scheduled") {
+      if (myAppt.status === "completed" && myAppt.followUpStatus === "scheduled" && myAppt.followUpStatus !== "used") {
         result.upcoming.push({
           ...a,
           isFollowUpAction: true,

@@ -161,8 +161,8 @@ export default function AdminDashboard() {
 
         {/* ── Chart & Activity Feed ── */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-          {/* Chart Section */}
-          <div className="lg:col-span-2 flex flex-col h-[400px]">
+          {/* Main Content Area */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
             <ActivityOverviewChart
               dailyStats={dailyStats}
               statsLoading={statsLoading}
