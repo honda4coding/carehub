@@ -14,23 +14,26 @@ interface KPIs {
 
 interface ReportsKPIsProps {
   kpis?: KPIs;
+  isAssistant?: boolean;
 }
 
-export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
+export default function ReportsKPIs({ kpis, isAssistant }: ReportsKPIsProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Revenue */}
-      <div className="bg-[hsl(var(--color-bg-surface))] p-5 rounded-2xl border border-[hsl(var(--color-border))] relative overflow-hidden group shadow-sm">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <LuBanknote className="text-6xl text-[hsl(var(--color-success))]" />
+      {!isAssistant && (
+        <div className="bg-[hsl(var(--color-bg-surface))] p-5 rounded-2xl border border-[hsl(var(--color-border))] relative overflow-hidden group shadow-sm">
+          <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+            <LuBanknote className="text-6xl text-[hsl(var(--color-success))]" />
+          </div>
+          <p className="text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">
+            Total Revenue
+          </p>
+          <h3 className="text-3xl font-black text-[hsl(var(--color-text))] leading-none">
+            EGP {kpis?.totalRevenue?.toLocaleString() || 0}
+          </h3>
         </div>
-        <p className="text-xs font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1.5">
-          Total Revenue
-        </p>
-        <h3 className="text-3xl font-black text-[hsl(var(--color-text))] leading-none">
-          EGP {kpis?.totalRevenue?.toLocaleString() || 0}
-        </h3>
-      </div>
+      )}
 
       {/* Total Visits */}
       <div className="bg-[hsl(var(--color-bg-surface))] p-5 rounded-2xl border border-[hsl(var(--color-border))] relative overflow-hidden group shadow-sm">
@@ -55,7 +58,9 @@ export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
             <div className="flex justify-between items-end mb-1.5">
               <span className="text-xs font-extrabold text-[hsl(var(--color-primary))] flex flex-col">
                 <span className="flex items-center gap-1"><LuTrendingUp /> Online</span>
-                <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.onlineRevenue?.toLocaleString() || 0}</span>
+                {!isAssistant && (
+                  <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.onlineRevenue?.toLocaleString() || 0}</span>
+                )}
               </span>
               <span className="text-base font-black text-[hsl(var(--color-text))]">
                 {kpis?.onlineVisits || 0}
@@ -78,7 +83,9 @@ export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
             <div className="flex justify-between items-end mb-1.5">
               <span className="text-xs font-extrabold text-[hsl(var(--color-text-muted))] flex flex-col">
                 <span className="flex items-center gap-1"><LuUsers className="opacity-80" /> Walk-in</span>
-                <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.offlineRevenue?.toLocaleString() || 0}</span>
+                {!isAssistant && (
+                  <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.offlineRevenue?.toLocaleString() || 0}</span>
+                )}
               </span>
               <span className="text-base font-black text-[hsl(var(--color-text))]">
                 {kpis?.walkinVisits || 0}

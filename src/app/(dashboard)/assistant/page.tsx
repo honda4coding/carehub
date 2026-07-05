@@ -314,6 +314,7 @@ export default function AssistantDashboard() {
                 }}
                 hideVitalsAction={!user?.permissions?.canManagePatientsVitals && !user?.permissions?.canManagePatientsFull}
                 hideAssessmentAction={true}
+                hideFees={!user?.permissions?.canManageBilling}
               />
             </div>
           )}
