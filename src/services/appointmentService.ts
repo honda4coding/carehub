@@ -115,11 +115,21 @@ export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
   return res.data ?? res;
 }
 
-export async function getAvailableSlots(doctorId: string, clinicId?: string): Promise<Slot[]> {
+export async function getAvailableSlots(doctorId: string, clinicId?: string, includeBooked?: boolean): Promise<Slot[]> {
   const res = await fetchClient.get(
     `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
-    { params: { ...(clinicId ? { clinicId } : {}), cb: Date.now().toString() } }
+    { params: { ...(clinicId ? { clinicId } : {}), ...(includeBooked ? { includeBooked: 'true' } : {}), cb: Date.now().toString() } }
   );
+  return res.data ?? res;
+}
+
+export async function deleteDoctorSlot(slotId: string): Promise<void> {
+  const res = await fetchClient.delete(`${APPOINTMENTS_BASE}/slots/${slotId}`);
+  return res.data ?? res;
+}
+
+export async function deleteMultipleDoctorSlots(slotIds: string[]): Promise<void> {
+  const res = await fetchClient.post(`${APPOINTMENTS_BASE}/slots/delete-multiple`, { slotIds });
   return res.data ?? res;
 }
 
@@ -161,8 +171,8 @@ export async function updateAvailability(
 }
 
 export async function getClinicAvailability(clinicId: string): Promise<Availability[]> {
-  const all = await getMyAvailability();
-  return all.filter((a) => (a as any).clinicId === clinicId || (a as any).clinicId?._id === clinicId);
+  const res = await fetchClient.get(`${APPOINTMENTS_BASE}/availability`, { params: { clinicId } });
+  return res.data ?? res;
 }
 
 export async function deleteAvailability(availabilityId: string, force?: boolean): Promise<void> {
@@ -173,6 +183,7 @@ export async function deleteAvailability(availabilityId: string, force?: boolean
 export async function generateSlots(payload: {
   clinicId?: string;
   dates: string[];
+  force?: boolean;
 }): Promise<{ message: string; totalSlots?: number; count?: number }> {
   const res = await fetchClient.post(`${APPOINTMENTS_BASE}/generate-slots`, payload);
   return res.data ?? res;

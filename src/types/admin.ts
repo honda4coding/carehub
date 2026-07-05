@@ -45,3 +45,11 @@ export interface AnalyticsData {
     value: number;
   }[];
 }
+
+export interface FinancialStats {
+  totalDoctorsEarnings: number;
+  platformBookingProfits: number;
+  platformSubscriptionProfits: number;
+  platformCancellationProfits: number;
+  cancellationRate: number;
+}

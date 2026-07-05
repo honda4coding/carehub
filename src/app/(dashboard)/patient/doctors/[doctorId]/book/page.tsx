@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
@@ -10,7 +10,7 @@ import {
 import { FaWhatsapp } from "react-icons/fa";
 
 import {
-  DoctorListItem, Slot,
+  DoctorListItem, Slot, Appointment,
   bookAppointment, getApprovedDoctors, getAvailableSlots, getMyAppointments, releaseReservation, holdSlot
 } from "@/services/appointmentService";
 import { walletService, Wallet } from "@/services/walletService";
@@ -74,6 +74,7 @@ function byStartTime(a: Slot, b: Slot) {
 export default function BookAppointmentPage() {
   const { doctorId } = useParams<{ doctorId: string }>();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
   const [clinics, setClinics] = useState<Clinic[]>([]);
@@ -93,7 +94,7 @@ export default function BookAppointmentPage() {
   const [confirming, setConfirming] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
-  const [isEligibleForFollowUpDiscount, setIsEligibleForFollowUpDiscount] = useState(false);
+  const [validFollowUp, setValidFollowUp] = useState<any | null>(null);
 
   // ── Data fetching ──────────────────────────────────────────────────────────
 
@@ -110,6 +111,15 @@ export default function BookAppointmentPage() {
         setClinics(doctorClinics);
         setWallet(myWallet);
 
+        const urlClinicId = searchParams.get("clinicId");
+        if (urlClinicId) {
+          const matchedClinic = doctorClinics.find((c: any) => c._id === urlClinicId);
+          if (matchedClinic) {
+            setSelectedClinic(matchedClinic);
+            setStep("calendar");
+          }
+        }
+
         // Only block days where the patient already has a non-cancelled
         // appointment with THIS SAME doctor — other doctors are unaffected.
         const booked = new Set(
@@ -122,14 +132,13 @@ export default function BookAppointmentPage() {
         );
         setBookedDates(booked);
 
-        const hasFollowUp = (myAppts.data || []).some(a => {
+        const validFollowUpAppt = (myAppts.data || []).find((a: any) => {
           const apptDoctorId = typeof a.doctorId === "string" ? a.doctorId : a.doctorId?._id;
           return apptDoctorId === doctorId && 
                  a.status === "completed" && 
-                 a.followUpStatus === "scheduled" && 
-                 a.followUpDeadline && new Date(a.followUpDeadline) >= new Date();
+                 (a.followUpStatus === "overridden" || a.followUpStatus === "scheduled");
         });
-        setIsEligibleForFollowUpDiscount(hasFollowUp);
+        setValidFollowUp(validFollowUpAppt || null);
       } catch (err: any) {
         setLoadError(err.message || "Failed to load doctor information");
       } finally {
@@ -163,6 +172,37 @@ export default function BookAppointmentPage() {
   }, [selectedClinic, doctorId]);
 
   // ── Derived state ──────────────────────────────────────────────────────────
+
+  const isEligibleForFollowUpDiscount = useMemo(() => {
+    if (!validFollowUp) return false;
+    if (validFollowUp.followUpStatus === "overridden") return true;
+    if (!validFollowUp.followUpDeadline) return false;
+    
+    // If a slot is selected, check against the slot date exactly like the backend
+    if (selectedSlot) {
+      const slotDate = new Date(selectedSlot.startDateTime);
+      slotDate.setHours(0, 0, 0, 0);
+      const deadline = new Date(validFollowUp.followUpDeadline);
+      deadline.setHours(0, 0, 0, 0);
+      return slotDate <= deadline;
+    }
+    
+    // If no slot is selected yet, check against today so we can show the banner if they MIGHT be eligible
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const deadline = new Date(validFollowUp.followUpDeadline);
+    deadline.setHours(0, 0, 0, 0);
+    return today <= deadline;
+  }, [validFollowUp, selectedSlot]);
+
+  const currentFee = useMemo(() => {
+    if (!selectedClinic) return 0;
+    const baseFee = selectedClinic.consultationFee || 0;
+    if (isEligibleForFollowUpDiscount) {
+      return selectedClinic.followUpFee ?? (baseFee * 0.5);
+    }
+    return baseFee;
+  }, [selectedClinic, isEligibleForFollowUpDiscount]);
 
   const dateGroups = useMemo(() => groupSlotsByDate(slots), [slots]);
 
@@ -228,7 +268,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       const res = await createCheckout({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id,
         paymentMethod: "card"
@@ -251,7 +291,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       await payWithWallet({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id
       });
@@ -269,7 +309,7 @@ export default function BookAppointmentPage() {
     setConfirmError(null);
     try {
       const res = await createCheckout({
-        amount: isEligibleForFollowUpDiscount ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5) : (doctor.consultationFee ?? 0),
+        amount: currentFee,
         purpose: "appointment",
         referenceId: selectedSlot._id,
         paymentMethod: "card",
@@ -511,17 +551,31 @@ export default function BookAppointmentPage() {
                       const isSelected = key === selectedDateKey;
                       const isAlreadyBooked = bookedDates.has(key);
 
+                      // Is this date inside the follow-up discount window?
+                      const isFollowUpDate = (() => {
+                        if (!validFollowUp) return false;
+                        if (validFollowUp.followUpStatus === "overridden") return isAvailable;
+                        if (!validFollowUp.followUpDeadline) return false;
+                        const d = new Date(date);
+                        d.setHours(0, 0, 0, 0);
+                        const deadline = new Date(validFollowUp.followUpDeadline);
+                        deadline.setHours(0, 0, 0, 0);
+                        return isAvailable && d <= deadline;
+                      })();
+
                       return (
-                        <div key={idx} className="flex items-center justify-center">
+                        <div key={idx} className="flex items-center justify-center relative">
                           <button
                             disabled={!isAvailable || isAlreadyBooked}
                             onClick={() => handlePickDay(date)}
-                            title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : undefined}
+                            title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : isFollowUpDate ? `Follow-up discount applies! Pay ${doctor?.followUpFee ?? ((doctor?.consultationFee ?? 0) * 0.5)} EGP` : undefined}
                             className={`w-11 h-11 rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
                               isSelected
                                 ? "bg-sky-700 border-sky-800 text-white"
                                 : isAlreadyBooked
                                 ? "border-amber-400 bg-amber-50 text-amber-600 cursor-not-allowed"
+                                : isFollowUpDate
+                                ? "border-emerald-500 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
                                 : isAvailable
                                 ? "border-sky-500 text-sky-700 bg-[hsl(var(--color-bg-surface))] hover:bg-sky-50"
                                 : "border-transparent text-[hsl(var(--color-text-muted))] cursor-default"
@@ -529,6 +583,11 @@ export default function BookAppointmentPage() {
                           >
                             {date.getDate()}
                           </button>
+                          {isFollowUpDate && !isSelected && (
+                            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white flex items-center justify-center pointer-events-none">
+                              <LuStar className="text-white" style={{ fontSize: 7 }} />
+                            </span>
+                          )}
                         </div>
                       );
                     })}
@@ -540,6 +599,22 @@ export default function BookAppointmentPage() {
                       <span className="w-4 h-4 rounded-full border-2 border-sky-500 inline-block" />
                       Available day
                     </div>
+                    {validFollowUp && (
+                      <div className="flex items-center gap-2 text-[11px] font-semibold text-emerald-700">
+                        <span className="w-4 h-4 rounded-full border-2 border-emerald-500 bg-emerald-50 inline-block relative">
+                          <LuStar className="absolute -top-1 -right-1 text-emerald-500" style={{ fontSize: 8 }} />
+                        </span>
+                        Follow-up discount ({selectedClinic?.followUpFee ?? ((selectedClinic?.consultationFee ?? 0) * 0.5)} EGP)
+                        {validFollowUp.followUpStatus !== "overridden" && validFollowUp.followUpDeadline && (
+                          <span className="text-[10px] text-emerald-500 font-normal">
+                            — until {new Date(validFollowUp.followUpDeadline).toLocaleDateString("en-GB", { day: "numeric", month: "short" })}
+                          </span>
+                        )}
+                        {validFollowUp.followUpStatus === "overridden" && (
+                          <span className="text-[10px] text-emerald-500 font-normal">— open (no deadline)</span>
+                        )}
+                      </div>
+                    )}
                     <div className="flex items-center gap-2 text-[11px] font-semibold text-amber-600">
                       <span className="w-4 h-4 rounded-full border-2 border-amber-400 bg-amber-50 inline-block" />
                       Already booked
@@ -581,6 +656,16 @@ export default function BookAppointmentPage() {
                           </p>
                         </div>
                       </div>
+
+                      {/* Follow-up fee note on selected date */}
+                      {isEligibleForFollowUpDiscount && selectedGroup && selectedClinic && (
+                        <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 mb-4">
+                          <LuStar className="text-emerald-500 shrink-0 text-[13px]" />
+                          <p className="text-[11.5px] font-bold text-emerald-700 leading-tight">
+                            Follow-up discount applies — you'll pay {selectedClinic.followUpFee ?? ((selectedClinic.consultationFee ?? 0) * 0.5)} EGP instead of {selectedClinic.consultationFee ?? 0} EGP
+                          </p>
+                        </div>
+                      )}
 
                       <div className="border-t border-[hsl(var(--color-border))] pt-4">
                         {!bookingMode && (
@@ -750,9 +835,7 @@ export default function BookAppointmentPage() {
                     <div className="flex justify-between items-center text-[13px] font-bold">
                       <span className="text-[hsl(var(--color-text-muted))]">Consultation Fee</span>
                       <span className="text-[hsl(var(--color-text))]">
-                        {isEligibleForFollowUpDiscount
-                          ? (doctor.followUpFee ?? (doctor.consultationFee ?? 0) * 0.5)
-                          : (doctor.consultationFee ?? 0)} EGP
+                        {currentFee} EGP
                         {isEligibleForFollowUpDiscount && <span className="ml-1 text-[10px] text-sky-600">(Follow-up)</span>}
                       </span>
                     </div>
@@ -766,7 +849,7 @@ export default function BookAppointmentPage() {
                 )}
 
                 <div className="flex flex-col gap-2.5 pt-2">
-                  {wallet && wallet.availableBalance >= (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                  {wallet && wallet.availableBalance >= currentFee && (
                     <button
                       onClick={handleConfirmWallet}
                       disabled={confirming}
@@ -776,13 +859,13 @@ export default function BookAppointmentPage() {
                     </button>
                   )}
 
-                  {wallet && wallet.availableBalance > 0 && wallet.availableBalance < (isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) && (
+                  {wallet && wallet.availableBalance > 0 && wallet.availableBalance < currentFee && (
                     <button
                       onClick={handleConfirmSplit}
                       disabled={confirming}
                       className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white text-[14px] font-black hover:opacity-90 transition-all disabled:opacity-60"
                     >
-                      {confirming ? "Processing…" : `Use Wallet & Pay ${(isEligibleForFollowUpDiscount ? (doctor?.followUpFee ?? (doctor?.consultationFee ?? 0) * 0.5) : (doctor?.consultationFee ?? 0)) - wallet.availableBalance} EGP`}
+                      {confirming ? "Processing…" : `Use Wallet & Pay ${currentFee - wallet.availableBalance} EGP`}
                     </button>
                   )}
 

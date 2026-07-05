@@ -261,36 +261,40 @@ export const CurrentQueue = ({
                     </td>
                     {!hideFees && (
                       <td className="py-3.5 pr-2 text-left">
-                        {s.isFeesFinalized ? (
-                          <div className="flex items-center gap-1.5 px-2 py-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-lg opacity-70 w-fit">
-                            <LuLock className="text-[hsl(var(--color-text-muted))] text-[12px]" />
-                            <span className="text-[12px] font-bold text-[hsl(var(--color-text))]">{s.fees || 0}</span>
-                            <span className="text-[9px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1 py-0.5 rounded">Paid</span>
-                          </div>
-                        ) : (
                           <form 
                             onSubmit={(e) => {
                               e.preventDefault();
-                              const feeValue = Number((e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement).value);
+                              const feeInput = e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement;
+                              let feeValue = Number(feeInput.value);
+                              if (s.isFeesFinalized && feeValue < s.fees) {
+                                feeValue = s.fees; // force minimum
+                                feeInput.value = String(s.fees);
+                              }
                               if (handleUpdateFees && !isNaN(feeValue)) {
                                 handleUpdateFees(s.id, feeValue, false);
                               }
                             }}
                             className="flex items-center gap-2"
                           >
-                            <input 
-                              type="number" 
-                              name="feeInput"
-                              defaultValue={s.fees}
-                              disabled={s.isFeesFinalized}
-                              className="w-20 px-2 py-1 text-sm rounded border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] disabled:opacity-50"
-                            />
+                            <div className="relative group">
+                              <input 
+                                type="number" 
+                                name="feeInput"
+                                defaultValue={s.fees}
+                                min={s.isFeesFinalized ? s.fees : 0}
+                                className="w-20 px-2 py-1 text-sm rounded border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] disabled:opacity-50"
+                              />
+                              {s.isFeesFinalized && (
+                                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap transition-opacity z-10">
+                                  Paid Online. Can only increase.
+                                </div>
+                              )}
+                            </div>
                             <div className="flex flex-col gap-1">
                               <Button 
                                 type="submit" 
                                 size="sm" 
                                 className="h-6 text-[10px] px-2 py-0"
-                                disabled={s.isFeesFinalized}
                               >
                                 Save
                               </Button>
@@ -312,7 +316,6 @@ export const CurrentQueue = ({
                               </Button>
                             </div>
                           </form>
-                        )}
                       </td>
                     )}
                   </tr>

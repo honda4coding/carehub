@@ -1,7 +1,7 @@
 import { fetchClient } from "@/services/fetchClient";
 import { GetUsersParams, GetUsersResponse } from "@/types/user";
 import { DoctorApprovalStatus, GetDoctorsResponse, GetPendingDoctorsResponse } from "@/types/doctor";
-import { GetDashboardData, MonthlyStats, DailyStats, AnalyticsData } from "@/types/admin";
+import { GetDashboardData, MonthlyStats, DailyStats, AnalyticsData, FinancialStats } from "@/types/admin";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 
@@ -70,6 +70,9 @@ export const adminService = {
     if (interval) params.interval = interval;
     return fetchClient.get("/admin/stats/analytics", { params });
   },
+
+  getFinancialStats: (): Promise<{ data: FinancialStats }> => 
+    fetchClient.get("/admindashboard/financial-stats"),
 
   getPaymentAnalytics: (): Promise<{ data: any }> =>
     fetchClient.get("/admin/stats/payments"),

@@ -8,6 +8,8 @@ interface KPIs {
   visitsGrowth: number;
   onlineVisits: number;
   walkinVisits: number;
+  onlineRevenue?: number;
+  offlineRevenue?: number;
 }
 
 interface ReportsKPIsProps {
@@ -51,8 +53,9 @@ export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
         <div className="flex flex-col sm:flex-row items-center gap-5">
           <div className="flex-1 w-full">
             <div className="flex justify-between items-end mb-1.5">
-              <span className="text-xs font-extrabold text-[hsl(var(--color-primary))] flex items-center gap-1">
-                <LuTrendingUp /> Online
+              <span className="text-xs font-extrabold text-[hsl(var(--color-primary))] flex flex-col">
+                <span className="flex items-center gap-1"><LuTrendingUp /> Online</span>
+                <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.onlineRevenue?.toLocaleString() || 0}</span>
               </span>
               <span className="text-base font-black text-[hsl(var(--color-text))]">
                 {kpis?.onlineVisits || 0}
@@ -73,8 +76,9 @@ export default function ReportsKPIs({ kpis }: ReportsKPIsProps) {
           </div>
           <div className="flex-1 w-full">
             <div className="flex justify-between items-end mb-1.5">
-              <span className="text-xs font-extrabold text-[hsl(var(--color-text-muted))] flex items-center gap-1">
-                <LuUsers className="opacity-80" /> Walk-in
+              <span className="text-xs font-extrabold text-[hsl(var(--color-text-muted))] flex flex-col">
+                <span className="flex items-center gap-1"><LuUsers className="opacity-80" /> Walk-in</span>
+                <span className="text-[10px] text-[hsl(var(--color-text-muted))] mt-0.5">EGP {kpis?.offlineRevenue?.toLocaleString() || 0}</span>
               </span>
               <span className="text-base font-black text-[hsl(var(--color-text))]">
                 {kpis?.walkinVisits || 0}

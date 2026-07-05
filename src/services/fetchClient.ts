@@ -36,7 +36,9 @@ export const fetchClient = {
     const token = Cookies.get(AUTH_COOKIE_NAME);
     
     const headers = new Headers(options.headers);
-    headers.set("Content-Type", "application/json");
+    if (!(options.body instanceof FormData)) {
+      headers.set("Content-Type", "application/json");
+    }
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
@@ -75,13 +77,13 @@ export const fetchClient = {
     fetchClient.request(endpoint, { ...options, method: "GET" }),
     
   post: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "POST", body: JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "POST", body: body instanceof FormData ? body : JSON.stringify(body) }),
     
   put: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "PUT", body: JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "PUT", body: body instanceof FormData ? body : JSON.stringify(body) }),
     
   patch: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "PATCH", body: JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "PATCH", body: body instanceof FormData ? body : JSON.stringify(body) }),
 
   delete: (endpoint: string, options?: FetchOptions) => 
     fetchClient.request(endpoint, { ...options, method: "DELETE" }),
