@@ -2,21 +2,21 @@
 
 import { Formik, Form, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { ImSpinner2 } from "react-icons/im";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { LuLoader } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import { LuCheck } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 import { VitalsFormValues } from "@/types/profile";
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   weight: Yup.string().optional(),
   height: Yup.string().optional(),
   pulse:  Yup.string().optional(),
 });
 
-// ─── Vital Card ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Vital Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function VitalCard({
   name, label, unit, icon, placeholder, value,
   onChange, error,
@@ -60,7 +60,7 @@ function VitalCard({
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile:       PatientProfile | null;
   onSaveSuccess: (updated: UpdatePatientProfilePayload) => void;
@@ -73,7 +73,7 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
   const initialValues: VitalsFormValues = {
     weight: profile?.weight ?? "",
     height: profile?.height ?? "",
-    pulse:  profile?.pulse  ?? "",  // ✅ بياخد القيمة من الـ profile
+    pulse:  profile?.pulse  ?? "",  // âœ… Ø¨ÙŠØ§Ø®Ø¯ Ø§Ù„Ù‚ÙŠÙ…Ø© Ù…Ù† Ø§Ù„Ù€ profile
   };
 
   const handleSubmit = async (
@@ -86,7 +86,7 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
       const payload: UpdatePatientProfilePayload = {
         weight: values.weight || undefined,
         height: values.height || undefined,
-        pulse:  values.pulse  || undefined,  // ✅ بيتبعت دلوقتي
+        pulse:  values.pulse  || undefined,  // âœ… Ø¨ÙŠØªØ¨Ø¹Øª Ø¯Ù„ÙˆÙ‚ØªÙŠ
       };
       await updatePatientProfile(payload);
       setServerSuccess("Vitals updated!");
@@ -122,27 +122,27 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
 
           {/* Note */}
           <p className="text-[11px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] px-3 py-2 rounded-xl">
-            📅 Update these periodically to help your doctor track your health progress.
+            ðŸ“… Update these periodically to help your doctor track your health progress.
           </p>
 
           {/* Vital Cards */}
           <div className="flex gap-3 flex-wrap">
             <VitalCard
-              name="weight" label="Weight" unit="kg" icon="⚖️"
+              name="weight" label="Weight" unit="kg" icon="âš–ï¸"
               placeholder="75"
               value={values.weight}
               onChange={(v) => setFieldValue("weight", v)}
               error={touched.weight && errors.weight ? String(errors.weight) : undefined}
             />
             <VitalCard
-              name="height" label="Height" unit="cm" icon="📏"
+              name="height" label="Height" unit="cm" icon="ðŸ“"
               placeholder="175"
               value={values.height}
               onChange={(v) => setFieldValue("height", v)}
               error={touched.height && errors.height ? String(errors.height) : undefined}
             />
             <VitalCard
-              name="pulse" label="Pulse" unit="bpm" icon="💓"
+              name="pulse" label="Pulse" unit="bpm" icon="ðŸ’“"
               placeholder="72"
               value={values.pulse}
               onChange={(v) => setFieldValue("pulse", v)}
@@ -176,8 +176,8 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
             style={{ background: "hsl(var(--color-primary))" }}
           >
             {isSubmitting
-              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-              : <><HiOutlineArrowRight className="w-4 h-4" /> Save Vitals</>
+              ? <><LuLoader className="w-4 h-4 animate-spin" /> Saving...</>
+              : <><LuArrowRight className="w-4 h-4" /> Save Vitals</>
             }
           </button>
         </Form>
@@ -185,3 +185,5 @@ export default function VitalsForm({ profile, onSaveSuccess }: Props) {
     </Formik>
   );
 }
+
+

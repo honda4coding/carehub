@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/adminService";
@@ -10,8 +10,8 @@ import {
   LuTriangleAlert,
   LuBan 
 } from "react-icons/lu";
-import { FiPieChart } from "react-icons/fi";
-import { BiMoney } from "react-icons/bi";
+import { LuChartPie } from "react-icons/lu";
+import { LuBanknote } from "react-icons/lu";
 
 export default function FinancialOverview() {
   const [stats, setStats] = useState<FinancialStats | null>(null);
@@ -36,7 +36,7 @@ export default function FinancialOverview() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="bg-[hsl(var(--color-surface))] rounded-[20px] p-6 h-[140px] border border-[hsl(var(--color-border))]"></div>
+          <div key={i} className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 h-[140px] border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)]"></div>
         ))}
       </div>
     );
@@ -54,7 +54,7 @@ export default function FinancialOverview() {
     <div className="space-y-6 mb-8">
       <div className="flex items-center gap-2">
         <h2 className="text-xl font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
-          <FiPieChart className="text-[hsl(var(--color-primary))]" />
+          <LuChartPie className="text-[hsl(var(--color-primary))]" />
           Financial Overview
         </h2>
         <span className="text-sm px-3 py-1 bg-[hsl(var(--color-primary)_/_0.1)] text-[hsl(var(--color-primary))] rounded-full font-medium">
@@ -65,12 +65,12 @@ export default function FinancialOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* Total Platform Profits */}
-        <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-success)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Platform Net Profit</p>
-              <h3 className="text-3xl font-extrabold text-[hsl(var(--color-text))]">
+              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
                 {totalPlatformProfits.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
               </h3>
             </div>
@@ -91,17 +91,17 @@ export default function FinancialOverview() {
         </div>
 
         {/* Doctors Total Revenue */}
-        <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-primary)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Total System Volume</p>
-              <h3 className="text-3xl font-extrabold text-[hsl(var(--color-text))]">
+              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
                 {stats.totalDoctorsEarnings.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
               </h3>
             </div>
             <div className="w-12 h-12 bg-[hsl(var(--color-primary)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-primary))]">
-              <BiMoney className="w-6 h-6" />
+              <LuBanknote className="w-6 h-6" />
             </div>
           </div>
           <p className="text-xs text-[hsl(var(--color-text-muted))] mt-4">
@@ -110,12 +110,12 @@ export default function FinancialOverview() {
         </div>
 
         {/* Cancellation Rate */}
-        <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
           <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-danger)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Cancellation Rate</p>
-              <h3 className="text-3xl font-extrabold text-[hsl(var(--color-text))]">
+              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
                 {stats.cancellationRate}%
               </h3>
             </div>
@@ -138,3 +138,5 @@ export default function FinancialOverview() {
     </div>
   );
 }
+
+

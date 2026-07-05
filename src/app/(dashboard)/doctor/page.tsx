@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { IoIosHelpCircleOutline } from "react-icons/io";
+import { LuCircleHelp } from "react-icons/lu";
 import NotificationBell from "@/components/global/NotificationBell";
 import {
   LuUsers,
@@ -207,10 +207,10 @@ export default function DoctorDashboard() {
 
       // Only show OTP alert if the session actually requires OTP verification
       if (sessionStatus === "pending_otp") {
-        alert("✅ An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
+        alert("âœ… An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
       } else {
-        // Session is in_progress immediately — no OTP needed
-        alert(`✅ Instant access granted to the patient based on their privacy settings.`);
+        // Session is in_progress immediately â€” no OTP needed
+        alert(`âœ… Instant access granted to the patient based on their privacy settings.`);
       }
 
      const newActiveSession: Session = {
@@ -251,8 +251,8 @@ export default function DoctorDashboard() {
         msg === "Access already granted" ||
         msg === "Access already granted for this patient"
       ) {
-        // Session already active — just refresh the queue to show it
-        alert("✅ This patient is already in the clinic queue (Active Session).");
+        // Session already active â€” just refresh the queue to show it
+        alert("âœ… This patient is already in the clinic queue (Active Session).");
         fetchCurrentQueue();
       } else {
         alert("Failed to request access: " + (msg || err.message));

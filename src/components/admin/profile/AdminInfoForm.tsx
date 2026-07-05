@@ -2,13 +2,13 @@
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { ImSpinner2 } from "react-icons/im";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { LuLoader } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import { LuUser, LuMail, LuPhone, LuMapPin, LuCheck } from "react-icons/lu";
 import { useState } from "react";
 import { AdminProfile, UpdateAdminProfilePayload, updateAdminProfile } from "@/services/adminService";
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   fullName:    Yup.string().min(3, "Min 3 characters").required("Full name is required"),
   phoneNumber: Yup.string().min(10, "Min 10 digits").optional(),
@@ -21,7 +21,7 @@ type FormValues = {
   address:     string;
 };
 
-// ─── Reusable field ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Reusable field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function EditField({ name, label, icon, placeholder, errors, touched }: {
   name: string; label: string; icon: React.ReactNode;
   placeholder: string;
@@ -48,7 +48,7 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile: AdminProfile | null;
   onSaveSuccess: (updated: UpdateAdminProfilePayload) => void;
@@ -109,13 +109,13 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
               {/* Full Name */}
               <EditField name="fullName" label="Full Name" icon={<LuUser />} placeholder="Admin Name" errors={errors} touched={touched} />
 
-              {/* Email — read only */}
+              {/* Email â€” read only */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
                   <LuMail className="w-4 h-4" /> Email
                 </label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
-                  {profile?.email || "—"}
+                  {profile?.email || "â€”"}
                 </div>
               </div>
 
@@ -133,8 +133,8 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
                 className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-                  : <><HiOutlineArrowRight className="w-4 h-4" /> Save Changes</>
+                  ? <><LuLoader className="w-4 h-4 animate-spin" /> Saving...</>
+                  : <><LuArrowRight className="w-4 h-4" /> Save Changes</>
                 }
               </button>
             </div>
@@ -144,3 +144,5 @@ export default function AdminInfoForm({ profile, onSaveSuccess }: Props) {
     </div>
   );
 }
+
+

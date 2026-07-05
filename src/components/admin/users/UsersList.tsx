@@ -178,7 +178,7 @@ export default function UsersList({
             <tr>
               <td colSpan={6} className="py-16 text-center">
                 <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
-                <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+                <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">
                   {debouncedSearch
                     ? "No users match your search."
                     : "No users found."}
@@ -186,7 +186,7 @@ export default function UsersList({
                 {debouncedSearch && (
                   <button
                     onClick={() => setSearch("")}
-                    className="mt-2 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
+                    className="mt-2 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                   >
                     Clear search
                   </button>
@@ -219,7 +219,7 @@ export default function UsersList({
                           {user.fullName}
                         </p>
                         {user.role === "admin" && (
-                          <p className="text-[11px] font-bold italic text-[hsl(var(--color-text-muted))] mt-0.5">
+                          <p className="text-[10px] font-semibold uppercase tracking-wider italic text-[hsl(var(--color-text-muted))] mt-0.5">
                             Protected Account
                           </p>
                         )}
@@ -227,21 +227,21 @@ export default function UsersList({
                     </div>
                   </td>
                   <td className="py-3.5 pr-4 max-w-[170px] text-left">
-                    <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
+                    <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] truncate">
                       {user.email}
                     </p>
                   </td>
                   <td className="py-3.5 pr-4 text-left">
-                    <span className={`text-[13px] font-bold whitespace-nowrap ${rc.style}`}>
+                    <span className={`text-sm font-semibold whitespace-nowrap ${rc.style}`}>
                       {rc.label}
                     </span>
                   </td>
-                  <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                  <td className="py-3.5 pr-4 text-sm font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
                     {fmtDate(user.createdAt)}
                   </td>
                   <td className="py-3.5 pr-4 text-left">
                     <span
-                      className={`inline-flex items-center text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
+                      className={`inline-flex items-center text-[10px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                     >
                       {sc.label}
                     </span>
@@ -275,7 +275,7 @@ export default function UsersList({
         {!isLoading && !error && users.length === 0 && (
           <div className="py-16 text-center">
             <LuInbox className="mx-auto text-[36px] text-[hsl(var(--color-text-muted))] opacity-30 mb-3" />
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+            <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))]">
               {debouncedSearch ? "No users match your search." : "No users found."}
             </p>
           </div>
@@ -293,7 +293,7 @@ export default function UsersList({
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-black shrink-0 ${pickAvatar(
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold tracking-tight shrink-0 ${pickAvatar(
                         user._id
                       )}`}
                     >

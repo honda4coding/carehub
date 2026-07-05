@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import Image from "next/image";
 import { LuCamera, LuTrash2 } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { DoctorProfile, uploadDoctorAvatar, deleteDoctorAvatar } from "@/services/doctorService";
 
 interface Props {
@@ -77,7 +77,7 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
             className="absolute bottom-0 right-0 w-7 h-7 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center hover:opacity-80 transition-opacity disabled:opacity-50"
           >
             {uploading
-              ? <ImSpinner2 className="w-3.5 h-3.5 animate-spin" />
+              ? <LuLoader className="w-3.5 h-3.5 animate-spin" />
               : <LuCamera className="w-3.5 h-3.5" />
             }
           </button>
@@ -98,7 +98,7 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
         {/* Info + actions */}
         <div className="flex-1 min-w-0">
           <p className="text-[15px] font-black text-[hsl(var(--color-text))] truncate">
-            {profile?.fullName ?? "—"}
+            {profile?.fullName ?? "â€”"}
           </p>
           <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-0.5">
             {profile?.email ?? ""}
@@ -122,7 +122,7 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
                 className="text-[12px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center gap-1.5"
               >
                 {deleting
-                  ? <ImSpinner2 className="w-3 h-3 animate-spin" />
+                  ? <LuLoader className="w-3 h-3 animate-spin" />
                   : <LuTrash2 className="w-3 h-3" />
                 }
                 {deleting ? "Removing..." : "Remove"}

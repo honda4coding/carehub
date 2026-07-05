@@ -63,7 +63,7 @@ export default function PendingApprovalsTable({
     <Card className="p-0 overflow-hidden flex flex-col">
       {/* Header */}
       <div className="p-6 border-b border-[hsl(var(--color-border))] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h3 className="text-[16px] md:text-[18px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap shrink-0">
+        <h3 className="text-lg font-semibold tracking-tight text-[hsl(var(--color-text))] whitespace-nowrap shrink-0">
           Pending Doctor Approvals
         </h3>
         <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -74,11 +74,11 @@ export default function PendingApprovalsTable({
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             leftIcon={<LuSearch />}
-            className="w-full sm:w-[220px] bg-[hsl(var(--color-bg-soft))] focus:bg-[hsl(var(--color-bg-surface))] text-[13px]"
+            className="w-full sm:w-[220px] bg-[hsl(var(--color-bg-soft))] focus:bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
           />
           <Link
             href="/admin/approvals"
-            className="text-[13px] font-bold text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] whitespace-nowrap transition-colors"
+            className="text-sm font-medium font-medium text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] whitespace-nowrap transition-colors"
           >
             View all ›
           </Link>
@@ -89,11 +89,11 @@ export default function PendingApprovalsTable({
       <div className="overflow-x-auto w-full">
         {loading ? (
           <div className="py-12 flex justify-center">
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">Loading...</p>
+            <p className="text-sm font-medium font-bold text-[hsl(var(--color-text-muted))]">Loading...</p>
           </div>
         ) : filtered.length === 0 ? (
           <div className="py-12 flex justify-center">
-            <p className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">No pending requests</p>
+            <p className="text-sm font-medium font-bold text-[hsl(var(--color-text-muted))]">No pending requests</p>
           </div>
         ) : (
           <>
@@ -106,7 +106,7 @@ export default function PendingApprovalsTable({
                       {["Doctor", "Specialty", "Phone", "Submitted", "Status"].map((h, i) => (
                         <th
                           key={h}
-                          className={`py-4 text-[14px] font-black text-[hsl(var(--color-text))] uppercase tracking-wider ${i === 0 ? 'pl-[80px] pr-4 text-left' : i === 4 ? 'px-8 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.5)]' : 'px-4 text-left'}`}
+                          className={`py-4 text-sm font-semibold text-[hsl(var(--color-text))] uppercase tracking-wider ${i === 0 ? 'pl-[80px] pr-4 text-left' : i === 4 ? 'px-8 text-center border-l-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft)/0.5)]' : 'px-4 text-left'}`}
                         >
                           {h}
                         </th>
@@ -127,7 +127,7 @@ export default function PendingApprovalsTable({
                           <td className="pl-8 pr-4 py-3.5">
                             <div className="flex items-center gap-3.5">
                               <div
-                                className={`w-11 h-11 rounded-full flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm ${avatarStyle}`}
+                                className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 shadow-sm ${avatarStyle}`}
                               >
                                 {initials}
                               </div>
@@ -135,7 +135,7 @@ export default function PendingApprovalsTable({
                                 <p className="text-[15px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap group-hover:text-[hsl(var(--color-primary))] transition-colors">
                                   {req.fullName}
                                 </p>
-                                <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                                <p className="text-sm font-medium font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
                                   {req.email}
                                 </p>
                               </div>
@@ -178,12 +178,12 @@ export default function PendingApprovalsTable({
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="flex items-center gap-3">
-                        <div className={`w-11 h-11 rounded-full flex items-center justify-center text-[14px] font-black shrink-0 shadow-sm ${avatarStyle}`}>
+                        <div className={`w-11 h-11 rounded-full flex items-center justify-center text-sm font-semibold shrink-0 shadow-sm ${avatarStyle}`}>
                           {initials}
                         </div>
                         <div>
                           <p className="text-[15px] font-bold text-[hsl(var(--color-text))] leading-tight mb-0.5">{req.fullName}</p>
-                          <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">{req.email}</p>
+                          <p className="text-sm font-medium font-semibold text-[hsl(var(--color-text-muted))]">{req.email}</p>
                         </div>
                       </div>
                       <Badge variant={sc.variant} className="gap-1.5 px-2.5 py-1 text-[10px] lowercase capitalize shadow-sm">
@@ -202,7 +202,7 @@ export default function PendingApprovalsTable({
                           <span className="font-bold text-[hsl(var(--color-text))]">{req.phoneNumber ?? "—"}</span>
                         </div>
                       </div>
-                      <span className="text-[11px] font-bold text-[hsl(var(--color-text-muted))]">
+                      <span className="text-xs font-medium text-[hsl(var(--color-text-muted))]">
                         {new Date(req.createdAt).toLocaleDateString()}
                       </span>
                     </div>

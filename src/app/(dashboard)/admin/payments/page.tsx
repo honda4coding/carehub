@@ -1,10 +1,10 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { 
   LuCreditCard as LuCreditCardIcon, 
   LuTrendingUp as LuTrendingUpIcon, 
-  LuChartPie as LuPieChartIcon, 
+  LuChartPie as LuChartPieIcon, 
   LuActivity as LuActivityIcon, 
   LuCircleAlert as LuCircleAlertIcon 
 } from "react-icons/lu";
@@ -166,7 +166,7 @@ export default function AdminPaymentsPage() {
             <div className="flex items-center justify-between mb-4">
               <span className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Revenue Streams</span>
               <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center text-purple-600">
-                <LuPieChartIcon className="text-xl" />
+                <LuChartPieIcon className="text-xl" />
               </div>
             </div>
             <div>
@@ -268,3 +268,4 @@ export default function AdminPaymentsPage() {
     </div>
   );
 }
+

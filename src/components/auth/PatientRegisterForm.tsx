@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation';
 import { patientRegisterSchema } from '@/components/schemas/patientRegisterSchema';
 import { PatientFormValues } from '@/types/patient';
 import { useState } from 'react';
-import { MdPerson, MdEmail, MdPhone, MdLock, MdCake, MdBloodtype, MdLocationOn } from 'react-icons/md';
-import { ImSpinner2 } from 'react-icons/im';
+import { LuUser, LuMail, LuPhone, LuLock, LuCake, LuDroplet, LuMapPin } from 'react-icons/lu';
+import { LuLoader } from 'react-icons/lu';
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
@@ -95,7 +95,7 @@ export default function PatientRegisterForm() {
           type="text" 
           {...formik.getFieldProps('fullName')} 
           placeholder="Enter full name" 
-          leftIcon={<MdPerson className="w-5 h-5" />}
+          leftIcon={<LuUser className="w-5 h-5" />}
           error={!!(formik.touched.fullName && formik.errors.fullName)}
         />
         {formik.touched.fullName && formik.errors.fullName && (
@@ -110,7 +110,7 @@ export default function PatientRegisterForm() {
           type="email" 
           {...formik.getFieldProps('email')} 
           placeholder="patient@example.com" 
-          leftIcon={<MdEmail className="w-5 h-5" />}
+          leftIcon={<LuMail className="w-5 h-5" />}
           error={!!(formik.touched.email && formik.errors.email)}
         />
         {formik.touched.email && formik.errors.email && (
@@ -126,7 +126,7 @@ export default function PatientRegisterForm() {
             type="tel" 
             {...formik.getFieldProps('phoneNumber')} 
             placeholder="0123..." 
-            leftIcon={<MdPhone className="w-5 h-5" />}
+            leftIcon={<LuPhone className="w-5 h-5" />}
             error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
           />
           {formik.touched.phoneNumber && formik.errors.phoneNumber && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.phoneNumber}</p>}
@@ -137,7 +137,7 @@ export default function PatientRegisterForm() {
             type="number" 
             {...formik.getFieldProps('age')} 
             placeholder="35" 
-            leftIcon={<MdCake className="w-5 h-5" />}
+            leftIcon={<LuCake className="w-5 h-5" />}
             error={!!(formik.touched.age && formik.errors.age)}
           />
           {formik.touched.age && formik.errors.age && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.age}</p>}
@@ -162,7 +162,7 @@ export default function PatientRegisterForm() {
         <div>
           <Label>Blood Type (Optional)</Label>
           <div className="relative">
-            <MdBloodtype className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+            <LuDroplet className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
             <select 
               {...formik.getFieldProps('bloodType')} 
               className={`w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
@@ -186,7 +186,7 @@ export default function PatientRegisterForm() {
             type="password" 
             {...formik.getFieldProps('password')} 
             placeholder="********" 
-            leftIcon={<MdLock className="w-5 h-5" />}
+            leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
           {formik.touched.password && formik.errors.password && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.password}</p>}
@@ -197,7 +197,7 @@ export default function PatientRegisterForm() {
             type="password" 
             {...formik.getFieldProps('confirmPassword')} 
             placeholder="********" 
-            leftIcon={<MdLock className="w-5 h-5" />}
+            leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
           />
           {formik.touched.confirmPassword && formik.errors.confirmPassword && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.confirmPassword}</p>}
@@ -208,7 +208,7 @@ export default function PatientRegisterForm() {
       <div>
         <Label>Address (Optional)</Label>
         <div className="relative">
-          <MdLocationOn className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <LuMapPin className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
           <textarea 
             {...formik.getFieldProps('address')} 
             rows={2} 
@@ -231,3 +231,5 @@ export default function PatientRegisterForm() {
     </form>
   );
 }
+
+

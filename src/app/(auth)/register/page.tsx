@@ -1,82 +1,60 @@
-"use client";
-
-import { useState, useEffect, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import RoleSelector from "@/components/auth/RoleSelector";
-import DoctorRegisterForm from "@/components/auth/DoctorRegisterForm";
+﻿import DoctorRegisterForm from "@/components/auth/DoctorRegisterForm";
 import PatientRegisterForm from "@/components/auth/PatientRegisterForm";
+import { Suspense } from "react";
+import Link from "next/link";
 import { AuthCard } from "@/components/auth/AuthCard";
 
-function RegisterContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const roleFromUrl = searchParams.get("role");
-  const [selectedRole, setSelectedRole] = useState<"doctor" | "patient">("doctor");
-
-  useEffect(() => {
-    if (roleFromUrl === "patient" || roleFromUrl === "doctor") {
-      setSelectedRole(roleFromUrl as "doctor" | "patient");
-    }
-  }, [roleFromUrl]);
-
-  const handleRoleChange = (role: "doctor" | "patient") => {
-    setSelectedRole(role);
-    router.push(`/register?role=${role}`, { scroll: false });
-  };
+// Using a wrapper component since Register requires handling role logic
+export default async function RegisterPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ role?: string }>;
+}) {
+  const sp = await searchParams;
+  const role = sp.role || "patient";
 
   return (
-    <AuthCard className="max-w-2xl w-full">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-[hsl(var(--color-text))]">
-          Create New Account
-        </h1>
-        <p className="text-[hsl(var(--color-text-muted))] mt-2">
-          Register as {selectedRole === "doctor" ? "Medical Professional" : "Patient"}
-        </p>
-      </div>
+    <div className="w-full">
+      <AuthCard>
+        <div className="text-center mb-8">
+          <h1 className="text-2xl font-semibold text-[hsl(var(--color-text))] tracking-tight">Create an Account</h1>
+          <p className="text-sm text-[hsl(var(--color-text-muted))] mt-2">Join CareHub to manage your health</p>
+        </div>
 
-      <RoleSelector selectedRole={selectedRole} onRoleChange={handleRoleChange} />
-
-      <div className="mt-4 transition-all duration-500">
-        {selectedRole === "doctor" ? (
-          <DoctorRegisterForm />
-        ) : (
-          <PatientRegisterForm />
-        )}
-      </div>
-
-      <div className="text-center mt-10 pt-8 border-t border-soft/50">
-        <p className="text-[hsl(var(--color-text-muted))]">
-          Already have an account?{" "}
-          <a
-            href="/login"
-            className="font-bold hover:underline underline-offset-4 transition-all"
-            style={{ color: "hsl(var(--color-primary-strong))" }}
+        <div className="flex gap-2 p-1 bg-[hsl(var(--color-bg-soft))] rounded-xl mb-8">
+          <Link
+            href="/register?role=patient"
+            className={`flex-1 text-center py-2 text-sm font-medium rounded-[10px] transition-all ${
+              role === "patient"
+                ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary))] shadow-[var(--shadow-sm)]"
+                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))/50]"
+            }`}
           >
+            Patient
+          </Link>
+          <Link
+            href="/register?role=doctor"
+            className={`flex-1 text-center py-2 text-sm font-medium rounded-[10px] transition-all ${
+              role === "doctor"
+                ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary))] shadow-[var(--shadow-sm)]"
+                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface))/50]"
+            }`}
+          >
+            Doctor
+          </Link>
+        </div>
+
+        <Suspense fallback={<div className="text-center text-[hsl(var(--color-primary))]">Loading Form...</div>}>
+          {role === "doctor" ? <DoctorRegisterForm /> : <PatientRegisterForm />}
+        </Suspense>
+
+        <div className="mt-6 text-center text-sm text-[hsl(var(--color-text-muted))]">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] transition-colors">
             Sign in
-          </a>
-        </p>
-      </div>
-    </AuthCard>
-  );
-}
-
-
-export default function RegisterPage() {
-  return (
-    <div
-      className="min-h-screen flex items-start justify-center p-6 pt-28" 
-      style={{
-        background: `
-          radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
-          radial-gradient(circle at bottom left, hsl(var(--color-primary) / 0.15) 0%, transparent 40%),
-          hsl(var(--color-bg))
-        `,
-      }}
-    >
-      <Suspense fallback={<div className="mt-20 font-medium text-[hsl(var(--color-primary))] text-center">Loading Registration...</div>}>
-        <RegisterContent />
-      </Suspense>
+          </Link>
+        </div>
+      </AuthCard>
     </div>
   );
 }

@@ -2,13 +2,13 @@
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { ImSpinner2 } from "react-icons/im";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { LuLoader } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck, LuShield } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   fullName:       Yup.string().min(3, "Min 3 characters").required("Full name is required"),
   phoneNumber:    Yup.string().min(10, "Min 10 digits").optional(),
@@ -27,7 +27,7 @@ type FormValues = {
   sharingSetting: "all" | "own_only" | "otp" | "";
 };
 
-// ─── Reusable field ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Reusable field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function EditField({ name, label, icon, placeholder, type = "text", errors, touched }: {
   name: string; label: string; icon: React.ReactNode;
   placeholder: string; type?: string;
@@ -54,7 +54,7 @@ function EditField({ name, label, icon, placeholder, type = "text", errors, touc
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile: PatientProfile | null;
   onSaveSuccess: (updated: UpdatePatientProfilePayload) => void;
@@ -121,27 +121,27 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
               {/* Full Name */}
               <EditField name="fullName" label="Full Name" icon={<LuUser />} placeholder="John Doe" errors={errors} touched={touched} />
 
-              {/* Email — read only */}
+              {/* Email â€” read only */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
                   <LuMail className="w-4 h-4" /> Email
                 </label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
-                  {profile?.email || "—"}
+                  {profile?.email || "â€”"}
                 </div>
               </div>
 
               {/* Phone */}
               <EditField name="phoneNumber" label="Phone" icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
 
-              {/* Age + Gender — 2 cols */}
+              {/* Age + Gender â€” 2 cols */}
               <div className="grid grid-cols-2 gap-4">
                 <EditField name="age" label="Age" icon={<LuCalendar />} placeholder="25" type="number" errors={errors} touched={touched} />
 
                 {/* Gender dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="gender" className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    <span className="w-4 h-4 text-base">⚧</span> Gender
+                    <span className="w-4 h-4 text-base">âš§</span> Gender
                   </label>
                   <div className="relative">
                     <Field
@@ -157,7 +157,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                     </Field>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">â–¾</span>
                   </div>
                   <ErrorMessage name="gender" component="p" className="text-danger text-xs pl-1 font-medium" />
                 </div>
@@ -211,8 +211,8 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                 className="py-3 px-6 text-white text-[14px] font-black rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all cursor-pointer bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))]"
               >
                 {isSubmitting
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-                  : <><HiOutlineArrowRight className="w-4 h-4" /> Save Changes</>
+                  ? <><LuLoader className="w-4 h-4 animate-spin" /> Saving...</>
+                  : <><LuArrowRight className="w-4 h-4" /> Save Changes</>
                 }
               </button>
             </div>
@@ -222,3 +222,5 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
     </div>
   );
 }
+
+

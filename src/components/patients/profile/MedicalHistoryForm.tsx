@@ -2,17 +2,17 @@
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { ImSpinner2 } from "react-icons/im";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { LuLoader } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import { LuDroplets, LuPlus, LuX, LuCheck, LuChevronDown, LuScissors } from "react-icons/lu";
 import { useState, KeyboardEvent } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 import { MedicalHistoryFormValues, Surgery } from "@/types/profile";
 
-// ─── Constants ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   bloodType: Yup.string().oneOf(BLOOD_TYPES).optional(),
   allergies: Yup.array().of(Yup.string()).optional(),
@@ -27,7 +27,7 @@ const schema = Yup.object({
   ).optional(),
 });
 
-// ─── Tag Input ────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Tag Input â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
   label: string; icon: React.ReactNode; placeholder: string;
   tags: string[]; onAdd: (tag: string) => void; onRemove: (i: number) => void;
@@ -79,7 +79,7 @@ function TagInput({ label, icon, placeholder, tags, onAdd, onRemove }: {
   );
 }
 
-// ─── Surgery Card ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ Surgery Card â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function SurgeryCard({ index, surgery, onRemove }: {
   index: number; surgery: Surgery; onRemove: () => void;
 }) {
@@ -97,7 +97,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
             {surgery.operationName || `Surgery ${index + 1}`}
           </span>
           {surgery.date && (
-            <span className="text-[11px] text-[hsl(var(--color-text-muted))]">· {surgery.date}</span>
+            <span className="text-[11px] text-[hsl(var(--color-text-muted))]">Â· {surgery.date}</span>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -148,7 +148,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
   );
 }
 
-// ─── Main Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile:       PatientProfile | null;
   onSaveSuccess: (updated: UpdatePatientProfilePayload) => void;
@@ -220,13 +220,13 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
                 <option value="">Select blood type</option>
                 {BLOOD_TYPES.map((bt) => <option key={bt} value={bt}>{bt}</option>)}
               </Field>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">â–¾</span>
             </div>
           </div>
 
           {/* Allergies */}
           <TagInput
-            label="Allergies" icon="🤧" placeholder="e.g. Penicillin, Peanuts..."
+            label="Allergies" icon="ðŸ¤§" placeholder="e.g. Penicillin, Peanuts..."
             tags={values.allergies}
             onAdd={(tag) => setFieldValue("allergies", [...values.allergies, tag])}
             onRemove={(i) => setFieldValue("allergies", values.allergies.filter((_, idx) => idx !== i))}
@@ -234,7 +234,7 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
 
           {/* Chronic */}
           <TagInput
-            label="Chronic Diseases" icon="🏥" placeholder="e.g. Diabetes, Hypertension..."
+            label="Chronic Diseases" icon="ðŸ¥" placeholder="e.g. Diabetes, Hypertension..."
             tags={values.chronic}
             onAdd={(tag) => setFieldValue("chronic", [...values.chronic, tag])}
             onRemove={(i) => setFieldValue("chronic", values.chronic.filter((_, idx) => idx !== i))}
@@ -279,8 +279,8 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
             className="w-full py-3 text-white text-[13px] font-bold rounded-xl flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed active:scale-[0.98] transition-all"
             style={{ background: "hsl(var(--color-primary))" }}>
             {isSubmitting
-              ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...</>
-              : <><HiOutlineArrowRight className="w-4 h-4" /> Save Medical History</>
+              ? <><LuLoader className="w-4 h-4 animate-spin" /> Saving...</>
+              : <><LuArrowRight className="w-4 h-4" /> Save Medical History</>
             }
           </button>
         </Form>
@@ -288,3 +288,5 @@ export default function MedicalHistoryForm({ profile, onSaveSuccess }: Props) {
     </Formik>
   );
 }
+
+

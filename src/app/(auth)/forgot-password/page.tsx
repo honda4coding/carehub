@@ -15,12 +15,13 @@
  */
 "use client";
 
+import { AuthCard } from "@/components/auth/AuthCard";
 import React from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
-import { HiOutlineMail } from "react-icons/hi";
-import { HiOutlineArrowRight } from "react-icons/hi2";
-import { ImSpinner2 } from "react-icons/im";
+import { LuMail } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -52,7 +53,7 @@ export default function ForgotPasswordPage() {
       const data = await response.json();
 
     if (!response.ok) {
-      // لو عنده OTP شغال، وديه على طول لصفحة الـ verify
+      // Ù„Ùˆ Ø¹Ù†Ø¯Ù‡ OTP Ø´ØºØ§Ù„ØŒ ÙˆØ¯ÙŠÙ‡ Ø¹Ù„Ù‰ Ø·ÙˆÙ„ Ù„ØµÙØ­Ø© Ø§Ù„Ù€ verify
       if (data.message?.includes("already have otp")) {
         router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=reset`);
         return;
@@ -70,8 +71,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center pt-24 px-4 pb-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
+    
+      <AuthCard>
 
         {/* Header */}
         <div className="text-center mb-6">
@@ -107,7 +108,7 @@ export default function ForgotPasswordPage() {
                   Email
                 </label>
                 <div className="relative">
-                  <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <LuMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field
                     name="email"
                     type="email"
@@ -141,13 +142,13 @@ export default function ForgotPasswordPage() {
               >
                 {isSubmitting ? (
                   <>
-                    <ImSpinner2 className="w-5 h-5 animate-spin" />
+                    <LuLoader className="w-5 h-5 animate-spin" />
                     Sending...
                   </>
                 ) : (
                   <>
                     Send Recovery Code
-                    <HiOutlineArrowRight className="w-5 h-5" />
+                    <LuArrowRight className="w-5 h-5" />
                   </>
                 )}
               </button>
@@ -156,7 +157,7 @@ export default function ForgotPasswordPage() {
           )}
         </Formik>
 
-      </div>
-    </div>
+      </AuthCard>
   );
 }
+

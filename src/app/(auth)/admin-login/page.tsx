@@ -6,8 +6,8 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { AuthCard } from "@/components/auth/AuthCard";
-import { HiOutlineMail, HiOutlineLockClosed, HiShieldCheck } from "react-icons/hi";
-import { ImSpinner2 } from "react-icons/im";
+import { LuMail, LuLock, LuShieldCheck } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
 import { adminLoginSchema } from "@/components/schemas/adminLoginSchema";
 
@@ -50,21 +50,12 @@ export default function AdminLoginPage() {
 };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center pt-24 px-6 pb-6" 
-      style={{
-        background: `
-          radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.15) 0%, transparent 40%),
-          radial-gradient(circle at bottom left, hsl(var(--color-primary) / 0.15) 0%, transparent 40%),
-          hsl(var(--color-bg))
-        `,
-      }}
-    >
-      <main className="w-full max-w-md">
+    
+      
         <AuthCard>
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-[hsl(var(--color-primary))] text-white rounded-2xl mx-auto mb-4 shadow-lg shadow-[hsl(var(--color-primary)/0.2)]">
-              <HiShieldCheck className="text-3xl" />
+              <LuShieldCheck className="text-3xl" />
             </div>
             <h1 className="text-2xl font-black text-[hsl(var(--color-text))]">Admin Portal</h1>
             <p className="text-[hsl(var(--color-text-muted))] text-sm mt-1">Authorized access only</p>
@@ -85,7 +76,7 @@ export default function AdminLoginPage() {
                         {...field}
                         type="email"
                         placeholder="admin@carehub.com"
-                        leftIcon={<HiOutlineMail className="w-5 h-5" />}
+                        leftIcon={<LuMail className="w-5 h-5" />}
                         error={!!(meta.touched && meta.error)}
                       />
                     )}
@@ -101,8 +92,8 @@ export default function AdminLoginPage() {
                       <Input
                         {...field}
                         type="password"
-                        placeholder="••••••••"
-                        leftIcon={<HiOutlineLockClosed className="w-5 h-5" />}
+                        placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                        leftIcon={<LuLock className="w-5 h-5" />}
                         error={!!(meta.touched && meta.error)}
                       />
                     )}
@@ -131,7 +122,6 @@ export default function AdminLoginPage() {
             </p>
           </div>
         </AuthCard>
-      </main>
-    </div>
   );
 }
+

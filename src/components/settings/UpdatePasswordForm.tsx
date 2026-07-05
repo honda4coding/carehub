@@ -2,13 +2,13 @@
 
 import React from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import { HiOutlineLockClosed } from "react-icons/hi";
-import { HiOutlineArrowRight } from "react-icons/hi2";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLock } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
-import { FaFingerprint } from "react-icons/fa";
+import { LuFingerprint } from "react-icons/lu";
 import { registerBiometrics } from "@/services/webAuthnService";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -130,8 +130,8 @@ export default function UpdatePasswordForm() {
                 Current Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="oldpassword" type="password" placeholder="••••••••"
+                <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+                <Field name="oldpassword" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.oldpassword && touched.oldpassword ? "#fff5f5" : "white",
@@ -148,8 +148,8 @@ export default function UpdatePasswordForm() {
                 New Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="newpassword" type="password" placeholder="••••••••"
+                <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+                <Field name="newpassword" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
@@ -166,8 +166,8 @@ export default function UpdatePasswordForm() {
                 Confirm New Password
               </label>
               <div className="relative">
-                <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-                <Field name="cpassword" type="password" placeholder="••••••••"
+                <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+                <Field name="cpassword" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
                   style={{
                     backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
@@ -183,9 +183,9 @@ export default function UpdatePasswordForm() {
               <button type="submit" disabled={isSubmitting}
                 className="w-full md:w-auto py-3 px-6 bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white font-black text-[14px] rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer">
                 {isSubmitting ? (
-                  <><ImSpinner2 className="w-5 h-5 animate-spin" /> Updating...</>
+                  <><LuLoader className="w-5 h-5 animate-spin" /> Updating...</>
                 ) : (
-                  <>Update Password <HiOutlineArrowRight className="w-5 h-5" /></>
+                  <>Update Password <LuArrowRight className="w-5 h-5" /></>
                 )}
               </button>
             </div>
@@ -202,7 +202,7 @@ export default function UpdatePasswordForm() {
         <div>
           <h3 className="text-sm font-black text-[hsl(var(--color-text))] flex items-center gap-2">
             <div className={`p-1.5 rounded-lg ${isBioEnabled ? 'bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]' : 'bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]'}`}>
-              <FaFingerprint className="w-4 h-4" />
+              <LuFingerprint className="w-4 h-4" />
             </div>
             Biometric Login
           </h3>
@@ -226,7 +226,7 @@ export default function UpdatePasswordForm() {
               className="w-full py-2.5 px-4 border border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger))] hover:text-white font-bold text-[13px] rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isRegisteringBio ? (
-                <><ImSpinner2 className="w-4 h-4 animate-spin" /> Removing...</>
+                <><LuLoader className="w-4 h-4 animate-spin" /> Removing...</>
               ) : (
                 "Disable Biometrics"
               )}
@@ -240,7 +240,7 @@ export default function UpdatePasswordForm() {
             className="w-full py-3 px-4 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface-hover))] font-bold text-[13px] rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isRegisteringBio ? (
-              <><ImSpinner2 className="w-4 h-4 animate-spin" /> Setting up...</>
+              <><LuLoader className="w-4 h-4 animate-spin" /> Setting up...</>
             ) : (
               "Enable Biometric Login"
             )}
@@ -250,3 +250,4 @@ export default function UpdatePasswordForm() {
     </div>
   );
 }
+
