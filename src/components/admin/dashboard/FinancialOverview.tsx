@@ -66,7 +66,7 @@ export default function FinancialOverview() {
         
         {/* Total Platform Profits */}
         <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-primary)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-success)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Platform Net Profit</p>
@@ -74,7 +74,7 @@ export default function FinancialOverview() {
                 {totalPlatformProfits.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
               </h3>
             </div>
-            <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-500">
+            <div className="w-12 h-12 bg-[hsl(var(--color-success)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-success))]">
               <LuTrendingUp className="w-6 h-6" />
             </div>
           </div>
@@ -92,7 +92,7 @@ export default function FinancialOverview() {
 
         {/* Doctors Total Revenue */}
         <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-blue-500/5 rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-primary)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Total System Volume</p>
@@ -100,7 +100,7 @@ export default function FinancialOverview() {
                 {stats.totalDoctorsEarnings.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
               </h3>
             </div>
-            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-500">
+            <div className="w-12 h-12 bg-[hsl(var(--color-primary)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-primary))]">
               <BiMoney className="w-6 h-6" />
             </div>
           </div>
@@ -111,7 +111,7 @@ export default function FinancialOverview() {
 
         {/* Cancellation Rate */}
         <div className="bg-[hsl(var(--color-surface))] rounded-[24px] p-6 border border-[hsl(var(--color-border))] relative overflow-hidden group hover:shadow-lg transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-rose-500/5 rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
+          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-danger)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
           <div className="flex items-start justify-between relative z-10">
             <div>
               <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Cancellation Rate</p>
@@ -119,13 +119,13 @@ export default function FinancialOverview() {
                 {stats.cancellationRate}%
               </h3>
             </div>
-            <div className="w-12 h-12 bg-rose-500/10 rounded-2xl flex items-center justify-center text-rose-500">
+            <div className="w-12 h-12 bg-[hsl(var(--color-danger)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-danger))]">
               <LuBan className="w-6 h-6" />
             </div>
           </div>
-          <div className="w-full bg-[hsl(var(--color-background))] rounded-full h-1.5 mt-4">
+          <div className="w-full bg-[hsl(var(--color-background))] rounded-full h-1.5 mt-4 border border-[hsl(var(--color-border-soft))] overflow-hidden">
             <div 
-              className="h-1.5 rounded-full bg-rose-500"
+              className="h-1.5 rounded-full bg-[hsl(var(--color-danger))]"
               style={{ width: `${Math.min(stats.cancellationRate, 100)}%` }}
             ></div>
           </div>
