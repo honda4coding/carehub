@@ -28,13 +28,15 @@ export default function BentoFeatures() {
           {/* Large Card: AI Safety */}
           <div className="md:col-span-2 row-span-1 md:row-span-2 rounded-[2.5rem] p-8 lg:p-12 bg-linear-to-br from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] relative overflow-hidden group flex flex-col justify-between h-full">
             <div className="absolute top-0 right-0 w-96 h-96 bg-[hsl(var(--color-primary)/0.1)] blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-[hsl(var(--color-primary)/0.15)] transition-colors duration-700" />
-            
-            <div className="relative z-10 mb-6">
-              <LuBrainCircuit className="w-10 h-10 text-[hsl(var(--color-primary))]" />
+            <div className="relative z-10 flex items-center gap-4 mb-6">
+              <div className="w-14 h-14 rounded-2xl bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-center shadow-[0_0_20px_-5px_hsl(var(--color-primary)/0.3)] shrink-0">
+                <LuBrainCircuit className="w-7 h-7 text-[hsl(var(--color-primary))]" />
+              </div>
+              <h3 className="text-xl lg:text-3xl font-black text-[hsl(var(--color-text))] tracking-tight leading-tight">AI Safety Intelligence</h3>
             </div>
             
             {/* CSS Visual: AI Radar/Scan with Image */}
-            <div className="relative w-full h-48 sm:h-64 mb-8 rounded-3xl bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] overflow-hidden flex items-center justify-center">
+            <div className="relative w-full flex-1 min-h-[200px] mb-6 rounded-3xl bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-text-muted)/0.1)] overflow-hidden flex items-center justify-center">
               {/* Radar Grid */}
               <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
               
@@ -59,10 +61,9 @@ export default function BentoFeatures() {
               </div>
             </div>
 
-            <div className="relative z-10">
-              <h3 className="text-xl lg:text-2xl font-black text-[hsl(var(--color-text))] tracking-tight mb-4 leading-tight">AI Safety<br/>Intelligence</h3>
-              <p className="text-lg text-[hsl(var(--color-text-muted))] leading-relaxed max-w-md">
-                Prescribe with absolute confidence. Our engine analyzes real-time drug interactions and patient allergies before the prescription is even finalized.
+            <div className="relative z-10 mt-auto">
+              <p className="text-lg text-[hsl(var(--color-text-muted))] leading-relaxed max-w-2xl">
+                Prescribe with absolute confidence. Our proprietary AI engine analyzes real-time drug interactions, patient allergies, and historical medical records before the prescription is even finalized. It actively monitors for adverse effects and suggests safer alternatives instantly, ensuring that clinical workflows remain uninterrupted while maximizing patient safety.
               </p>
             </div>
           </div>
@@ -70,8 +71,8 @@ export default function BentoFeatures() {
           {/* Medium Card: Smart AI Assistant (Replaced Reminders) */}
           <div className="md:col-span-1 row-span-1 rounded-[2.5rem] p-8 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
             <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-4">
-                <LuBot className="w-8 h-8 text-[hsl(var(--color-secondary))]" />
+              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--color-secondary)/0.1)] border border-[hsl(var(--color-secondary)/0.2)] flex items-center justify-center shadow-[0_0_15px_-5px_hsl(var(--color-secondary)/0.2)] mb-5">
+                <LuBot className="w-6 h-6 text-[hsl(var(--color-secondary))]" />
               </div>
               <h3 className="text-xl font-bold text-[hsl(var(--color-text))] mb-2">Smart AI Assistant</h3>
               <p className="text-sm text-[hsl(var(--color-text-muted))] leading-relaxed mb-6">
@@ -96,7 +97,9 @@ export default function BentoFeatures() {
           {/* Medium Card: Smart Rx */}
           <div className="md:col-span-1 row-span-1 rounded-[2.5rem] p-8 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
             <div className="relative z-10">
-              <LuFileDigit className="w-10 h-10 text-[hsl(var(--color-primary))] mb-6" />
+              <div className="w-12 h-12 rounded-xl bg-[hsl(var(--color-primary)/0.1)] border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-center shadow-[0_0_15px_-5px_hsl(var(--color-primary)/0.2)] mb-5">
+                <LuFileDigit className="w-6 h-6 text-[hsl(var(--color-primary))]" />
+              </div>
               <h3 className="text-xl font-bold text-[hsl(var(--color-text))] mb-2">Digital Prescriptions</h3>
               <p className="text-sm text-[hsl(var(--color-text-muted))] leading-relaxed mb-6">
                 Instant, paperless Rx routing. Clear dosages directly in your pocket.
@@ -118,7 +121,7 @@ export default function BentoFeatures() {
           <div className="md:col-span-3 row-span-1 rounded-[2.5rem] p-8 lg:p-12 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-text-muted)/0.1)] flex flex-col md:flex-row items-center justify-between gap-8 group">
             <div className="flex-1 max-w-xl">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-[hsl(var(--color-text-muted)/0.1)] rounded-xl flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-[hsl(var(--color-text-muted)/0.1)] border border-[hsl(var(--color-text-muted)/0.2)] flex items-center justify-center shadow-[0_0_15px_-5px_hsl(var(--color-text-muted)/0.1)]">
                   <LuActivity className="w-6 h-6 text-[hsl(var(--color-text))]" />
                 </div>
                 <h3 className="text-2xl font-bold text-[hsl(var(--color-text))]">Unified Medical Records</h3>
@@ -130,13 +133,13 @@ export default function BentoFeatures() {
             
             {/* Visual Element for Vitals Card */}
             <div className="w-full md:w-auto flex-1 flex justify-end">
-              <div className="w-full max-w-sm h-32 bg-[hsl(var(--color-bg))] rounded-2xl border border-[hsl(var(--color-text-muted)/0.1)] p-4 flex items-end gap-2 overflow-hidden">
+              <div className="w-full h-32 bg-[hsl(var(--color-bg))] rounded-2xl border border-[hsl(var(--color-text-muted)/0.1)] p-4 flex items-end justify-between gap-2 overflow-hidden">
                  {/* Fake Chart Bars */}
-                 {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85].map((height, i) => (
+                 {[40, 70, 45, 90, 65, 80, 50, 100, 75, 85, 60, 95, 40].map((height, i) => (
                     <div 
                       key={i} 
-                      className="flex-1 bg-linear-to-t from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] rounded-t-sm opacity-60 group-hover:opacity-100 transition-opacity"
-                      style={{ height: `${height}%`, transitionDelay: `${i * 50}ms` }}
+                      className="w-full bg-linear-to-t from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] rounded-t-sm opacity-60 group-hover:opacity-100 transition-opacity"
+                      style={{ height: `${height}%`, transitionDelay: `${i * 30}ms` }}
                     />
                  ))}
               </div>

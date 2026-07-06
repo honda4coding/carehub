@@ -88,14 +88,14 @@ export const CurrentQueue = ({
         </div>
 
         <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
-          <div className="relative flex items-center min-w-[200px] flex-1 lg:flex-none">
-            <LuSearch className="absolute left-2.5 text-[13px] text-[hsl(var(--color-text-muted))]" />
+          <div className="relative flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 w-full md:w-[400px] focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all">
+            <LuSearch className="ml-2 text-[13px] text-[hsl(var(--color-text-muted))] shrink-0" />
             <input
               type="text"
               placeholder="Search name or phone..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="pl-7 pr-3 py-1.5 text-[12px] font-medium rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-1 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
+              className="flex-1 min-w-0 bg-transparent border-none outline-none text-[12px] font-medium py-1.5 px-2 text-[hsl(var(--color-text))]"
             />
           </div>
 
@@ -372,7 +372,30 @@ export const CurrentQueue = ({
                       )}
                     </div>
                     <div className="flex justify-end gap-2 shrink-0">
-                      {s.status === "pending_otp" ? (
+                      {isAssistant ? (
+                        <>
+                          {!hideVitalsAction && (user?.permissions?.canManagePatientsVitals || user?.permissions?.canManagePatientsFull || user?.permissions?.canManagePatients) && (
+                            <Button
+                              size="sm"
+                              variant="primary"
+                              onClick={() => onRecordVitals && onRecordVitals(s)}
+                              className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+                            >
+                              Update Vitals
+                            </Button>
+                          )}
+                          {!hideAssessmentAction && canManagePatientsFull && (
+                            <Button
+                              size="sm"
+                              icon={LuEye}
+                              onClick={() => router.push(`/assistant/encounter/${s.id}`)}
+                              className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg"
+                            >
+                              Open File
+                            </Button>
+                          )}
+                        </>
+                      ) : s.status === "pending_otp" ? (
                         <>
                           <button
                             onClick={() => handleCancelRequest?.(s.id)}

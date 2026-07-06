@@ -46,7 +46,7 @@ export default function ThemeToggle() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="w-9 h-9 flex items-center justify-center rounded-xl bg-[hsl(var(--color-bg-surface-hover))] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-text-muted))] transition-colors border border-[hsl(var(--color-border))] shrink-0"
+        className="w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary-soft))] hover:text-[hsl(var(--color-primary))] text-[hsl(var(--color-text-muted))] transition-colors border border-[hsl(var(--color-border))] shrink-0 active:scale-95"
         aria-label="Toggle Theme"
         title={`Current Theme: ${activeTheme.label}`}
       >
@@ -54,7 +54,7 @@ export default function ThemeToggle() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl shadow-lg z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-44 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-2xl shadow-[hsl(var(--color-text-muted)/0.15)] z-50 overflow-hidden animate-slide-up">
           <div className="p-1 flex flex-col gap-0.5">
             {THEMES.map((t) => {
               const Icon = t.icon;
@@ -66,13 +66,13 @@ export default function ThemeToggle() {
                     setTheme(t.id);
                     setOpen(false);
                   }}
-                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-colors w-full text-left
+                  className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 w-full text-left
                     ${isActive 
-                      ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]" 
-                      : "text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-surface-hover))]"
+                      ? "bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] shadow-sm translate-x-1" 
+                      : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))] hover:translate-x-0.5"
                     }`}
                 >
-                  <Icon className={`text-[15px] ${isActive ? "text-[hsl(var(--color-primary))]" : "text-[hsl(var(--color-text-muted))]"}`} />
+                  <Icon className={`text-base ${isActive ? "text-[hsl(var(--color-primary))]" : "text-[hsl(var(--color-text-muted))]"}`} />
                   {t.label}
                 </button>
               );

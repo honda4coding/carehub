@@ -70,7 +70,7 @@ export default function InstallButton() {
       icon={LuDownload}
       onClick={handleInstallClick}
       title="Install App"
-      className="hidden md:flex bg-[hsl(var(--color-primary)/0.1)] border-[hsl(var(--color-primary)/0.3)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white rounded-xl w-10 h-10 items-center justify-center !p-0 shrink-0"
+      className="hidden md:flex rounded-xl w-10 h-10 items-center justify-center !p-0 shrink-0"
     />
   );
 }

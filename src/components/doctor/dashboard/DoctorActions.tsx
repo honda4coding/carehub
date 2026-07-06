@@ -15,29 +15,41 @@ export const DoctorActions = ({
   user,
 }: any) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
       {/* Welcome Card - Left, larger */}
-      <div className="md:col-span-2">
-        <div className="bg-gradient-doctor rounded-xl p-5 h-full flex items-center gap-4 text-white relative overflow-hidden">
+      <div className="md:col-span-2 lg:col-span-12 xl:col-span-4">
+        <div className="bg-gradient-doctor rounded-xl p-5 h-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-white relative overflow-hidden">
           <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-2xl"></div>
           <div className="absolute right-12 top-2 w-16 h-16 bg-white/5 rounded-full blur-xl"></div>
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-[22px] font-black border-2 border-white/25 shrink-0 overflow-hidden relative">
-            {user?.profilepicture?.secure_url ? (
-              <img src={user.profilepicture.secure_url} alt="Doctor" className="w-full h-full object-cover" />
-            ) : (
-              user?.name?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || "D"
-            )}
+          
+          <div className="flex items-center gap-4 relative z-10">
+            <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-[22px] font-black border-2 border-white/25 shrink-0 overflow-hidden relative">
+              {user?.profilepicture?.secure_url ? (
+                <img src={user.profilepicture.secure_url} alt="Doctor" className="w-full h-full object-cover" />
+              ) : (
+                user?.name?.[0]?.toUpperCase() || user?.fullName?.[0]?.toUpperCase() || "D"
+              )}
+            </div>
+            <div className="flex-1">
+              <p className="text-[13px] font-semibold text-white/70 mb-0.5">Welcome back,</p>
+              <h2 className="text-[20px] font-black text-white leading-tight">Dr. {user?.name || user?.fullName || "Doctor"}</h2>
+              <p className="text-[12px] font-medium text-white/60 mt-1">Have a productive day ahead ✨</p>
+            </div>
           </div>
-          <div className="flex-1 relative z-10">
-            <p className="text-[13px] font-semibold text-white/70 mb-0.5">Welcome back,</p>
-            <h2 className="text-[20px] font-black text-white leading-tight">Dr. {user?.name || user?.fullName || "Doctor"}</h2>
-            <p className="text-[12px] font-medium text-white/60 mt-1">Have a productive day ahead ✨</p>
+
+          <div className="hidden sm:flex flex-col items-end text-right relative z-10 opacity-90 pr-2">
+            <div className="text-[24px] font-black text-white leading-none tracking-tight">
+              {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+            </div>
+            <div className="text-[13px] font-medium text-white/70 mt-1.5 uppercase tracking-wider">
+              {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Start Consultation - Larger Card */}
-      <div className="md:col-span-2 relative">
+      <div className="md:col-span-1 lg:col-span-8 xl:col-span-5 relative">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-center relative">
           <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] mb-2 leading-tight">Start Consultation</h2>
           
@@ -62,7 +74,7 @@ export const DoctorActions = ({
             </div>
 
             {showSearchResults && (
-              <div className="absolute top-full right-0 mt-2 w-full md:w-[400px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+              <div className="absolute top-full left-0 mt-2 w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden z-50 shadow-xl animate-in fade-in slide-in-from-top-2">
                 <div className="p-2 border-b border-[hsl(var(--color-border-soft))] bg-[hsl(var(--color-bg-soft))] flex justify-between items-center">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">Search Results</span>
                   <button onClick={() => setShowSearchResults(false)} className="text-[10px] text-[hsl(var(--color-danger))] font-bold hover:underline cursor-pointer">Close</button>
@@ -114,21 +126,21 @@ export const DoctorActions = ({
       </div>
 
       {/* Walk-In Patient - Compact & Narrow */}
-      <div className="md:col-span-1">
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-row md:flex-col items-center md:items-stretch justify-between relative">
-          <div className="flex items-center gap-3 mb-0 md:mb-2">
-            <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.1)] rounded-xl flex items-center justify-center text-[hsl(var(--color-primary))] text-[24px] shrink-0">
+      <div className="md:col-span-1 lg:col-span-4 xl:col-span-3">
+        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-row items-center justify-between relative gap-2">
+          <div className="flex items-center gap-2 2xl:gap-3 min-w-0">
+            <div className="w-10 h-10 bg-[hsl(var(--color-primary)/0.1)] rounded-xl flex items-center justify-center text-[hsl(var(--color-primary))] text-[20px] shrink-0">
               <LuUserPlus />
             </div>
-            <div>
-              <h2 className="text-[hsl(var(--color-text))] text-[16px] font-black leading-tight">Walk-In</h2>
-              <p className="text-[hsl(var(--color-text-muted))] text-[12px] font-semibold">Offline patients</p>
+            <div className="min-w-0">
+              <h2 className="text-[hsl(var(--color-text))] text-[14px] font-black leading-tight truncate">Walk-In</h2>
+              <p className="text-[hsl(var(--color-text-muted))] text-[11px] font-semibold truncate hidden sm:block">Offline patients</p>
             </div>
           </div>
           <Button 
             size="sm"
             onClick={() => setWalkInModalOpen(true)}
-            className="!text-[11px] !py-1 !px-3 !h-[32px] !rounded-lg w-fit md:self-end shrink-0"
+            className="!text-[12px] !py-1.5 !px-3 2xl:!px-4 !h-auto !rounded-lg shrink-0"
           >
             Register
           </Button>

@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import { adminService } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
-import { FaSquarePollVertical } from "react-icons/fa6";
+import { LuTrendingUp } from "react-icons/lu";
 
 import {
   LuLayoutDashboard,
@@ -56,7 +56,7 @@ const adminNav: NavSection[] = [
       {
         label: "Analytics",
         href: "/admin/analytics",
-        icon: <FaSquarePollVertical />,
+        icon: <LuTrendingUp />,
       },
     ],
   },
@@ -119,7 +119,7 @@ const doctorNav: NavSection[] = [
       {
         label: "Reports",
         href: "/doctor/reports",
-        icon: <FaSquarePollVertical />,
+        icon: <LuTrendingUp />,
       },
       {
         label: "Wallet",
@@ -159,9 +159,9 @@ const doctorNav: NavSection[] = [
         icon: <LuBuilding2 />,
       },
       {
-        label: "Staff & Logs",
+        label: "Manage Assistant",
         href: "/doctor/staff",
-        icon: <LuShieldCheck />,
+        icon: <LuUsers />,
       },
     ],
   },
@@ -244,7 +244,7 @@ const navMap: Record<string, NavSection[]> = {
 
 ////////////////////
 
-// ─── Expandable Settings group (Profile / Preferences / Security) ─────────────
+// â”€â”€â”€ Expandable Settings group (Profile / Preferences / Security) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const settingsSub: Record<
   string,
   { label: string; href: string; icon: React.ReactNode }[]
@@ -500,7 +500,7 @@ function SidebarContent({
   if (role === "assistant" && user) {
     const assistantDynamicNav: NavSection[] = [
       {
-        title: "Main",
+        title: "Workspace",
         items: [
           { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
           ...(user.permissions?.canManageAppointments ? [{ 
@@ -508,23 +508,25 @@ function SidebarContent({
             href: "/assistant/appointments", 
             icon: <LuCalendarDays />,
             subItems: [
-              {
-                label: "Appointments",
-                href: "/assistant/appointments",
-                icon: <LuCalendarDays className="text-sm" />,
-              },
-              {
-                label: "My Schedule",
-                href: "/assistant/appointments/schedule",
-                icon: <LuSettings2 className="text-sm" />,
-              },
+              { label: "Appointments", href: "/assistant/appointments", icon: <LuCalendarDays className="text-sm" /> },
+              { label: "My Schedule", href: "/assistant/appointments/schedule", icon: <LuSettings2 className="text-sm" /> },
             ],
           }] : []),
+        ],
+      },
+      {
+        title: "Patient Care",
+        items: [
           ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatients ? [{ label: "Vitals Queue", href: "/assistant/vitals", icon: <LuHeartPulse /> }] : []),
           ...(user.permissions?.canManagePatientsFull ? [{ label: "Clinical Queue", href: "/assistant/assessment", icon: <LuStethoscope /> }] : []),
           ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatientsFull || user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/assistant/patients", icon: <LuUsers /> }] : []),
-          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuSettings2 /> }] : []),
-          ...(user.permissions?.canManageReports ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <FaSquarePollVertical /> }] : []),
+        ],
+      },
+      {
+        title: "Operations",
+        items: [
+          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuWallet /> }] : []),
+          ...(user.permissions?.canManageReports ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <LuTrendingUp /> }] : []),
         ],
       },
     ];
@@ -550,7 +552,8 @@ function SidebarContent({
     if (!avatarUrl) {
       const fetchAvatar = async () => {
         try {
-          const res = await fetchClient.get(`/${role}/profile`);
+          const route = role === 'assistant' ? '/users/profile' : `/${role}/profile`;
+          const res = await fetchClient.get(route);
           const pic =
             res?.data?.profilepicture?.secure_url ||
             res?.data?.user?.profilepicture?.secure_url;
@@ -581,7 +584,7 @@ function SidebarContent({
             </p>
           </div>
         </Link>
-        {/* Close btn — mobile only */}
+        {/* Close btn â€” mobile only */}
         {onClose && (
           <button
             onClick={onClose}
@@ -624,9 +627,7 @@ function SidebarContent({
                   href={item.href}
                   onClick={onClose}
                   className={`flex items-center gap-2.5 px-2.5 py-2 rounded-[10px] text-[13px] font-semibold mb-0.5 transition-all duration-150 ${
-                    isActive
-                      ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))]"
-                      : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))]"
+                    isActive ? "bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] font-medium shadow-[var(--shadow-card)] translate-x-1" : "text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] hover:text-[hsl(var(--color-text))] hover:translate-x-0.5"
                   }`}
                 >
                   <span
@@ -646,7 +647,7 @@ function SidebarContent({
           </div>
         ))}
 
-        {/* Account — Settings expandable */}
+        {/* Account â€” Settings expandable */}
         {role !== "assistant" && (
           <div className="mb-2">
             <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[0.1em] text-[hsl(var(--color-text-muted)/0.55)]">
@@ -701,7 +702,7 @@ export default function Sidebar({ role }: { role: string }) {
   );
   const [pendingLicenses, setPendingLicenses] = useState<number | null>(null);
 
-  // ── Pending approvals badge ──────────────────────────────────────────────────
+  // â”€â”€ Pending approvals badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (role !== "admin") return;
 
@@ -723,7 +724,7 @@ export default function Sidebar({ role }: { role: string }) {
       );
   }, [role]);
 
-  // ── Pending license updates badge ────────────────────────────────────────────
+  // â”€â”€ Pending license updates badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (role !== "admin") return;
 
@@ -745,7 +746,7 @@ export default function Sidebar({ role }: { role: string }) {
       );
   }, [role]);
 
-  // ── Unread notifications badge ───────────────────────────────────────────────
+  // â”€â”€ Unread notifications badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchUnreadCount = useCallback(async () => {
     if (role !== "admin" && role !== "patient" && role !== "doctor") return;
     try {
@@ -785,7 +786,7 @@ export default function Sidebar({ role }: { role: string }) {
 
   return (
     <>
-      {/* ── Desktop sidebar ── */}
+      {/* â”€â”€ Desktop sidebar â”€â”€ */}
       <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
         <SidebarContent
           role={role}
@@ -806,7 +807,7 @@ export default function Sidebar({ role }: { role: string }) {
         </button>
       )}
 
-      {/* ── Mobile drawer ── */}
+      {/* â”€â”€ Mobile drawer â”€â”€ */}
       {open && (
         <>
           <div

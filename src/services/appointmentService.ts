@@ -115,12 +115,30 @@ export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
   return res.data ?? res;
 }
 
-export async function getAvailableSlots(doctorId: string, clinicId?: string, includeBooked?: boolean): Promise<Slot[]> {
+export async function getAvailableSlots(
+  doctorId: string, 
+  clinicIdOrOptions?: string | { clinicId?: string, startDate?: string, endDate?: string, includeBooked?: string | boolean, limit?: number }, 
+  legacyIncludeBooked?: boolean
+): Promise<Slot[]> {
+  let params: any = { cb: Date.now().toString() };
+  
+  if (typeof clinicIdOrOptions === 'string') {
+    params.clinicId = clinicIdOrOptions;
+    if (legacyIncludeBooked) params.includeBooked = 'true';
+  } else if (clinicIdOrOptions && typeof clinicIdOrOptions === 'object') {
+    if (clinicIdOrOptions.clinicId) params.clinicId = clinicIdOrOptions.clinicId;
+    if (clinicIdOrOptions.startDate) params.startDate = clinicIdOrOptions.startDate;
+    if (clinicIdOrOptions.endDate) params.endDate = clinicIdOrOptions.endDate;
+    if (clinicIdOrOptions.includeBooked) params.includeBooked = 'true';
+    if (clinicIdOrOptions.limit) params.limit = clinicIdOrOptions.limit;
+  }
+
   const res = await fetchClient.get(
     `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
-    { params: { ...(clinicId ? { clinicId } : {}), ...(includeBooked ? { includeBooked: 'true' } : {}), cb: Date.now().toString() } }
+    { params }
   );
-  return res.data ?? res;
+  const data = res.data ?? res;
+  return Array.isArray(data) ? data : (data.slots ?? []);
 }
 
 export async function deleteDoctorSlot(slotId: string): Promise<void> {

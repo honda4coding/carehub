@@ -15,12 +15,13 @@
 
 "use client";
 
+import { AuthCard } from "@/components/auth/AuthCard";
 import React from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
-import { HiOutlineLockClosed } from "react-icons/hi";
-import { HiOutlineArrowRight } from "react-icons/hi2";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLock } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 import { Suspense } from "react";
 
@@ -164,8 +165,8 @@ React.useEffect(() => {
 }, []);
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center pt-24 px-4 pb-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
+    
+      <AuthCard>
         {/* Header */}
         <div className="text-center mb-6">
           <h2 className="text-xl font-black text-[hsl(var(--color-text))]">
@@ -201,7 +202,7 @@ React.useEffect(() => {
           >
             {({ errors, touched, isSubmitting }) => (
               <Form className="space-y-4">
-                {/* ✅ Email field - بيظهر بس لو مفيش email في الـ URL (يعني الدكتور جاي من login) */}
+                {/* Ã¢Å“â€¦ Email field - Ã˜Â¨Ã™Å Ã˜Â¸Ã™â€¡Ã˜Â± Ã˜Â¨Ã˜Â³ Ã™â€žÃ™Ë† Ã™â€¦Ã™ÂÃ™Å Ã˜Â´ email Ã™ÂÃ™Å  Ã˜Â§Ã™â€žÃ™â‚¬ URL (Ã™Å Ã˜Â¹Ã™â€ Ã™Å  Ã˜Â§Ã™â€žÃ˜Â¯Ã™Æ’Ã˜ÂªÃ™Ë†Ã˜Â± Ã˜Â¬Ã˜Â§Ã™Å  Ã™â€¦Ã™â€  login) */}
                 {!email && (
                   <div className="space-y-1.5">
                     <label
@@ -281,12 +282,12 @@ React.useEffect(() => {
                 >
                   {isSubmitting ? (
                     <>
-                      <ImSpinner2 className="w-5 h-5 animate-spin" />{" "}
+                      <LuLoader className="w-5 h-5 animate-spin" />{" "}
                       Verifying...
                     </>
                   ) : (
                     <>
-                      Confirm Email <HiOutlineArrowRight className="w-5 h-5" />
+                      Confirm Email <LuArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -304,7 +305,7 @@ React.useEffect(() => {
           >
             {({ errors, touched, isSubmitting }) => (
               <Form className="space-y-4">
-                {/* Email field - بيظهر بس لو مفيش email في الـ URL */}
+                {/* Email field - Ã˜Â¨Ã™Å Ã˜Â¸Ã™â€¡Ã˜Â± Ã˜Â¨Ã˜Â³ Ã™â€žÃ™Ë† Ã™â€¦Ã™ÂÃ™Å Ã˜Â´ email Ã™ÂÃ™Å  Ã˜Â§Ã™â€žÃ™â‚¬ URL */}
                 {!email && (
                   <div className="space-y-1.5">
                     <label
@@ -368,11 +369,11 @@ React.useEffect(() => {
                     New Password
                   </label>
                   <div className="relative">
-                    <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Field
                       name="newpassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
                       className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
@@ -403,11 +404,11 @@ React.useEffect(() => {
                     Confirm Password
                   </label>
                   <div className="relative">
-                    <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                     <Field
                       name="cpassword"
                       type="password"
-                      placeholder="••••••••"
+                      placeholder="Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢Ã¢â‚¬Â¢"
                       className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                       style={{
                         backgroundColor:
@@ -454,12 +455,12 @@ React.useEffect(() => {
                 >
                   {isSubmitting ? (
                     <>
-                      <ImSpinner2 className="w-5 h-5 animate-spin" />{" "}
+                      <LuLoader className="w-5 h-5 animate-spin" />{" "}
                       Resetting...
                     </>
                   ) : (
                     <>
-                      Reset Password <HiOutlineArrowRight className="w-5 h-5" />
+                      Reset Password <LuArrowRight className="w-5 h-5" />
                     </>
                   )}
                 </button>
@@ -470,23 +471,24 @@ React.useEffect(() => {
                   className="w-full py-2 text-sm font-medium transition-colors"
                   style={{ color: "hsl(var(--color-text-muted))" }}
                 >
-                  ← Back
+                  Ã¢â€ Â Back
                 </button>
               </Form>
             )}
           </Formik>
         )}
-      </div>
-    </div>
+      </AuthCard>
   );
 }
+
+
 
 // ========== Page ==========
 export default function VerifyOtpPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center font-medium mt-10 text-[hsl(var(--color-primary))]">
           Loading...
         </div>
       }
@@ -495,3 +497,4 @@ export default function VerifyOtpPage() {
     </Suspense>
   );
 }
+

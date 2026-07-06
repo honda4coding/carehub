@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { LuUser, LuShieldCheck, LuCamera, LuTrash2, LuAward } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import ProfileHeader from "@/components/doctor/profile/ProfileHeader";
@@ -76,7 +76,7 @@ export default function DoctorProfilePage() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <ImSpinner2 className="w-7 h-7 animate-spin text-[hsl(var(--color-primary))]" />
+            <LuLoader className="w-7 h-7 animate-spin text-[hsl(var(--color-primary))]" />
           </div>
         )}
 
@@ -94,7 +94,7 @@ export default function DoctorProfilePage() {
         {!loading && !error && profile && (
           <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
-            {/* ── Left sidebar ── */}
+            {/* â”€â”€ Left sidebar â”€â”€ */}
             <aside className="flex flex-row md:flex-col gap-3 w-full md:w-44 shrink-0 overflow-x-auto scrollbar-hide pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -145,10 +145,10 @@ export default function DoctorProfilePage() {
               })}
             </aside>
 
-            {/* ── Right content card ── */}
+            {/* â”€â”€ Right content card â”€â”€ */}
             <div className="flex-1 min-w-0 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
 
-              {/* ProfileHeader يظهر بس في profile و license */}
+              {/* ProfileHeader ÙŠØ¸Ù‡Ø± Ø¨Ø³ ÙÙŠ profile Ùˆ license */}
               {(activeTab === "profile" || activeTab === "license") && (
                 <>
                   <ProfileHeader profile={profile} />

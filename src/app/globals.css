@@ -4,24 +4,27 @@
 @layer base {
   :root {
     /* Backgrounds */
-    --color-bg: 210 40% 98%; /* light app background */
-    --color-bg-surface: 0 0% 100%; /* cards / sections */
-    --color-bg-surface-hover: 210 40% 96%; /* subtle gray background */
+    --color-bg: 210 40% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 210 40% 96%;
+    --color-bg-soft: 210 40% 93%; /* Missing token added for Button ghost variant */
+    --color-bg-base: var(--color-bg); /* Alias for consistency across components */
+    --color-border-strong: 215 16% 47% / 0.5; /* Added missing border strong token */
 
     /* Text */
-    --color-text: 222 47% 11%; /* main text */
-    --color-text-muted: 215 16% 47%; /* secondary text */
-    --color-text-inverse: 0 0% 100%; /* white text */
+    --color-text: 222 47% 11%;
+    --color-text-muted: 215 16% 47%;
+    --color-text-inverse: 0 0% 100%;
 
     /* Primary (from #46BFE5 → cyan/teal system) */
-    --color-primary: 195 75% 58%; /* main */
-    --color-primary-strong: 195 75% 45%; /* hover / active */
+    --color-primary: 195 75% 58%;
+    --color-primary-strong: 195 75% 45%;
 
     /* Secondary (from #F472B6 → pink system) */
-    --color-secondary: 330 80% 70%; /* soft pink */
-    --color-secondary-strong: 330 75% 60%; /* stronger pink */
+    --color-secondary: 330 80% 70%;
+    --color-secondary-strong: 330 75% 60%;
 
-    /* Status colors (dashboard) */
+    /* Status colors */
     --color-success: 142 60% 35%;
     --color-success-bg: 142 60% 94%;
     --color-warning: 38 90% 35%;
@@ -29,29 +32,35 @@
     --color-danger: 0 84% 60%;
     --color-danger-bg: 0 100% 95%;
 
-    /* Indigo (Users) */
+    /* Indigo */
     --color-indigo: 245 58% 60%;
     --color-indigo-bg: 245 58% 95%;
 
     /* Borders */
     --color-border: 215 16% 47% / 0.12;
     --color-border-soft: 215 16% 47% / 0.07;
+
+    /* Shadows (Stripe-inspired) */
+    --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-float: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
+    --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   }
 
   .dark {
     /* Backgrounds */
-    --color-bg: 222 47% 5%; /* very dark blue app background */
-    --color-bg-surface: 222 47% 8%; /* cards / sections slightly lighter */
-    --color-bg-surface-hover: 222 47% 12%; /* hover state */
+    --color-bg: 222 47% 5%;
+    --color-bg-surface: 222 47% 8%;
+    --color-bg-surface-hover: 222 47% 12%;
+    --color-bg-soft: 222 47% 16%; /* Dark mode support for soft background */
 
     /* Text */
-    --color-text: 210 40% 98%; /* white text */
-    --color-text-muted: 215 20% 65%; /* light gray secondary text */
-    --color-text-inverse: 222 47% 11%; /* dark text for contrast */
+    --color-text: 210 40% 98%;
+    --color-text-muted: 215 20% 65%;
+    --color-text-inverse: 222 47% 11%;
 
-    /* Primary (kept similar cyan but slightly adjusted for dark mode) */
-    --color-primary: 195 75% 50%;
-    --color-primary-strong: 195 85% 60%;
+    /* Primary */
+    --color-primary: 217 91% 60%;
+    --color-primary-strong: 217 91% 65%;
 
     /* Secondary */
     --color-secondary: 330 80% 65%;
@@ -72,257 +81,260 @@
     /* Borders */
     --color-border: 215 16% 47% / 0.25;
     --color-border-soft: 215 16% 47% / 0.15;
-  }
-
-  .theme-nature {
-    --color-bg: 120 20% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 120 20% 95%;
-    --color-text: 120 30% 15%;
-    --color-text-muted: 120 15% 45%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 140 60% 45%;
-    --color-primary-strong: 140 65% 35%;
-    --color-secondary: 30 70% 55%;
-    --color-secondary-strong: 30 75% 45%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 120 15% 45% / 0.15;
-    --color-border-soft: 120 15% 45% / 0.08;
-  }
-
-  .theme-ocean {
-    --color-bg: 210 50% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 210 50% 95%;
-    --color-text: 220 50% 15%;
-    --color-text-muted: 220 20% 50%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 210 90% 50%;
-    --color-primary-strong: 210 95% 40%;
-    --color-secondary: 180 70% 45%;
-    --color-secondary-strong: 180 75% 35%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 220 20% 50% / 0.15;
-    --color-border-soft: 220 20% 50% / 0.08;
-  }
-
-  .theme-sunset {
-    --color-bg: 30 50% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 30 50% 95%;
-    --color-text: 20 50% 15%;
-    --color-text-muted: 20 20% 50%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 15 90% 55%;
-    --color-primary-strong: 15 95% 45%;
-    --color-secondary: 40 90% 50%;
-    --color-secondary-strong: 40 95% 40%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 20 20% 50% / 0.15;
-    --color-border-soft: 20 20% 50% / 0.08;
-  }
-
-  .theme-rose {
-    --color-bg: 340 50% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 340 50% 95%;
-    --color-text: 340 50% 15%;
-    --color-text-muted: 340 20% 50%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 340 80% 60%;
-    --color-primary-strong: 340 85% 50%;
-    --color-secondary: 310 70% 55%;
-    --color-secondary-strong: 310 75% 45%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 340 20% 50% / 0.15;
-    --color-border-soft: 340 20% 50% / 0.08;
-  }
-
-  .theme-violet {
-    --color-bg: 270 50% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 270 50% 95%;
-    --color-text: 270 50% 15%;
-    --color-text-muted: 270 20% 50%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 270 80% 60%;
-    --color-primary-strong: 270 85% 50%;
-    --color-secondary: 300 70% 55%;
-    --color-secondary-strong: 300 75% 45%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 270 20% 50% / 0.15;
-    --color-border-soft: 270 20% 50% / 0.08;
-  }
-
-  .theme-monochrome {
-    --color-bg: 0 0% 98%;
-    --color-bg-surface: 0 0% 100%;
-    --color-bg-surface-hover: 0 0% 95%;
-    --color-text: 0 0% 15%;
-    --color-text-muted: 0 0% 50%;
-    --color-text-inverse: 0 0% 100%;
-    --color-primary: 0 0% 20%;
-    --color-primary-strong: 0 0% 10%;
-    --color-secondary: 0 0% 40%;
-    --color-secondary-strong: 0 0% 30%;
-    --color-success: 142 60% 45%;
-    --color-success-bg: 142 60% 94%;
-    --color-warning: 38 90% 50%;
-    --color-warning-bg: 38 90% 93%;
-    --color-danger: 0 84% 60%;
-    --color-danger-bg: 0 100% 95%;
-    --color-indigo: 245 58% 60%;
-    --color-indigo-bg: 245 58% 95%;
-    --color-border: 0 0% 50% / 0.15;
-    --color-border-soft: 0 0% 50% / 0.08;
-  }
-
-  .theme-cyberpunk {
-    --color-bg: 280 80% 5%;
-    --color-bg-surface: 280 80% 10%;
-    --color-bg-surface-hover: 280 80% 15%;
-    --color-text: 60 100% 80%;
-    --color-text-muted: 60 50% 60%;
-    --color-text-inverse: 280 80% 5%;
-    --color-primary: 320 100% 60%;
-    --color-primary-strong: 320 100% 50%;
-    --color-secondary: 180 100% 50%;
-    --color-secondary-strong: 180 100% 40%;
-    --color-success: 142 100% 50%;
-    --color-success-bg: 142 100% 15%;
-    --color-warning: 40 100% 50%;
-    --color-warning-bg: 40 100% 15%;
-    --color-danger: 0 100% 60%;
-    --color-danger-bg: 0 100% 15%;
-    --color-indigo: 280 100% 70%;
-    --color-indigo-bg: 280 100% 15%;
-    --color-border: 320 100% 60% / 0.3;
-    --color-border-soft: 320 100% 60% / 0.1;
-  }
-
-  .theme-midnight {
-    --color-bg: 230 60% 4%;
-    --color-bg-surface: 230 60% 7%;
-    --color-bg-surface-hover: 230 60% 11%;
-    --color-text: 210 20% 90%;
-    --color-text-muted: 210 20% 60%;
-    --color-text-inverse: 230 60% 4%;
-    --color-primary: 210 100% 60%;
-    --color-primary-strong: 210 100% 70%;
-    --color-secondary: 260 100% 65%;
-    --color-secondary-strong: 260 100% 75%;
-    --color-success: 142 70% 50%;
-    --color-success-bg: 142 70% 15%;
-    --color-warning: 38 90% 55%;
-    --color-warning-bg: 38 90% 15%;
-    --color-danger: 0 84% 65%;
-    --color-danger-bg: 0 100% 15%;
-    --color-indigo: 245 58% 65%;
-    --color-indigo-bg: 245 58% 15%;
-    --color-border: 210 20% 50% / 0.2;
-    --color-border-soft: 210 20% 50% / 0.1;
+    
+    /* Dark Mode Shadows */
+    --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-float: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+    --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
   }
 
   body {
     background-color: hsl(var(--color-bg));
-
     color: hsl(var(--color-text));
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: var(--font-geist-sans), Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11"; /* Inter specific font features */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  /* ========================================================
+     MULTI-THEME SYSTEM (Fixed: Real bg-surface & Contrast)
+     ======================================================== */
+  
+  /* 1. Nature Theme */
+  .theme-nature {
+    --color-bg: 120 20% 98%;
+    --color-bg-surface: 120 20% 100%; /* Now has a slight tint */
+    --color-bg-surface-hover: 120 20% 95%;
+    --color-bg-soft: 120 20% 93%;
+    --color-text: 120 30% 15%;
+    --color-primary: 140 60% 45%;
+    --color-primary-strong: 140 65% 35%;
+    --color-secondary: 30 70% 55%;
+    --color-secondary-strong: 30 75% 45%;
+  }
+  .dark.theme-nature {
+    --color-bg: 120 30% 6%;
+    --color-bg-surface: 120 30% 9%;
+    --color-bg-surface-hover: 120 30% 13%;
+    --color-bg-soft: 120 30% 17%;
+    --color-text: 120 20% 90%;
+    --color-primary: 140 60% 50%;
+    --color-primary-strong: 140 65% 60%;
+    --color-secondary: 30 70% 65%;
+    --color-secondary-strong: 30 75% 75%;
+  }
+
+  /* 2. Ocean Theme */
+  .theme-ocean {
+    --color-bg: 210 50% 98%;
+    --color-bg-surface: 210 50% 100%;
+    --color-bg-surface-hover: 210 50% 95%;
+    --color-bg-soft: 210 50% 93%;
+    --color-text: 220 50% 15%;
+    --color-primary: 210 90% 50%;
+    --color-primary-strong: 210 95% 40%;
+    --color-secondary: 180 70% 45%;
+    --color-secondary-strong: 180 75% 35%;
+  }
+  .dark.theme-ocean {
+    --color-bg: 210 50% 6%;
+    --color-bg-surface: 210 50% 9%;
+    --color-bg-surface-hover: 210 50% 13%;
+    --color-bg-soft: 210 50% 17%;
+    --color-text: 220 30% 90%;
+    --color-primary: 210 90% 60%;
+    --color-primary-strong: 210 95% 70%;
+    --color-secondary: 180 70% 55%;
+    --color-secondary-strong: 180 75% 65%;
+  }
+
+  /* 3. Sunset Theme */
+  .theme-sunset {
+    --color-bg: 30 50% 98%;
+    --color-bg-surface: 30 50% 100%;
+    --color-bg-surface-hover: 30 50% 95%;
+    --color-bg-soft: 30 50% 93%;
+    --color-text: 20 50% 15%;
+    --color-primary: 15 90% 55%;
+    --color-primary-strong: 15 95% 45%;
+    --color-secondary: 40 90% 50%;
+    --color-secondary-strong: 40 95% 40%;
+  }
+  .dark.theme-sunset {
+    --color-bg: 30 50% 6%;
+    --color-bg-surface: 30 50% 9%;
+    --color-bg-surface-hover: 30 50% 13%;
+    --color-bg-soft: 30 50% 17%;
+    --color-text: 20 30% 90%;
+    --color-primary: 15 90% 65%;
+    --color-primary-strong: 15 95% 75%;
+    --color-secondary: 40 90% 60%;
+    --color-secondary-strong: 40 95% 70%;
+  }
+
+  /* 4. Rose Theme */
+  .theme-rose {
+    --color-bg: 340 50% 98%;
+    --color-bg-surface: 340 50% 100%;
+    --color-bg-surface-hover: 340 50% 95%;
+    --color-bg-soft: 340 50% 93%;
+    --color-text: 340 50% 15%;
+    --color-primary: 340 80% 60%;
+    --color-primary-strong: 340 85% 50%;
+    --color-secondary: 310 70% 55%;
+    --color-secondary-strong: 310 75% 45%;
+  }
+  .dark.theme-rose {
+    --color-bg: 340 50% 6%;
+    --color-bg-surface: 340 50% 9%;
+    --color-bg-surface-hover: 340 50% 13%;
+    --color-bg-soft: 340 50% 17%;
+    --color-text: 340 30% 90%;
+    --color-primary: 340 80% 70%;
+    --color-primary-strong: 340 85% 80%;
+    --color-secondary: 310 70% 65%;
+    --color-secondary-strong: 310 75% 75%;
+  }
+
+  /* 5. Violet Theme */
+  .theme-violet {
+    --color-bg: 270 50% 98%;
+    --color-bg-surface: 270 50% 100%;
+    --color-bg-surface-hover: 270 50% 95%;
+    --color-bg-soft: 270 50% 93%;
+    --color-text: 270 50% 15%;
+    --color-primary: 270 80% 60%;
+    --color-primary-strong: 270 85% 50%;
+    --color-secondary: 300 70% 55%;
+    --color-secondary-strong: 300 75% 45%;
+  }
+  .dark.theme-violet {
+    --color-bg: 270 50% 6%;
+    --color-bg-surface: 270 50% 9%;
+    --color-bg-surface-hover: 270 50% 13%;
+    --color-bg-soft: 270 50% 17%;
+    --color-text: 270 30% 90%;
+    --color-primary: 270 80% 70%;
+    --color-primary-strong: 270 85% 80%;
+    --color-secondary: 300 70% 65%;
+    --color-secondary-strong: 300 75% 75%;
+  }
+
+  /* 6. Monochrome Theme */
+  .theme-monochrome {
+    --color-bg: 0 0% 98%;
+    --color-bg-surface: 0 0% 100%;
+    --color-bg-surface-hover: 0 0% 95%;
+    --color-bg-soft: 0 0% 93%;
+    --color-text: 0 0% 15%;
+    --color-primary: 0 0% 20%;
+    --color-primary-strong: 0 0% 10%;
+    --color-secondary: 0 0% 40%;
+    --color-secondary-strong: 0 0% 30%;
+  }
+  .dark.theme-monochrome {
+    --color-bg: 0 0% 6%;
+    --color-bg-surface: 0 0% 9%;
+    --color-bg-surface-hover: 0 0% 13%;
+    --color-bg-soft: 0 0% 17%;
+    --color-text: 0 0% 90%;
+    --color-primary: 0 0% 80%;
+    --color-primary-strong: 0 0% 90%;
+    --color-secondary: 0 0% 60%;
+    --color-secondary-strong: 0 0% 70%;
+  }
+
+  /* 7. Cyberpunk Theme */
+  .theme-cyberpunk {
+    --color-bg: 280 80% 5%;
+    --color-bg-surface: 280 80% 10%;
+    --color-bg-surface-hover: 280 80% 15%;
+    --color-bg-soft: 280 80% 20%;
+    --color-text: 60 100% 80%;
+    --color-primary: 320 100% 60%;
+    --color-primary-strong: 320 100% 50%;
+    --color-secondary: 180 100% 50%;
+    --color-secondary-strong: 180 100% 40%;
+  }
+  .dark.theme-cyberpunk {
+    /* Cyberpunk is inherently dark, just keep it consistent */
+    --color-bg: 280 80% 4%;
+    --color-bg-surface: 280 80% 8%;
+    --color-bg-surface-hover: 280 80% 12%;
+    --color-bg-soft: 280 80% 16%;
+    --color-text: 60 100% 90%;
+  }
+
+  /* 8. Midnight Theme */
+  .theme-midnight {
+    --color-bg: 230 60% 4%;
+    --color-bg-surface: 230 60% 7%;
+    --color-bg-surface-hover: 230 60% 11%;
+    --color-bg-soft: 230 60% 15%;
+    --color-text: 210 20% 90%;
+    --color-primary: 210 100% 60%;
+    --color-primary-strong: 210 100% 70%;
+    --color-secondary: 260 100% 65%;
+    --color-secondary-strong: 260 100% 75%;
+  }
+  .dark.theme-midnight {
+    --color-bg: 230 60% 3%;
+    --color-bg-surface: 230 60% 6%;
+    --color-bg-surface-hover: 230 60% 10%;
+    --color-bg-soft: 230 60% 14%;
   }
 }
 
 @layer utilities {
-  /* Typography Scale */
-  .text-xs { font-size: 12px; line-height: 16px; }
-  .text-sm { font-size: 14px; line-height: 20px; }
-  .text-base { font-size: 16px; line-height: 24px; }
-  .text-lg { font-size: 18px; line-height: 28px; }
-  .text-xl { font-size: 20px; line-height: 28px; } 
-  .text-2xl { font-size: 24px; line-height: 32px; } 
-  .text-4xl { font-size: 36px; line-height: 40px; } 
+  /* Typography Scale (Linear-inspired) */
+  .text-xs { font-size: 12px; line-height: 16px; letter-spacing: 0.02em; font-weight: 500; }
+  .text-sm { font-size: 14px; line-height: 20px; letter-spacing: 0; }
+  .text-base { font-size: 16px; line-height: 24px; letter-spacing: 0; }
+  .text-lg { font-size: 18px; line-height: 28px; letter-spacing: -0.01em; font-weight: 500; }
+  .text-xl { font-size: 20px; line-height: 28px; letter-spacing: -0.01em; font-weight: 600; } 
+  .text-2xl { font-size: 24px; line-height: 32px; letter-spacing: -0.02em; font-weight: 600; } 
+  .text-3xl { font-size: 30px; line-height: 36px; letter-spacing: -0.03em; font-weight: 600; } 
+  .text-4xl { font-size: 36px; line-height: 40px; letter-spacing: -0.04em; font-weight: 700; } 
 
-  /* Text Colors */
-  .text-main { color: hsl(var(--color-text)); }
-  .text-muted { color: hsl(var(--color-text-muted)); }
-  .text-inverse { color: hsl(var(--color-text-inverse)); }
-  .text-primary { color: hsl(var(--color-primary)); }
-  .text-secondary { color: hsl(var(--color-secondary)); }
-  .text-success { color: hsl(var(--color-success)); }
-  .text-warning { color: hsl(var(--color-warning)); }
-  .text-danger { color: hsl(var(--color-danger)); }
-
-  /* Background Colors */
-  .bg-surface { background-color: hsl(var(--color-bg-surface)); }
-  .bg-soft { background-color: hsl(var(--color-bg-surface-hover)); }
-  .bg-primary { background-color: hsl(var(--color-primary)); }
-  .bg-secondary { background-color: hsl(var(--color-secondary)); }
-  .bg-success { background-color: hsl(var(--color-success)); }
-  .bg-warning { background-color: hsl(var(--color-warning)); }
-  .bg-danger { background-color: hsl(var(--color-danger)); }
-  .bg-success-light { background-color: hsl(var(--color-success-bg)); }
-  .bg-warning-light { background-color: hsl(var(--color-warning-bg)); }
-  .bg-danger-light { background-color: hsl(var(--color-danger-bg)); }
-
-  /* Border Colors */
-  .border-soft { border-color: hsl(var(--color-border-soft)); }
-  .border-main { border-color: hsl(var(--color-border)); }
-  .border-primary { border-color: hsl(var(--color-primary)); }
-
-  /* Custom Rings */
-  .focus\:ring-primary:focus {
-    --tw-ring-color: hsl(var(--color-primary));
-  }
-
-  /* Gradients */
+  /* Dynamic Gradients that respond to themes */
   .bg-gradient-brand {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+    background-image: linear-gradient(to right, hsl(var(--color-primary)), hsl(var(--color-secondary)));
   }
   .bg-gradient-doctor {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-primary)));
+    background-image: linear-gradient(to right, hsl(var(--color-primary-strong)), hsl(var(--color-primary)));
   }
   .bg-gradient-patient {
     background-image: linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)));
   }
   .text-gradient {
-    background-image: linear-gradient(to right, #0891B2, hsl(var(--color-secondary)));
+    background-image: linear-gradient(to right, hsl(var(--color-primary)), hsl(var(--color-secondary)));
     background-clip: text;
     -webkit-background-clip: text; 
     color: transparent;
+  }
+
+  /* Micro-animations */
+  .animate-fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .animate-scale-in {
+    animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0.95; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
   }
 
   /* Hide Scrollbar */
@@ -333,15 +345,5 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none; /* Chrome, Safari and Opera */
   }
-
-  .slot-available-in {
-    font-size: 0.85rem;
-    color: var(--color-text-muted);
-    animation: fadeIn 0.3s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
 }
+

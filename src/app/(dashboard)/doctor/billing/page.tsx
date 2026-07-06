@@ -71,7 +71,90 @@ export default function DoctorBillingPage() {
                 </p>
               </div>
             ) : (
-              <div className="overflow-x-auto w-full p-4">
+              <>
+              {/* Mobile Cards */}
+              <div className="lg:hidden flex flex-col gap-3 p-4">
+                {sessions.map(s => {
+                  const patientName = s.isOfflinePatient ? s.guestName : s.patientId?.fullName || "App User";
+                  const patientPhone = s.isOfflinePatient ? s.guestPhone || "N/A" : s.patientId?.phoneNumber || s.phone || "N/A";
+                  return (
+                    <div key={s._id} className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border-soft))] rounded-2xl p-4 flex flex-col gap-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-[hsl(var(--color-text))]">{patientName}</p>
+                          <p className="text-xs font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">{patientPhone}</p>
+                        </div>
+                        {s.isFollowUp && (
+                          <span className="px-2 py-0.5 text-[10px] uppercase font-black bg-[hsl(var(--color-primary-bg))] text-[hsl(var(--color-primary))] rounded">
+                            Follow-Up
+                          </span>
+                        )}
+                      </div>
+                      <div className="border-t border-[hsl(var(--color-border-soft))] pt-3">
+                        {s.isFeesFinalized ? (
+                          <div className="flex items-center gap-2 px-3 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-xl">
+                            <LuLock className="text-[hsl(var(--color-text-muted))]" />
+                            <span className="text-sm font-bold text-[hsl(var(--color-text))]">{s.fees || 0} EGP</span>
+                            <span className="text-[10px] uppercase font-black text-[hsl(var(--color-success))] ml-auto bg-[hsl(var(--color-success-bg))] px-1.5 py-0.5 rounded">Paid</span>
+                          </div>
+                        ) : (
+                          <form
+                            onSubmit={(e) => {
+                              e.preventDefault();
+                              const feeValue = Number((e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement).value);
+                              const isFinalized = (e.nativeEvent as SubmitEvent).submitter?.getAttribute("name") === "finish";
+                              handleUpdateFees(s._id, feeValue, isFinalized);
+                            }}
+                            className="flex flex-col gap-2"
+                          >
+                            <div className="flex items-center gap-2">
+                              <label className="text-xs font-bold text-[hsl(var(--color-text-muted))] shrink-0">Fees (EGP)</label>
+                              <input
+                                name="feeInput"
+                                type="number"
+                                min="0"
+                                className="flex-1 px-3 py-2 text-sm font-semibold border border-[hsl(var(--color-border))] rounded-xl bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
+                                defaultValue={s.fees || 0}
+                              />
+                            </div>
+                            <div className="flex gap-2">
+                              <button name="submit" type="submit" className="flex-1 py-2 bg-[hsl(var(--color-primary))] text-white text-xs font-bold rounded-xl hover:bg-[hsl(var(--color-primary-strong))] transition-colors">
+                                Submit
+                              </button>
+                              <button name="finish" type="submit" className="flex-1 py-2 bg-[hsl(var(--color-success))] text-white text-xs font-bold rounded-xl hover:bg-[hsl(var(--color-success-strong))] transition-colors flex items-center justify-center gap-1">
+                                <LuCheck className="text-sm" /> Finish
+                              </button>
+                            </div>
+                            {s.isFollowUp && s.appointmentId && (
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
+                                    try {
+                                      await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`, {});
+                                      alert("Follow-up discount cancelled.");
+                                      window.location.reload();
+                                    } catch (err) {
+                                      console.error(err);
+                                      alert("Failed to override follow-up.");
+                                    }
+                                  }
+                                }}
+                                className="w-full py-2 bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-xs font-bold rounded-xl hover:bg-[hsl(var(--color-danger-soft))] transition-colors border border-[hsl(var(--color-danger-soft))]"
+                              >
+                                Override Discount
+                              </button>
+                            )}
+                          </form>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Desktop Table */}
+              <div className="hidden lg:block overflow-x-auto w-full p-4">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-[hsl(var(--color-border))]">
@@ -102,7 +185,7 @@ export default function DoctorBillingPage() {
                               <span className="text-[10px] uppercase font-black text-[hsl(var(--color-success))] ml-1 bg-[hsl(var(--color-success-bg))] px-1.5 py-0.5 rounded">Paid</span>
                             </div>
                           ) : (
-                            <form 
+                            <form
                               onSubmit={(e) => {
                                 e.preventDefault();
                                 const feeValue = Number((e.currentTarget.elements.namedItem('feeInput') as HTMLInputElement).value);
@@ -124,10 +207,9 @@ export default function DoctorBillingPage() {
                               <button name="finish" type="submit" className="px-3 py-1.5 bg-[hsl(var(--color-success))] text-white text-xs font-bold rounded-lg hover:bg-[hsl(var(--color-success-strong))] transition-colors flex items-center gap-1">
                                 <LuCheck className="text-sm" /> Finish
                               </button>
-                              
                               {s.isFollowUp && s.appointmentId && (
-                                <button 
-                                  type="button" 
+                                <button
+                                  type="button"
                                   onClick={async () => {
                                     if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
                                       try {
@@ -153,6 +235,7 @@ export default function DoctorBillingPage() {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
 

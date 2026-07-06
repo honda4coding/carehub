@@ -8,12 +8,12 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import {
-  HiOutlineMail, HiOutlineLockClosed, HiOutlineEye,
-  HiOutlineEyeOff, HiShieldCheck,
-} from "react-icons/hi";
-import { HiOutlineArrowRight } from "react-icons/hi2";
-import { ImSpinner2 } from "react-icons/im";
-import { FaFingerprint } from "react-icons/fa";
+  LuMail, LuLock, LuEye,
+  LuEyeOff, LuShieldCheck,
+} from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
+import { LuFingerprint } from "react-icons/lu";
 import { authenticateBiometrics } from "@/services/webAuthnService";
 import {
   loginSchema,
@@ -57,6 +57,7 @@ export const LoginForm = () => {
         jobTitle: data.jobTitle,
         doctorName: data.doctorName,
         clinicName: data.clinicName,
+        subscriptionPlan: data.subscriptionPlan,
       });
     } catch (err: any) {
       setBioError(err.message || "Biometrics login failed.");
@@ -105,6 +106,7 @@ export const LoginForm = () => {
         jobTitle: data.data.jobTitle,
         doctorName: data.data.doctorName,
         clinicName: data.data.clinicName,
+        subscriptionPlan: data.data.subscriptionPlan,
       });
 
     } catch (error) {
@@ -152,7 +154,7 @@ export const LoginForm = () => {
                       {...field}
                       type="email"
                       placeholder="name@example.com"
-                      leftIcon={<HiOutlineMail className="w-5 h-5" />}
+                      leftIcon={<LuMail className="w-5 h-5" />}
                       error={!!(meta.touched && meta.error)}
                     />
                   )}
@@ -169,10 +171,10 @@ export const LoginForm = () => {
                       {...field}
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••"
-                      leftIcon={<HiOutlineLockClosed className="w-5 h-5" />}
+                      leftIcon={<LuLock className="w-5 h-5" />}
                       rightIcon={
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="hover:text-[hsl(var(--color-text))] transition-colors">
-                          {showPassword ? <HiOutlineEyeOff className="w-5 h-5" /> : <HiOutlineEye className="w-5 h-5" />}
+                          {showPassword ? <LuEyeOff className="w-5 h-5" /> : <LuEye className="w-5 h-5" />}
                         </button>
                       }
                       error={!!(meta.touched && meta.error)}
@@ -207,10 +209,10 @@ export const LoginForm = () => {
               <div className="pt-4">
                 <Button
                   type="submit"
-                  variant="gradient"
+                  variant="primary"
                   className="w-full"
                   isLoading={isSubmitting}
-                  icon={HiOutlineArrowRight}
+                  icon={LuArrowRight}
                   iconPosition="right"
                 >
                   Enter Sanctuary
@@ -238,10 +240,10 @@ export const LoginForm = () => {
                   className="w-full flex items-center justify-center gap-3 py-3 px-4 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl text-[hsl(var(--color-text))] font-bold transition-colors hover:bg-[hsl(var(--color-bg-surface-hover))] disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isBioSubmitting ? (
-                    <ImSpinner2 className="w-5 h-5 animate-spin text-[hsl(var(--color-primary))]" />
+                    <LuLoader className="w-5 h-5 animate-spin text-[hsl(var(--color-primary))]" />
                   ) : (
                     <>
-                      <FaFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+                      <LuFingerprint className="w-5 h-5 text-[hsl(var(--color-primary))]" />
                       <span>Sign in with Biometrics</span>
                     </>
                   )}
@@ -276,7 +278,7 @@ export const LoginForm = () => {
 
       {/* Security Tag */}
       <div className="mt-6 flex items-center justify-center gap-2 opacity-60">
-        <HiShieldCheck className="w-4 h-4" style={{ color: "hsl(var(--color-text-muted))" }} />
+        <LuShieldCheck className="w-4 h-4" style={{ color: "hsl(var(--color-text-muted))" }} />
         <span className="text-[10px] uppercase font-bold tracking-[0.2em]" style={{ color: "hsl(var(--color-text-muted))" }}>
           HIPAA COMPLIANT ENVIRONMENT
         </span>
@@ -284,3 +286,5 @@ export const LoginForm = () => {
     </div>
   );
 };
+
+

@@ -121,7 +121,7 @@ export default function PatientTable({
                   {showActions && (
                     <button
                       onClick={() => onViewHistory && onViewHistory(p)}
-                      className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer mt-3 w-full"
+                      className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] text-xs font-bold px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
                     >
                       <LuHistory className="text-sm" /> View History
                     </button>

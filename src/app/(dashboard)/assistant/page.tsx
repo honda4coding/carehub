@@ -86,7 +86,7 @@ export default function AssistantDashboard() {
     setSearchError("");
     setShowSearchResults(true);
     try {
-      const response = await fetchClient.get(`/doctor/search-patient?searchTerm=${searchQuery}`);
+      const response = await fetchClient.get(`/doctor/search-patient?searchTerm=${searchQuery}`, { skipClinicContext: true });
       setRealSearchResults(response.data || []);
     } catch (error: any) {
       setSearchError(error.message || "Something went wrong!");
@@ -96,9 +96,22 @@ export default function AssistantDashboard() {
     }
   };
 
-  const handleRequestAccess = async (patient: any) => {
+  const [isExistingPatientModalOpen, setExistingPatientModalOpen] = useState(false);
+  const [selectedPatientForQueue, setSelectedPatientForQueue] = useState<any>(null);
+
+  const handleRequestAccess = (patient: any) => {
+    setSelectedPatientForQueue(patient);
+    setExistingPatientModalOpen(true);
+  };
+
+  const handleExistingPatientQueueEntry = async (selectedSlot: string, skipQueue: boolean) => {
+    if (!selectedPatientForQueue) return;
     try{
-      const responseData = await fetchClient.post(`/doctor/session/request`, { patientId: patient._id });
+      const responseData = await fetchClient.post(`/doctor/session/request`, { 
+        patientId: selectedPatientForQueue._id,
+        appointmentId: selectedSlot || undefined,
+        skipQueue
+      });
       const newSessionData = responseData.data?.session || responseData.data || responseData;
       const sessionStatus = newSessionData.status || "pending_otp";
       if (sessionStatus === "pending_otp") {
@@ -107,11 +120,15 @@ export default function AssistantDashboard() {
         alert(`✅ Instant access granted to the patient based on their privacy settings.`);
       }
       fetchCurrentQueue();
+      setExistingPatientModalOpen(false);
+      setSelectedPatientForQueue(null);
     } catch (err: any) {
       const msg = err.message;
       if (msg === "Session already exists for this patient" || msg === "Access already granted" || msg === "Access already granted for this patient") {
         alert("✅ This patient is already in the clinic queue (Active Session).");
         fetchCurrentQueue();
+        setExistingPatientModalOpen(false);
+        setSelectedPatientForQueue(null);
       } else {
         alert("Failed to request access: " + msg);
       }
@@ -148,13 +165,15 @@ export default function AssistantDashboard() {
     }
   };
 
-  const handleWalkInRegister = async () => {
+  const handleWalkInRegister = async (selectedSlot: string, skipQueue: boolean) => {
     if (!walkInName.trim() || !walkInPhone.trim()) return;
     try {
       await fetchClient.post(`/doctor/session/request`, {
         isOfflinePatient: true,
         guestName: walkInName,
         guestPhone: walkInPhone,
+        appointmentId: selectedSlot || undefined,
+        skipQueue,
         ...(walkInAge ? { guestAge: Number(walkInAge) } : {})
       });
       fetchCurrentQueue();
@@ -314,6 +333,7 @@ export default function AssistantDashboard() {
                 }}
                 hideVitalsAction={!user?.permissions?.canManagePatientsVitals && !user?.permissions?.canManagePatientsFull}
                 hideAssessmentAction={true}
+                hideFees={!user?.permissions?.canManageBilling}
               />
             </div>
           )}
@@ -335,6 +355,10 @@ export default function AssistantDashboard() {
         walkInAge={walkInAge}
         setWalkInAge={setWalkInAge}
         handleWalkInRegister={handleWalkInRegister}
+        isExistingPatientModalOpen={isExistingPatientModalOpen}
+        setExistingPatientModalOpen={setExistingPatientModalOpen}
+        handleExistingPatientQueueEntry={handleExistingPatientQueueEntry}
+        selectedExistingPatient={selectedPatientForQueue}
       />
       <VitalsModal
         isOpen={isVitalsModalOpen}

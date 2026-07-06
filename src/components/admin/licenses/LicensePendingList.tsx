@@ -5,7 +5,7 @@ import { useState } from "react";
 import {
   LuEye, LuCheck, LuX, LuClock, LuShieldCheck, LuHistory,
 } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { PendingLicenseDoctor } from "@/services/adminService";
 import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
 import RejectLicenseModal from "@/components/admin/licenses/RejectLicenseModal";
@@ -47,7 +47,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
   if (loading) {
     return (
       <div className="flex items-center justify-center py-16">
-        <ImSpinner2 className="w-6 h-6 animate-spin text-[hsl(var(--color-primary))]" />
+        <LuLoader className="w-6 h-6 animate-spin text-[hsl(var(--color-primary))]" />
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
 
   return (
     <>
-      {/* ── Desktop Table ────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Desktop Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <table className="w-full min-w-[700px] hidden lg:table">
         <thead>
           <tr className="border-b border-[hsl(var(--color-border))]">
@@ -105,7 +105,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
 
                 {/* Specialty */}
                 <td className="py-4 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">
-                  {doc.specialty ?? "—"}
+                  {doc.specialty ?? "â€”"}
                 </td>
 
                 {/* Submitted */}
@@ -123,7 +123,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                       <LuHistory className="w-3 h-3" /> View
                     </button>
                   ) : (
-                    <span className="text-[12px] text-[hsl(var(--color-text-muted))]">—</span>
+                    <span className="text-[12px] text-[hsl(var(--color-text-muted))]">â€”</span>
                   )}
                 </td>
 
@@ -151,7 +151,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                       disabled={!!actionId}
                       className="flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-[8px] border border-[hsl(var(--color-success)/0.3)] text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                     >
-                      {isActing ? <ImSpinner2 className="w-3 h-3 animate-spin" /> : <LuCheck className="w-3 h-3" />}
+                      {isActing ? <LuLoader className="w-3 h-3 animate-spin" /> : <LuCheck className="w-3 h-3" />}
                       Approve
                     </button>
                     <button
@@ -169,7 +169,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
         </tbody>
       </table>
 
-      {/* ── Mobile Cards ─────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Mobile Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="lg:hidden flex flex-col gap-4 py-2">
         {doctors.map((doc, i) => {
           const initials = (doc.fullName ?? "??").slice(0, 2).toUpperCase();
@@ -198,7 +198,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
               <div className="grid grid-cols-2 gap-3 mb-4 text-[12px] bg-[hsl(var(--color-bg-soft))] p-3 rounded-xl border border-[hsl(var(--color-border-soft))]">
                 <div>
                   <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Specialty</p>
-                  <p className="font-semibold text-[hsl(var(--color-text))]">{doc.specialty ?? "—"}</p>
+                  <p className="font-semibold text-[hsl(var(--color-text))]">{doc.specialty ?? "â€”"}</p>
                 </div>
                 <div>
                   <p className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Submitted</p>
@@ -231,7 +231,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                   disabled={!!actionId}
                   className="flex-1 flex items-center justify-center gap-1.5 text-[12px] font-bold py-2 rounded-[10px] border border-[hsl(var(--color-success)/0.3)] text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
                 >
-                  {isActing ? <ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> : <LuCheck className="w-3.5 h-3.5" />}
+                  {isActing ? <LuLoader className="w-3.5 h-3.5 animate-spin" /> : <LuCheck className="w-3.5 h-3.5" />}
                   Approve
                 </button>
                 <button
@@ -247,7 +247,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
         })}
       </div>
 
-      {/* ── Modals ───────────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Modals â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <LicenseViewerModal
         isOpen={viewModal.open}
         onClose={() => setViewModal({ open: false, url: null, title: "" })}
@@ -263,3 +263,4 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
     </>
   );
 }
+

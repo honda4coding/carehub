@@ -2,8 +2,8 @@
 
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
-import { ImSpinner2 } from "react-icons/im";
-import { HiOutlineArrowRight } from "react-icons/hi2";
+import { LuLoader } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
 import {
   LuUser,
   LuMail,
@@ -21,7 +21,7 @@ import {
   updateDoctorProfile,
 } from "@/services/doctorService";
 
-// نفس الـ list الموجودة في صفحة الـ signup
+// Ù†ÙØ³ Ø§Ù„Ù€ list Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ ØµÙØ­Ø© Ø§Ù„Ù€ signup
 const SPECIALTIES = [
   { value: "general_practice", label: "General Practice" },
   { value: "pediatrics", label: "Pediatrics" },
@@ -33,7 +33,7 @@ const SPECIALTIES = [
   { value: "psychiatry", label: "Psychiatry" },
 ];
 
-// ─── Validation ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   fullName: Yup.string()
     .min(3, "Min 3 characters")
@@ -54,7 +54,7 @@ type FormValues = {
   bio: string;
 };
 
-// ─── Reusable read-only field ─────────────────────────────────────────────────
+// â”€â”€â”€ Reusable read-only field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ReadOnlyField({
   label,
   value,
@@ -71,13 +71,13 @@ function ReadOnlyField({
         {label}
       </label>
       <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
-        {value || "—"}
+        {value || "â€”"}
       </div>
     </div>
   );
 }
 
-// ─── Reusable editable field ──────────────────────────────────────────────────
+// â”€â”€â”€ Reusable editable field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function EditField({
   name,
   label,
@@ -128,7 +128,7 @@ function EditField({
   );
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile: DoctorProfile | null;
   onSaveSuccess: (updated: UpdateDoctorProfilePayload) => void;
@@ -213,13 +213,13 @@ export default function ProfessionalInfoForm({
                 touched={touched}
               />
 
-              {/* Email — read only */}
+              {/* Email â€” read only */}
               <ReadOnlyField
                 label="Email"
                 value={profile?.email ?? ""}
                 icon={<LuMail />}
               />
-              {/* Phone — editable */}
+              {/* Phone â€” editable */}
               <EditField
                 name="phoneNumber"
                 label="Phone"
@@ -229,9 +229,9 @@ export default function ProfessionalInfoForm({
                 touched={touched}
               />
 
-              {/* Specialization dropdown + Experience — 2 cols */}
+              {/* Specialization dropdown + Experience â€” 2 cols */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Specialization — dropdown */}
+                {/* Specialization â€” dropdown */}
                 <div className="space-y-1.5">
                   <label
                     htmlFor="specialization"
@@ -267,7 +267,7 @@ export default function ProfessionalInfoForm({
                     </Field>
                     {/* Dropdown arrow */}
                     <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
-                      ▾
+                      â–¾
                     </span>
                   </div>
                   <ErrorMessage
@@ -323,7 +323,7 @@ export default function ProfessionalInfoForm({
               </div>
             </div>
 
-            {/* Save button — full width, attached to bottom */}
+            {/* Save button â€” full width, attached to bottom */}
             <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit"
@@ -332,11 +332,11 @@ export default function ProfessionalInfoForm({
               >
                 {isSubmitting ? (
                   <>
-                    <ImSpinner2 className="w-4 h-4 animate-spin" /> Saving...
+                    <LuLoader className="w-4 h-4 animate-spin" /> Saving...
                   </>
                 ) : (
                   <>
-                    <HiOutlineArrowRight className="w-4 h-4" /> Save Changes
+                    <LuArrowRight className="w-4 h-4" /> Save Changes
                   </>
                 )}
               </button>
@@ -347,3 +347,5 @@ export default function ProfessionalInfoForm({
     </div>
   );
 }
+
+

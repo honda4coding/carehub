@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { LuPlus, LuTrash2, LuImage, LuInfo } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { DoctorProfile } from "@/services/doctorService";
 import { uploadDoctorCertificate, deleteDoctorCertificate } from "@/services/doctorService";
 import { Button } from "@/components/ui/Button";
@@ -137,7 +137,7 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
               disabled={isUploading || !selectedFile || !title || !issuer}
               className="gap-2"
             >
-              {isUploading ? <ImSpinner2 className="w-4 h-4 animate-spin" /> : <LuPlus className="w-4 h-4" />}
+              {isUploading ? <LuLoader className="w-4 h-4 animate-spin" /> : <LuPlus className="w-4 h-4" />}
               Upload Certificate
             </Button>
           </div>
@@ -188,7 +188,7 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
                       disabled={loading}
                       className="p-1.5 text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger-bg))] rounded-md transition-colors disabled:opacity-50"
                     >
-                      {loading ? <ImSpinner2 className="w-4 h-4 animate-spin" /> : <LuTrash2 className="w-4 h-4" />}
+                      {loading ? <LuLoader className="w-4 h-4 animate-spin" /> : <LuTrash2 className="w-4 h-4" />}
                     </button>
                   </div>
                 </div>
@@ -200,3 +200,4 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
     </div>
   );
 }
+

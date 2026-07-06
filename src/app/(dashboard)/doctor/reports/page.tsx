@@ -16,6 +16,7 @@ interface AnalyticsData {
     visitsGrowth: number;
     onlineVisits: number;
     walkinVisits: number;
+    totalWithdrawn: number;
   };
   visitTrends: { date: string; visits: number }[];
   ageDemographics: { name: string; count: number }[];
@@ -25,6 +26,8 @@ import { useClinicContext } from "@/context/ClinicContext";
 import { walletService, Wallet, Transaction } from "@/services/walletService";
 import { LuWallet, LuArrowDownToLine } from "react-icons/lu";
 
+import { useAuth } from "@/context/AuthContext";
+
 export default function DoctorReportsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [wallet, setWallet] = useState<Wallet | null>(null);
@@ -33,6 +36,7 @@ export default function DoctorReportsPage() {
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const { activeClinicId } = useClinicContext();
+  const { role } = useAuth();
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -57,16 +61,18 @@ export default function DoctorReportsPage() {
         );
         setData(res.data.data);
 
-        // Fetch wallet
-        try {
-            const [walletData, transactionsData] = await Promise.all([
-                walletService.getMyWallet(),
-                walletService.getMyTransactions()
-            ]);
-            setWallet(walletData);
-            setTransactions(transactionsData.transactions || []);
-        } catch (e) {
-            console.error("Failed to load wallet for analytics", e);
+        // Fetch wallet only for doctor/admin
+        if (role !== 'assistant') {
+            try {
+                const [walletData, transactionsData] = await Promise.all([
+                    walletService.getMyWallet(),
+                    walletService.getMyTransactions()
+                ]);
+                setWallet(walletData);
+                setTransactions(transactionsData.transactions || []);
+            } catch (e) {
+                console.error("Failed to load wallet for analytics", e);
+            }
         }
       } catch (err) {
         console.error("Failed to fetch analytics", err);
@@ -113,27 +119,32 @@ export default function DoctorReportsPage() {
         title="Reports & Analytics"
         subtitle="Clinic performance overview"
         backPath="/doctor"
-        rightElement={
-          <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+      />
+
+      <main className="print-area flex-1 overflow-auto min-w-0">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6">
+
+          {/* Filters & Export Bar — moved out of header for responsive safety */}
+          <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-3">
             {/* Date Range Picker */}
-            <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden">
-              <div className="flex items-center px-3 py-2 border-r border-[hsl(var(--color-border))]">
+            <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden flex-1 min-w-0">
+              <div className="flex items-center px-3 py-2 border-r border-[hsl(var(--color-border))] shrink-0">
                 <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base shrink-0" />
               </div>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 w-[120px] hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
               />
-              <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))]">
+              <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))] shrink-0">
                 <span className="text-[10px] font-black uppercase tracking-wider">To</span>
               </div>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 w-[120px] hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
               />
             </div>
             {/* Actions */}
@@ -155,42 +166,53 @@ export default function DoctorReportsPage() {
               </button>
             </div>
           </div>
-        }
-      />
 
-      <main className="print-area flex-1 overflow-auto min-w-0">
-        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6">
         {loading && data && (
           <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-[hsl(var(--color-primary))] text-white px-4 py-2 rounded-full text-xs font-bold shadow-md animate-pulse">
             Refreshing Data...
           </div>
         )}
 
-        <ReportsKPIs kpis={data?.kpis} />
+          <ReportsKPIs 
+            kpis={data?.kpis} 
+            isAssistant={role === 'assistant'}
+          />
 
-        {wallet && (
+        {wallet && role !== 'assistant' && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-            {/* Wallet Section */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Wallet Balance</span>
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))]">
-                  <LuWallet className="text-xl" />
+              <div className="bg-[hsl(var(--color-bg))] rounded-2xl border border-[hsl(var(--color-border))] overflow-hidden flex flex-col">
+                <div className="p-4 sm:p-5 border-b border-[hsl(var(--color-border))]">
+                  <div className="flex items-center gap-2">
+                    <LuWallet className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+                    <h3 className="font-bold text-[hsl(var(--color-text))]">
+                      Wallet Balance
+                    </h3>
+                  </div>
+                </div>
+                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center bg-[hsl(var(--color-primary)/0.03)]">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-2">
+                      Available to Withdraw
+                    </p>
+                    <p className="text-4xl sm:text-5xl font-black text-[hsl(var(--color-text))] tracking-tight">
+                      <span className="text-2xl text-[hsl(var(--color-text-muted))] mr-1">
+                        EGP
+                      </span>
+                      {wallet?.availableBalance?.toLocaleString() || 0}
+                    </p>
+                  </div>
+                </div>
+                <div className="bg-[hsl(var(--color-bg))] p-4 sm:p-5 border-t border-[hsl(var(--color-border))]">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-[hsl(var(--color-text-muted))]">
+                      Pending Balance
+                    </span>
+                    <span className="font-bold text-[hsl(var(--color-text))]">
+                      EGP {(wallet?.pendingBalance || 0).toLocaleString()}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="flex justify-between items-end">
-                <div>
-                  <p className="text-[32px] font-black text-[hsl(var(--color-text))]">{wallet.availableBalance.toFixed(2)} EGP</p>
-                  <p className="text-[12px] font-semibold text-[hsl(var(--color-success))] mt-1 flex items-center gap-1">
-                    Available for Withdrawal
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-[18px] font-bold text-[hsl(var(--color-warning))]">{wallet.pendingBalance.toFixed(2)} EGP</p>
-                  <p className="text-[10px] font-semibold text-[hsl(var(--color-text-muted))] uppercase">Pending</p>
-                </div>
-              </div>
-            </div>
 
             {/* Transferred Section */}
             <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 hover:shadow-md transition-shadow">
@@ -202,10 +224,10 @@ export default function DoctorReportsPage() {
               </div>
               <div>
                 <p className="text-[32px] font-black text-[hsl(var(--color-text))]">
-                  {transactions.filter(t => t.type === 'payout_withdrawal').reduce((acc, t) => acc + t.amount, 0).toFixed(2)} EGP
+                  {data?.kpis?.totalWithdrawn?.toLocaleString() || 0} EGP
                 </p>
                 <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1">
-                  Lifetime Payouts
+                  Selected Period
                 </p>
               </div>
             </div>

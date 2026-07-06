@@ -12,7 +12,7 @@ import {
   LuX,
   LuHistory,
 } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { DoctorProfile, uploadDoctorLicense, cancelPendingLicense } from "@/services/doctorService";
 
 interface Props {
@@ -33,7 +33,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
   const hasPending  = !!profile?.pendingLicenseImage?.secure_url;
   const hasPrevious = !!profile?.previousLicenseImage?.secure_url;
 
-  // ─── File pick ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ File pick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = e.target.files?.[0];
     if (!picked) return;
@@ -54,7 +54,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
     setPreview(URL.createObjectURL(picked));
   };
 
-  // ─── Upload ───────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleUpload = async () => {
     if (!file) return;
     try {
@@ -74,7 +74,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
     }
   };
 
-  // ─── Cancel pending ───────────────────────────────────────────────────────
+  // â”€â”€â”€ Cancel pending â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const handleCancelPending = async () => {
     try {
       setCancelling(true);
@@ -99,7 +99,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
 
   return (
     <div className="p-6 space-y-5">
-      {/* ── Section title ─────────────────────────────────────────────────── */}
+      {/* â”€â”€ Section title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="flex items-center gap-2">
         <LuShieldCheck className="w-4 h-4 text-[hsl(var(--color-primary))]" />
         <h3 className="text-[13px] font-black text-[hsl(var(--color-text))]">
@@ -107,7 +107,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         </h3>
       </div>
 
-      {/* ── Server messages ───────────────────────────────────────────────── */}
+      {/* â”€â”€ Server messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       {(error || success) && (
         <div
           className={`flex items-center gap-2 px-4 py-3 rounded-xl text-[13px] font-medium ${
@@ -121,7 +121,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         </div>
       )}
 
-      {/* ── Cards row ─────────────────────────────────────────────────────── */}
+      {/* â”€â”€ Cards row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Current license */}
         <LicenseCard
@@ -151,14 +151,14 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
               className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl text-[12px] font-bold border border-[hsl(var(--color-danger)/0.3)] text-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] hover:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
             >
               {cancelling
-                ? <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> Cancelling...</>
+                ? <><LuLoader className="w-3.5 h-3.5 animate-spin" /> Cancelling...</>
                 : <><LuX className="w-3.5 h-3.5" /> Cancel Pending</>
               }
             </button>
           </div>
         )}
 
-        {/* Previous license — collapsed by default */}
+        {/* Previous license â€” collapsed by default */}
         {hasPrevious && !hasPending && (
           <LicenseCard
             title="Previous License"
@@ -171,7 +171,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         )}
       </div>
 
-      {/* ── Upload area ───────────────────────────────────────────────────── */}
+      {/* â”€â”€ Upload area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
       <div className="border border-dashed border-[hsl(var(--color-border))] rounded-2xl p-5 space-y-4">
         <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
           {hasPending
@@ -191,7 +191,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
               Click to choose an image
             </span>
             <span className="text-[11px] text-[hsl(var(--color-text-muted))]">
-              PNG, JPG, WEBP — max 5 MB
+              PNG, JPG, WEBP â€” max 5 MB
             </span>
           </button>
         ) : (
@@ -219,7 +219,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[13px] font-black text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] disabled:opacity-60 disabled:cursor-not-allowed transition-all active:scale-[0.98]"
                 >
                   {uploading ? (
-                    <><ImSpinner2 className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
+                    <><LuLoader className="w-3.5 h-3.5 animate-spin" /> Uploading...</>
                   ) : (
                     <><LuUpload className="w-3.5 h-3.5" /> Submit for Review</>
                   )}
@@ -241,7 +241,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
   );
 }
 
-// ─── LicenseCard ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ LicenseCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 type BadgeColor = "success" | "warning" | "muted";
 
 const badgeStyles: Record<BadgeColor, string> = {
@@ -285,7 +285,7 @@ function LicenseCard({
       {url ? (
         <div className="relative w-full h-40 bg-[hsl(var(--color-bg-soft))] group">
           <Image src={url} alt={title} fill className="object-contain p-3" />
-          {/* Hover overlay — open in new tab */}
+          {/* Hover overlay â€” open in new tab */}
           <a
             href={url}
             target="_blank"
@@ -305,3 +305,4 @@ function LicenseCard({
     </div>
   );
 }
+

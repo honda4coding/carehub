@@ -7,7 +7,7 @@ import {
   LuArrowLeft, LuCheck, LuCircleAlert, LuClock, LuCalendarDays, LuInfo,
   LuChevronLeft, LuChevronRight, LuPhone, LuPhoneCall, LuMapPin, LuBuilding2, LuStar,
 } from "react-icons/lu";
-import { FaWhatsapp } from "react-icons/fa";
+import { LuMessageCircle } from "react-icons/lu";
 
 import {
   DoctorListItem, Slot, Appointment,
@@ -370,7 +370,7 @@ export default function BookAppointmentPage() {
 
         .slot-available-in {
           font-size: 0.85rem;
-          color: var(--color-text-muted);
+          color: hsl(var(--color-text-muted));
           animation: fadeIn 0.3s ease-in-out;
         }
 
@@ -392,19 +392,19 @@ export default function BookAppointmentPage() {
             <div className="flex items-center gap-2">
               {ALL_STEPS.map((s, i) => (
                 <div key={s} className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black border-2 transition-all ${
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold tracking-widest border-2 transition-all ${
                     i < stepIndex
-                      ? "bg-sky-700 border-sky-800 text-white"
+                      ? "bg-[hsl(var(--color-primary-strong))] border-sky-800 text-white"
                       : step === s
-                      ? "bg-sky-200 border-sky-500 text-sky-800"
+                      ? "bg-sky-200 border-sky-500 text-[hsl(var(--color-primary-strong))]"
                       : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
                   }`}>{i + 1}</div>
                   {i < ALL_STEPS.length - 1 && (
-                    <div className={`w-8 h-0.5 rounded ${i < stepIndex ? "bg-sky-700" : "bg-[hsl(var(--color-border))]"}`} />
+                    <div className={`w-8 h-0.5 rounded ${i < stepIndex ? "bg-[hsl(var(--color-primary-strong))]" : "bg-[hsl(var(--color-border))]"}`} />
                   )}
                 </div>
               ))}
-              <button onClick={handleCancel} className="py-2 px-4 rounded-xl border border-red-500 bg-red-50 text-red-700 text-[12px] font-bold hover:bg-red-100">
+              <button onClick={handleCancel} className="py-2 px-4 rounded-xl border border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-xs font-semibold tracking-wide hover:bg-[hsl(var(--color-danger)/0.15)]">
                 Cancel
               </button>
             </div>
@@ -415,9 +415,9 @@ export default function BookAppointmentPage() {
       {/* ── Main ── */}
       <main className="flex-1 overflow-auto">
         {isEligibleForFollowUpDiscount && step !== "success" && (
-          <div className="bg-sky-50 border-b border-sky-100 p-3 flex items-center justify-center gap-2">
+          <div className="bg-[hsl(var(--color-primary-soft))] border-b border-[hsl(var(--color-primary)/0.2)] p-3 flex items-center justify-center gap-2">
             <LuStar className="text-sky-500 shrink-0" />
-            <p className="text-sky-800 text-sm font-semibold text-center">
+            <p className="text-[hsl(var(--color-primary-strong))] text-sm font-semibold text-center">
               You are eligible for a follow-up discount with this doctor! Discount will be automatically applied at checkout.
             </p>
           </div>
@@ -452,27 +452,27 @@ export default function BookAppointmentPage() {
                     <button
                       key={c._id}
                       onClick={() => handleSelectClinic(c)}
-                      className="w-full text-left p-4 rounded-2xl border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-sky-500 hover:bg-sky-50/50 transition-all group"
+                      className="w-full text-left p-4 rounded-2xl border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-sky-500 hover:bg-[hsl(var(--color-primary-soft))]/50 transition-all group"
                     >
                       <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-sky-700 flex items-center justify-center shrink-0 mt-0.5">
+                        <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary-strong))] flex items-center justify-center shrink-0 mt-0.5">
                           <LuBuilding2 className="text-white text-[17px]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[14px] font-black text-[hsl(var(--color-text))] group-hover:text-sky-700 transition-colors">
+                          <p className="text-sm font-semibold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary-strong))] transition-colors">
                             {c.name}
                           </p>
                           <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))]">
                             <LuMapPin className="text-[12px] shrink-0" /> {c.address} — {c.governorate}
                           </div>
                           {(c.phone || c.whatsapp || c.landline) && (
-                            <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-sky-700">
+                            <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-primary-strong))]">
                               <LuPhone className="text-[12px] shrink-0" />
                               {c.phone || c.whatsapp || c.landline}
                             </div>
                           )}
                           {c.services && c.services.length > 0 && (
-                            <div className="mt-1.5 text-[11px] font-bold text-sky-700">
+                            <div className="mt-1.5 text-[11px] font-bold text-[hsl(var(--color-primary-strong))]">
                               {c.services.length} service{c.services.length !== 1 ? "s" : ""} available
                             </div>
                           )}
@@ -491,18 +491,18 @@ export default function BookAppointmentPage() {
           <div className="flex flex-col h-full">
             {/* Doctor + clinic mini bar */}
             <div className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-[13px] font-black shrink-0">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-sm font-medium font-black shrink-0">
                 {doctorInitials}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-[14px] font-black text-[hsl(var(--color-text))]">{doctorName}</p>
+                <p className="text-sm font-semibold text-[hsl(var(--color-text))]">{doctorName}</p>
                 <p className="text-[11px] font-bold text-sky-600 truncate">
                   {selectedClinic?.name} · {selectedClinic?.address}
                 </p>
               </div>
               <button
                 onClick={() => setStep("clinic")}
-                className="text-[11px] font-bold text-sky-600 hover:text-sky-800 transition-colors shrink-0"
+                className="text-[11px] font-bold text-sky-600 hover:text-[hsl(var(--color-primary-strong))] transition-colors shrink-0"
               >
                 Change
               </button>
@@ -521,17 +521,17 @@ export default function BookAppointmentPage() {
                     <button
                       onClick={() => goToMonth(-1)}
                       aria-label="Previous month"
-                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-sky-700 hover:border-sky-500 transition-all"
+                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 transition-all"
                     >
                       <LuChevronLeft className="text-[14px]" />
                     </button>
-                    <p className="text-[14px] font-black text-[hsl(var(--color-text))]">
+                    <p className="text-sm font-semibold text-[hsl(var(--color-text))]">
                       {viewMonth ? `${MONTHS[viewMonth.getMonth()]} ${viewMonth.getFullYear()}` : ""}
                     </p>
                     <button
                       onClick={() => goToMonth(1)}
                       aria-label="Next month"
-                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-sky-700 hover:border-sky-500 transition-all"
+                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 transition-all"
                     >
                       <LuChevronRight className="text-[14px]" />
                     </button>
@@ -571,13 +571,13 @@ export default function BookAppointmentPage() {
                             title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : isFollowUpDate ? `Follow-up discount applies! Pay ${doctor?.followUpFee ?? ((doctor?.consultationFee ?? 0) * 0.5)} EGP` : undefined}
                             className={`w-11 h-11 rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
                               isSelected
-                                ? "bg-sky-700 border-sky-800 text-white"
+                                ? "bg-[hsl(var(--color-primary-strong))] border-sky-800 text-white"
                                 : isAlreadyBooked
                                 ? "border-amber-400 bg-amber-50 text-amber-600 cursor-not-allowed"
                                 : isFollowUpDate
                                 ? "border-emerald-500 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
                                 : isAvailable
-                                ? "border-sky-500 text-sky-700 bg-[hsl(var(--color-bg-surface))] hover:bg-sky-50"
+                                ? "border-sky-500 text-[hsl(var(--color-primary-strong))] bg-[hsl(var(--color-bg-surface))] hover:bg-[hsl(var(--color-primary-soft))]"
                                 : "border-transparent text-[hsl(var(--color-text-muted))] cursor-default"
                             }`}
                           >
@@ -627,14 +627,14 @@ export default function BookAppointmentPage() {
                   {!selectedGroup ? (
                     <div className="flex flex-col items-center justify-center text-center py-12">
                       <LuCalendarDays className="text-[26px] text-[hsl(var(--color-text-muted))] mb-3" />
-                      <p className="text-[13px] font-black text-[hsl(var(--color-text))]">Select a day</p>
+                      <p className="text-sm font-medium font-black text-[hsl(var(--color-text))]">Select a day</p>
                       <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-1 max-w-[220px]">
                         Pick a highlighted day on the calendar to see availability and booking options.
                       </p>
                     </div>
                   ) : (
                     <div>
-                      <p className="text-[13px] font-black text-[hsl(var(--color-text))] mb-4">
+                      <p className="text-sm font-medium font-black text-[hsl(var(--color-text))] mb-4">
                         {formatFullDate(selectedGroup.dateObj)}
                       </p>
 
@@ -651,7 +651,7 @@ export default function BookAppointmentPage() {
                           <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1">
                             <LuCalendarDays className="text-[12px]" /> Available
                           </div>
-                          <p className="text-[13px] font-black text-[hsl(var(--color-text))]">
+                          <p className="text-sm font-medium font-black text-[hsl(var(--color-text))]">
                             {selectedGroup.slots.length} slots
                           </p>
                         </div>
@@ -660,7 +660,7 @@ export default function BookAppointmentPage() {
                       {/* Follow-up fee note on selected date */}
                       {isEligibleForFollowUpDiscount && selectedGroup && selectedClinic && (
                         <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2 mb-4">
-                          <LuStar className="text-emerald-500 shrink-0 text-[13px]" />
+                          <LuStar className="text-emerald-500 shrink-0 text-sm font-medium" />
                           <p className="text-[11.5px] font-bold text-emerald-700 leading-tight">
                             Follow-up discount applies — you'll pay {selectedClinic.followUpFee ?? ((selectedClinic.consultationFee ?? 0) * 0.5)} EGP instead of {selectedClinic.consultationFee ?? 0} EGP
                           </p>
@@ -672,13 +672,13 @@ export default function BookAppointmentPage() {
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <button
                               onClick={handleBookOnline}
-                              className="py-3 rounded-xl border border-sky-500 bg-sky-50 text-sky-700 text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-600 transition-all"
+                              className="py-3 rounded-xl border border-sky-500 bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-600 transition-all"
                             >
                               Book online
                             </button>
                             <button
                               onClick={() => setBookingMode("contact")}
-                              className="py-3 rounded-xl border border-sky-400 bg-sky-50 text-sky-700 text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-500 transition-all"
+                              className="py-3 rounded-xl border border-sky-400 bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-500 transition-all"
                             >
                               Contact to confirm
                             </button>
@@ -696,7 +696,7 @@ export default function BookAppointmentPage() {
                                 const slot = sortedDaySlots.find((s) => s._id === e.target.value);
                                 if (slot) setSelectedSlot(slot);
                               }}
-                              className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-sky-50 text-[13px] font-bold text-sky-800 outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
+                              className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-sm font-medium font-bold text-[hsl(var(--color-primary-strong))] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
                             >
                               {sortedDaySlots.map((s) => {
                                 const remainingMs = s.isReserved && s.reservedAt
@@ -738,27 +738,27 @@ export default function BookAppointmentPage() {
                               <div className="flex flex-col gap-2 mb-4">
                                 {selectedClinic.phone && (
                                   <a href={`tel:${selectedClinic.phone}`}
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
+                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
                                     <LuPhone className="text-[15px]" /> Call: {selectedClinic.phone}
                                   </a>
                                 )}
                                 {selectedClinic.whatsapp && (
                                   <a href={`https://wa.me/${selectedClinic.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
-                                    <FaWhatsapp className="text-[15px]" /> WhatsApp: {selectedClinic.whatsapp}
+                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
+                                    <LuMessageCircle className="text-[15px]" /> WhatsApp: {selectedClinic.whatsapp}
                                   </a>
                                 )}
                                 {selectedClinic.landline && (
                                   <a href={`tel:${selectedClinic.landline}`}
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-sky-50 text-[12.5px] font-bold text-sky-700 hover:bg-sky-100 transition-all">
+                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
                                     <LuPhoneCall className="text-[15px]" /> Landline: {selectedClinic.landline}
                                   </a>
                                 )}
                               </div>
                             ) : (
-                              <div className="flex items-start gap-2.5 bg-sky-50 border border-sky-300 rounded-xl p-3 mb-4">
+                              <div className="flex items-start gap-2.5 bg-[hsl(var(--color-primary-soft))] border border-sky-300 rounded-xl p-3 mb-4">
                                 <LuInfo className="text-sky-600 text-[14px] mt-0.5 shrink-0" />
-                                <p className="text-[12px] font-medium text-sky-700 leading-relaxed">
+                                <p className="text-[12px] font-medium text-[hsl(var(--color-primary-strong))] leading-relaxed">
                                   Contact details aren't available for this clinic yet.
                                 </p>
                               </div>
@@ -801,11 +801,11 @@ export default function BookAppointmentPage() {
 
               <div className="p-6 space-y-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-[14px] font-black shrink-0">
+                  <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
                     {doctorInitials}
                   </div>
                   <div>
-                    <p className="text-[14px] font-black text-[hsl(var(--color-text))]">{doctorName}</p>
+                    <p className="text-sm font-semibold text-[hsl(var(--color-text))]">{doctorName}</p>
                     <p className="text-[12px] font-semibold text-sky-600">{doctorSpec}</p>
                   </div>
                 </div>
@@ -817,9 +817,9 @@ export default function BookAppointmentPage() {
                   </div>
                 )}
 
-                <div className="flex items-start gap-2.5 bg-sky-50 border border-sky-300 rounded-xl p-3">
+                <div className="flex items-start gap-2.5 bg-[hsl(var(--color-primary-soft))] border border-sky-300 rounded-xl p-3">
                   <LuInfo className="text-sky-600 text-[14px] mt-0.5 shrink-0" />
-                  <p className="text-[12px] font-medium text-sky-700 leading-relaxed">
+                  <p className="text-[12px] font-medium text-[hsl(var(--color-primary-strong))] leading-relaxed">
                     You can cancel this appointment anytime before the scheduled time from My Appointments.
                   </p>
                 </div>
@@ -832,7 +832,7 @@ export default function BookAppointmentPage() {
 
                 {doctor && (
                   <div className="flex flex-col gap-2 bg-[hsl(var(--color-bg-soft))] p-4 rounded-xl border border-[hsl(var(--color-border))]">
-                    <div className="flex justify-between items-center text-[13px] font-bold">
+                    <div className="flex justify-between items-center text-sm font-medium font-bold">
                       <span className="text-[hsl(var(--color-text-muted))]">Consultation Fee</span>
                       <span className="text-[hsl(var(--color-text))]">
                         {currentFee} EGP
@@ -840,7 +840,7 @@ export default function BookAppointmentPage() {
                       </span>
                     </div>
                     {wallet && wallet.availableBalance > 0 && (
-                      <div className="flex justify-between items-center text-[13px] font-bold">
+                      <div className="flex justify-between items-center text-sm font-medium font-bold">
                         <span className="text-[hsl(var(--color-text-muted))]">Wallet Balance</span>
                         <span className="text-emerald-600">{wallet.availableBalance} EGP</span>
                       </div>
@@ -853,7 +853,7 @@ export default function BookAppointmentPage() {
                     <button
                       onClick={handleConfirmWallet}
                       disabled={confirming}
-                      className="w-full py-3.5 rounded-xl bg-emerald-600 text-white text-[14px] font-black hover:bg-emerald-700 transition-all disabled:opacity-60"
+                      className="w-full py-3.5 rounded-xl bg-emerald-600 text-white text-sm font-semibold hover:bg-emerald-700 transition-all disabled:opacity-60"
                     >
                       {confirming ? "Processing…" : "Pay with Wallet ✓"}
                     </button>
@@ -863,7 +863,7 @@ export default function BookAppointmentPage() {
                     <button
                       onClick={handleConfirmSplit}
                       disabled={confirming}
-                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white text-[14px] font-black hover:opacity-90 transition-all disabled:opacity-60"
+                      className="w-full py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-sky-600 text-white text-sm font-semibold hover:opacity-90 transition-all disabled:opacity-60"
                     >
                       {confirming ? "Processing…" : `Use Wallet & Pay ${currentFee - wallet.availableBalance} EGP`}
                     </button>
@@ -872,14 +872,14 @@ export default function BookAppointmentPage() {
                   <button
                     onClick={handleConfirmCard}
                     disabled={confirming}
-                    className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-bg))] border-2 border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] text-[14px] font-black hover:border-sky-500 hover:text-sky-700 transition-all disabled:opacity-60"
+                    className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-bg))] border-2 border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] text-sm font-semibold hover:border-sky-500 hover:text-[hsl(var(--color-primary-strong))] transition-all disabled:opacity-60"
                   >
                     {confirming ? "Processing…" : "Pay with Card"}
                   </button>
                 </div>
                 <button
                   onClick={() => setStep("calendar")}
-                  className="w-full py-3 rounded-xl border border-[hsl(var(--color-border))] text-[13px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                  className="w-full py-3 rounded-xl border border-[hsl(var(--color-border))] text-sm font-medium font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
                 >
                   ← Change day
                 </button>
@@ -902,20 +902,20 @@ export default function BookAppointmentPage() {
             </p>
             <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))] mb-8">
               is confirmed for{" "}
-              <strong className="text-sky-700">
+              <strong className="text-[hsl(var(--color-primary-strong))]">
                 {selectedSlot ? `${formatFullDate(selectedSlot.startDateTime)} · ${slotTimeRangeLabel(selectedSlot)}` : ""}
               </strong>
             </p>
             <div className="flex gap-3 flex-wrap justify-center">
               <button
                 onClick={() => router.push("/patient/appointments")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white hover:scale-105 transition-all"
+                className="text-sm font-medium font-bold px-6 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white hover:scale-105 transition-all"
               >
                 View my appointments
               </button>
               <button
                 onClick={() => router.push("/patient/doctors")}
-                className="text-[13px] font-bold px-6 py-3 rounded-xl border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
+                className="text-sm font-medium font-bold px-6 py-3 rounded-xl border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
               >
                 Book another
               </button>

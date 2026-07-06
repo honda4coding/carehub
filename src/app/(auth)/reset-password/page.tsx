@@ -19,12 +19,13 @@
 // app/reset-password/page.tsx
 "use client";
 
+import { AuthCard } from "@/components/auth/AuthCard";
 import React from "react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
-import { HiOutlineMail, HiOutlineLockClosed } from "react-icons/hi";
-import { HiOutlineArrowRight } from "react-icons/hi2";
-import { ImSpinner2 } from "react-icons/im";
+import { LuMail, LuLock } from "react-icons/lu";
+import { LuArrowRight } from "react-icons/lu";
+import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -50,7 +51,7 @@ export default function ResetPasswordPage() {
   const [serverError, setServerError] = React.useState("");
   const [serverSuccess, setServerSuccess] = React.useState("");
 
-  // ضيفي state
+  // Ø¶ÙŠÙÙŠ state
 const [otpSent, setOtpSent] = React.useState(false);
 const [sendingOtp, setSendingOtp] = React.useState(false);
 
@@ -109,8 +110,8 @@ const handleSendOtp = async (email: string) => {
 
 
   return (
-    <div className="min-h-screen bg-[hsl(var(--color-bg))] flex items-center justify-center pt-24 px-4 pb-4">
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 max-w-md w-full">
+    
+      <AuthCard>
 
         {/* Header */}
         <div className="text-center mb-6">
@@ -147,7 +148,7 @@ const handleSendOtp = async (email: string) => {
                 <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
                   style={{ color: "hsl(var(--color-text-muted))" }}>Email</label>
                 <div className="relative">
-                  <HiOutlineMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <LuMail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                   <Field name="email" type="email" placeholder="name@example.com"
                     className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
@@ -166,7 +167,7 @@ const handleSendOtp = async (email: string) => {
   className="w-full py-3 text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-60"
   style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}
 >
-  {sendingOtp ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Sending...</> : "Send OTP"}
+  {sendingOtp ? <><LuLoader className="w-4 h-4 animate-spin" /> Sending...</> : "Send OTP"}
 </button>
 
 {otpSent && (
@@ -192,8 +193,8 @@ const handleSendOtp = async (email: string) => {
                 <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
                   style={{ color: "hsl(var(--color-text-muted))" }}>New Password</label>
                 <div className="relative">
-                  <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Field name="newpassword" type="password" placeholder="••••••••"
+                  <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Field name="newpassword" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
@@ -209,8 +210,8 @@ const handleSendOtp = async (email: string) => {
                 <label className="block text-xs font-bold pl-4 tracking-wide uppercase"
                   style={{ color: "hsl(var(--color-text-muted))" }}>Confirm Password</label>
                 <div className="relative">
-                  <HiOutlineLockClosed className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                  <Field name="cpassword" type="password" placeholder="••••••••"
+                  <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  <Field name="cpassword" type="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                     className="w-full pl-12 pr-4 py-4 rounded-2xl outline-none transition-all placeholder:text-slate-300"
                     style={{
                       backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
@@ -226,23 +227,23 @@ const handleSendOtp = async (email: string) => {
                 className="w-full py-4 text-white font-bold rounded-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
                 style={{ backgroundImage: "linear-gradient(to right, hsl(var(--color-secondary)), hsl(var(--color-primary)))" }}>
                 {isSubmitting ? (
-                  <><ImSpinner2 className="w-5 h-5 animate-spin" /> Resetting...</>
+                  <><LuLoader className="w-5 h-5 animate-spin" /> Resetting...</>
                 ) : (
-                  <>Reset Password <HiOutlineArrowRight className="w-5 h-5" /></>
+                  <>Reset Password <LuArrowRight className="w-5 h-5" /></>
                 )}
               </button>
 
               <button type="button" onClick={() => router.push("/forgot-password")}
                 className="w-full py-2 text-sm font-medium transition-colors"
                 style={{ color: "hsl(var(--color-text-muted))" }}>
-                ← Back to Forgot Password
+                â† Back to Forgot Password
               </button>
 
             </Form>
           )}
         </Formik>
 
-      </div>
-    </div>
+      </AuthCard>
   );
 }
+

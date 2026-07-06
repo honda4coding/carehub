@@ -124,24 +124,24 @@ export default function ApprovalsList({
                       <p className="text-[14px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap leading-tight">
                         {doc.fullName}
                       </p>
-                      <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate max-w-[170px]">
+                      <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate max-w-[170px]">
                         {doc.email}
                       </p>
                     </div>
                   </div>
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pr-4 text-sm font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
                   {doc.specialty ?? "—"}
                 </td>
 
-                <td className="py-3.5 pr-4 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
+                <td className="py-3.5 pr-4 text-sm font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap text-left">
                   {new Date(doc.createdAt).toLocaleDateString()}
                 </td>
 
                 <td className="py-3.5 pr-4 text-left">
                   <span
-                    className={`inline-flex items-center gap-1 text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
+                    className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-3 py-1 rounded-full whitespace-nowrap ${sc.style}`}
                   >
                     {sc.label}
                   </span>
@@ -161,7 +161,7 @@ export default function ApprovalsList({
                       View
                     </Button>
                   ) : (
-                    <span className="text-[13px] text-[hsl(var(--color-text-muted))]">
+                    <span className="text-sm text-[hsl(var(--color-text-muted))]">
                       —
                     </span>
                   )}
@@ -184,7 +184,7 @@ export default function ApprovalsList({
                       View
                     </Button>
                   ) : (
-                    <span className="text-[13px] text-[hsl(var(--color-text-muted))]">
+                    <span className="text-sm text-[hsl(var(--color-text-muted))]">
                       —
                     </span>
                   )}
@@ -250,7 +250,7 @@ export default function ApprovalsList({
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-black shrink-0 ${avatarStyle}`}
+                    className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-semibold tracking-tight shrink-0 ${avatarStyle}`}
                   >
                     {initials}
                   </div>
@@ -296,7 +296,7 @@ export default function ApprovalsList({
                       onClick={() =>
                         setLicenseModal({ open: true, url: doc.licenseUrl ?? null })
                       }
-                      className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
+                      className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                     >
                       <LuEye className="text-[12px]" /> License
                     </button>
@@ -309,7 +309,7 @@ export default function ApprovalsList({
                           url: doc.nationalIdUrl ?? null,
                         })
                       }
-                      className="flex items-center gap-1 text-[11px] font-bold text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
+                      className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--color-primary))] hover:underline cursor-pointer"
                     >
                       <LuEye className="text-[12px]" /> ID
                     </button>

@@ -45,9 +45,9 @@ export default function SupportPage() {
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-semibold text-[hsl(var(--color-text))]">Message</label>
-                <textarea 
+                  <textarea 
                   rows={4}
-                  className="w-full py-4 px-4 rounded-2xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.6)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)] resize-none"
+                  className="w-full py-4 px-4 rounded-2xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.6)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)] resize-none"
                   placeholder="Tell us more about your inquiry..."
                 ></textarea>
               </div>
@@ -87,9 +87,9 @@ export default function SupportPage() {
                 <LuMapPin className="w-6 h-6 text-[hsl(var(--color-success))]" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-[hsl(var(--color-text))] mb-1.5">Headquarters</h3>
-                <p className="text-[hsl(var(--color-text-muted))] mb-4">Visit our main office for business inquiries.</p>
-                <p className="text-[hsl(var(--color-text))] font-semibold">123 Health Ave, Suite 400<br/>San Francisco, CA 94105</p>
+                <h3 className="text-xl font-bold text-[hsl(var(--color-text))] mb-1.5">CareHub Headquarters</h3>
+                <p className="text-[hsl(var(--color-text-muted))] mb-4">Visit our main office for clinic onboarding and training.</p>
+                <p className="text-[hsl(var(--color-text))] font-semibold">Smart Village, Building B12<br/>Cairo, Egypt</p>
               </div>
             </div>
           </div>

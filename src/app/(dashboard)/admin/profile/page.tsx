@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 import { LuShieldCheck, LuCamera, LuTrash2 } from "react-icons/lu";
 import Image from "next/image";
 import AdminInfoForm from "@/components/admin/profile/AdminInfoForm";
@@ -71,7 +71,7 @@ export default function AdminProfilePage() {
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
-            <ImSpinner2 className="w-7 h-7 animate-spin text-primary" />
+            <LuLoader className="w-7 h-7 animate-spin text-primary" />
           </div>
         )}
 
@@ -87,7 +87,7 @@ export default function AdminProfilePage() {
         {!loading && !error && (
           <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
 
-            {/* ── Left sidebar ── */}
+            {/* â”€â”€ Left sidebar â”€â”€ */}
             <aside className="flex flex-row md:flex-col gap-3 w-full md:w-44 shrink-0 overflow-x-auto scrollbar-hide pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
@@ -131,10 +131,10 @@ export default function AdminProfilePage() {
               })}
             </aside>
 
-            {/* ── Right content card ── */}
+            {/* â”€â”€ Right content card â”€â”€ */}
             <div className="flex-1 min-w-0 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
 
-              {/* Header (يظهر بس في profile tab) */}
+              {/* Header (ÙŠØ¸Ù‡Ø± Ø¨Ø³ ÙÙŠ profile tab) */}
               {activeTab === "profile" && (
                 <>
                   <div className="p-6 flex items-center gap-4">
@@ -147,7 +147,7 @@ export default function AdminProfilePage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <h2 className="text-[hsl(var(--color-text))] text-lg font-black">{profile?.fullName ?? "—"}</h2>
+                        <h2 className="text-[hsl(var(--color-text))] text-lg font-black">{profile?.fullName ?? "â€”"}</h2>
                         <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[10px] font-bold">
                           <LuShieldCheck className="w-3 h-3" /> Admin
                         </span>

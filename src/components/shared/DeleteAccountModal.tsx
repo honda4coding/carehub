@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { LuTrash2, LuX } from "react-icons/lu";
-import { ImSpinner2 } from "react-icons/im";
+import { LuLoader } from "react-icons/lu";
 
 interface Props {
   onConfirm: () => Promise<void>;
@@ -80,7 +80,7 @@ export default function DeleteAccountModal({ onConfirm }: Props) {
                 className="flex-1 py-2.5 rounded-xl text-[13px] font-bold bg-[hsl(var(--color-danger))] text-white hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
               >
                 {loading
-                  ? <><ImSpinner2 className="w-4 h-4 animate-spin" /> Deleting...</>
+                  ? <><LuLoader className="w-4 h-4 animate-spin" /> Deleting...</>
                   : "Yes, Delete"
                 }
               </button>

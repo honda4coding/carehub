@@ -42,7 +42,6 @@ export default function DoctorSchedulePage() {
         title="My Schedule"
         subtitle="Your weekly hours for each clinic"
         backPath={role === "assistant" ? "/assistant/appointments" : "/doctor/appointments"}
-        rightElement={<SectionToggle />}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
