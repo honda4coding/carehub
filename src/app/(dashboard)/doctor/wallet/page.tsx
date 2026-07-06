@@ -383,18 +383,18 @@ export default function DoctorWalletPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {transactionsData.transactions.map(t => {
-                      const isCredit = t.amount > 0 || ['online_booking_payment', 'refund'].includes(t.type);
+                    {transactionsData.transactions.map((t: any) => {
+                      const isCredit = t.type === 'credit';
                       return (
                         <tr key={t._id} className="text-[14px] font-medium text-slate-700">
                           <td className="p-4 whitespace-nowrap">{new Date(t.createdAt).toLocaleDateString()}</td>
                           <td className="p-4">
                             <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-lg text-[12px] font-bold">
-                              {t.type.replace(/_/g, ' ')}
+                              {(t.purpose || t.type).replace(/_/g, ' ')}
                             </span>
                           </td>
                           <td className={`p-4 font-bold ${isCredit ? 'text-emerald-600' : 'text-rose-600'}`}>
-                            {isCredit ? '+' : '-'}{t.amount}
+                            {isCredit ? '+' : '-'}{Math.abs(t.amount)}
                           </td>
                         </tr>
                       );

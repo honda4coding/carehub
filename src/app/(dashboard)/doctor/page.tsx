@@ -186,11 +186,23 @@ export default function DoctorDashboard() {
     return matchText && matchStatus && matchType;
   });
 
-  const handleRequestAccess = async (patient: any) => {
+  const [isExistingPatientModalOpen, setExistingPatientModalOpen] = useState(false);
+  const [selectedPatientForQueue, setSelectedPatientForQueue] = useState<any>(null);
 
+  const handleRequestAccess = (patient: any) => {
+    setSelectedPatientForQueue(patient);
+    setExistingPatientModalOpen(true);
+  };
+
+  const handleExistingPatientQueueEntry = async (selectedSlot: string, skipQueue: boolean) => {
+    if (!selectedPatientForQueue) return;
     try{
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const requestData: any = { patientId: patient._id };
+      const requestData: any = { 
+        patientId: selectedPatientForQueue._id,
+        appointmentId: selectedSlot || undefined,
+        skipQueue
+      };
       if (activeClinicId && activeClinicId !== "all") {
         requestData.clinicId = activeClinicId;
       }
@@ -200,48 +212,19 @@ export default function DoctorDashboard() {
         }
       });
 
-
       const responseData = response.data.data;
       const newSessionData = responseData.session || responseData;
       const sessionStatus: SessionStatus = newSessionData.status || "pending_otp";
 
-      // Only show OTP alert if the session actually requires OTP verification
       if (sessionStatus === "pending_otp") {
-        alert("âœ… An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
+        alert("✅ An OTP has been sent via Push Notification to the patient's phone. Please ask the patient for the code to complete the session.");
       } else {
-        // Session is in_progress immediately â€” no OTP needed
-        alert(`âœ… Instant access granted to the patient based on their privacy settings.`);
+        alert(`✅ Instant access granted to the patient based on their privacy settings.`);
       }
 
-     const newActiveSession: Session = {
-        id: newSessionData._id,
-        patient: patient.fullName,
-        type: "Online",
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: sessionStatus,
-        initials: patient.fullName.slice(0, 2).toUpperCase(),
-        avatarStyle: sessionStatus === "in_progress"
-          ? "bg-[hsl(var(--color-success-bg))] text-success"
-          : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]",
-        validUntil: sessionStatus === "pending_otp" && newSessionData.validUntil
-          ? new Date(newSessionData.validUntil).getTime()
-          : undefined,
-      };
-
-
-
-      setSessions((prev) => {
-        const sessionExists = prev.find((s) => s.id === newActiveSession.id);
-        if (sessionExists) {
-          // Update existing session
-          return prev.map((s) => s.id === newActiveSession.id ? newActiveSession : s);
-        } else {
-          return [newActiveSession, ...prev];
-        }
-      });
-      
-      // Refresh the queue to show the new patient!
       fetchCurrentQueue();
+      setExistingPatientModalOpen(false);
+      setSelectedPatientForQueue(null);
 
     } catch (err: any) {
       console.error("Error requesting session:", err);
@@ -251,11 +234,12 @@ export default function DoctorDashboard() {
         msg === "Access already granted" ||
         msg === "Access already granted for this patient"
       ) {
-        // Session already active â€” just refresh the queue to show it
-        alert("âœ… This patient is already in the clinic queue (Active Session).");
+        alert("✅ This patient is already in the clinic queue (Active Session).");
         fetchCurrentQueue();
+        setExistingPatientModalOpen(false);
+        setSelectedPatientForQueue(null);
       } else {
-        alert("Failed to request access: " + (msg || err.message));
+        alert("Failed to request access: " + (msg || "Unknown error"));
       }
     }
   };
@@ -330,16 +314,16 @@ export default function DoctorDashboard() {
     }
   };
 
-  const handleWalkInRegister = async () => {
+    const handleWalkInRegister = async (selectedSlot: string, skipQueue: boolean) => {
     if (!walkInName.trim() || !walkInPhone.trim()) return;
-    if (!token) return;
-
     try {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const requestData: any = {
         isOfflinePatient: true,
         guestName: walkInName,
         guestPhone: walkInPhone,
+        appointmentId: selectedSlot || undefined,
+        skipQueue,
         ...(walkInAge ? { guestAge: Number(walkInAge) } : {})
       };
       if (activeClinicId && activeClinicId !== "all") {
@@ -352,24 +336,13 @@ export default function DoctorDashboard() {
 
       const backendSession = response.data.data;
       
-      const newSession: Session = {
-        id: backendSession._id,
-        patient: walkInName,
-        type: "Walk-in",
-        time: new Date(backendSession.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        status: "in_progress",
-        initials: walkInName.slice(0, 2).toUpperCase(),
-        phone: walkInPhone,
-        avatarStyle: "bg-[hsl(var(--color-primary)/0.1)] text-primary"
-      };
-
-      setSessions(prev => [newSession, ...prev]);
+      fetchCurrentQueue();
       setWalkInModalOpen(false);
       setWalkInName("");
       setWalkInPhone("");
       setWalkInAge("");
       
-      router.push(`/doctor/encounter/${newSession.id}`);
+      router.push(`/doctor/encounter/${backendSession._id}`);
     } catch (err: any) {
       console.error(err);
       alert(err.response?.data?.message || "Failed to register walk-in patient");
@@ -435,6 +408,10 @@ export default function DoctorDashboard() {
         walkInAge={walkInAge}
         setWalkInAge={setWalkInAge}
         handleWalkInRegister={handleWalkInRegister}
+        isExistingPatientModalOpen={isExistingPatientModalOpen}
+        setExistingPatientModalOpen={setExistingPatientModalOpen}
+        handleExistingPatientQueueEntry={handleExistingPatientQueueEntry}
+        selectedExistingPatient={selectedPatientForQueue}
       />
     </div>
   );

@@ -57,6 +57,7 @@ export const LoginForm = () => {
         jobTitle: data.jobTitle,
         doctorName: data.doctorName,
         clinicName: data.clinicName,
+        subscriptionPlan: data.subscriptionPlan,
       });
     } catch (err: any) {
       setBioError(err.message || "Biometrics login failed.");
@@ -105,6 +106,7 @@ export const LoginForm = () => {
         jobTitle: data.data.jobTitle,
         doctorName: data.data.doctorName,
         clinicName: data.data.clinicName,
+        subscriptionPlan: data.data.subscriptionPlan,
       });
 
     } catch (error) {

@@ -109,7 +109,7 @@ export default function DoctorAIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary/90 transition-transform hover:scale-105 z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary)/0.9)] transition-transform hover:scale-105 z-50 shadow-xl"
           title="Clinical Assistant"
         >
           <LuBrainCircuit size={28} />
@@ -120,7 +120,7 @@ export default function DoctorAIChatWidget() {
       {isOpen && (
         <div className="fixed inset-0 w-full h-[100dvh] rounded-none sm:bottom-6 sm:right-6 sm:inset-auto sm:w-[450px] sm:h-[550px] sm:max-h-[85vh] sm:rounded-2xl bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] flex flex-col z-50 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 bg-primary text-white">
+          <div className="flex items-center justify-between p-4 bg-[hsl(var(--color-primary))] text-white">
             <div className="flex items-center gap-2 font-bold">
               <LuBrainCircuit size={20} />
               Clinical Assistant
@@ -139,9 +139,9 @@ export default function DoctorAIChatWidget() {
                 <div 
                   className={`max-w-[85%] p-3 rounded-2xl text-sm whitespace-pre-wrap ${
                     msg.role === "user" 
-                    ? "bg-primary text-white rounded-tr-none" 
+                    ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none" 
                     : msg.role === "system"
-                    ? "bg-primary/10 text-primary rounded-lg text-xs w-full text-center border border-primary/20"
+                    ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] rounded-lg text-xs w-full text-center border border-[hsl(var(--color-primary)/0.2)]"
                     : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
                   }`}
                   dir="auto"
@@ -177,7 +177,7 @@ export default function DoctorAIChatWidget() {
             <button 
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center disabled:opacity-50 hover:bg-primary/90 transition-colors shrink-0"
+              className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center disabled:opacity-50 hover:bg-[hsl(var(--color-primary)/0.9)] transition-colors shrink-0 shadow-md"
             >
               <LuSend size={18} />
             </button>

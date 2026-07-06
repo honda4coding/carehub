@@ -16,6 +16,7 @@ interface AnalyticsData {
     visitsGrowth: number;
     onlineVisits: number;
     walkinVisits: number;
+    totalWithdrawn: number;
   };
   visitTrends: { date: string; visits: number }[];
   ageDemographics: { name: string; count: number }[];
@@ -204,10 +205,10 @@ export default function DoctorReportsPage() {
                 <div className="bg-[hsl(var(--color-bg))] p-4 sm:p-5 border-t border-[hsl(var(--color-border))]">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium text-[hsl(var(--color-text-muted))]">
-                      Total Transferred
+                      Pending Balance
                     </span>
                     <span className="font-bold text-[hsl(var(--color-text))]">
-                      EGP {(wallet?.grossRevenue ?? 0 - (wallet?.availableBalance ?? 0)).toLocaleString()}
+                      EGP {(wallet?.pendingBalance || 0).toLocaleString()}
                     </span>
                   </div>
                 </div>
@@ -223,10 +224,10 @@ export default function DoctorReportsPage() {
               </div>
               <div>
                 <p className="text-[32px] font-black text-[hsl(var(--color-text))]">
-                  {transactions.filter(t => t.type === 'payout_withdrawal').reduce((acc, t) => acc + t.amount, 0).toFixed(2)} EGP
+                  {data?.kpis?.totalWithdrawn?.toLocaleString() || 0} EGP
                 </p>
                 <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1">
-                  Lifetime Payouts
+                  Selected Period
                 </p>
               </div>
             </div>

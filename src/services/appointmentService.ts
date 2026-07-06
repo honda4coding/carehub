@@ -137,7 +137,8 @@ export async function getAvailableSlots(
     `${APPOINTMENTS_BASE}/available-slots/${doctorId}`,
     { params }
   );
-  return res.data ?? res;
+  const data = res.data ?? res;
+  return Array.isArray(data) ? data : (data.slots ?? []);
 }
 
 export async function deleteDoctorSlot(slotId: string): Promise<void> {

@@ -64,11 +64,18 @@ export default function GenerateSlotsModal({ isOpen, onClose, clinicId, onSucces
 
       const res = await generateSlots(payload);
       
+      const total = res.totalGenerated ?? res.totalSlots ?? res.count;
+      if (total === 0) {
+        setConflict(null);
+        setError("These slots are in the past and cannot be generated.");
+        setLoading(false);
+        return;
+      }
+
       setSuccess(res.message || `Generated slots successfully.`);
       setSelectedDates([]);
       setConflict(null);
       
-      const total = res.totalGenerated ?? res.totalSlots ?? res.count;
       if (onSuccess && total !== undefined) {
         onSuccess(total);
       }
