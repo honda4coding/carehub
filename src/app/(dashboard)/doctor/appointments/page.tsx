@@ -224,86 +224,60 @@ export default function DoctorAppointmentsPage() {
         title="Appointments"
         subtitle="Manage your schedule and patient visits"
         backPath="/doctor"
-        rightElement={<SectionToggle />}
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
-        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6">
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-6 lg:gap-8">
 
         {/* ══════════════════════════════════════════════════════
-            LEFT — Clinics sidebar (Hidden for Assistants)
+            MAIN AREA
         ══════════════════════════════════════════════════════ */}
-        {role !== 'assistant' && (
-        <aside className="w-full lg:w-60 shrink-0">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-            Clinics
-          </p>
-          <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
-            <button
-              onClick={() => setSelectedClinicId(null)}
-              className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
-                selectedClinicId === null
-                  ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                  : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
-              }`}
-            >
-              <LuUsers className="text-[15px] shrink-0" />
-              <span className="flex-1 text-left">All Clinics</span>
-              <span
-                className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                  selectedClinicId === null
-                    ? "bg-white/20"
-                    : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
-                }`}
-              >
-                {appointments.length}
-              </span>
-            </button>
-
-            {clinicsLoading ? (
-              [1, 2].map((i) => (
-                <div
-                  key={i}
-                  className="h-12 rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse shrink-0 lg:w-full w-40"
-                />
-              ))
-            ) : (
-              clinics.map((clinic) => (
+        <div className="flex-1 min-w-0 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
+          {/* Clinics sidebar (Hidden for Assistants) */}
+          {role !== 'assistant' && (
+            <aside className="w-full lg:w-64 shrink-0">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-3 px-1">
+                Select Clinic
+              </p>
+              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-2 lg:pb-0">
                 <button
-                  key={clinic._id}
-                  onClick={() => setSelectedClinicId(clinic._id)}
-                  className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
-                    selectedClinicId === clinic._id
-                      ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                      : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
+                  onClick={() => setSelectedClinicId(null)}
+                  className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
+                    selectedClinicId === null
+                      ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)]"
+                      : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary)/0.5)] hover:shadow-sm"
                   }`}
                 >
-                  <LuBuilding2 className="text-[15px] shrink-0" />
-                  <span className="flex-1 text-left truncate">{clinic.name}</span>
-                  <span
-                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                      selectedClinicId === clinic._id
-                        ? "bg-white/20"
-                        : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"
+                  <LuUsers className="text-[16px] shrink-0" />
+                  <span className="truncate">All Clinics</span>
+                </button>
+
+                {clinicsLoading && (
+                  <div className="px-4 py-3 text-[12px] text-[hsl(var(--color-text-muted))]">Loading clinics...</div>
+                )}
+                {clinics.map((c) => (
+                  <button
+                    key={c._id}
+                    onClick={() => setSelectedClinicId(c._id)}
+                    className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-[13px] font-bold border transition-all shrink-0 cursor-pointer max-w-[200px] lg:max-w-none ${
+                      selectedClinicId === c._id
+                        ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)]"
+                        : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary)/0.5)] hover:shadow-sm"
                     }`}
                   >
-                    {countByClinic[clinic._id] || 0}
-                  </span>
-                </button>
-              ))
-            )}
-          </div>
-        </aside>
-        )}
+                    <LuBuilding2 className="text-[16px] shrink-0" />
+                    <span className="truncate">{c.name}</span>
+                  </button>
+                ))}
+              </div>
+            </aside>
+          )}
 
-        {/* ══════════════════════════════════════════════════════
-            RIGHT — APPOINTMENTS for the selected clinic
-        ══════════════════════════════════════════════════════ */}
-        <div className="flex-1 min-w-0">
-          <>
+          {/* Right Content */}
+          <div className="flex-1 min-w-0 flex flex-col gap-6">
             {/* Tab bar */}
             <div className="mb-6 w-full flex justify-center">
-              <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[14px] border border-[hsl(var(--color-border))] w-full lg:w-auto">
+              <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-[16px] border border-[hsl(var(--color-border))] shadow-sm w-full md:w-auto">
                 <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
                 <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
                 <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
@@ -361,9 +335,11 @@ export default function DoctorAppointmentsPage() {
                       </span>
                       <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
                     </div>
-                    {group.items.map((appt) => (
-                      <ApptRow key={appt._id} appt={appt} />
-                    ))}
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {group.items.map((appt) => (
+                        <ApptRow key={appt._id} appt={appt} />
+                      ))}
+                    </div>
                   </div>
                 ))
               )
@@ -377,7 +353,7 @@ export default function DoctorAppointmentsPage() {
                   description="Nothing to show in this tab yet."
                 />
               ) : (
-                <div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {grouped[tab].map((appt) => (
                     <ApptRow key={appt._id} appt={appt} />
                   ))}
@@ -394,8 +370,8 @@ export default function DoctorAppointmentsPage() {
                 />
               </div>
             )}
-          </>
           </div>
+        </div>
         </div>
       </main>
 

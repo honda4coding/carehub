@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
@@ -159,9 +159,9 @@ const doctorNav: NavSection[] = [
         icon: <LuBuilding2 />,
       },
       {
-        label: "Staff & Logs",
+        label: "Manage Assistant",
         href: "/doctor/staff",
-        icon: <LuShieldCheck />,
+        icon: <LuUsers />,
       },
     ],
   },
@@ -500,7 +500,7 @@ function SidebarContent({
   if (role === "assistant" && user) {
     const assistantDynamicNav: NavSection[] = [
       {
-        title: "Main",
+        title: "Workspace",
         items: [
           { label: "Dashboard", href: "/assistant", icon: <LuLayoutDashboard /> },
           ...(user.permissions?.canManageAppointments ? [{ 
@@ -508,22 +508,24 @@ function SidebarContent({
             href: "/assistant/appointments", 
             icon: <LuCalendarDays />,
             subItems: [
-              {
-                label: "Appointments",
-                href: "/assistant/appointments",
-                icon: <LuCalendarDays className="text-sm" />,
-              },
-              {
-                label: "My Schedule",
-                href: "/assistant/appointments/schedule",
-                icon: <LuSettings2 className="text-sm" />,
-              },
+              { label: "Appointments", href: "/assistant/appointments", icon: <LuCalendarDays className="text-sm" /> },
+              { label: "My Schedule", href: "/assistant/appointments/schedule", icon: <LuSettings2 className="text-sm" /> },
             ],
           }] : []),
+        ],
+      },
+      {
+        title: "Patient Care",
+        items: [
           ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatients ? [{ label: "Vitals Queue", href: "/assistant/vitals", icon: <LuHeartPulse /> }] : []),
           ...(user.permissions?.canManagePatientsFull ? [{ label: "Clinical Queue", href: "/assistant/assessment", icon: <LuStethoscope /> }] : []),
           ...(user.permissions?.canManagePatientsVitals || user.permissions?.canManagePatientsFull || user.permissions?.canManagePatients ? [{ label: "Patient Directory", href: "/assistant/patients", icon: <LuUsers /> }] : []),
-          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuSettings2 /> }] : []),
+        ],
+      },
+      {
+        title: "Operations",
+        items: [
+          ...(user.permissions?.canManageBilling ? [{ label: "Billing", href: "/assistant/billing", icon: <LuWallet /> }] : []),
           ...(user.permissions?.canManageReports ? [{ label: "Reports & Analytics", href: "/assistant/reports", icon: <LuTrendingUp /> }] : []),
         ],
       },
@@ -550,7 +552,8 @@ function SidebarContent({
     if (!avatarUrl) {
       const fetchAvatar = async () => {
         try {
-          const res = await fetchClient.get(`/${role}/profile`);
+          const route = role === 'assistant' ? '/users/profile' : `/${role}/profile`;
+          const res = await fetchClient.get(route);
           const pic =
             res?.data?.profilepicture?.secure_url ||
             res?.data?.user?.profilepicture?.secure_url;

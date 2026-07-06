@@ -265,11 +265,11 @@ export default function ScheduleSetup({
 
   if (loadingAvailability) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-3">
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="h-[46px] rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse"
+            className="h-[52px] rounded-xl bg-[hsl(var(--color-bg-subtle))] animate-pulse"
           />
         ))}
       </div>
@@ -277,19 +277,8 @@ export default function ScheduleSetup({
   }
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-      <div className="flex items-center gap-2 mb-1">
-        <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base" />
-        <p className="text-base font-black uppercase tracking-wide text-[hsl(var(--color-text))]">
-          Weekly schedule
-        </p>
-      </div>
-      <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mb-5">
-        Pick your working days and hours
-        {clinicName ? ` for ${clinicName}` : clinicId ? " for this clinic" : ""}
-      </p>
-
-      <div className="space-y-2">
+    <div className="w-full">
+      <div className="space-y-3">
         {DAYS.map((day) => {
           const isSelected = selectedDays.has(day);
           const isExpanded = expandedDay === day;
@@ -299,113 +288,122 @@ export default function ScheduleSetup({
           return (
             <div
               key={day}
-              className={`border rounded-xl overflow-hidden transition-all duration-150 ${
+              className={`rounded-xl transition-all duration-200 border ${
                 isSelected
-                  ? "border-primary bg-[hsl(var(--color-primary)/0.04)]"
-                  : "border-[hsl(var(--color-border))]"
+                  ? isExpanded ? "bg-white border-[hsl(var(--color-border))] shadow-md" : "bg-[hsl(var(--color-bg-subtle))] border-[hsl(var(--color-border))]"
+                  : "bg-transparent border-transparent hover:bg-[hsl(var(--color-bg-subtle))] hover:border-[hsl(var(--color-border))]"
               }`}
             >
-              <div className="flex items-center gap-3 px-4 py-3">
+              <div 
+                className={`flex items-center gap-3 px-4 py-3 cursor-pointer select-none rounded-xl ${isExpanded && isSelected ? 'border-b border-[hsl(var(--color-border))] rounded-b-none' : ''}`}
+                onClick={(e) => {
+                  if ((e.target as HTMLElement).closest('button')) return;
+                  if (isSelected) {
+                    setExpandedDay(isExpanded ? null : day);
+                  } else {
+                    toggleDay(day);
+                  }
+                }}
+              >
                 <button
-                  onClick={() => toggleDay(day)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleDay(day);
+                  }}
                   disabled={deletingDay === day}
-                  className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-300 cursor-pointer disabled:opacity-40 ${
+                  className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-200 disabled:opacity-40 ${
                     isSelected
-                      ? "bg-[hsl(var(--color-primary)/0.15)] border-primary text-primary"
-                      : "border-[hsl(var(--color-border))] bg-transparent"
+                      ? "bg-[hsl(var(--color-primary))] border-[hsl(var(--color-primary))] text-white"
+                      : "border-[hsl(var(--color-border))] bg-white"
                   }`}
                 >
-                  {isSelected && <LuCheck className="text-base font-black" />}
+                  {isSelected && <LuCheck className="text-[12px] font-black" />}
                 </button>
 
-                <span
-                  className={`text-base font-bold flex-1 flex items-center gap-1.5 ${
-                    isSelected
-                      ? "text-[hsl(var(--color-text))]"
-                      : "text-[hsl(var(--color-text-muted))]"
-                  }`}
-                >
-                  {DAY_LABELS[day]}
+                <div className="flex-1 flex items-center gap-2">
+                  <span
+                    className={`text-[14px] font-bold ${
+                      isSelected ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"
+                    }`}
+                  >
+                    {DAY_LABELS[day]}
+                  </span>
                   {isSaved && (
-                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.5 rounded-full bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]">
-                      Saved
+                    <span className="text-[10px] font-bold text-[hsl(var(--color-success))] bg-[hsl(var(--color-success-bg))] px-2 py-0.5 rounded-full">
+                      Active
                     </span>
                   )}
-                </span>
+                </div>
 
                 {isSelected && tc && (
-                  <button
-                    onClick={() => setExpandedDay(isExpanded ? null : day)}
-                    className="flex items-center gap-1.5 text-sm font-bold text-[hsl(var(--color-text))] hover:opacity-70 transition-opacity cursor-pointer"
-                  >
-                    {tc.startTime} – {tc.endTime}
+                  <div className="flex items-center gap-3">
+                    <span className="text-[13px] font-bold text-[hsl(var(--color-text))]">
+                      {tc.startTime} - {tc.endTime}
+                    </span>
                     <LuChevronDown
-                      className={`text-base transition-transform duration-200 ${
+                      className={`text-[hsl(var(--color-text-muted))] transition-transform duration-200 ${
                         isExpanded ? "rotate-180" : ""
                       }`}
                     />
-                  </button>
-                )}
-
-                {isSaved && (
-                  <button
-                    onClick={() => handleDeleteDay(day)}
-                    disabled={deletingDay === day}
-                    className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors disabled:opacity-40 shrink-0 cursor-pointer"
-                  >
-                    <LuTrash2 className="text-base" />
-                  </button>
+                    {isSaved && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteDay(day);
+                        }}
+                        disabled={deletingDay === day}
+                        className="p-1.5 text-[hsl(var(--color-text-muted))] hover:text-white hover:bg-[hsl(var(--color-danger))] transition-colors disabled:opacity-40 rounded-lg"
+                        title="Remove Day"
+                      >
+                        <LuTrash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 )}
               </div>
 
               {isSelected && isExpanded && (
-                <div className="border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] p-5 space-y-5">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="flex-1">
-                      <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
+                <div className="p-5 bg-white rounded-b-xl">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                    <div>
+                      <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         Start Time
                       </label>
-                      <div className="relative group">
-                        <input
-                          type="time"
-                          value={tc?.startTime ?? "09:00"}
-                          onChange={(e) =>
-                            setTimeConfig((prev) => ({
-                              ...prev,
-                              [day]: {
-                                ...prev[day]!,
-                                startTime: e.target.value,
-                              },
-                            }))
-                          }
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
-                        />
-                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
-                      </div>
+                      <input
+                        type="time"
+                        value={tc?.startTime ?? "09:00"}
+                        onChange={(e) =>
+                          setTimeConfig((prev) => ({
+                            ...prev,
+                            [day]: {
+                              ...prev[day]!,
+                              startTime: e.target.value,
+                            },
+                          }))
+                        }
+                        className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] text-[14px] font-bold outline-none focus:border-[hsl(var(--color-primary))] transition-all"
+                      />
                     </div>
-                    <div className="flex-1">
-                      <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2">
+                    <div>
+                      <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         End Time
                       </label>
-                      <div className="relative group">
-                        <input
-                          type="time"
-                          value={tc?.endTime ?? "17:00"}
-                          onChange={(e) =>
-                            setTimeConfig((prev) => ({
-                              ...prev,
-                              [day]: { ...prev[day]!, endTime: e.target.value },
-                            }))
-                          }
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-base font-bold outline-none focus:border-[hsl(var(--color-text))] focus:bg-[hsl(var(--color-bg-surface))] transition-all cursor-pointer"
-                        />
-                        <LuClock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))] text-lg" />
-                      </div>
+                      <input
+                        type="time"
+                        value={tc?.endTime ?? "17:00"}
+                        onChange={(e) =>
+                          setTimeConfig((prev) => ({
+                            ...prev,
+                            [day]: { ...prev[day]!, endTime: e.target.value },
+                          }))
+                        }
+                        className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] text-[14px] font-bold outline-none focus:border-[hsl(var(--color-primary))] transition-all"
+                      />
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-black uppercase tracking-wide text-[hsl(var(--color-text))] mb-2.5">
+                  <div className="mb-4">
+                    <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                       Appointment Duration
                     </label>
                     <div className="flex gap-2 flex-wrap">
@@ -418,10 +416,10 @@ export default function ScheduleSetup({
                               [day]: { ...prev[day]!, appointmentDuration: d },
                             }))
                           }
-                          className={`px-4 py-2 rounded-xl text-base font-bold border transition-all duration-300 cursor-pointer ${
+                          className={`px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all border ${
                             tc?.appointmentDuration === d
-                              ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-md -translate-y-0.5"
-                              : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] hover:-translate-y-0.5"
+                              ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] border-[hsl(var(--color-primary)/0.3)]"
+                              : "border-[hsl(var(--color-border))] bg-white text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary)/0.5)] hover:text-[hsl(var(--color-text))]"
                           }`}
                         >
                           {d} min
@@ -430,20 +428,18 @@ export default function ScheduleSetup({
                     </div>
                   </div>
 
-                  <div className="pt-2">
-                    <div className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] font-bold text-sm">
-                      {savingDay === day ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                          Saving...
-                        </>
-                      ) : isSaved ? (
-                        <>
-                          <LuCheck className="text-lg" />
-                          Saved Automatically
-                        </>
-                      ) : null}
-                    </div>
+                  <div className="flex items-center justify-end h-6">
+                    {savingDay === day ? (
+                      <span className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
+                        <LuClock className="animate-spin w-3.5 h-3.5" />
+                        Saving...
+                      </span>
+                    ) : isSaved ? (
+                      <span className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-success))]">
+                        <LuCheck className="w-3.5 h-3.5" />
+                        Saved
+                      </span>
+                    ) : null}
                   </div>
                 </div>
               )}

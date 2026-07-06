@@ -52,7 +52,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4">
       {STATS.map((s) => {
         const CardContent = (
           <div
@@ -61,14 +61,14 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
               (s.link || s.onClick) ? 'hover:border-[hsl(var(--color-primary)/0.5)] hover:-translate-y-1 hover:shadow-lg cursor-pointer' : ''
             }`}
           >
-            <div className="flex items-start gap-4">
-              <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center text-[24px] shrink-0 ${s.iconStyle}`}>
+            <div className="flex items-start gap-3 md:gap-4">
+              <div className={`w-10 h-10 md:w-12 md:h-12 rounded-[12px] md:rounded-[14px] flex items-center justify-center text-[20px] md:text-[24px] shrink-0 ${s.iconStyle}`}>
                 {s.icon}
               </div>
-              <div className="flex-1">
-                <p className="text-[13px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1">{s.label}</p>
-                <div className="flex items-end gap-3 flex-wrap">
-                  <p className="text-[30px] leading-none font-black text-[hsl(var(--color-text))]">{s.value}</p>
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] md:text-[13px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1 truncate">{s.label}</p>
+                <div className="flex items-end gap-2 md:gap-3 flex-wrap">
+                  <p className="text-[24px] md:text-[30px] leading-none font-black text-[hsl(var(--color-text))]">{s.value}</p>
                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-flex whitespace-nowrap mb-1 ${
                     s.up ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
                   }`}>

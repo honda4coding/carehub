@@ -86,7 +86,7 @@ export default function AssistantDashboard() {
     setSearchError("");
     setShowSearchResults(true);
     try {
-      const response = await fetchClient.get(`/doctor/search-patient?searchTerm=${searchQuery}`);
+      const response = await fetchClient.get(`/doctor/search-patient?searchTerm=${searchQuery}`, { skipClinicContext: true });
       setRealSearchResults(response.data || []);
     } catch (error: any) {
       setSearchError(error.message || "Something went wrong!");

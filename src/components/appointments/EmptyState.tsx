@@ -12,14 +12,14 @@ export default function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="bg-gradient-to-b from-[hsl(var(--color-bg-surface))] to-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] shadow-sm rounded-2xl py-16 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center mx-auto mb-4 text-[26px] ring-4 ring-[hsl(var(--color-primary)/0.05)]">
+    <div className="py-20 px-6 text-center max-w-sm mx-auto flex flex-col items-center justify-center animate-in fade-in duration-500">
+      <div className="w-20 h-20 rounded-full bg-[hsl(var(--color-primary)/0.05)] text-[hsl(var(--color-primary))] flex items-center justify-center mb-6 text-[32px] ring-1 ring-[hsl(var(--color-primary)/0.1)] shadow-inner">
         {icon}
       </div>
-      <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
+      <h3 className="text-[18px] font-black text-[hsl(var(--color-text))] mb-2 tracking-tight">
         {title}
       </h3>
-      <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] max-w-sm mx-auto mb-5 leading-relaxed">
+      <p className="text-[14px] font-semibold text-[hsl(var(--color-text-muted))/0.8] max-w-[280px] mx-auto mb-6 leading-relaxed">
         {description}
       </p>
       {action}

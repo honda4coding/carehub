@@ -22,7 +22,7 @@ export default function StaffManagementPage() {
     // Form state
     const defaultFormData = {
         fullName: "", email: "", password: "", phoneNumber: "", clinicId: "", jobTitle: "", isActive: true,
-        permissions: { canManageAppointments: false, canManagePatientsVitals: false, canManagePatientsFull: false, canManageBilling: false, canManageReports: false }
+        permissions: { canManageAppointments: false, canManagePatientsVitals: false, canManagePatientsFull: false, canManageBilling: false, canManageReports: false, canManageClinics: false }
     };
     const [formData, setFormData] = useState(defaultFormData);
 
@@ -34,7 +34,7 @@ export default function StaffManagementPage() {
                     fetchClient.get("/clinics")
                 ]);
                 setStaff(staffRes.data || []);
-                setClinics(clinicsRes.data || []);
+                setClinics(clinicsRes.data?.clinics || clinicsRes.data || []);
             } catch (err) {
                 console.error("Failed to load data", err);
             } finally {
@@ -72,7 +72,7 @@ export default function StaffManagementPage() {
             clinicId: member.clinicId?._id || member.clinicId || "",
             jobTitle: member.jobTitle || "",
             isActive: member.isActive ?? true,
-            permissions: member.permissions || defaultFormData.permissions
+            permissions: { ...defaultFormData.permissions, ...(member.permissions || {}) }
         });
         setEditingStaffId(member._id);
         setIsModalOpen(true);
@@ -202,7 +202,8 @@ export default function StaffManagementPage() {
                                     { key: 'PatientsVitals', label: 'Manage Patients (Vitals Only)' },
                                     { key: 'PatientsFull', label: 'Manage Patients (Full Clinical Assessment)' },
                                     { key: 'Billing', label: 'Manage Billing' },
-                                    { key: 'Reports', label: 'Manage Reports' }
+                                    { key: 'Reports', label: 'Manage Reports' },
+                                    { key: 'Clinics', label: 'Manage Clinics & Services' }
                                 ].map(perm => (
                                     <label key={perm.key} className="flex items-center gap-3 mb-2 cursor-pointer">
                                         <input type="checkbox" checked={formData.permissions[`canManage${perm.key}` as keyof typeof formData.permissions]} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 

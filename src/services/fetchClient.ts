@@ -5,6 +5,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
 type FetchOptions = RequestInit & {
   params?: Record<string, string>;
+  skipClinicContext?: boolean;
 };
 
 async function handleResponse(response: Response) {
@@ -58,7 +59,7 @@ export const fetchClient = {
     if (typeof window !== "undefined") {
       const activeClinicId = localStorage.getItem('carehub_active_clinic_id');
       const isPatientRoute = window.location.pathname.startsWith('/patient');
-      if (!isPatientRoute && activeClinicId && activeClinicId !== "all" && activeClinicId !== "undefined" && activeClinicId !== "null" && !finalParams.clinicId && !urlObj.searchParams.has('clinicId')) {
+      if (!options.skipClinicContext && !isPatientRoute && activeClinicId && activeClinicId !== "all" && activeClinicId !== "undefined" && activeClinicId !== "null" && !finalParams.clinicId && !urlObj.searchParams.has('clinicId')) {
         finalParams.clinicId = activeClinicId;
       }
     }

@@ -118,27 +118,32 @@ export default function DoctorReportsPage() {
         title="Reports & Analytics"
         subtitle="Clinic performance overview"
         backPath="/doctor"
-        rightElement={
-          <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full lg:w-auto">
+      />
+
+      <main className="print-area flex-1 overflow-auto min-w-0">
+        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6">
+
+          {/* Filters & Export Bar — moved out of header for responsive safety */}
+          <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-3">
             {/* Date Range Picker */}
-            <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden">
-              <div className="flex items-center px-3 py-2 border-r border-[hsl(var(--color-border))]">
+            <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden flex-1 min-w-0">
+              <div className="flex items-center px-3 py-2 border-r border-[hsl(var(--color-border))] shrink-0">
                 <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base shrink-0" />
               </div>
               <input
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 w-[120px] hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
               />
-              <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))]">
+              <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))] shrink-0">
                 <span className="text-[10px] font-black uppercase tracking-wider">To</span>
               </div>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 w-[120px] hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
               />
             </div>
             {/* Actions */}
@@ -160,11 +165,7 @@ export default function DoctorReportsPage() {
               </button>
             </div>
           </div>
-        }
-      />
 
-      <main className="print-area flex-1 overflow-auto min-w-0">
-        <div className="p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6">
         {loading && data && (
           <div className="fixed top-24 left-1/2 -translate-x-1/2 z-50 bg-[hsl(var(--color-primary))] text-white px-4 py-2 rounded-full text-xs font-bold shadow-md animate-pulse">
             Refreshing Data...

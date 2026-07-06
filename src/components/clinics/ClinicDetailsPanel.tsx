@@ -12,6 +12,7 @@ import {
   LuTriangleAlert,
   LuCircleAlert,
   LuCalendarClock,
+  LuCalendarDays,
 } from "react-icons/lu";
 
 import {
@@ -25,7 +26,7 @@ import {
 } from "@/services/clinicService";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import ScheduleSetup from "@/components/appointments/ScheduleSetup";
-import GenerateSlotsCard from "@/components/appointments/GenerateSlotsCard";
+import GenerateSlotsModal from "@/components/appointments/GenerateSlotsModal";
 import OpenSlotsPanel from "@/components/appointments/OpenSlotsPanel";
 import { useAuth } from "@/context/AuthContext";
 
@@ -42,12 +43,18 @@ interface Props {
  */
 export default function ClinicDetailsPanel({ clinicId }: Props) {
   const { user } = useAuth();
-  const doctorId = (user as any)?._id ?? user?.id ?? "";
+  const doctorId = user?.role === 'assistant' 
+    ? (user as any)?.doctorId 
+    : ((user as any)?._id ?? user?.id ?? "");
+  
+  console.log("[ClinicDetailsPanel] user:", user);
+  console.log("[ClinicDetailsPanel] calculated doctorId:", doctorId);
 
   const [clinic, setClinic] = useState<Clinic | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [slotsVersion, setSlotsVersion] = useState(0);
+  const [isGenerateModalOpen, setGenerateModalOpen] = useState(false);
   // toast
   const [toast, setToast] = useState<{
     msg: string;
@@ -248,8 +255,14 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
         </div>
       </div>
 
-      {/* Services Section */}
-      <section className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+      {/* Main Layout Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        {/* Left Column: Services & Schedule */}
+        <div className="lg:col-span-5 flex flex-col gap-6">
+          
+          {/* Services Section */}
+          <section className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-[15px] font-black text-[hsl(var(--color-text))]">
             Services &amp; Pricing
@@ -318,51 +331,65 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
             ))}
           </div>
         )}
-      </section>
+          </section>
 
-      {/* Availability & Slots Section */}
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <LuCalendarClock className="text-[hsl(var(--color-primary))] text-lg" />
-          <h2 className="text-[15px] font-black text-[hsl(var(--color-text))]">
-            Availability &amp; Slots
-          </h2>
-        </div>
+          {/* Weekly Schedule Section */}
+          <section className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
+            <div className="flex items-center gap-2 mb-6">
+              <LuCalendarClock className="text-[hsl(var(--color-primary))] text-xl" />
+              <div>
+                <h2 className="text-[16px] font-black text-[hsl(var(--color-text))] leading-tight">
+                  Weekly Schedule
+                </h2>
+                <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
+                  Set your recurring availability for this clinic
+                </p>
+              </div>
+            </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left: weekly schedule */}
-          <ScheduleSetup
-            clinicId={clinicId}
-            doctorId={doctorId}
-            onToast={(msg, variant) => setToast({ msg, variant })}
-            onSelectedDaysChange={setHasSelectedDays}
-            onDayDeleted={() => setSlotsVersion((v) => v + 1)}
-          />
-
-          {/* Middle: generate slots */}
-          <div className="flex flex-col gap-6 w-full">
-            <GenerateSlotsCard
-              clinicId={clinicId}
-              onSuccess={(totalSlots) => {
-                setToast({
-                  msg: `Generated ${totalSlots} slots successfully.`,
-                  variant: "success",
-                });
-                setSlotsVersion((v) => v + 1);
-              }}
-            />
-          </div>
-
-          {/* Right: open slots */}
-          <div className="flex flex-col gap-6 w-full">
-            <OpenSlotsPanel
+            <ScheduleSetup
               clinicId={clinicId}
               doctorId={doctorId}
-              slotsVersion={slotsVersion}
+              onToast={(msg, variant) => setToast({ msg, variant })}
+              onSelectedDaysChange={setHasSelectedDays}
+              onDayDeleted={() => setSlotsVersion((v) => v + 1)}
             />
-          </div>
+          </section>
         </div>
-      </section>
+
+        {/* Right Column: Open Slots */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-black text-xl text-[hsl(var(--color-text))]">Open Slots</h2>
+            <button 
+              onClick={() => setGenerateModalOpen(true)}
+              className="bg-[hsl(var(--color-primary))] text-white px-4 py-2 rounded-xl text-[13px] font-bold hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2"
+            >
+              <LuCalendarDays className="w-4 h-4" />
+              Generate Custom Slots
+            </button>
+          </div>
+
+          <OpenSlotsPanel
+            clinicId={clinicId}
+            doctorId={doctorId}
+            slotsVersion={slotsVersion}
+          />
+        </div>
+      </div>
+
+      <GenerateSlotsModal 
+        isOpen={isGenerateModalOpen}
+        onClose={() => setGenerateModalOpen(false)}
+        clinicId={clinicId}
+        onSuccess={(totalSlots) => {
+          setToast({
+            msg: `Generated ${totalSlots} slots successfully.`,
+            variant: "success",
+          });
+          setSlotsVersion((v) => v + 1);
+        }}
+      />
 
       {/* Toast */}
       {toast && (
