@@ -33,7 +33,9 @@ export const DashboardModals = ({
   useEffect(() => {
     if (isWalkInModalOpen || isExistingPatientModalOpen) {
       setSlotsLoading(true);
-      fetchClient.get(`/appointments/available-slots/me?limit=50`)
+      const startOfToday = new Date();
+      startOfToday.setHours(0,0,0,0);
+      fetchClient.get(`/appointments/available-slots/me?limit=50&startDate=${startOfToday.toISOString()}`)
         .then(res => {
           setAvailableSlots(res.data?.data || res.data || []);
           setSelectedSlot("");
@@ -81,7 +83,7 @@ export const DashboardModals = ({
         />
         <div>
           <div className="text-sm font-bold text-[hsl(var(--color-danger))] flex items-center gap-1.5">
-            <span className="text-base">⚡</span> Skip Queue / من غير طابور
+            <span className="text-base">⚡</span> Skip Queue
           </div>
           <div className="text-xs text-[hsl(var(--color-text-muted))] mt-0.5">Patient will be placed at the absolute front of the queue.</div>
         </div>
