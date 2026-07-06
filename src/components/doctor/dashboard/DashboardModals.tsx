@@ -37,7 +37,8 @@ export const DashboardModals = ({
       startOfToday.setHours(0,0,0,0);
       fetchClient.get(`/appointments/available-slots/me?limit=50&startDate=${startOfToday.toISOString()}`)
         .then(res => {
-          setAvailableSlots(res.data?.data || res.data || []);
+          const responseData = res.data ?? res;
+          setAvailableSlots(Array.isArray(responseData) ? responseData : (responseData.slots ?? responseData.data?.slots ?? []));
           setSelectedSlot("");
           setSkipQueue(false);
         })
