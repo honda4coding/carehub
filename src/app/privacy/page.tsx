@@ -31,10 +31,10 @@ export default function PrivacyPage() {
               When you use CareHub, we collect information that you provide directly to us, such as when you create an account, update your profile, or communicate with us. This includes:
             </p>
             <ul className="list-disc list-inside text-[hsl(var(--color-text-muted))] space-y-2 ml-2">
-              <li>Contact information (Name, Email, Phone Number)</li>
-              <li>Professional credentials (for Doctors and Assistants)</li>
-              <li>Health and medical history (for Patients)</li>
-              <li>Usage data and interaction metrics</li>
+              <li><strong>Account Data:</strong> Name, National ID, Phone Number, and Role (Patient, Doctor, or Assistant).</li>
+              <li><strong>Medical Data:</strong> Complete digital medical history, active prescriptions, blood type, and detected allergies.</li>
+              <li><strong>Clinic Data:</strong> Live queue positioning, appointment times, and encounter durations.</li>
+              <li><strong>AI Interactions:</strong> Data processed by our proprietary AI for prescription safety checks and anomaly detection.</li>
             </ul>
           </section>
 
@@ -49,10 +49,10 @@ export default function PrivacyPage() {
               We use the information we collect to operate, maintain, and provide the features and functionality of the CareHub platform. Specifically, we use it to:
             </p>
             <ul className="list-disc list-inside text-[hsl(var(--color-text-muted))] space-y-2 ml-2">
-              <li>Facilitate secure medical appointments and prescriptions</li>
-              <li>Verify medical credentials of practitioners</li>
-              <li>Improve platform security and prevent fraud</li>
-              <li>Send administrative messages and technical notices</li>
+              <li>Power the <strong>AI Safety Engine</strong> to instantly flag drug interactions and allergies.</li>
+              <li>Manage <strong>Live Queue Tracking</strong> to give patients real-time wait estimations.</li>
+              <li>Enable seamless <strong>Cross-Clinic Access</strong> so doctors can view unified patient histories.</li>
+              <li>Authenticate users using biometric data (Touch ID / Face ID) via hardware-level encryption.</li>
             </ul>
           </section>
 
@@ -64,7 +64,7 @@ export default function PrivacyPage() {
               <h2 className="text-2xl font-bold text-[hsl(var(--color-text))]">3. Data Security & Encryption</h2>
             </div>
             <p className="text-[hsl(var(--color-text-muted))] leading-relaxed mb-4">
-              CareHub implements strict security measures to protect your personal information. All sensitive fields (such as phone numbers and passwords) are heavily encrypted before being stored in our database. Role-based access control (RBAC) ensures that only authorized personnel can access specific medical records.
+              CareHub treats medical data with military-grade security. <strong>100% of sensitive fields</strong> (such as patient phone numbers and medical IDs) are heavily encrypted at rest. Our Role-Based Access Control (RBAC) guarantees that a clinic assistant can never view a patient's private medical history—only the assigned doctor has decryption rights.
             </p>
           </section>
 

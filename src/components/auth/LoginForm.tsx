@@ -168,7 +168,7 @@ export const LoginForm = () => {
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                      placeholder="••••••••"
                       leftIcon={<LuLock className="w-5 h-5" />}
                       rightIcon={
                         <button type="button" onClick={() => setShowPassword(!showPassword)} className="hover:text-[hsl(var(--color-text))] transition-colors">
@@ -207,7 +207,7 @@ export const LoginForm = () => {
               <div className="pt-4">
                 <Button
                   type="submit"
-                  variant="gradient"
+                  variant="primary"
                   className="w-full"
                   isLoading={isSubmitting}
                   icon={LuArrowRight}

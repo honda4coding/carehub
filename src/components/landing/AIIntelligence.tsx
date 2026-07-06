@@ -73,8 +73,8 @@ export default function AIIntelligence() {
                </div>
 
                {/* Interaction Path */}
-               <div className="flex justify-center py-2">
-                 <div className="w-px h-8 bg-linear-to-b from-transparent via-red-500/50 to-transparent" />
+               <div className="flex justify-center">
+                 <div className="w-px h-3 bg-linear-to-b from-[hsl(var(--color-border))] to-[hsl(var(--color-danger)/0.5)]" />
                </div>
 
                {/* Mock Patient History Conflict */}

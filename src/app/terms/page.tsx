@@ -43,10 +43,9 @@ export default function TermsPage() {
               To use certain features of the Service, you must register for an account. You agree to:
             </p>
             <ul className="list-disc list-inside text-[hsl(var(--color-text-muted))] space-y-2 ml-2">
-              <li>Provide accurate, current, and complete information</li>
-              <li>Maintain the security of your password and identification</li>
-              <li>Accept all responsibility for any and all activities that occur under your account</li>
-              <li>Promptly notify us of any unauthorized use of your account</li>
+              <li><strong>Doctors:</strong> Must maintain a valid medical license. All prescriptions issued through CareHub are legally binding.</li>
+              <li><strong>Patients:</strong> Must provide accurate medical history. Failure to declare known allergies may result in unsafe AI prescriptions.</li>
+              <li><strong>Assistants:</strong> Are strictly forbidden from accessing patient medical histories. Access is limited to queue management and general info.</li>
             </ul>
           </section>
 
@@ -58,7 +57,7 @@ export default function TermsPage() {
               <h2 className="text-2xl font-bold text-[hsl(var(--color-text))]">3. Medical Disclaimer</h2>
             </div>
             <p className="text-[hsl(var(--color-text-muted))] leading-relaxed mb-4">
-              CareHub is a technology platform that facilitates communication between patients and healthcare providers. CareHub itself does not provide medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.
+              CareHub acts as an intelligent conduit between patients and healthcare providers. <strong>The CareHub AI Engine is an assistive tool, not a doctor.</strong> While our AI actively flags drug-to-drug interactions and patient allergies, the final medical decision and liability rest solely with the prescribing physician. CareHub is not liable for medical errors, misdiagnoses, or delayed queue times.
             </p>
           </section>
 

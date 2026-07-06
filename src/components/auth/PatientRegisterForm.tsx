@@ -94,7 +94,7 @@ export default function PatientRegisterForm() {
         <Input 
           type="text" 
           {...formik.getFieldProps('fullName')} 
-          placeholder="Enter full name" 
+          placeholder="e.g. Ahmed Ali" 
           leftIcon={<LuUser className="w-5 h-5" />}
           error={!!(formik.touched.fullName && formik.errors.fullName)}
         />
@@ -125,7 +125,7 @@ export default function PatientRegisterForm() {
           <Input 
             type="tel" 
             {...formik.getFieldProps('phoneNumber')} 
-            placeholder="0123..." 
+            placeholder="e.g. 01012345678" 
             leftIcon={<LuPhone className="w-5 h-5" />}
             error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
           />
@@ -136,7 +136,7 @@ export default function PatientRegisterForm() {
           <Input 
             type="number" 
             {...formik.getFieldProps('age')} 
-            placeholder="35" 
+            placeholder="e.g. 25" 
             leftIcon={<LuCake className="w-5 h-5" />}
             error={!!(formik.touched.age && formik.errors.age)}
           />
@@ -185,7 +185,7 @@ export default function PatientRegisterForm() {
           <Input 
             type="password" 
             {...formik.getFieldProps('password')} 
-            placeholder="********" 
+            placeholder="••••••••" 
             leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
@@ -196,7 +196,7 @@ export default function PatientRegisterForm() {
           <Input 
             type="password" 
             {...formik.getFieldProps('confirmPassword')} 
-            placeholder="********" 
+            placeholder="••••••••" 
             leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
           />
@@ -221,7 +221,7 @@ export default function PatientRegisterForm() {
       <div className="pt-2">
         <Button
           type="submit"
-          variant="gradient"
+          variant="primary"
           className="w-full py-4 text-lg"
           isLoading={loading}
         >

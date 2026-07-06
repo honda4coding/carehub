@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 import InstallButton from "@/components/pwa/InstallButton";
 import Link from "next/link";
 import { useState, useEffect } from "react";
@@ -22,7 +22,8 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient") || pathname.startsWith("/assistant");
+  const dashboardRoutes = ["/admin", "/doctor", "/patient", "/assistant"];
+  const isDashboard = dashboardRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
   if (isDashboard) return null;
 
   const navLinkClasses = "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] font-medium text-sm transition-all duration-300";

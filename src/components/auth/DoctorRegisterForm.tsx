@@ -135,7 +135,7 @@ export default function DoctorRegisterForm() {
         <Input 
           type="tel" 
           {...formik.getFieldProps('phoneNumber')} 
-          placeholder="01234567890" 
+          placeholder="e.g. 01012345678" 
           leftIcon={<LuPhone className="w-5 h-5" />}
           error={!!(formik.touched.phoneNumber && formik.errors.phoneNumber)}
         />
@@ -168,7 +168,7 @@ export default function DoctorRegisterForm() {
           <Input 
             type="password" 
             {...formik.getFieldProps('password')} 
-            placeholder="********" 
+            placeholder="••••••••" 
             leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
@@ -179,7 +179,7 @@ export default function DoctorRegisterForm() {
           <Input 
             type="password" 
             {...formik.getFieldProps('confirmPassword')} 
-            placeholder="********" 
+            placeholder="••••••••" 
             leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.confirmPassword && formik.errors.confirmPassword)}
           />
@@ -217,7 +217,7 @@ export default function DoctorRegisterForm() {
         <Input 
           type="number" 
           {...formik.getFieldProps('syndicateId')} 
-          placeholder="123456" 
+          placeholder="e.g. 12345" 
           leftIcon={<LuBadge className="w-5 h-5" />}
           error={!!(formik.touched.syndicateId && formik.errors.syndicateId)}
         />
@@ -259,7 +259,7 @@ export default function DoctorRegisterForm() {
       <div className="pt-2">
         <Button
           type="submit"
-          variant="gradient"
+          variant="primary"
           className="w-full py-4 text-lg"
           isLoading={loading}
         >

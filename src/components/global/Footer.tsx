@@ -1,11 +1,12 @@
-﻿"use client";
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LuActivity } from "react-icons/lu";
 
 export default function Footer() {
   const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/admin") || pathname.startsWith("/doctor") || pathname.startsWith("/patient") || pathname.startsWith("/assistant");
+  const dashboardRoutes = ["/admin", "/doctor", "/patient", "/assistant"];
+  const isDashboard = dashboardRoutes.some(route => pathname === route || pathname.startsWith(`${route}/`));
   if (isDashboard) return null;
 
   return (

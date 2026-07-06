@@ -54,7 +54,7 @@ export default function ThemeToggle() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-[hsl(var(--color-bg-surface))/90] backdrop-blur-xl border border-[hsl(var(--color-border))] rounded-2xl shadow-[var(--shadow-modal)] z-50 overflow-hidden animate-slide-up">
+        <div className="absolute right-0 mt-2 w-44 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-2xl shadow-[hsl(var(--color-text-muted)/0.15)] z-50 overflow-hidden animate-slide-up">
           <div className="p-1 flex flex-col gap-0.5">
             {THEMES.map((t) => {
               const Icon = t.icon;
