@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/Badge";
 
 const Hero = () => {
   return (
-    <section className="w-full bg-[hsl(var(--color-bg))] overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 pt-20 lg:pt-28 pb-16 lg:pb-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+    // 1) ضفنا min-h-screen عشان السكشن ياخد ارتفاع الشاشة كامل
+    //    وضفنا flex + items-center عشان المحتوى يتمركز عموديًا جوه المساحة دي
+    <section className="w-full min-h-screen flex items-center bg-[hsl(var(--color-bg))] overflow-hidden">
+      <div className="mx-auto max-w-7xl px-6 lg:px-10 py-16 lg:py-20 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         
         {/* Left Content */}
         <div className="flex flex-col">
@@ -18,7 +20,7 @@ const Hero = () => {
           </Badge>
 
           {/* Heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-[64px] font-black tracking-tighter text-[hsl(var(--color-text))] leading-[1.1] lg:leading-[1.05]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter text-[hsl(var(--color-text))] leading-[1.1] lg:leading-[1.05]">
             Your Complete
             <br />
             Medical History,
@@ -26,7 +28,8 @@ const Hero = () => {
             <span className="text-[hsl(var(--color-primary))]">Unified.</span>
           </h1>
 
-          <p className="mt-6 text-base lg:text-lg text-[hsl(var(--color-text-muted))] max-w-xl leading-relaxed">
+          {/* 2) كبرنا حجم الخط: كان text-base lg:text-lg وبقى text-lg lg:text-xl */}
+          <p className="mt-6 text-lg lg:text-xl text-[hsl(var(--color-text-muted))] max-w-xl leading-relaxed">
             Experience the sanctuary of modern healthcare. CareHub brings precision,
             clarity, and security to your medical journey, connecting patients and
             professionals seamlessly.

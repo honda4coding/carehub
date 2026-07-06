@@ -4,22 +4,21 @@
 @layer base {
   :root {
     /* Backgrounds */
-    --color-bg: 210 40% 98%; /* light app background */
+    --color-bg: 0, 0%, 95%; /* light app background */
     --color-bg-surface: 0 0% 100%; /* cards / sections */
     --color-bg-surface-hover: 210 40% 96%; /* subtle gray background */
-
     /* Text */
     --color-text: 222 47% 11%; /* main text */
     --color-text-muted: 215 16% 47%; /* secondary text */
     --color-text-inverse: 0 0% 100%; /* white text */
 
     /* Primary (from #46BFE5 → cyan/teal system) */
-    --color-primary: 195 75% 58%; /* main */
-    --color-primary-strong: 195 75% 45%; /* hover / active */
+    --color-primary: 212, 100%, 39%; /* main */
+    --color-primary-strong: 212, 100%, 39%; /* hover / active */
 
     /* Secondary (from #F472B6 → pink system) */
-    --color-secondary: 330 80% 70%; /* soft pink */
-    --color-secondary-strong: 330 75% 60%; /* stronger pink */
+    --color-secondary: 195, 100%, 40%; /* soft pink */
+    --color-secondary-strong: 195, 100%, 40%; /* stronger pink */
 
     /* Status colors (dashboard) */
     --color-success: 142 60% 35%;
@@ -262,7 +261,7 @@
     background-color: hsl(var(--color-bg));
 
     color: hsl(var(--color-text));
-    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   }
 }
 

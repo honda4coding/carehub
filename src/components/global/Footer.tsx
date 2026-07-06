@@ -11,17 +11,22 @@ export default function Footer() {
   return (
     <footer className="bg-[hsl(var(--color-bg))] border-t border-[hsl(var(--color-text-muted)/0.1)] mt-auto pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12 text-center md:text-left">
+        {/* 
+          استبدلنا grid-cols-3 (أعمدة متساوية بالقوة) بـ flex + justify-between
+          عشان كل عمود ياخد عرضه الطبيعي بس، والمسافة الفاضية توزع بين الأعمدة
+          مش تتكوم كفراغ في نص/يمين الصفحة
+        */}
+        <div className="flex flex-col md:flex-row md:justify-between gap-10 mb-12 text-center md:text-left">
           
           {/* Brand & Description */}
-          <div className="flex flex-col items-center md:items-start gap-4">
+          <div className="flex flex-col items-center md:items-start gap-4 md:max-w-xs">
             <Link href="/" className="flex items-center gap-2 group">
               <LuActivity className="w-8 h-8 text-[hsl(var(--color-primary))] group-hover:scale-110 transition-transform" />
               <span className="text-xl font-bold text-[hsl(var(--color-text))] tracking-tight">
                 CareHub
               </span>
             </Link>
-            <p className="text-[hsl(var(--color-text-muted))] text-xs font-semibold leading-relaxed max-w-xs">
+            <p className="text-[hsl(var(--color-text-muted))] text-xs font-semibold leading-relaxed">
               Empowering healthcare professionals and patients with an integrated, intelligent, and seamless medical ecosystem.
             </p>
           </div>

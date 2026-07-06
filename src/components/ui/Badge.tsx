@@ -10,7 +10,7 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
   ...props 
 }) => {
-  const baseStyles = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black uppercase tracking-wider';
+  const baseStyles = 'inline-flex items-center px-3 py-1.5 rounded-full text-xs font-black uppercase tracking-wider';
   
   const variants = {
     primary: 'bg-[hsl(var(--color-primary))] text-white',

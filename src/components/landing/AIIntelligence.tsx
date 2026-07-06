@@ -17,7 +17,7 @@ export default function AIIntelligence() {
             <span>Core Intelligence</span>
           </Badge>
           
-          <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-6">
+          <h2 className="text-2xl lg:text-4xl font-black text-[hsl(var(--color-text))] tracking-tight mb-2">
             Preventing medical errors before they happen.
           </h2>
           
