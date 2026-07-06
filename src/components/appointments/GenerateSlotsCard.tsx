@@ -64,7 +64,8 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
       setSelectedDates([]);
       setConflict(null);
       
-      const total = res.totalGenerated ?? res.totalSlots ?? res.count;
+      const anyRes = res as any;
+      const total = anyRes.totalGenerated ?? anyRes.totalSlots ?? anyRes.count;
       if (onSuccess && total !== undefined) {
         onSuccess(total);
       }

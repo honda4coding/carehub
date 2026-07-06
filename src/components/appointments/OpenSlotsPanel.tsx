@@ -49,7 +49,8 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
             clinicId, startDate: startStr, endDate: endStr, includeBooked: "true", limit: 500
           });
           console.log(`[OpenSlotsPanel] getAvailableSlots res for ${dayStr}:`, res);
-          const daySlots = res?.slots || res?.data?.slots || res || [];
+          const anyRes = res as any;
+          const daySlots = anyRes?.slots || anyRes?.data?.slots || res || [];
           setSlotsByDay(prev => ({ ...prev, [dayStr]: Array.isArray(daySlots) ? daySlots : [] }));
         } catch (err) {
           console.error(`Failed to load slots for ${dayStr}`, err);

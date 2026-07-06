@@ -42,8 +42,8 @@ interface Props {
  * /doctor/clinics sidebar layout — pick a clinic on the left, edit it here.
  */
 export default function ClinicDetailsPanel({ clinicId }: Props) {
-  const { user } = useAuth();
-  const doctorId = user?.role === 'assistant' 
+  const { user, role } = useAuth();
+  const doctorId = role === 'assistant' 
     ? (user as any)?.doctorId 
     : ((user as any)?._id ?? user?.id ?? "");
   

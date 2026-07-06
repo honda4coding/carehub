@@ -7,16 +7,16 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 
 export default function AssistantSchedulePage() {
   const router = useRouter();
-  const { user, loading } = useAuth();
+  const { user, isLoading } = useAuth();
 
   useEffect(() => {
-    if (!loading && user?.clinicId) {
+    if (!isLoading && user?.clinicId) {
       router.replace(`/assistant/clinics/${user.clinicId}`);
-    } else if (!loading && !user?.clinicId) {
+    } else if (!isLoading && !user?.clinicId) {
       // Fallback if somehow assistant has no clinic
       router.replace("/assistant/appointments");
     }
-  }, [user, loading, router]);
+  }, [user, isLoading, router]);
 
   return (
     <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
