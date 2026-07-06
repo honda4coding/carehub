@@ -370,7 +370,7 @@ export default function BookAppointmentPage() {
 
         .slot-available-in {
           font-size: 0.85rem;
-          color: var(--color-text-muted);
+          color: hsl(var(--color-text-muted));
           animation: fadeIn 0.3s ease-in-out;
         }
 
