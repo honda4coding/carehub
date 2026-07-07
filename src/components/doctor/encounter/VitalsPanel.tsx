@@ -197,7 +197,7 @@ export default function VitalsPanel({
                       type="number"
                       value={editHeight}
                       onChange={(e) => setEditHeight(e.target.value)}
-                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="e.g. 175"
                     />
                   </div>
@@ -207,7 +207,7 @@ export default function VitalsPanel({
                       type="number"
                       value={editWeight}
                       onChange={(e) => setEditWeight(e.target.value)}
-                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="e.g. 70"
                     />
                   </div>
@@ -229,7 +229,7 @@ export default function VitalsPanel({
                         else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); // special case for 90/60
                         setEditBloodPressure(val);
                       }}
-                      className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-primary)/0.2)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="120/80"
                       maxLength={7}
                     />
@@ -240,7 +240,7 @@ export default function VitalsPanel({
                       type="number"
                       value={editSugarLevel}
                       onChange={(e) => setEditSugarLevel(e.target.value)}
-                      className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-primary)/0.2)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="90"
                     />
                   </div>
@@ -252,7 +252,7 @@ export default function VitalsPanel({
                       type="number"
                       value={editPulse}
                       onChange={(e) => setEditPulse(e.target.value)}
-                      className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-primary)/0.2)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="75"
                     />
                   </div>
@@ -266,7 +266,7 @@ export default function VitalsPanel({
                         if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
                         setEditTemperature(val);
                       }}
-                      className="w-full border border-primary/20 bg-white dark:bg-black/20 rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors"
+                      className="w-full border border-[hsl(var(--color-primary)/0.2)] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                       placeholder="37.5"
                       maxLength={4}
                     />
@@ -285,7 +285,7 @@ export default function VitalsPanel({
               </button>
               <button 
                 onClick={saveVitalsLocally}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02]"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] flex items-center gap-2 transition-all hover:scale-[1.02]"
               >
                 <LuSave /> Update Vitals
               </button>
@@ -313,7 +313,7 @@ export default function VitalsPanel({
                 <select 
                   value={editBloodType}
                   onChange={(e) => setEditBloodType(e.target.value)}
-                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-base font-bold focus:border-primary outline-none transition-colors"
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] rounded-xl px-4 py-3 text-base font-bold focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
                 >
                   <option value="">Select Blood Type</option>
                   <option value="A+">A+</option>
@@ -340,7 +340,7 @@ export default function VitalsPanel({
                   saveVitalsLocally();
                   setIsEditBloodTypeOpen(false);
                 }}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02]"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] flex items-center gap-2 transition-all hover:scale-[1.02]"
               >
                 <LuSave /> Save Blood Type
               </button>

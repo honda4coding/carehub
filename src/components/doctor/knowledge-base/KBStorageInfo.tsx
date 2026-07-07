@@ -39,8 +39,16 @@ export default function KBStorageInfo({
             Vector DB Size
           </p>
           <div className="text-xl md:text-2xl font-black text-[hsl(var(--color-text))]">
-            {loading ? "..." : info?.sizeMB}{" "}
-            <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">MB</span>
+            {loading ? "..." : (
+              info?.sizeMB?.includes("N/A") || info?.sizeMB === "Cloud Storage" ? (
+                <span className="text-lg">Cloud Storage</span>
+              ) : (
+                <>
+                  {info?.sizeMB}{" "}
+                  <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">MB</span>
+                </>
+              )
+            )}
           </div>
         </div>
 

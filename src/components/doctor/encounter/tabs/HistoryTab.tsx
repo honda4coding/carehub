@@ -29,17 +29,17 @@ export default function HistoryTab({
   setIsAssessmentMode
 }: HistoryTabProps) {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div className="lg:col-span-3">
+    <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+      <div className="xl:col-span-3">
         {sessionData && !sessionData.isOfflinePatient && sessionData.patientId ? (
           <MedicationCompliancePanel patientId={sessionData.patientId._id} />
         ) : (
-          <div className="bg-white rounded-3xl p-6 border border-soft text-center">
-            <p className="text-sm text-muted">Compliance tracking is not available for offline patients.</p>
+          <div className="bg-[hsl(var(--color-bg-surface))] rounded-3xl p-6 border border-[hsl(var(--color-border))] text-center">
+            <p className="text-sm text-[hsl(var(--color-text-muted))]">Compliance tracking is not available for offline patients.</p>
           </div>
         )}
       </div>
-      <div className="lg:col-span-9">
+      <div className="xl:col-span-9 flex flex-col min-w-0">
         <HistoryTimeline 
           setIsAssessmentMode={setIsAssessmentMode}
           startDate={startDate}

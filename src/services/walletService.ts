@@ -155,5 +155,9 @@ export const walletService = {
     manualWalletAdjust: async (data: { targetUserId: string, amount: number, reason: string, balanceType: string }): Promise<any> => {
         const response = await fetchClient.post("/wallet/admin/adjust", data);
         return response.data;
+    },
+    getUserWalletBalances: async (userId: string): Promise<{ availableBalance: number, pendingBalance: number }> => {
+        const response = await fetchClient.get(`/wallet/admin/user-wallet/${userId}`);
+        return response.data;
     }
 };

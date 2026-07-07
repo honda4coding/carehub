@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { adminService } from "@/services/adminService";
@@ -51,87 +51,78 @@ export default function FinancialOverview() {
     (stats.platformSubscriptionProfits || 0);
 
   return (
-    <div className="space-y-6 mb-8">
-      <div className="flex items-center gap-2">
-        <h2 className="text-xl font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
-          <LuChartPie className="text-[hsl(var(--color-primary))]" />
-          Financial Overview
-        </h2>
-        <span className="text-sm px-3 py-1 bg-[hsl(var(--color-primary)_/_0.1)] text-[hsl(var(--color-primary))] rounded-full font-medium">
-          Platform Revenue & Health
-        </span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
         
         {/* Total Platform Profits */}
-        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-success)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
-          <div className="flex items-start justify-between relative z-10">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Platform Net Profit</p>
-              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
-                {totalPlatformProfits.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
-              </h3>
-            </div>
-            <div className="w-12 h-12 bg-[hsl(var(--color-success)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-success))]">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] flex flex-col justify-between group hover:border-[hsl(var(--color-success)/0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-float)]">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-[hsl(var(--color-success)/0.15)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-success))] shrink-0 group-hover:scale-110 transition-transform duration-300">
               <LuTrendingUp className="w-6 h-6" />
             </div>
-          </div>
-          <div className="mt-4 pt-4 border-t border-[hsl(var(--color-border))] grid grid-cols-2 gap-2 text-xs">
             <div>
-              <span className="text-[hsl(var(--color-text-muted))] block mb-1">From Bookings</span>
-              <span className="font-semibold text-[hsl(var(--color-text))]">{stats.platformBookingProfits.toLocaleString()}</span>
+              <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Platform Net Profit</p>
+              <h3 className="text-2xl font-black text-[hsl(var(--color-text))]">
+                {totalPlatformProfits.toLocaleString()} <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">EGP</span>
+              </h3>
+            </div>
+          </div>
+          <div className="pt-4 border-t border-[hsl(var(--color-border-soft))] grid grid-cols-2 gap-2 text-[12px]">
+            <div>
+              <span className="text-[hsl(var(--color-text-muted))] block mb-0.5">From Bookings</span>
+              <span className="font-bold text-[hsl(var(--color-text))]">{stats.platformBookingProfits.toLocaleString()}</span>
             </div>
             <div>
-              <span className="text-[hsl(var(--color-text-muted))] block mb-1">From Subscriptions</span>
-              <span className="font-semibold text-[hsl(var(--color-text))]">{stats.platformSubscriptionProfits.toLocaleString()}</span>
+              <span className="text-[hsl(var(--color-text-muted))] block mb-0.5">From Subscriptions</span>
+              <span className="font-bold text-[hsl(var(--color-text))]">{stats.platformSubscriptionProfits.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         {/* Doctors Total Revenue */}
-        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-primary)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
-          <div className="flex items-start justify-between relative z-10">
-            <div>
-              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Total System Volume</p>
-              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
-                {stats.totalDoctorsEarnings.toLocaleString()} <span className="text-lg font-medium text-[hsl(var(--color-text-muted))]">EGP</span>
-              </h3>
-            </div>
-            <div className="w-12 h-12 bg-[hsl(var(--color-primary)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-primary))]">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] flex flex-col justify-between group hover:border-[hsl(var(--color-primary)/0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-float)]">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-[hsl(var(--color-primary)/0.15)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-primary))] shrink-0 group-hover:scale-110 transition-transform duration-300">
               <LuBanknote className="w-6 h-6" />
             </div>
+            <div>
+              <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Total System Volume</p>
+              <h3 className="text-2xl font-black text-[hsl(var(--color-text))]">
+                {stats.totalDoctorsEarnings.toLocaleString()} <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">EGP</span>
+              </h3>
+            </div>
           </div>
-          <p className="text-xs text-[hsl(var(--color-text-muted))] mt-4">
-            Total money paid by patients across all doctors on the platform.
-          </p>
+          <div className="pt-4 border-t border-[hsl(var(--color-border-soft))] mt-auto">
+            <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
+              Total money paid by patients across all doctors on the platform.
+            </p>
+          </div>
         </div>
 
         {/* Cancellation Rate */}
-        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)] relative overflow-hidden group hover:shadow-[var(--shadow-float)] transition-all duration-300">
-          <div className="absolute -right-6 -top-6 w-32 h-32 bg-[hsl(var(--color-danger)_/_0.05)] rounded-full group-hover:scale-110 transition-transform duration-500 ease-out pointer-events-none" />
-          <div className="flex items-start justify-between relative z-10">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl p-6 border border-[hsl(var(--color-border))] flex flex-col justify-between group hover:border-[hsl(var(--color-danger)/0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-float)]">
+          <div className="flex items-center gap-4 mb-4">
+            <div className="w-12 h-12 bg-[hsl(var(--color-danger)/0.15)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-danger))] shrink-0 group-hover:scale-110 transition-transform duration-300">
+              <LuBan className="w-6 h-6" />
+            </div>
             <div>
-              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-2">Cancellation Rate</p>
-              <h3 className="text-3xl font-bold tracking-tight text-[hsl(var(--color-text))]">
+              <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">Cancellation Rate</p>
+              <h3 className="text-2xl font-black text-[hsl(var(--color-text))]">
                 {stats.cancellationRate}%
               </h3>
             </div>
-            <div className="w-12 h-12 bg-[hsl(var(--color-danger)_/_0.1)] rounded-2xl flex items-center justify-center text-[hsl(var(--color-danger))]">
-              <LuBan className="w-6 h-6" />
+          </div>
+          <div className="pt-4 border-t border-[hsl(var(--color-border-soft))] mt-auto">
+            <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-1.5 mb-2 overflow-hidden">
+              <div 
+                className="h-1.5 rounded-full bg-[hsl(var(--color-danger))]"
+                style={{ width: `${Math.min(stats.cancellationRate, 100)}%` }}
+              ></div>
             </div>
+            <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
+              Percentage of cancelled appointments out of total bookings.
+            </p>
           </div>
-          <div className="w-full bg-[hsl(var(--color-background))] rounded-full h-1.5 mt-4 border border-[hsl(var(--color-border-soft))] overflow-hidden">
-            <div 
-              className="h-1.5 rounded-full bg-[hsl(var(--color-danger))]"
-              style={{ width: `${Math.min(stats.cancellationRate, 100)}%` }}
-            ></div>
-          </div>
-          <p className="text-xs text-[hsl(var(--color-text-muted))] mt-2">
-            Percentage of cancelled appointments out of total bookings.
-          </p>
         </div>
 
       </div>

@@ -19,14 +19,12 @@ import {
   deleteDoctorAccount,
 } from "@/services/doctorService";
 
-type Tab = "profile" | "license" | "avatar" | "certificates" | "danger";
+type Tab = "profile" | "license" | "certificates";
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode; desc: string }[] = [
   { id: "profile", label: "Profile",  icon: <LuUser className="w-4 h-4" />,        desc: "Personal info" },
   { id: "license", label: "License",  icon: <LuShieldCheck className="w-4 h-4" />, desc: "Manage license" },
-  { id: "avatar",  label: "Photo",    icon: <LuCamera className="w-4 h-4" />,       desc: "Profile picture" },
   { id: "certificates", label: "Certificates", icon: <LuAward className="w-4 h-4" />, desc: "Achievements" },
-  { id: "danger",  label: "Danger",   icon: <LuTrash2 className="w-4 h-4" />,       desc: "Delete account" },
 ];
 
 export default function DoctorProfilePage() {
@@ -65,7 +63,7 @@ export default function DoctorProfilePage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
+    <div className="flex flex-col min-h-full w-full bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
         title="Profile Settings"
         subtitle="Manage your personal information and license"
@@ -92,18 +90,18 @@ export default function DoctorProfilePage() {
 
         {/* Content */}
         {!loading && !error && profile && (
-          <div className="max-w-4xl mx-auto w-full flex flex-col md:flex-row gap-4 items-start">
+          <div className="w-full flex flex-col gap-6 items-center">
 
-            {/* â”€â”€ Left sidebar â”€â”€ */}
-            <aside className="flex flex-row md:flex-col gap-3 w-full md:w-44 shrink-0 overflow-x-auto scrollbar-hide pb-1">
+            {/* ── Tabs (Top) ── */}
+            <aside className="flex flex-row flex-wrap justify-center gap-2 md:gap-4 w-full pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
-                const isDanger = tab.id === "danger";
+                const isDanger = (tab.id as string) === "danger";
                 return (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`w-[140px] md:w-full shrink-0 text-left p-4 rounded-2xl border transition-all cursor-pointer shadow-sm flex flex-col md:block ${
+                    className={`min-w-[140px] shrink-0 text-center py-2.5 px-4 md:py-3 md:px-5 rounded-xl md:rounded-2xl border transition-all cursor-pointer shadow-sm flex flex-row items-center justify-center gap-3 ${
                       isDanger
                         ? isActive
                           ? "bg-[hsl(var(--color-danger-bg))] border-[hsl(var(--color-danger)/0.4)]"
@@ -113,7 +111,7 @@ export default function DoctorProfilePage() {
                           : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.25)] hover:shadow-md"
                     }`}
                   >
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center mb-3 ${
+                    <div className={`w-7 h-7 md:w-8 md:h-8 rounded-lg flex items-center justify-center shrink-0 ${
                       isDanger
                         ? "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))]"
                         : isActive
@@ -123,61 +121,61 @@ export default function DoctorProfilePage() {
                       {tab.icon}
                     </div>
 
-                    <p className={`text-[13px] font-black leading-tight ${
-                      isDanger
-                        ? "text-[hsl(var(--color-danger))]"
-                        : isActive
-                          ? "text-[hsl(var(--color-text))]"
-                          : "text-[hsl(var(--color-text-muted))]"
-                    }`}>
-                      {tab.label}
-                    </p>
-
-                    <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mt-0.5">
-                      {tab.desc}
-                    </p>
-
-                    {isActive && !isDanger && (
-                      <div className="mt-3 h-[3px] w-8 rounded-full bg-[hsl(var(--color-primary))]" />
-                    )}
+                    <div className="flex flex-col items-start text-left">
+                      <p className={`text-[13px] md:text-[14px] font-black leading-tight whitespace-nowrap ${
+                        isDanger
+                          ? "text-[hsl(var(--color-danger))]"
+                          : isActive
+                            ? "text-[hsl(var(--color-text))]"
+                            : "text-[hsl(var(--color-text-muted))]"
+                      }`}>
+                        {tab.label}
+                      </p>
+                    </div>
                   </button>
                 );
               })}
             </aside>
 
-            {/* â”€â”€ Right content card â”€â”€ */}
-            <div className="flex-1 min-w-0 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+            {/* ── Centered Content Area ── */}
+            <div className="w-full max-w-3xl flex flex-col gap-5">
 
-              {/* ProfileHeader ÙŠØ¸Ù‡Ø± Ø¨Ø³ ÙÙŠ profile Ùˆ license */}
-              {(activeTab === "profile" || activeTab === "license") && (
+              {activeTab === "profile" && (
                 <>
-                  <ProfileHeader profile={profile} />
-                  <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6" />
+                  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+                    <DoctorAvatarSection profile={profile} onUpdate={handleAvatarUpdate} />
+                    <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6" />
+                    <ProfessionalInfoForm profile={profile} onSaveSuccess={handleProfileSaved} />
+                  </div>
+
+                  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+                    <div className="p-6">
+                      <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">Danger Zone</h3>
+                      <p className="text-[12px] text-[hsl(var(--color-text-muted))] mb-5">
+                        Permanently delete your account. This cannot be undone.
+                      </p>
+                      <DeleteAccountModal onConfirm={handleDeleteAccount} />
+                    </div>
+                  </div>
                 </>
               )}
 
-              {activeTab === "profile" && (
-                <ProfessionalInfoForm profile={profile} onSaveSuccess={handleProfileSaved} />
-              )}
               {activeTab === "license" && (
-                <LicenseSection profile={profile} onUploadSuccess={fetchProfile} />
+                <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+                  <ProfileHeader profile={profile} />
+                  <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6" />
+                  <LicenseSection profile={profile} onUploadSuccess={fetchProfile} />
+                </div>
               )}
-              {activeTab === "avatar" && (
-                <DoctorAvatarSection profile={profile} onUpdate={handleAvatarUpdate} />
-              )}
+
               {activeTab === "certificates" && (
-                <CertificateSection
-                  profile={profile!}
-                  onUpdate={(updated) => setProfile(updated)}
-                />
-              )}
-              {activeTab === "danger" && (
-                <div className="p-6">
-                  <h3 className="text-[14px] font-black text-[hsl(var(--color-danger))] mb-1">Danger Zone</h3>
-                  <p className="text-[12px] text-[hsl(var(--color-text-muted))] mb-5">
-                    Permanently delete your account. This cannot be undone.
-                  </p>
-                  <DeleteAccountModal onConfirm={handleDeleteAccount} />
+                <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden shadow-sm">
+                  <ProfileHeader profile={profile} />
+                  <div className="border-t border-dashed border-[hsl(var(--color-border-soft))] mx-6" />
+                  <CertificateSection
+                    profile={profile!}
+                    onUpdate={(updated) => setProfile(updated)}
+                  />
                 </div>
               )}
 

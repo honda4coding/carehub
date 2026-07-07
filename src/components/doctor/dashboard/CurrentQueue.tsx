@@ -87,15 +87,15 @@ export const CurrentQueue = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 overflow-x-auto pb-1 lg:pb-0 scrollbar-hide">
-          <div className="relative flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 w-full md:w-[400px] focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all">
+        <div className="flex items-center gap-2 w-full lg:w-auto shrink-0 flex-wrap pb-1 lg:pb-0">
+          <div className="relative flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 flex-1 min-w-[200px] md:min-w-[300px] max-w-full focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all">
             <LuSearch className="ml-2 text-[13px] text-[hsl(var(--color-text-muted))] shrink-0" />
             <input
               type="text"
               placeholder="Search name or phone..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="flex-1 min-w-0 bg-transparent border-none outline-none text-[12px] font-medium py-1.5 px-2 text-[hsl(var(--color-text))]"
+              className="flex-1 w-full min-w-0 bg-transparent border-none outline-none text-[12px] font-medium py-1.5 px-2 text-[hsl(var(--color-text))]"
             />
           </div>
 

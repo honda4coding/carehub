@@ -69,7 +69,7 @@ export const DoctorStats = ({ dashboardStats, sessions, setStatusFilter }: { das
                 <p className="text-[10px] md:text-[13px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-1 truncate">{s.label}</p>
                 <div className="flex items-end gap-2 md:gap-3 flex-wrap">
                   <p className="text-[24px] md:text-[30px] leading-none font-black text-[hsl(var(--color-text))]">{s.value}</p>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-flex whitespace-nowrap mb-1 ${
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md inline-flex truncate max-w-full mb-1 ${
                     s.up ? "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]"
                   }`}>
                     {s.trend}

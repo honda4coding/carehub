@@ -132,12 +132,11 @@ export default function UpdatePasswordForm() {
               <div className="relative">
                 <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="oldpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
-                  style={{
-                    backgroundColor: errors.oldpassword && touched.oldpassword ? "#fff5f5" : "white",
-                    borderColor: errors.oldpassword && touched.oldpassword ? "#fc8181" : "hsl(var(--color-border))",
-                    color: "hsl(var(--color-text))",
-                  }} />
+                  className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+                    errors.oldpassword && touched.oldpassword
+                      ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                      : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                  }`} />
               </div>
               <ErrorMessage name="oldpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>
@@ -150,12 +149,11 @@ export default function UpdatePasswordForm() {
               <div className="relative">
                 <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="newpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
-                  style={{
-                    backgroundColor: errors.newpassword && touched.newpassword ? "#fff5f5" : "white",
-                    borderColor: errors.newpassword && touched.newpassword ? "#fc8181" : "hsl(var(--color-border))",
-                    color: "hsl(var(--color-text))",
-                  }} />
+                  className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+                    errors.newpassword && touched.newpassword
+                      ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                      : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                  }`} />
               </div>
               <ErrorMessage name="newpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>
@@ -168,12 +166,11 @@ export default function UpdatePasswordForm() {
               <div className="relative">
                 <LuLock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
                 <Field name="cpassword" type="password" placeholder="••••••••"
-                  className="w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] border bg-white"
-                  style={{
-                    backgroundColor: errors.cpassword && touched.cpassword ? "#fff5f5" : "white",
-                    borderColor: errors.cpassword && touched.cpassword ? "#fc8181" : "hsl(var(--color-border))",
-                    color: "hsl(var(--color-text))",
-                  }} />
+                  className={`w-full pl-12 pr-4 py-3 rounded-xl outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+                    errors.cpassword && touched.cpassword
+                      ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                      : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                  }`} />
               </div>
               <ErrorMessage name="cpassword" component="p" className="text-danger text-xs pl-4 font-medium" />
             </div>

@@ -22,8 +22,8 @@ export default function TodayCard({
     (appt.endDateTime ? " – " + isoTo12Hour(appt.endDateTime) : "");
 
   return (
-    <div className="group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:-translate-y-0.5 transition-all duration-300 cursor-pointer">
-      <div className="absolute top-0 bottom-0 left-0 w-[4px] bg-[hsl(var(--color-secondary))] rounded-l-2xl" />
+    <div className="group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden">
+      <div className={`absolute top-0 bottom-0 left-0 w-[4px] rounded-l-2xl ${status === "upcoming" ? "bg-[hsl(var(--color-warning))]" : status === "completed" ? "bg-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-secondary))]"}`} />
       
       <div className="flex items-center gap-3 min-w-0 w-full sm:w-auto">
         {/* Avatar */}

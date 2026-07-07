@@ -1,5 +1,6 @@
 import React from "react";
 import { LuSearch } from "react-icons/lu";
+import { Input } from "@/components/ui/Input";
 
 export type ApprovalStatus = "pending" | "approved" | "rejected";
 
@@ -28,10 +29,10 @@ export default function ApprovalsFilters({
   tabCounts,
 }: ApprovalsFiltersProps) {
   return (
-    <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
-      <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
+    <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
+      <div className="w-full lg:w-auto shrink-0 order-2 lg:order-1">
         {/* Status tabs */}
-        <div className="flex items-center gap-1 flex-wrap bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto">
+        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.value;
             const count = tab.value === "all" ? totalDoctors : tabCounts[tab.value] ?? 0;
@@ -39,7 +40,7 @@ export default function ApprovalsFilters({
               <button
                 key={tab.value}
                 onClick={() => setActiveTab(tab.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12px] font-bold transition-all cursor-pointer ${
+                className={`flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                   isActive
                     ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
                     : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
@@ -61,17 +62,16 @@ export default function ApprovalsFilters({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto shrink-0">
-        <div className="relative flex items-center w-full sm:w-[250px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
-          <input
-            type="text"
-            placeholder="Filter by name or specialty..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
-          />
-        </div>
+      <div className="w-full flex-1 order-1 lg:order-2">
+        <Input
+          size="sm"
+          type="text"
+          placeholder="Search name, email or specialty…"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          leftIcon={<LuSearch />}
+          className="w-full !bg-[hsl(var(--color-bg-soft))] focus:!bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
+        />
       </div>
     </div>
   );

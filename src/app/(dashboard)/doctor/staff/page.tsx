@@ -99,23 +99,29 @@ export default function StaffManagementPage() {
             <DashboardHeader 
                 title="Staff Management" 
                 subtitle="Manage your clinic assistants and their permissions"
-                rightElement={
-                    <div className="flex gap-2">
-                        <Button variant="secondary" size="sm" href="/doctor/staff/logs" icon={LuShieldCheck}>
-                            Activity Logs
-                        </Button>
-                        <Button variant="primary" size="sm" icon={LuPlus} onClick={openAddModal}>
-                            Add Staff
-                        </Button>
-                    </div>
-                }
             />
 
             <main className="flex-1 p-4 md:p-6 overflow-y-auto">
                 <div className="max-w-6xl mx-auto space-y-6">
+                    {/* Action Bar */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[hsl(var(--color-bg-surface))] p-4 sm:p-5 rounded-2xl border border-[hsl(var(--color-border))]">
+                        <div>
+                            <h2 className="text-[16px] font-black text-[hsl(var(--color-text))]">Team Overview</h2>
+                            <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">View and manage all active team members</p>
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                            <Button variant="secondary" className="w-full sm:w-auto justify-center font-bold" href="/doctor/staff/logs" icon={LuShieldCheck}>
+                                Activity Logs
+                            </Button>
+                            <Button variant="primary" className="w-full sm:w-auto justify-center font-bold shadow-sm" icon={LuPlus} onClick={openAddModal}>
+                                Add Staff
+                            </Button>
+                        </div>
+                    </div>
+
                     {loading ? (
                         <div className="animate-pulse space-y-4">
-                            {[1, 2, 3].map(i => <div key={i} className="h-20 bg-[hsl(var(--color-bg-soft))] rounded-2xl" />)}
+                            {[1, 2, 3].map(i => <div key={i} className="h-24 bg-[hsl(var(--color-bg-soft))] rounded-2xl" />)}
                         </div>
                     ) : staff.length === 0 ? (
                         <Card className="p-12 flex flex-col items-center justify-center text-center">

@@ -298,7 +298,7 @@ export default function RxBuilder({
               onFocus={() => { if(filteredDrugs.length > 0 && drugName) setShowSuggestions(true); }}
               type="text" 
               placeholder="e.g. Amoxicillin" 
-              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" 
+              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors" 
               autoComplete="off"
             />
             {showSuggestions && (
@@ -321,14 +321,14 @@ export default function RxBuilder({
           </div>
           <div>
             <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Dosage</label>
-            <input value={dosage} onChange={e=>setDosage(e.target.value)} type="text" placeholder="500mg" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <input value={dosage} onChange={e=>setDosage(e.target.value)} type="text" placeholder="500mg" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors" />
           </div>
           <div>
             <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Frequency</label>
             <select
               value={frequency}
               onChange={e => setFrequency(e.target.value)}
-              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
+              className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors"
             >
               <option value="">Select Frequency</option>
               <option value="1 time daily">1 time daily</option>
@@ -339,7 +339,7 @@ export default function RxBuilder({
               <option value="Every 12 hours">Every 12 hours</option>
             </select>
           </div>
-          <div>
+          <div className="md:col-span-2">
             <div className="flex justify-between items-center mb-1">
               <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))]">Duration</label>
               <label className="flex items-center gap-1 cursor-pointer text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase">
@@ -348,8 +348,8 @@ export default function RxBuilder({
               </label>
             </div>
             <div className="flex gap-2">
-              <input disabled={duration.toLowerCase() === "lifelong"} value={durNum} onChange={e=>updateDuration(e.target.value, durUnit)} type="number" min="1" placeholder="e.g. 5" className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50" />
-              <select disabled={duration.toLowerCase() === "lifelong"} value={durUnit} onChange={e=>updateDuration(durNum, e.target.value)} className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors disabled:opacity-50">
+              <input disabled={duration.toLowerCase() === "lifelong"} value={durNum} onChange={e=>updateDuration(e.target.value, durUnit)} type="number" min="1" placeholder="e.g. 5" className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors disabled:opacity-50" />
+              <select disabled={duration.toLowerCase() === "lifelong"} value={durUnit} onChange={e=>updateDuration(durNum, e.target.value)} className="w-1/2 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors disabled:opacity-50">
                 <option value="Days">Days</option>
                 <option value="Weeks">Weeks</option>
                 <option value="Months">Months</option>
@@ -358,10 +358,10 @@ export default function RxBuilder({
           </div>
           <div className="md:col-span-5 mt-2">
             <label className="block text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1">Instructions (Optional)</label>
-            <input value={instructions} onChange={e=>setInstructions(e.target.value)} type="text" placeholder="e.g. After meals" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-sm focus:border-primary outline-none transition-colors" />
+            <input value={instructions} onChange={e=>setInstructions(e.target.value)} type="text" placeholder="e.g. After meals" className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-sm focus:border-[hsl(var(--color-primary))] outline-none transition-colors" />
           </div>
           <div className="flex items-end mt-2 md:col-span-1">
-            <button onClick={handleAddDrug} className="w-full bg-[hsl(var(--color-secondary))] text-white hover:bg-[hsl(var(--color-secondary-strong))] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer">
+            <button onClick={handleAddDrug} className="w-full bg-[hsl(var(--color-primary))] text-white hover:bg-[hsl(var(--color-primary-strong))] font-bold py-2 rounded-lg flex items-center justify-center gap-1 transition-colors cursor-pointer">
               <LuPlus /> Add
             </button>
           </div>

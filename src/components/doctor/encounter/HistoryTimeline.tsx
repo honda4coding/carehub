@@ -43,16 +43,16 @@ export default function HistoryTimeline({
         <h3 className="text-[15px] font-semibold text-[hsl(var(--color-text))] flex items-center gap-2 shrink-0">
           <LuHistory className="text-[hsl(var(--color-primary))]" /> Full medical history
         </h3>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full 2xl:w-auto">
+        <div className="flex flex-wrap items-center gap-3 w-full 2xl:w-auto">
           <DateRangeFilter
             startDate={startDate}
             endDate={endDate}
             onStartDateChange={setStartDate}
             onEndDateChange={setEndDate}
             onReset={startDate || endDate ? () => { setStartDate(""); setEndDate(""); } : undefined}
-            className="!mt-0"
+            className="!mt-0 flex-1 min-w-[280px]"
           />
-          <div className="relative flex-1 min-w-0">
+          <div className="relative flex-1 min-w-[200px]">
             <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[12px] text-[hsl(var(--color-text-muted))]" />
             <input
               type="text"

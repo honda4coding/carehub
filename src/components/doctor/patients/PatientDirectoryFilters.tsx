@@ -37,7 +37,7 @@ export default function PatientDirectoryFilters({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             leftIcon={<LuSearch className="text-lg text-[hsl(var(--color-text-muted))]" />}
-            className="w-full text-sm bg-[hsl(var(--color-bg-soft))] focus:bg-[hsl(var(--color-bg-surface))]"
+            className="w-full text-[14px] font-bold bg-[hsl(var(--color-bg-base))] focus:bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] placeholder:text-[hsl(var(--color-text-muted))] placeholder:font-medium transition-colors"
           />
         </div>
 

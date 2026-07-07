@@ -55,7 +55,7 @@ export default function EncounterHeader({
         </button>
         {isAssessmentMode && (
           <div className="flex items-center flex-1 sm:flex-none">
-            <button onClick={() => onEndSession(0)} disabled={isEnding} className="bg-primary text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
+            <button onClick={() => onEndSession(0)} disabled={isEnding} className="bg-[hsl(var(--color-primary))] text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
               {isEnding ? "Saving..." : <><LuSave className="text-lg hidden sm:block shrink-0" /> End Session</>}
             </button>
           </div>

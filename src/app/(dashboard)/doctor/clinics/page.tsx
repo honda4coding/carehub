@@ -11,7 +11,8 @@ import {
   LuTriangleAlert,
   LuMapPin,
   LuPhone,
-  LuLock
+  LuLock,
+  LuChevronDown
 } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
 
@@ -49,6 +50,7 @@ function ClinicsContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedClinicId, setSelectedClinicId] = useState<string | null>(null);
+  const [clinicDropdownOpen, setClinicDropdownOpen] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
@@ -289,12 +291,6 @@ function ClinicsContent() {
                 </span>
               </div>
             )}
-            <button
-              onClick={openAddModal}
-              className="bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold px-4 py-2 rounded-xl hover:bg-[hsl(var(--color-primary-strong))] transition-all flex items-center gap-2 cursor-pointer"
-            >
-              <LuPlus className="text-lg" /> Add Clinic
-            </button>
           </div>
         }
       />
@@ -332,111 +328,139 @@ function ClinicsContent() {
             </button>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-5">
-            {/* ── LEFT: Clinics list ── */}
-            <aside className="w-full lg:w-64 shrink-0">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-                Clinics
-              </p>
-              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
-                {clinics.map((clinic) => {
-                  const isActive = selectedClinicId === clinic._id;
-                  return (
-                    <div
-                      key={clinic._id}
-                      onClick={() => {
-                        if (clinic.isActive) {
-                          setSelectedClinicId(clinic._id);
-                          setGlobalActiveClinicId(clinic._id);
-                        }
-                      }}
-                      className={`group flex items-center gap-2.5 px-3.5 py-3 rounded-xl border transition-all shrink-0 lg:w-full ${
-                        clinic.isActive ? "cursor-pointer" : "opacity-60 bg-[hsl(var(--color-bg-base))] border-[hsl(var(--color-border))] cursor-not-allowed"
-                      } ${
-                        isActive
-                          ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                          : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
-                      }`}
-                    >
-                      <LuBuilding2 className="text-[15px] shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <p className="text-[13px] font-bold truncate">{clinic.name}</p>
-                          {!clinic.isActive && <LuLock className="text-[12px] text-[hsl(var(--color-danger))]" title="Deactivated due to subscription limits" />}
+          <div className="flex flex-col gap-6">
+            {(() => {
+              const selectedClinic = clinics.find(c => c._id === selectedClinicId);
+              if (!selectedClinic) {
+                return (
+                  <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
+                    <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
+                    <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
+                      Select a clinic to manage it
+                    </p>
+                  </div>
+                );
+              }
+
+              return (
+                <div className="flex flex-col gap-6">
+                  {/* Unified Clinic Header & Switcher */}
+                  <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-5 flex flex-col gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                      
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 hidden sm:flex">
+                          <LuBuilding2 className="text-[hsl(var(--color-primary))] text-xl" />
                         </div>
-                        <p
-                          className={`text-[10.5px] font-medium truncate ${
-                            isActive ? "text-white/80" : "text-[hsl(var(--color-text-muted))]"
-                          }`}
-                        >
-                          {clinic.governorate}
-                        </p>
+                        
+                        <div className="relative flex-1 sm:flex-none sm:w-[260px]">
+                          <button
+                            onClick={() => setClinicDropdownOpen(!clinicDropdownOpen)}
+                            className="flex items-center justify-between w-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-[12px] text-[13px] sm:text-[14px] font-black cursor-pointer shadow-sm transition-colors min-w-0"
+                          >
+                            <span className="truncate pr-2">
+                              {selectedClinic.name}
+                            </span>
+                            <LuChevronDown className={`text-[hsl(var(--color-text-muted))] shrink-0 transition-transform ${clinicDropdownOpen ? "rotate-180" : ""}`} />
+                          </button>
+                        
+                          {clinicDropdownOpen && (
+                            <>
+                              <div className="fixed inset-0 z-40" onClick={() => setClinicDropdownOpen(false)}></div>
+                              <div className="absolute top-full left-0 mt-2 w-full min-w-[200px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] shadow-xl rounded-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                                {clinics.map(c => (
+                                  <button
+                                    key={c._id}
+                                    onClick={() => {
+                                      setSelectedClinicId(c._id);
+                                      if (c.isActive) {
+                                        setGlobalActiveClinicId(c._id);
+                                      }
+                                      setClinicDropdownOpen(false);
+                                    }}
+                                    className={`flex items-center justify-between w-full text-left px-4 py-3 hover:bg-[hsl(var(--color-bg-base))] transition-colors cursor-pointer border-b last:border-b-0 border-[hsl(var(--color-border))] ${selectedClinicId === c._id ? "bg-[hsl(var(--color-primary)/0.05)]" : ""}`}
+                                  >
+                                    <span className={`text-[13px] sm:text-[14px] font-bold ${selectedClinicId === c._id ? "text-[hsl(var(--color-primary))]" : "text-[hsl(var(--color-text))]"}`}>
+                                      {c.name}
+                                    </span>
+                                    {!c.isActive && <LuLock className="text-[hsl(var(--color-danger))] text-[12px] shrink-0 ml-2" title="Deactivated" />}
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
+
+                        {!selectedClinic.isActive && (
+                          <LuLock className="text-[hsl(var(--color-danger))] text-sm shrink-0 hidden sm:block" title="Deactivated" />
+                        )}
+
+                        {selectedClinic.isActive && (
+                          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+                            <button
+                              onClick={() => openEditModal(selectedClinic)}
+                              className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl hover:bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors cursor-pointer"
+                              title="Edit Clinic"
+                            >
+                              <LuPencil size={15} />
+                            </button>
+                            <button
+                              onClick={() => setDeleteTarget(selectedClinic)}
+                              className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl hover:bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors cursor-pointer"
+                              title="Delete Clinic"
+                            >
+                              <LuTrash2 size={15} />
+                            </button>
+                          </div>
+                        )}
+                        {!selectedClinic.isActive && (
+                          <button
+                            onClick={() => handleReactivate(selectedClinic)}
+                            disabled={activatingClinicId === selectedClinic._id}
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white text-[12px] font-bold hover:bg-[hsl(var(--color-primary-strong))] transition-colors cursor-pointer disabled:opacity-50 shrink-0"
+                          >
+                            {activatingClinicId === selectedClinic._id ? '...' : 'Activate'}
+                          </button>
+                        )}
                       </div>
                       
-                      {clinic.isActive ? (
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              openEditModal(clinic);
-                            }}
-                            className={`p-1 rounded-md cursor-pointer transition-colors ${
-                              isActive
-                                ? "text-white/80 hover:text-white"
-                                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))]"
-                            }`}
-                            title="Edit clinic info"
-                          >
-                            <LuPencil className="text-[13px]" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteTarget(clinic);
-                            }}
-                            className={`p-1 rounded-md cursor-pointer transition-colors ${
-                              isActive
-                                ? "text-white/80 hover:text-white"
-                                : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))]"
-                            }`}
-                            title="Delete clinic"
-                          >
-                            <LuTrash2 className="text-[13px]" />
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleReactivate(clinic);
-                            }}
-                            disabled={activatingClinicId === clinic._id}
-                            className="bg-[hsl(var(--color-primary))] text-white text-[10px] font-bold px-2 py-1 rounded-md cursor-pointer hover:bg-[hsl(var(--color-primary-strong))] transition-colors disabled:opacity-50"
-                          >
-                            {activatingClinicId === clinic._id ? '...' : 'Activate'}
-                          </button>
-                        </div>
+                      <button
+                        onClick={openAddModal}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[13px] font-bold hover:bg-[hsl(var(--color-primary)/0.2)] transition-colors w-full md:w-auto shrink-0 cursor-pointer"
+                      >
+                        <LuPlus className="text-base" /> Add Clinic
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-4 pl-[52px] text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
+                      <span className="flex items-center gap-1.5">
+                        <LuMapPin className="text-[hsl(var(--color-primary))]" /> {selectedClinic.address} — {selectedClinic.governorate}
+                      </span>
+                      {(selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline) && (
+                        <span className="flex items-center gap-1.5">
+                          <LuPhone className="text-[hsl(var(--color-primary))]" /> {selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline}
+                        </span>
                       )}
                     </div>
-                  );
-                })}
-              </div>
-            </aside>
+                  </div>
 
-            {/* ── RIGHT: Selected clinic detail ── */}
-            <div className="flex-1 min-w-0">
-              {selectedClinicId ? (
-                <ClinicDetailsPanel clinicId={selectedClinicId} />
-              ) : (
-                <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
-                  <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
-                  <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    Select a clinic to manage it
-                  </p>
+                  {/* Clinic Details Panel */}
+                  {selectedClinic.isActive ? (
+                    <ClinicDetailsPanel clinicId={selectedClinic._id} />
+                  ) : (
+                    <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-danger)/0.3)] rounded-2xl">
+                      <LuLock className="text-4xl text-[hsl(var(--color-danger))] mb-3" />
+                      <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))]">
+                        Clinic is Inactive
+                      </h3>
+                      <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mt-1 mb-4 max-w-sm">
+                        This clinic was deactivated due to your subscription limit. Upgrade your plan or deactivate another clinic to reactivate it.
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              );
+            })()}
           </div>
         )}
       </div>

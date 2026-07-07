@@ -203,54 +203,60 @@ export default function KnowledgeBasePage() {
         title="Knowledge Base"
         subtitle="Manage the documents your Clinical Assistant learns from"
         backPath="/doctor"
-        rightElement={
-          <div className="flex gap-2 w-full md:w-auto no-print">
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading}
-              className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
-            >
-              {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
-              Upload File(s)
-            </button>
-            <input
-              type="file"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={(e) => {
-                handleFileUpload(e);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-              }}
-              accept=".pdf,.txt,.docx"
-              multiple
-            />
-
-            <button
-              onClick={() => document.getElementById("folderUploadInput")?.click()}
-              disabled={uploading}
-              className="bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none"
-            >
-              {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
-              Upload Folder
-            </button>
-            <input
-              id="folderUploadInput"
-              type="file"
-              className="hidden"
-              onChange={(e) => {
-                handleFileUpload(e);
-                const el = document.getElementById("folderUploadInput") as HTMLInputElement;
-                if (el) el.value = "";
-              }}
-              accept=".pdf,.txt,.docx"
-              multiple
-              {...({ webkitdirectory: "", directory: "" } as any)}
-            />
-          </div>
-        }
       />
       <div className="flex-1 overflow-auto min-w-0">
         <div className="p-4 md:p-8 max-w-5xl mx-auto w-full space-y-6">
+
+          {/* Action Bar */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-[hsl(var(--color-bg-surface))] p-4 sm:p-5 rounded-2xl border border-[hsl(var(--color-border))]">
+            <div>
+              <h2 className="text-[16px] font-black text-[hsl(var(--color-text))]">Document Uploads</h2>
+              <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">Upload medical guidelines, PDFs, and folders to enrich your AI Assistant.</p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="bg-[hsl(var(--color-primary)/0.1)] hover:bg-[hsl(var(--color-primary))] hover:text-white text-[hsl(var(--color-primary))] px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none w-full sm:w-auto"
+              >
+                {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
+                Upload File(s)
+              </button>
+              <input
+                type="file"
+                className="hidden"
+                ref={fileInputRef}
+                onChange={(e) => {
+                  handleFileUpload(e);
+                  if (fileInputRef.current) fileInputRef.current.value = "";
+                }}
+                accept=".pdf,.txt,.docx"
+                multiple
+              />
+
+              <button
+                onClick={() => document.getElementById("folderUploadInput")?.click()}
+                disabled={uploading}
+                className="bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white px-4 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 justify-center cursor-pointer disabled:opacity-60 disabled:pointer-events-none w-full sm:w-auto shadow-sm"
+              >
+                {uploading ? <LuLoader className="animate-spin text-base" /> : <LuUpload className="text-base" />}
+                Upload Folder
+              </button>
+              <input
+                id="folderUploadInput"
+                type="file"
+                className="hidden"
+                onChange={(e) => {
+                  handleFileUpload(e);
+                  const el = document.getElementById("folderUploadInput") as HTMLInputElement;
+                  if (el) el.value = "";
+                }}
+                accept=".pdf,.txt,.docx"
+                multiple
+                {...({ webkitdirectory: "", directory: "" } as any)}
+              />
+            </div>
+          </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-1 space-y-6">

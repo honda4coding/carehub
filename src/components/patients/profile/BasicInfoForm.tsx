@@ -42,12 +42,11 @@ function EditField({ name, label, icon, placeholder, type = "text", errors, touc
       </label>
       <Field
         id={name} name={name} type={type} placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-        style={{
-          backgroundColor: hasError ? "#fff5f5" : "white",
-          border: hasError ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
-          color: "hsl(var(--color-text))",
-        }}
+        className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+          hasError
+            ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+            : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+        }`}
       />
       <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>
@@ -128,30 +127,30 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                 </label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
                   {profile?.email || "â€”"}
+                  {profile?.email || "—"}
                 </div>
               </div>
 
               {/* Phone */}
               <EditField name="phoneNumber" label="Phone" icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
 
-              {/* Age + Gender â€” 2 cols */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Age + Gender — 2 cols */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <EditField name="age" label="Age" icon={<LuCalendar />} placeholder="25" type="number" errors={errors} touched={touched} />
 
                 {/* Gender dropdown */}
                 <div className="space-y-1.5">
                   <label htmlFor="gender" className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                    <span className="w-4 h-4 text-base">âš§</span> Gender
+                    <span className="w-4 h-4 text-base">⚲</span> Gender
                   </label>
                   <div className="relative">
                     <Field
                       as="select" id="gender" name="gender"
-                      className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer"
-                      style={{
-                        backgroundColor: errors.gender && touched.gender ? "#fff5f5" : "white",
-                        border: errors.gender && touched.gender ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
-                        color: "hsl(var(--color-text))",
-                      }}
+                      className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer text-[hsl(var(--color-text))] ${
+                        errors.gender && touched.gender
+                          ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                          : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                      }`}
                     >
                       <option value="">Select gender</option>
                       <option value="male">Male</option>
@@ -172,7 +171,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                   <span className="w-4 h-4"><LuShield /></span> Medical Record Privacy
                 </label>
                 
-                <div className="flex bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl p-1.5 gap-1">
+                <div className="flex flex-col sm:flex-row bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-xl p-1.5 gap-1">
                   {[
                     { val: "all", label: "Public" },
                     { val: "own_only", label: "Restricted" },
