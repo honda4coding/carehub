@@ -110,14 +110,11 @@ function EditField({
         name={name}
         type={type}
         placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-        style={{
-          backgroundColor: hasError ? "#fff5f5" : "white",
-          border: hasError
-            ? "1.5px solid #fc8181"
-            : "1px solid hsl(var(--color-border))",
-          color: "hsl(var(--color-text))",
-        }}
+        className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+          hasError
+            ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+            : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+        }`}
       />
       <ErrorMessage
         name={name}
@@ -245,18 +242,11 @@ export default function ProfessionalInfoForm({
                       as="select"
                       id="specialization"
                       name="specialization"
-                      className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer"
-                      style={{
-                        backgroundColor:
-                          errors.specialization && touched.specialization
-                            ? "#fff5f5"
-                            : "white",
-                        border:
-                          errors.specialization && touched.specialization
-                            ? "1.5px solid #fc8181"
-                            : "1px solid hsl(var(--color-border))",
-                        color: "hsl(var(--color-text))",
-                      }}
+                      className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer text-[hsl(var(--color-text))] ${
+                        errors.specialization && touched.specialization
+                          ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                          : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                      }`}
                     >
                       <option value="">Select specialization</option>
                       {SPECIALTIES.map((s) => (
@@ -304,16 +294,11 @@ export default function ProfessionalInfoForm({
                   name="bio"
                   rows={4}
                   placeholder="Board-certified internist with 15 years of experience in primary care and chronic disease management."
-                  className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-                  style={{
-                    backgroundColor:
-                      errors.bio && touched.bio ? "#fff5f5" : "white",
-                    border:
-                      errors.bio && touched.bio
-                        ? "1.5px solid #fc8181"
-                        : "1px solid hsl(var(--color-border))",
-                    color: "hsl(var(--color-text))",
-                  }}
+                  className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+                    errors.bio && touched.bio
+                      ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                      : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                  }`}
                 />
                 <ErrorMessage
                   name="bio"

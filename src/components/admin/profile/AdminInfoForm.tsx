@@ -36,12 +36,11 @@ function EditField({ name, label, icon, placeholder, errors, touched }: {
       </label>
       <Field
         id={name} name={name} placeholder={placeholder}
-        className="w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)]"
-        style={{
-          backgroundColor: hasError ? "#fff5f5" : "white",
-          border: hasError ? "1.5px solid #fc8181" : "1px solid hsl(var(--color-border))",
-          color: "hsl(var(--color-text))",
-        }}
+        className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+          hasError
+            ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+            : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+        }`}
       />
       <ErrorMessage name={name} component="p" className="text-danger text-xs pl-1 font-medium" />
     </div>

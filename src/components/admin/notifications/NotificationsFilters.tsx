@@ -1,7 +1,7 @@
 import React from "react";
 import { LuSearch, LuCheckCheck } from "react-icons/lu";
+import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-
 export const TABS = [
   { label: "All", value: "all" },
   { label: "Unread", value: "unread" },
@@ -21,6 +21,7 @@ interface NotificationsFiltersProps {
   handleMarkAllAsRead: () => void;
 }
 
+
 export default function NotificationsFilters({
   filter,
   setFilter,
@@ -32,64 +33,67 @@ export default function NotificationsFilters({
   handleMarkAllAsRead,
 }: NotificationsFiltersProps) {
   return (
-    <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
-      <div className="flex items-center gap-3 flex-wrap flex-1 min-w-[200px]">
-        <div className="relative flex items-center w-full max-w-[300px]">
-          <LuSearch className="absolute left-3 text-[14px] text-[hsl(var(--color-text-muted))]" />
-          <input
-            type="text"
-            placeholder="Search notifications..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="pl-8 pr-3 py-1.5 text-[13px] font-medium rounded-[10px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] w-full outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:bg-[hsl(var(--color-bg-surface))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-text"
-          />
-        </div>
+    <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
+      <div className="w-full flex-1 order-1">
+        <Input
+          size="sm"
+          type="text"
+          placeholder="Search notifications..."
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          leftIcon={<LuSearch />}
+          className="w-full !bg-[hsl(var(--color-bg-soft))] focus:!bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
+        />
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto shrink-0">
-        <div className="flex items-center gap-1 flex-wrap bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto">
-          {TABS.map((tab) => {
-            const isActive = activeTab === tab.value;
-            const count =
-              tab.value === "all"
-                ? totalCount
-                : tab.value === "read"
-                ? readCount
-                : unreadCount;
-            return (
-              <button
-                key={tab.value}
-                onClick={() => setActiveTab(tab.value)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-[12px] font-bold transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
-                    : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
-                }`}
-              >
-                {tab.label}
-                <span
-                  className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
+      <div className="w-full lg:w-auto shrink-0 order-2">
+        <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto lg:justify-end">
+          <div className="grid grid-cols-3 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full lg:w-auto flex-1 lg:flex-none">
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.value;
+              const count =
+                tab.value === "all"
+                  ? totalCount
+                  : tab.value === "read"
+                  ? readCount
+                  : unreadCount;
+              return (
+                <button
+                  key={tab.value}
+                  onClick={() => setActiveTab(tab.value)}
+                  className={`flex items-center justify-center gap-1.5 px-1.5 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap ${
                     isActive
-                      ? "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
-                      : "bg-[hsl(var(--color-bg))] text-[hsl(var(--color-text-muted))]"
+                      ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
+                      : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
                   }`}
                 >
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+                  {tab.label}
+                  {count > 0 && (
+                    <span
+                      className={`text-[10px] font-black px-1 sm:px-1.5 py-0.5 rounded-md ${
+                        isActive
+                          ? "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
+                          : "bg-[hsl(var(--color-bg))] text-[hsl(var(--color-text-muted))]"
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
 
-        {unreadCount > 0 && (
-          <Button
-            onClick={handleMarkAllAsRead}
-            icon={LuCheckCheck}
-            className="!text-[12px] !font-bold !px-3 !py-1.5 !h-auto !rounded-[8px] shadow-sm flex-1 sm:flex-none cursor-pointer"
-          >
-            Mark All Read
-          </Button>
-        )}
+          {unreadCount > 0 && (
+            <Button
+              onClick={handleMarkAllAsRead}
+              icon={LuCheckCheck}
+              className="!text-[12px] !font-bold !px-3 !py-1.5 !h-auto !rounded-[8px] shadow-sm flex-1 sm:flex-none cursor-pointer"
+            >
+              Mark All Read
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );

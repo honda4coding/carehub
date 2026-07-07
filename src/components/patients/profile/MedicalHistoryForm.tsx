@@ -118,7 +118,7 @@ function SurgeryCard({ index, surgery, onRemove }: {
               style={{ border: "1px solid hsl(var(--color-border))", color: "hsl(var(--color-text))" }} />
             <ErrorMessage name={`surgeries.${index}.operationName`} component="p" className="text-danger text-[11px] pl-1" />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Surgeon Name *</label>
               <Field name={`surgeries.${index}.surgeonName`} placeholder="Dr. Ahmed Ali"

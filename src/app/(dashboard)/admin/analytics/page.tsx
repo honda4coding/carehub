@@ -78,18 +78,21 @@ export default function AnalyticsPage() {
         title="Detailed Analytics"
         subtitle="Deep dive into platform metrics and statistics"
         backPath="/admin"
-        rightElement={
-          <DateRangeFilter
-            startDate={startDate}
-            endDate={endDate}
-            onStartDateChange={setStartDate}
-            onEndDateChange={setEndDate}
-            onReset={() => { setStartDate(""); setEndDate(""); }}
-          />
-        }
       />
       <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
+          <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
+            <h3 className="text-lg font-semibold tracking-tight text-[hsl(var(--color-text))]">
+              Financial & System Overview
+            </h3>
+            <DateRangeFilter
+              startDate={startDate}
+              endDate={endDate}
+              onStartDateChange={setStartDate}
+              onEndDateChange={setEndDate}
+              onReset={() => { setStartDate(""); setEndDate(""); }}
+            />
+          </div>
 
       {loading ? (
         <div className="flex items-center justify-center py-20">

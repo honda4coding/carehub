@@ -66,19 +66,21 @@ export default function PendingApprovalsTable({
         <h3 className="text-lg font-semibold tracking-tight text-[hsl(var(--color-text))] whitespace-nowrap shrink-0">
           Pending Doctor Approvals
         </h3>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
-          <Input
-            size="sm"
-            type="text"
-            placeholder="Search doctors..."
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            leftIcon={<LuSearch />}
-            className="w-full sm:w-[220px] bg-[hsl(var(--color-bg-soft))] focus:bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
-          />
+        <div className="flex items-center gap-4 w-full sm:flex-1 sm:justify-end">
+          <div className="w-full sm:max-w-[400px] xl:max-w-[500px]">
+            <Input
+              size="sm"
+              type="text"
+              placeholder="Search doctors..."
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              leftIcon={<LuSearch />}
+              className="w-full !bg-[hsl(var(--color-bg-soft))] focus:!bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
+            />
+          </div>
           <Link
             href="/admin/approvals"
-            className="text-sm font-medium font-medium text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] whitespace-nowrap transition-colors"
+            className="text-sm font-medium text-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary-strong))] whitespace-nowrap transition-colors"
           >
             View all ›
           </Link>

@@ -136,78 +136,141 @@ export default function AdminPayoutsPage() {
                 <p className="text-slate-500 text-[16px] font-bold">No pending withdrawal requests.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50">
-                    <tr className="text-slate-500 text-[12px] uppercase tracking-wider">
-                      <th className="p-4 font-bold">Date</th>
-                      <th className="p-4 font-bold">User</th>
-                      <th className="p-4 font-bold">Amount</th>
-                      <th className="p-4 font-bold">Destination</th>
-                      <th className="p-4 font-bold">Status</th>
-                      <th className="p-4 font-bold text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {payouts.map(p => (
-                      <tr key={p._id} className="text-[14px] text-slate-700">
-                        <td className="p-4 whitespace-nowrap font-medium text-slate-500">
-                          {new Date(p.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-4">
-                          <div className="font-bold text-slate-800">{p.userId?.fullName || 'Unknown User'}</div>
-                          <div className="text-[12px] text-slate-500 uppercase tracking-wider">{p.userId?.role || 'User'}</div>
-                        </td>
-                        <td className="p-4 font-black text-[16px] text-emerald-600">
-                          {p.amount} <span className="text-[12px] text-emerald-600/70">EGP</span>
-                        </td>
-                        <td className="p-4">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[12px] font-bold mb-1 uppercase">
-                            {p.paymentMethod.replace(/_/g, ' ')}
-                          </div>
-                          <div className="text-[13px] font-mono text-slate-600">{p.paymentDetails}</div>
-                        </td>
-                        <td className="p-4">
+              <>
+                <div className="hidden xl:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead className="bg-slate-50">
+                      <tr className="text-slate-500 text-[12px] uppercase tracking-wider">
+                        <th className="p-4 font-bold">Date</th>
+                        <th className="p-4 font-bold">User</th>
+                        <th className="p-4 font-bold">Amount</th>
+                        <th className="p-4 font-bold">Destination</th>
+                        <th className="p-4 font-bold">Status</th>
+                        <th className="p-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {payouts.map(p => (
+                        <tr key={p._id} className="text-[14px] text-slate-700">
+                          <td className="p-4 whitespace-nowrap font-medium text-slate-500">
+                            {new Date(p.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="p-4">
+                            <div className="font-bold text-slate-800">{p.userId?.fullName || 'Unknown User'}</div>
+                            <div className="text-[12px] text-slate-500 uppercase tracking-wider">{p.userId?.role || 'User'}</div>
+                          </td>
+                          <td className="p-4 font-black text-[16px] text-emerald-600">
+                            {p.amount} <span className="text-[12px] text-emerald-600/70">EGP</span>
+                          </td>
+                          <td className="p-4">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-[12px] font-bold mb-1 uppercase">
+                              {p.paymentMethod.replace(/_/g, ' ')}
+                            </div>
+                            <div className="text-[13px] font-mono text-slate-600">{p.paymentDetails}</div>
+                          </td>
+                          <td className="p-4">
+                            {p.status === "pending" && <span className="flex items-center gap-1 text-amber-600 font-bold text-[13px]"><LuClock/> Pending</span>}
+                            {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCircleCheck/> Paid</span>}
+                            {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuCircleX/> Rejected</span>}
+                          </td>
+                          <td className="p-4 text-right">
+                            {p.status === 'pending' && (
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => openModal('withdrawals', 'paid', p._id)}
+                                  disabled={processingId === p._id}
+                                  className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[13px] font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50"
+                                >
+                                  Mark Paid
+                                </button>
+                                <button
+                                  onClick={() => openModal('withdrawals', 'rejected', p._id)}
+                                  disabled={processingId === p._id}
+                                  className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-[13px] font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            )}
+                            {p.status !== 'pending' && (
+                              <span className="text-[13px] text-slate-400 font-medium mr-2">Processed</span>
+                            )}
+                            <div className="mt-2 flex justify-end">
+                                <button
+                                  onClick={() => openModal('suspend', 'suspend', p._id, p.userId?._id)}
+                                  className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition-colors"
+                                >
+                                  Suspend Wallet
+                                </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="grid grid-cols-1 gap-4 xl:hidden p-4 bg-slate-50">
+                  {payouts.map(p => (
+                    <div key={p._id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-4">
+                      <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+                        <div>
+                          <div className="font-bold text-slate-800 text-[15px]">{p.userId?.fullName || 'Unknown User'}</div>
+                          <div className="text-[11px] text-slate-500 uppercase tracking-wider font-bold bg-slate-100 px-2 py-0.5 rounded-md inline-block mt-1">{p.userId?.role || 'User'}</div>
+                        </div>
+                        <div className="text-right">
+                          <div className="font-black text-[18px] text-emerald-600">{p.amount} <span className="text-[12px] text-emerald-600/70">EGP</span></div>
+                          <div className="text-[11px] font-medium text-slate-400 mt-0.5">{new Date(p.createdAt).toLocaleDateString()}</div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 rounded-lg text-[11px] font-bold mb-1.5 uppercase">
+                          {p.paymentMethod.replace(/_/g, ' ')}
+                        </div>
+                        <div className="text-[13px] font-mono text-slate-800 font-bold break-all">{p.paymentDetails}</div>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-1">
+                        <div>
                           {p.status === "pending" && <span className="flex items-center gap-1 text-amber-600 font-bold text-[13px]"><LuClock/> Pending</span>}
                           {p.status === "paid" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCircleCheck/> Paid</span>}
                           {p.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuCircleX/> Rejected</span>}
-                        </td>
-                        <td className="p-4 text-right">
-                          {p.status === 'pending' && (
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => openModal('withdrawals', 'paid', p._id)}
-                                disabled={processingId === p._id}
-                                className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-xl text-[13px] font-bold hover:bg-emerald-100 transition-colors disabled:opacity-50"
-                              >
-                                Mark Paid
-                              </button>
-                              <button
-                                onClick={() => openModal('withdrawals', 'rejected', p._id)}
-                                disabled={processingId === p._id}
-                                className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-[13px] font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                          {p.status !== 'pending' && (
-                            <span className="text-[13px] text-slate-400 font-medium mr-2">Processed</span>
-                          )}
-                          <div className="mt-2 flex justify-end">
-                              <button
-                                onClick={() => openModal('suspend', 'suspend', p._id, p.userId?._id)}
-                                className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition-colors"
-                              >
-                                Suspend Wallet
-                              </button>
+                        </div>
+                        {p.status === 'pending' ? (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => openModal('withdrawals', 'paid', p._id)}
+                              disabled={processingId === p._id}
+                              className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-[12px] font-bold hover:bg-emerald-100 disabled:opacity-50"
+                            >
+                              Mark Paid
+                            </button>
+                            <button
+                              onClick={() => openModal('withdrawals', 'rejected', p._id)}
+                              disabled={processingId === p._id}
+                              className="px-3 py-1.5 bg-rose-50 text-rose-700 rounded-lg text-[12px] font-bold hover:bg-rose-100 disabled:opacity-50"
+                            >
+                              Reject
+                            </button>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        ) : (
+                          <span className="text-[12px] text-slate-400 font-medium">Processed</span>
+                        )}
+                      </div>
+                      <div className="flex justify-end mt-1 pt-3 border-t border-slate-100">
+                        <button
+                          onClick={() => openModal('suspend', 'suspend', p._id, p.userId?._id)}
+                          className="px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[11px] font-bold hover:bg-rose-100 transition-colors"
+                        >
+                          Suspend Wallet
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         ) : (
@@ -219,83 +282,151 @@ export default function AdminPayoutsPage() {
                 <p className="text-slate-500 text-[16px] font-bold">No pending profile change requests.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50">
-                    <tr className="text-slate-500 text-[12px] uppercase tracking-wider">
-                      <th className="p-4 font-bold">Date</th>
-                      <th className="p-4 font-bold">User</th>
-                      <th className="p-4 font-bold">New Destination</th>
-                      <th className="p-4 font-bold">Verification ID</th>
-                      <th className="p-4 font-bold">Status</th>
-                      <th className="p-4 font-bold text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {changeRequests.map(c => (
-                      <tr key={c._id} className="text-[14px] text-slate-700">
-                        <td className="p-4 whitespace-nowrap font-medium text-slate-500">
+              <>
+                <div className="hidden xl:block overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead className="bg-slate-50">
+                      <tr className="text-slate-500 text-[12px] uppercase tracking-wider">
+                        <th className="p-4 font-bold">Date</th>
+                        <th className="p-4 font-bold">User</th>
+                        <th className="p-4 font-bold">New Destination</th>
+                        <th className="p-4 font-bold">Verification ID</th>
+                        <th className="p-4 font-bold">Status</th>
+                        <th className="p-4 font-bold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {changeRequests.map(c => (
+                        <tr key={c._id} className="text-[14px] text-slate-700">
+                          <td className="p-4 whitespace-nowrap font-medium text-slate-500">
+                            {new Date(c.createdAt).toLocaleDateString()}
+                          </td>
+                          <td className="p-4">
+                            <div className="font-bold text-slate-800">{c.userId?.fullName || 'Unknown User'}</div>
+                            <div className="text-[12px] text-slate-500 uppercase tracking-wider">{c.userId?.role || 'User'}</div>
+                          </td>
+                          <td className="p-4">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[12px] font-bold mb-1 uppercase">
+                              {c.newPaymentMethod.replace(/_/g, ' ')}
+                            </div>
+                            <div className="text-[13px] font-mono text-slate-800 font-bold">{c.newAccountDetails}</div>
+                          </td>
+                          <td className="p-4">
+                            <button 
+                              onClick={() => setSelectedImage(c.idPhotoUrl)}
+                              className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-[12px] font-bold hover:bg-slate-200 transition-colors"
+                            >
+                              <LuImage /> View ID Photo
+                            </button>
+                          </td>
+                          <td className="p-4">
+                            {c.status === "pending" && <span className="flex items-center gap-1 text-amber-600 font-bold text-[13px]"><LuClock/> Pending</span>}
+                            {c.status === "approved" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCircleCheck/> Approved</span>}
+                            {c.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuCircleX/> Rejected</span>}
+                          </td>
+                          <td className="p-4 text-right">
+                            {c.status === 'pending' && (
+                              <div className="flex justify-end gap-2">
+                                <button
+                                  onClick={() => openModal('changes', 'approved', c._id)}
+                                  disabled={processingId === c._id}
+                                  className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[13px] font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-sm"
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => openModal('changes', 'rejected', c._id)}
+                                  disabled={processingId === c._id}
+                                  className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-[13px] font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
+                                >
+                                  Reject
+                                </button>
+                              </div>
+                            )}
+                            {c.status !== 'pending' && (
+                              <span className="text-[13px] text-slate-400 font-medium mr-2">Processed</span>
+                            )}
+                            <div className="mt-2 flex justify-end">
+                                <button
+                                  onClick={() => openModal('suspend', 'suspend', c._id, c.userId?._id)}
+                                  className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition-colors"
+                                >
+                                  Suspend Wallet
+                                </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards */}
+                <div className="grid grid-cols-1 gap-4 xl:hidden p-4 bg-slate-50">
+                  {changeRequests.map(c => (
+                    <div key={c._id} className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-4">
+                      <div className="flex justify-between items-start border-b border-slate-100 pb-3">
+                        <div>
+                          <div className="font-bold text-slate-800 text-[15px]">{c.userId?.fullName || 'Unknown User'}</div>
+                          <div className="text-[11px] text-slate-500 uppercase tracking-wider font-bold bg-slate-100 px-2 py-0.5 rounded-md inline-block mt-1">{c.userId?.role || 'User'}</div>
+                        </div>
+                        <div className="text-[11px] font-medium text-slate-400 mt-0.5">
                           {new Date(c.createdAt).toLocaleDateString()}
-                        </td>
-                        <td className="p-4">
-                          <div className="font-bold text-slate-800">{c.userId?.fullName || 'Unknown User'}</div>
-                          <div className="text-[12px] text-slate-500 uppercase tracking-wider">{c.userId?.role || 'User'}</div>
-                        </td>
-                        <td className="p-4">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[12px] font-bold mb-1 uppercase">
-                            {c.newPaymentMethod.replace(/_/g, ' ')}
-                          </div>
-                          <div className="text-[13px] font-mono text-slate-800 font-bold">{c.newAccountDetails}</div>
-                        </td>
-                        <td className="p-4">
-                          <button 
-                            onClick={() => setSelectedImage(c.idPhotoUrl)}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 text-slate-600 rounded-lg text-[12px] font-bold hover:bg-slate-200 transition-colors"
-                          >
-                            <LuImage /> View ID Photo
-                          </button>
-                        </td>
-                        <td className="p-4">
+                        </div>
+                      </div>
+                      
+                      <div className="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-200/50 text-slate-700 rounded-lg text-[11px] font-bold mb-1.5 uppercase">
+                          {c.newPaymentMethod.replace(/_/g, ' ')}
+                        </div>
+                        <div className="text-[13px] font-mono text-slate-800 font-bold break-all mb-3">{c.newAccountDetails}</div>
+                        <button 
+                          onClick={() => setSelectedImage(c.idPhotoUrl)}
+                          className="flex w-full items-center justify-center gap-2 px-3 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-[12px] font-bold hover:bg-slate-50 transition-colors"
+                        >
+                          <LuImage /> View ID Photo
+                        </button>
+                      </div>
+
+                      <div className="flex justify-between items-center pt-1">
+                        <div>
                           {c.status === "pending" && <span className="flex items-center gap-1 text-amber-600 font-bold text-[13px]"><LuClock/> Pending</span>}
                           {c.status === "approved" && <span className="flex items-center gap-1 text-emerald-600 font-bold text-[13px]"><LuCircleCheck/> Approved</span>}
                           {c.status === "rejected" && <span className="flex items-center gap-1 text-rose-600 font-bold text-[13px]"><LuCircleX/> Rejected</span>}
-                        </td>
-                        <td className="p-4 text-right">
-                          {c.status === 'pending' && (
-                            <div className="flex justify-end gap-2">
-                              <button
-                                onClick={() => openModal('changes', 'approved', c._id)}
-                                disabled={processingId === c._id}
-                                className="px-4 py-2 bg-emerald-600 text-white rounded-xl text-[13px] font-bold hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-sm"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => openModal('changes', 'rejected', c._id)}
-                                disabled={processingId === c._id}
-                                className="px-4 py-2 bg-rose-50 text-rose-700 rounded-xl text-[13px] font-bold hover:bg-rose-100 transition-colors disabled:opacity-50"
-                              >
-                                Reject
-                              </button>
-                            </div>
-                          )}
-                          {c.status !== 'pending' && (
-                            <span className="text-[13px] text-slate-400 font-medium mr-2">Processed</span>
-                          )}
-                          <div className="mt-2 flex justify-end">
-                              <button
-                                onClick={() => openModal('suspend', 'suspend', c._id, c.userId?._id)}
-                                className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[11px] font-bold hover:bg-slate-200 transition-colors"
-                              >
-                                Suspend Wallet
-                              </button>
+                        </div>
+                        {c.status === 'pending' ? (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => openModal('changes', 'approved', c._id)}
+                              disabled={processingId === c._id}
+                              className="px-4 py-1.5 bg-emerald-600 text-white rounded-lg text-[12px] font-bold hover:bg-emerald-700 disabled:opacity-50"
+                            >
+                              Approve
+                            </button>
+                            <button
+                              onClick={() => openModal('changes', 'rejected', c._id)}
+                              disabled={processingId === c._id}
+                              className="px-3 py-1.5 bg-rose-50 text-rose-700 rounded-lg text-[12px] font-bold hover:bg-rose-100 disabled:opacity-50"
+                            >
+                              Reject
+                            </button>
                           </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        ) : (
+                          <span className="text-[12px] text-slate-400 font-medium">Processed</span>
+                        )}
+                      </div>
+                      <div className="flex justify-end mt-1 pt-3 border-t border-slate-100">
+                        <button
+                          onClick={() => openModal('suspend', 'suspend', c._id, c.userId?._id)}
+                          className="px-3 py-1 bg-rose-50 text-rose-600 rounded-lg text-[11px] font-bold hover:bg-rose-100 transition-colors"
+                        >
+                          Suspend Wallet
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         )}
