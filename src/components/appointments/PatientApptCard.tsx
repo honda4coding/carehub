@@ -35,7 +35,6 @@ export default function PatientApptCard({
   const clinicPhone   = clinic?.phone || clinic?.whatsapp;
 
   return (
-  return (
     <div className={`group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden mb-4 ${
       status === "cancelled" ? "opacity-60 saturate-50 hover:opacity-100" : ""
     }`}>

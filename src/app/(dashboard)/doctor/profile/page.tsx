@@ -96,7 +96,7 @@ export default function DoctorProfilePage() {
             <aside className="flex flex-row flex-wrap justify-center gap-2 md:gap-4 w-full pb-1">
               {tabs.map((tab) => {
                 const isActive = activeTab === tab.id;
-                const isDanger = tab.id === "danger";
+                const isDanger = (tab.id as string) === "danger";
                 return (
                   <button
                     key={tab.id}

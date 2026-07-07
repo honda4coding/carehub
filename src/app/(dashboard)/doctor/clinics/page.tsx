@@ -446,7 +446,7 @@ function ClinicsContent() {
 
                   {/* Clinic Details Panel */}
                   {selectedClinic.isActive ? (
-                    <ClinicDetailsPanel clinicId={selectedClinicId} />
+                    <ClinicDetailsPanel clinicId={selectedClinic._id} />
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-danger)/0.3)] rounded-2xl">
                       <LuLock className="text-4xl text-[hsl(var(--color-danger))] mb-3" />
