@@ -23,7 +23,7 @@ export default function DateRangeFilter({
 }: DateRangeFilterProps) {
   return (
     <div className={`flex flex-wrap items-center gap-2 w-auto ${className || ''}`}>
-      <div className="flex items-center gap-2 flex-1 sm:flex-none min-w-[240px]">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 sm:flex-none sm:min-w-[240px]">
         <input
           type="date"
           value={startDate}
@@ -32,7 +32,7 @@ export default function DateRangeFilter({
           onClick={(e) => 'showPicker' in e.currentTarget && e.currentTarget.showPicker()}
           className="text-sm font-semibold text-[hsl(var(--color-text))] !bg-[hsl(var(--color-bg-soft))] focus:!bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-md px-2 py-1.5 outline-none focus:border-primary w-full min-w-0 cursor-pointer hover:border-[hsl(var(--color-primary)/0.5)] transition-colors"
         />
-        <span className="text-base text-[hsl(var(--color-text-muted))]">to</span>
+        <span className="hidden sm:inline text-base text-[hsl(var(--color-text-muted))]">to</span>
         <input
           type="date"
           value={endDate}
