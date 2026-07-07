@@ -189,6 +189,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                                 onStartDateChange={setFilterStartDate}
                                 onEndDateChange={setFilterEndDate}
                                 onReset={filterStartDate || filterEndDate ? () => { setFilterStartDate(""); setFilterEndDate(""); } : undefined}
+                                stacked={true}
                             />
                         </div>
                     )}
