@@ -132,9 +132,9 @@ const doctorNav: NavSection[] = [
     title: "Management",
     items: [
       {
-        label: "Appointments",
-        href: "/doctor/appointments",
-        icon: <LuCalendarDays />,
+        label: "Clinics",
+        href: "/doctor/clinics",
+        icon: <LuBuilding2 />,
         subItems: [
           {
             label: "Appointments",
@@ -142,8 +142,8 @@ const doctorNav: NavSection[] = [
             icon: <LuCalendarDays className="text-sm" />,
           },
           {
-            label: "My Schedule",
-            href: "/doctor/appointments/schedule",
+            label: "Clinic Schedule",
+            href: "/doctor/clinics",
             icon: <LuSettings2 className="text-sm" />,
           },
         ],
@@ -152,11 +152,6 @@ const doctorNav: NavSection[] = [
         label: "Patient Directory",
         href: "/doctor/patients",
         icon: <LuUsers />,
-      },
-      {
-        label: "Clinics",
-        href: "/doctor/clinics",
-        icon: <LuBuilding2 />,
       },
       {
         label: "Manage Assistant",

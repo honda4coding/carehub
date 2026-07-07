@@ -232,58 +232,40 @@ export default function DoctorAppointmentsPage() {
         {/* ══════════════════════════════════════════════════════
             MAIN AREA
         ══════════════════════════════════════════════════════ */}
-        <div className="flex-1 min-w-0 flex flex-col gap-6 lg:flex-row lg:items-start lg:gap-8">
-          {/* Clinics sidebar (Hidden for Assistants) */}
-          {role !== 'assistant' && (
-            <aside className="w-full lg:w-64 shrink-0">
-              <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-3 px-1">
-                Select Clinic
-              </p>
-              <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-2 lg:pb-0">
-                <button
-                  onClick={() => setSelectedClinicId(null)}
-                  className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
-                    selectedClinicId === null
-                      ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)]"
-                      : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary)/0.5)] hover:shadow-sm"
-                  }`}
-                >
-                  <LuUsers className="text-[16px] shrink-0" />
-                  <span className="truncate">All Clinics</span>
-                </button>
-
-                {clinicsLoading && (
-                  <div className="px-4 py-3 text-[12px] text-[hsl(var(--color-text-muted))]">Loading clinics...</div>
-                )}
-                {clinics.map((c) => (
-                  <button
-                    key={c._id}
-                    onClick={() => setSelectedClinicId(c._id)}
-                    className={`flex items-center gap-3 px-4 py-3.5 rounded-[14px] text-[13px] font-bold border transition-all shrink-0 cursor-pointer max-w-[200px] lg:max-w-none ${
-                      selectedClinicId === c._id
-                        ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)]"
-                        : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary)/0.5)] hover:shadow-sm"
-                    }`}
-                  >
-                    <LuBuilding2 className="text-[16px] shrink-0" />
-                    <span className="truncate">{c.name}</span>
-                  </button>
-                ))}
-              </div>
-            </aside>
-          )}
-
-          {/* Right Content */}
-          <div className="flex-1 min-w-0 flex flex-col gap-6">
-            {/* Tab bar */}
-            <div className="mb-6 w-full flex justify-center">
-              <div className="flex flex-wrap items-center justify-center gap-1.5 bg-[hsl(var(--color-bg-surface))] p-1.5 rounded-[16px] border border-[hsl(var(--color-border))] shadow-sm w-full md:w-auto">
-                <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
-                <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-                <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-                <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
-              </div>
+        <div className="flex-1 min-w-0 flex flex-col gap-6">
+          
+          {/* Header Controls: Tabs & Clinics Filter */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            
+            {/* Tab bar (Segmented Control Style) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[16px] w-full md:w-auto">
+              <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
+              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
             </div>
+
+            {/* Clinics Dropdown */}
+            {role !== 'assistant' && (
+              <div className="relative shrink-0 w-full md:w-auto">
+                <select
+                  value={selectedClinicId || ""}
+                  onChange={(e) => setSelectedClinicId(e.target.value || null)}
+                  className="appearance-none bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-4 py-2.5 pr-10 rounded-[12px] text-[13px] font-bold outline-none cursor-pointer w-full md:w-[250px] shadow-sm transition-colors"
+                >
+                  <option value="">All Clinics</option>
+                  {clinics.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[hsl(var(--color-text-muted))]">
+                  <LuChevronDown className="text-base" />
+                </div>
+              </div>
+            )}
+          </div>
 
             {apptLoading ? (
               <div className="space-y-3">
@@ -370,7 +352,7 @@ export default function DoctorAppointmentsPage() {
                 />
               </div>
             )}
-          </div>
+
         </div>
         </div>
       </main>

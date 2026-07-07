@@ -77,7 +77,7 @@ export default function MedicalAlertsPanel({
                 <textarea 
                   value={editAllergies}
                   onChange={(e) => setEditAllergies(e.target.value)}
-                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors min-h-[80px]"
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors min-h-[80px]"
                   placeholder="e.g. Penicillin, Peanuts"
                 />
               </div>
@@ -87,7 +87,7 @@ export default function MedicalAlertsPanel({
                 <textarea 
                   value={editChronic}
                   onChange={(e) => setEditChronic(e.target.value)}
-                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-primary outline-none transition-colors min-h-[80px]"
+                  className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] rounded-xl px-4 py-2.5 text-sm font-medium focus:border-[hsl(var(--color-primary))] outline-none transition-colors min-h-[80px]"
                   placeholder="e.g. Diabetes Type 2, Hypertension"
                 />
               </div>
@@ -104,7 +104,7 @@ export default function MedicalAlertsPanel({
               <button 
                 onClick={saveAlerts}
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
               >
                 <LuSave /> {isSaving ? "Saving..." : "Update Alerts"}
               </button>

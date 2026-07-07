@@ -57,18 +57,18 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
 
     if (loading) {
         return (
-            <div className="bg-white rounded-3xl p-6 border border-soft flex flex-col gap-4 animate-pulse">
-                <div className="h-6 w-1/2 bg-gray-200 rounded"></div>
-                <div className="h-20 bg-gray-200 rounded-xl"></div>
-                <div className="h-20 bg-gray-200 rounded-xl"></div>
+            <div className="bg-[hsl(var(--color-bg-surface))] rounded-3xl p-6 border border-[hsl(var(--color-border))] flex flex-col gap-4 animate-pulse">
+                <div className="h-6 w-1/2 bg-[hsl(var(--color-border))] rounded"></div>
+                <div className="h-20 bg-[hsl(var(--color-border))] rounded-xl"></div>
+                <div className="h-20 bg-[hsl(var(--color-border))] rounded-xl"></div>
             </div>
         );
     }
 
     if (!compliance) {
         return (
-            <div className="bg-white rounded-3xl p-6 border border-soft text-center">
-                <p className="text-sm text-muted">Failed to load compliance data.</p>
+            <div className="bg-[hsl(var(--color-bg-surface))] rounded-3xl p-6 border border-[hsl(var(--color-border))] text-center">
+                <p className="text-sm text-[hsl(var(--color-text-muted))]">Failed to load compliance data.</p>
             </div>
         );
     }
@@ -102,14 +102,14 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
         .slice(0, 5) || [];
 
     return (
-        <div className="bg-white rounded-3xl p-6 border border-soft flex flex-col h-full sticky top-6">
-            <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 text-primary flex items-center justify-center">
+        <div className="bg-[hsl(var(--color-bg-surface))] rounded-3xl p-4 lg:p-6 border border-[hsl(var(--color-border))] flex flex-col h-full sticky top-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-6">
+                <div className="w-10 h-10 shrink-0 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] flex items-center justify-center">
                     <LuActivity size={20} />
                 </div>
-                <div>
-                    <h2 className="text-[17px] font-bold text-main">Medication Compliance</h2>
-                    <p className="text-[13px] text-muted">Patient Adherence Tracking</p>
+                <div className="min-w-0">
+                    <h2 className="text-base lg:text-[17px] font-bold text-[hsl(var(--color-text))] break-words">Medication Compliance</h2>
+                    <p className="text-[12px] lg:text-[13px] text-[hsl(var(--color-text-muted))] break-words">Patient Adherence Tracking</p>
                 </div>
             </div>
 
@@ -127,48 +127,48 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                 </div>
             )}
 
-            <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-soft p-4 rounded-2xl flex flex-col justify-center items-center text-center">
-                    <span className="text-[12px] font-medium text-muted mb-1">Adherence</span>
-                    <span className="text-2xl font-black text-main">{compliance.adherencePercentage}%</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <div className="bg-[hsl(var(--color-bg-soft))] p-4 rounded-2xl flex flex-col justify-center items-center text-center">
+                    <span className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mb-1">Adherence</span>
+                    <span className="text-2xl font-black text-[hsl(var(--color-text))]">{compliance.adherencePercentage}%</span>
                     <span className={`mt-2 text-[11px] font-bold px-2 py-0.5 rounded-full ${getStatusColor(compliance.complianceStatus)}`}>
                         {getStatusIndicator(compliance.complianceStatus)}
                     </span>
                 </div>
                 
-                <div className="bg-soft p-4 rounded-2xl flex flex-col justify-center items-center text-center">
-                    <span className="text-[12px] font-medium text-muted mb-1">Streak</span>
-                    <span className="text-2xl font-black text-main">{compliance.currentStreak} <span className="text-sm font-bold text-muted">Days</span></span>
+                <div className="bg-[hsl(var(--color-bg-soft))] p-4 rounded-2xl flex flex-col justify-center items-center text-center">
+                    <span className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mb-1">Streak</span>
+                    <span className="text-2xl font-black text-[hsl(var(--color-text))]">{compliance.currentStreak} <span className="text-sm font-bold text-[hsl(var(--color-text-muted))]">Days</span></span>
                     <div className="mt-2 text-[11px] font-bold text-orange-600 flex items-center gap-1">
                         <LuFlame size={12} /> Active
                     </div>
                 </div>
             </div>
 
-            <div className="bg-blue-50/50 rounded-2xl p-4 border border-blue-100/50 mb-6">
-                <h3 className="text-[13px] font-bold text-blue-900 mb-3 uppercase tracking-wider">Doses History</h3>
-                <div className="flex justify-between items-center text-sm font-medium">
-                    <div className="flex items-center gap-2 text-green-700">
-                        <FiCheckCircle size={16} /> Taken: {compliance.totalTaken}
+            <div className="bg-[hsl(var(--color-primary)/0.05)] rounded-2xl p-4 border border-[hsl(var(--color-primary)/0.15)] mb-6">
+                <h3 className="text-[13px] font-bold text-[hsl(var(--color-primary))] mb-3 uppercase tracking-wider">Doses History</h3>
+                <div className="flex flex-wrap justify-between items-center text-sm font-medium gap-2">
+                    <div className="flex items-center gap-2 text-[hsl(var(--color-success))]">
+                        <FiCheckCircle size={16} className="shrink-0" /> Taken: {compliance.totalTaken}
                     </div>
-                    <div className="flex items-center gap-2 text-danger">
-                        <FiAlertCircle size={16} /> Missed: {compliance.totalMissed}
+                    <div className="flex items-center gap-2 text-[hsl(var(--color-danger))]">
+                        <FiAlertCircle size={16} className="shrink-0" /> Missed: {compliance.totalMissed}
                     </div>
                 </div>
             </div>
 
             <div className="flex-1 flex flex-col min-h-0 mt-4">
                 <div className="flex flex-col gap-3 mb-3">
-                    <div className="flex gap-2 bg-soft p-1 rounded-xl">
+                    <div className="flex gap-2 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl">
                         <button 
                             onClick={() => setActiveTab("active")}
-                            className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "active" ? "bg-white text-primary shadow-sm" : "text-muted hover:text-main"}`}
+                            className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "active" ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary))] shadow-sm" : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"}`}
                         >
                             Active ({compliance.activeMedicationsCount})
                         </button>
                         <button 
                             onClick={() => setActiveTab("past")}
-                            className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "past" ? "bg-white text-primary shadow-sm" : "text-muted hover:text-main"}`}
+                            className={`flex-1 text-[12px] font-bold py-1.5 rounded-lg transition-colors cursor-pointer ${activeTab === "past" ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-primary))] shadow-sm" : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"}`}
                         >
                             Past ({compliance.pastMeds?.length || 0})
                         </button>
@@ -181,7 +181,7 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                                 placeholder="Search medicine name..." 
                                 value={filterText}
                                 onChange={(e) => setFilterText(e.target.value)}
-                                className="w-full text-[12px] px-3 py-2 rounded-xl border border-soft outline-none focus:border-primary"
+                                className="w-full text-[12px] px-3 py-2 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
                             />
                             <DateRangeFilter
                                 startDate={filterStartDate}
@@ -197,24 +197,24 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                 <div className="flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar">
                     {activeTab === "active" ? (
                         compliance.activeMeds.length === 0 ? (
-                            <p className="text-[13px] text-muted text-center mt-4">No active medications.</p>
+                            <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center mt-4">No active medications.</p>
                         ) : (
                             compliance.activeMeds.map((med, idx) => (
-                                <div key={idx} className="bg-white border border-soft rounded-xl p-3 flex flex-col">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="text-[14px] font-bold text-main">{med.medicineName}</h4>
-                                        <span className="text-[11px] font-bold text-primary bg-blue-50 px-2 py-0.5 rounded-md">
+                                <div key={idx} className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3 flex flex-col">
+                                    <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+                                        <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] min-w-0 flex-1 break-words">{med.medicineName}</h4>
+                                        <span className="text-[11px] font-bold text-[hsl(var(--color-primary))] bg-[hsl(var(--color-primary)/0.1)] px-2 py-0.5 rounded-md shrink-0">
                                             {med.progress}%
                                         </span>
                                     </div>
-                                    <div className="text-[12px] text-muted flex flex-wrap gap-x-3 gap-y-1">
+                                    <div className="text-[12px] text-[hsl(var(--color-text-muted))] flex flex-wrap gap-x-2 gap-y-1">
                                         <span>{med.dosage}</span>
                                         <span>•</span>
                                         <span>{med.frequency}</span>
                                     </div>
-                                    <div className="mt-3 h-1.5 w-full bg-soft rounded-full overflow-hidden">
+                                    <div className="mt-3 h-1.5 w-full bg-[hsl(var(--color-bg-soft))] rounded-full overflow-hidden shrink-0">
                                         <div 
-                                            className="h-full bg-primary rounded-full" 
+                                            className="h-full bg-[hsl(var(--color-primary))] rounded-full" 
                                             style={{ width: `${med.progress}%` }}
                                         />
                                     </div>
@@ -223,22 +223,22 @@ export default function MedicationCompliancePanel({ patientId }: { patientId: st
                         )
                     ) : (
                         pastMedsFiltered.length === 0 ? (
-                            <p className="text-[13px] text-muted text-center mt-4">No past medications found.</p>
+                            <p className="text-[13px] text-[hsl(var(--color-text-muted))] text-center mt-4">No past medications found.</p>
                         ) : (
                             pastMedsFiltered.map((med, idx) => (
-                                <div key={idx} className="bg-gray-50/50 border border-soft rounded-xl p-3 flex flex-col opacity-80">
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="text-[14px] font-bold text-main line-through">{med.medicineName}</h4>
-                                        <span className="text-[10px] font-bold text-muted bg-gray-100 px-2 py-0.5 rounded-md">
+                                <div key={idx} className="bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl p-3 flex flex-col opacity-80">
+                                    <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
+                                        <h4 className="text-[14px] font-bold text-[hsl(var(--color-text))] line-through min-w-0 flex-1 break-words">{med.medicineName}</h4>
+                                        <span className="text-[10px] font-bold text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] px-2 py-0.5 rounded-md shrink-0">
                                             Finished
                                         </span>
                                     </div>
-                                    <div className="text-[12px] text-muted flex flex-wrap gap-x-3 gap-y-1">
+                                    <div className="text-[12px] text-[hsl(var(--color-text-muted))] flex flex-wrap gap-x-2 gap-y-1">
                                         <span>{med.dosage}</span>
                                         <span>•</span>
                                         <span>{med.frequency}</span>
                                     </div>
-                                    <div className="text-[11px] text-muted mt-2 border-t border-soft pt-2 flex justify-between">
+                                    <div className="text-[11px] text-[hsl(var(--color-text-muted))] mt-2 border-t border-[hsl(var(--color-border))] pt-2 flex flex-col xl:flex-row xl:justify-between gap-1">
                                         <span>Start: {new Date(med.startDate).toLocaleDateString()}</span>
                                         {med.endDate && <span>End: {new Date(med.endDate).toLocaleDateString()}</span>}
                                     </div>

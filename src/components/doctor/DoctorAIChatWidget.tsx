@@ -118,7 +118,7 @@ export default function DoctorAIChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed inset-0 w-full h-[100dvh] rounded-none sm:bottom-6 sm:right-6 sm:inset-auto sm:w-[450px] sm:h-[550px] sm:max-h-[85vh] sm:rounded-2xl bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] flex flex-col z-50 overflow-hidden">
+        <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-32px)] sm:w-[400px] h-[500px] max-h-[calc(100dvh-100px)] rounded-2xl bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] flex flex-col z-50 overflow-hidden shadow-2xl">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-[hsl(var(--color-primary))] text-white">
             <div className="flex items-center gap-2 font-bold">
@@ -142,7 +142,7 @@ export default function DoctorAIChatWidget() {
                     ? "bg-[hsl(var(--color-primary))] text-white rounded-tr-none" 
                     : msg.role === "system"
                     ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] rounded-lg text-xs w-full text-center border border-[hsl(var(--color-primary)/0.2)]"
-                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none  prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0"
+                    : "bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border-soft))] text-[hsl(var(--color-text))] rounded-tl-none prose prose-sm max-w-none dark:prose-invert prose-p:leading-relaxed prose-pre:p-0 prose-p:text-[hsl(var(--color-text))] prose-headings:text-[hsl(var(--color-text))] prose-strong:text-[hsl(var(--color-text))]"
                   }`}
                   dir="auto"
                 >
@@ -172,7 +172,7 @@ export default function DoctorAIChatWidget() {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder="Ask a clinical question..."
-              className="flex-1 px-4 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-full text-sm focus:outline-none focus:border-primary"
+              className="flex-1 px-4 py-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] rounded-full text-[13px] text-[hsl(var(--color-text))] placeholder:text-[hsl(var(--color-text-muted)/0.5)] focus:outline-none focus:border-[hsl(var(--color-primary))]"
             />
             <button 
               onClick={handleSend}

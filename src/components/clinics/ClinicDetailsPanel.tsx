@@ -237,24 +237,6 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Clinic info header */}
-      <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-        <h1 className="text-lg md:text-xl font-black text-[hsl(var(--color-text))] flex items-center gap-2">
-          <LuBuilding2 className="text-[hsl(var(--color-primary))]" />{" "}
-          {clinic.name}
-        </h1>
-        <div className="flex flex-wrap items-center gap-4 mt-2 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-          <span className="flex items-center gap-1.5">
-            <LuMapPin /> {clinic.address} — {clinic.governorate}
-          </span>
-          {(clinic.phone || clinic.whatsapp || clinic.landline) && (
-            <span className="flex items-center gap-1.5">
-              <LuPhone /> {clinic.phone || clinic.whatsapp || clinic.landline}
-            </span>
-          )}
-        </div>
-      </div>
-
       {/* Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -275,22 +257,22 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
           </button>
         </div>
 
-        <div className="flex gap-4 mb-6">
-          <div className="bg-[hsl(var(--color-primary)/0.1)] px-4 py-3 rounded-xl border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-between min-w-[200px] flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4 mb-6">
+          <div className="bg-[hsl(var(--color-primary)/0.1)] px-4 py-3 rounded-xl border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-between">
             <div>
               <span className="block text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase tracking-wider mb-1">Consultation Fee</span>
               <span className="text-[16px] font-black text-[hsl(var(--color-text))]">{clinic.consultationFee} <span className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">EGP</span></span>
             </div>
-            <button onClick={() => setFeesModalOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors cursor-pointer">
+            <button onClick={() => setFeesModalOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors cursor-pointer shrink-0">
               <LuPencil size={14} />
             </button>
           </div>
-          <div className="bg-[hsl(var(--color-primary)/0.1)] px-4 py-3 rounded-xl border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-between min-w-[200px] flex-1">
+          <div className="bg-[hsl(var(--color-primary)/0.1)] px-4 py-3 rounded-xl border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-between">
             <div>
               <span className="block text-[11px] font-bold text-[hsl(var(--color-primary))] uppercase tracking-wider mb-1">Follow-Up Fee</span>
               <span className="text-[16px] font-black text-[hsl(var(--color-text))]">{clinic.followUpFee} <span className="text-[12px] font-bold text-[hsl(var(--color-text-muted))]">EGP</span></span>
             </div>
-            <button onClick={() => setFeesModalOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors cursor-pointer">
+            <button onClick={() => setFeesModalOpen(true)} className="w-8 h-8 flex items-center justify-center rounded-full bg-[hsl(var(--color-primary)/0.15)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors cursor-pointer shrink-0">
               <LuPencil size={14} />
             </button>
           </div>
@@ -358,12 +340,14 @@ export default function ClinicDetailsPanel({ clinicId }: Props) {
         </div>
 
         {/* Right Column: Open Slots */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <h2 className="font-black text-xl text-[hsl(var(--color-text))]">Open Slots</h2>
-            <button 
+        <div className="lg:col-span-7 self-start">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[15px] font-black text-[hsl(var(--color-text))]">
+              Open Slots
+            </h2>
+            <button
               onClick={() => setGenerateModalOpen(true)}
-              className="bg-[hsl(var(--color-primary))] text-white px-4 py-2 rounded-xl text-[13px] font-bold hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2"
+              className="bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] text-[12px] font-bold px-4 py-2.5 rounded-xl hover:scale-[1.02] transition-transform flex items-center gap-2 shadow-[0_2px_10px_hsl(var(--color-primary)/0.3)] cursor-pointer"
             >
               <LuCalendarDays className="w-4 h-4" />
               Generate Custom Slots

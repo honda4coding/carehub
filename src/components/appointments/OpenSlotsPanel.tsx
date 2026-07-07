@@ -209,13 +209,13 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
         
         {/* Month Navigation */}
         <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl p-1 shadow-sm">
-          <button onClick={handlePrevMonth} className="p-1.5 hover:bg-[hsl(var(--color-bg-subtle))] rounded-lg text-[hsl(var(--color-text-muted))] transition-colors">
+          <button onClick={handlePrevMonth} className="p-1.5 hover:bg-[hsl(var(--color-bg-subtle))] rounded-lg text-[hsl(var(--color-text-muted))] transition-colors cursor-pointer">
             <LuChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-sm font-bold w-24 text-center text-[hsl(var(--color-text))]">
             {format(currentMonth, "MMM yyyy")}
           </span>
-          <button onClick={handleNextMonth} className="p-1.5 hover:bg-[hsl(var(--color-bg-subtle))] rounded-lg text-[hsl(var(--color-text-muted))] transition-colors">
+          <button onClick={handleNextMonth} className="p-1.5 hover:bg-[hsl(var(--color-bg-subtle))] rounded-lg text-[hsl(var(--color-text-muted))] transition-colors cursor-pointer">
             <LuChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -239,10 +239,10 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                   <div className="flex items-center gap-2">
                     <button 
                       onClick={(e) => handleDeleteWeekSlots(week, e)}
-                      className="p-1.5 mr-2 text-[hsl(var(--color-text-muted))] hover:text-white hover:bg-[hsl(var(--color-danger))] rounded-lg transition-colors shadow-sm bg-[hsl(var(--color-danger)/0.1)] border border-[hsl(var(--color-danger)/0.2)]"
+                      className="p-1.5 mr-2 rounded-lg transition-colors shadow-sm bg-[hsl(var(--color-danger)/0.1)] border border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger))] hover:text-white cursor-pointer flex items-center justify-center group"
                       title="Delete All Loaded Slots in Week"
                     >
-                      <LuTrash2 className="w-4 h-4 text-[hsl(var(--color-danger))]" />
+                      <LuTrash2 className="w-4 h-4" />
                     </button>
                     {expandedWeeks.includes(week.weekNum) ? <LuChevronUp className="w-5 h-5 text-[hsl(var(--color-text-muted))]" /> : <LuChevronDown className="w-5 h-5 text-[hsl(var(--color-text-muted))]" />}
                   </div>
@@ -295,7 +295,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                                     {daySlots.length > 0 && (
                                       <button 
                                         onClick={() => handleDeleteDaySlots(day.dayStr)}
-                                        className="text-xs font-bold text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger))] hover:text-white border border-[hsl(var(--color-danger)/0.3)] hover:border-transparent px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-sm shrink-0"
+                                        className="text-xs font-bold text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger))] hover:text-white border border-[hsl(var(--color-danger)/0.3)] hover:border-transparent px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-all shadow-sm shrink-0 cursor-pointer"
                                       >
                                         <LuTrash2 className="w-3.5 h-3.5" />
                                         Delete All Slots
@@ -317,7 +317,7 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                                           </span>
                                           <button 
                                               onClick={(e) => handleDeleteSlot(e, slot, day.dayStr)}
-                                              className="p-1.5 text-[hsl(var(--color-text-muted))] hover:text-white hover:bg-[hsl(var(--color-danger))] rounded-lg transition-colors shadow-sm"
+                                              className="p-1.5 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] rounded-lg transition-colors shadow-sm cursor-pointer"
                                               title={slot.isBooked ? "Cancel Appointment & Delete Slot" : "Delete Slot"}
                                           >
                                               <LuTrash2 className="w-3.5 h-3.5" />

@@ -107,7 +107,7 @@ export default function PrescriptionTab({
                 placeholder="e.g. 7"
                 value={followUpDate || ""}
                 onChange={(e) => setFollowUpDate && setFollowUpDate(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl text-sm font-semibold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all"
+                className="w-full pl-10 pr-4 py-2.5 bg-[hsl(var(--color-bg-base))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] rounded-xl text-sm font-semibold focus:border-[hsl(var(--color-primary))] focus:ring-1 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all"
               />
             </div>
           </div>

@@ -92,7 +92,7 @@ function PatientDirectoryContent() {
       }
     };
     fetchPatients();
-  }, [token, filterParam, startDate, endDate, debouncedSearchTerm, typeFilter, page]);
+  }, [token, filterParam, startDate, endDate, debouncedSearchTerm, typeFilter, page, activeClinicId]);
 
   const handleViewHistory = (patient: any) => {
     const basePath = role === 'assistant' ? '/assistant' : '/doctor';

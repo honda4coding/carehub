@@ -105,21 +105,21 @@ export default function PastSurgeriesPanel({
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3 pr-6">
                         <div>
                           <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Operation Name *</label>
-                          <input type="text" value={surgery.operationName} onChange={(e) => updateSurgery(index, "operationName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Appendectomy" />
+                          <input type="text" value={surgery.operationName} onChange={(e) => updateSurgery(index, "operationName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-xs focus:border-[hsl(var(--color-primary))] outline-none" placeholder="e.g. Appendectomy" />
                         </div>
                         <div>
                           <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Date</label>
-                          <input type="text" value={surgery.date || ""} onChange={(e) => updateSurgery(index, "date", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Jan 2020" />
+                          <input type="text" value={surgery.date || ""} onChange={(e) => updateSurgery(index, "date", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-xs focus:border-[hsl(var(--color-primary))] outline-none" placeholder="e.g. Jan 2020" />
                         </div>
                       </div>
                       <div className="grid grid-cols-1 gap-3">
                         <div>
                           <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Surgeon Name</label>
-                          <input type="text" value={surgery.surgeonName || ""} onChange={(e) => updateSurgery(index, "surgeonName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none" placeholder="e.g. Dr. Ahmed" />
+                          <input type="text" value={surgery.surgeonName || ""} onChange={(e) => updateSurgery(index, "surgeonName", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-xs focus:border-[hsl(var(--color-primary))] outline-none" placeholder="e.g. Dr. Ahmed" />
                         </div>
                         <div>
                           <label className="block text-[10px] font-bold text-[hsl(var(--color-text-muted))] mb-1">Brief Report / Notes</label>
-                          <textarea value={surgery.report || ""} onChange={(e) => updateSurgery(index, "report", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] rounded-lg px-3 py-2 text-xs focus:border-primary outline-none h-16" placeholder="Any complications or notes..." />
+                          <textarea value={surgery.report || ""} onChange={(e) => updateSurgery(index, "report", e.target.value)} className="w-full border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] rounded-lg px-3 py-2 text-xs focus:border-[hsl(var(--color-primary))] outline-none h-16" placeholder="Any complications or notes..." />
                         </div>
                       </div>
                     </div>
@@ -142,7 +142,7 @@ export default function PastSurgeriesPanel({
               <button 
                 onClick={saveSurgeries}
                 disabled={isSaving}
-                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-primary hover:bg-primary/90 /20 flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
+                className="px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] flex items-center gap-2 transition-all hover:scale-[1.02] disabled:opacity-50"
               >
                 <LuSave /> {isSaving ? "Saving..." : "Update Surgeries"}
               </button>

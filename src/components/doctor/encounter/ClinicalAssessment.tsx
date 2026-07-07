@@ -99,7 +99,7 @@ export default function ClinicalAssessment({
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
             placeholder="Patient reports..."
-            className="w-full h-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
+            className="w-full h-32 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] rounded-xl px-4 py-3 text-sm font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
           />
         </div>
         
@@ -117,8 +117,8 @@ export default function ClinicalAssessment({
                 onClick={() => startListening("diagnosis")}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold transition-all cursor-pointer ${
                   listeningTo === "diagnosis" 
-                    ? "bg-danger-light text-danger border border-red-200 animate-pulse" 
-                    : "bg-[hsl(var(--color-bg-soft))] text-primary border border-[hsl(var(--color-border))] hover:bg-primary/10"
+                    ? "bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] border border-[hsl(var(--color-danger)/0.2)] animate-pulse" 
+                    : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))] border border-[hsl(var(--color-border))] hover:bg-[hsl(var(--color-primary)/0.1)]"
                 }`}
               >
                 <LuMic className={listeningTo === "diagnosis" ? "animate-bounce shrink-0" : "shrink-0"} />
@@ -130,7 +130,7 @@ export default function ClinicalAssessment({
             value={diagnosis}
             onChange={(e) => setDiagnosis(e.target.value)}
             placeholder="e.g. Acute Bronchitis, detailed observations..."
-            className="w-full h-24 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-4 py-3 text-sm font-medium focus:border-primary focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
+            className="w-full h-24 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] rounded-xl px-4 py-3 text-sm font-medium focus:border-[hsl(var(--color-primary))] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.2)] outline-none transition-all resize-y"
           />
         </div>
       </div>

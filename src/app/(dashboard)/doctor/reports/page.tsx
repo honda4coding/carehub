@@ -124,46 +124,80 @@ export default function DoctorReportsPage() {
       <main className="print-area flex-1 overflow-auto min-w-0">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full space-y-6">
 
-          {/* Filters & Export Bar — moved out of header for responsive safety */}
-          <div className="no-print flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-3">
-            {/* Date Range Picker */}
-            <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden flex-1 min-w-0">
-              <div className="flex items-center px-3 py-2 border-r border-[hsl(var(--color-border))] shrink-0">
-                <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base shrink-0" />
+          {/* Filters, Actions & Quick Stats Bar */}
+          <div className="no-print flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-4 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-3">
+            
+            {/* Quick Wallet Stats (Left) */}
+            {wallet && role !== 'assistant' ? (
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1 min-w-0">
+                {/* Balance Card */}
+                <div className="flex-1 flex items-center gap-3 p-2.5 sm:p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg))]">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] shrink-0">
+                    <LuWallet className="text-lg" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Wallet Balance</p>
+                    <p className="text-base sm:text-lg font-black text-[hsl(var(--color-text))] truncate">{wallet?.availableBalance?.toLocaleString() || 0} <span className="text-[10px] sm:text-xs text-[hsl(var(--color-text-muted))]">EGP</span></p>
+                  </div>
+                </div>
+
+                {/* Withdrawn Card */}
+                <div className="flex-1 flex items-center gap-3 p-2.5 sm:p-3 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg))]">
+                  <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-success-bg))] flex items-center justify-center text-[hsl(var(--color-success))] shrink-0">
+                    <LuArrowDownToLine className="text-lg" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-0.5">Total Withdrawn</p>
+                    <p className="text-base sm:text-lg font-black text-[hsl(var(--color-text))] truncate">{data?.kpis?.totalWithdrawn?.toLocaleString() || 0} <span className="text-[10px] sm:text-xs text-[hsl(var(--color-text-muted))]">EGP</span></p>
+                  </div>
+                </div>
               </div>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
-              />
-              <div className="flex items-center px-2 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))] shrink-0">
-                <span className="text-[10px] font-black uppercase tracking-wider">To</span>
+            ) : (
+               <div className="flex-1" />
+            )}
+
+            {/* Filters & Actions (Right) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              {/* Date Range Picker */}
+              <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden shrink-0 w-full sm:w-auto">
+                <div className="flex items-center px-2 sm:px-3 h-10 border-r border-[hsl(var(--color-border))] shrink-0">
+                  <LuCalendarDays className="text-[hsl(var(--color-primary))] text-base shrink-0" />
+                </div>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="bg-transparent text-[11px] sm:text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-1 sm:px-2 h-10 flex-1 min-w-[110px] sm:w-[130px] sm:flex-none hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                />
+                <div className="flex items-center px-1 sm:px-2 h-10 text-[hsl(var(--color-text-muted))] border-x border-[hsl(var(--color-border))] shrink-0">
+                  <span className="text-[10px] font-black uppercase tracking-wider">To</span>
+                </div>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="bg-transparent text-[11px] sm:text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-1 sm:px-2 h-10 flex-1 min-w-[110px] sm:w-[130px] sm:flex-none hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
+                />
               </div>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-transparent text-xs font-bold text-[hsl(var(--color-text))] focus:outline-none px-2 py-2 flex-1 min-w-0 hover:bg-[hsl(var(--color-bg-surface))] transition-colors cursor-pointer"
-              />
-            </div>
-            {/* Actions */}
-            <div className="flex items-center gap-2 shrink-0">
-              {(startDate || endDate) && (
+
+              {/* Actions */}
+              <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                {(startDate || endDate) && (
+                  <button
+                    onClick={() => { setStartDate(""); setEndDate(""); }}
+                    className="w-10 h-10 flex items-center justify-center rounded-xl border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all shrink-0"
+                    title="Reset Filters"
+                  >
+                    <LuRotateCcw className="text-base" />
+                  </button>
+                )}
                 <button
-                  onClick={() => { setStartDate(""); setEndDate(""); }}
-                  className="w-9 h-9 flex items-center justify-center rounded-xl border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:border-[hsl(var(--color-danger)/0.3)] transition-all"
-                  title="Reset Filters"
+                  onClick={handleExport}
+                  className="flex items-center justify-center gap-2 px-4 h-10 rounded-xl text-sm font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white border border-transparent transition-all shrink-0"
                 >
-                  <LuRotateCcw className="text-base" />
+                  <LuDownload className="text-base" /> Export
                 </button>
-              )}
-              <button
-                onClick={handleExport}
-                className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white border border-transparent transition-all"
-              >
-                <LuDownload className="text-base" /> Export
-              </button>
+              </div>
             </div>
           </div>
 
@@ -178,61 +212,7 @@ export default function DoctorReportsPage() {
             isAssistant={role === 'assistant'}
           />
 
-        {wallet && role !== 'assistant' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              <div className="bg-[hsl(var(--color-bg))] rounded-2xl border border-[hsl(var(--color-border))] overflow-hidden flex flex-col">
-                <div className="p-4 sm:p-5 border-b border-[hsl(var(--color-border))]">
-                  <div className="flex items-center gap-2">
-                    <LuWallet className="w-5 h-5 text-[hsl(var(--color-primary))]" />
-                    <h3 className="font-bold text-[hsl(var(--color-text))]">
-                      Wallet Balance
-                    </h3>
-                  </div>
-                </div>
-                <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center bg-[hsl(var(--color-primary)/0.03)]">
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-[hsl(var(--color-text-muted))] mb-2">
-                      Available to Withdraw
-                    </p>
-                    <p className="text-4xl sm:text-5xl font-black text-[hsl(var(--color-text))] tracking-tight">
-                      <span className="text-2xl text-[hsl(var(--color-text-muted))] mr-1">
-                        EGP
-                      </span>
-                      {wallet?.availableBalance?.toLocaleString() || 0}
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-[hsl(var(--color-bg))] p-4 sm:p-5 border-t border-[hsl(var(--color-border))]">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-[hsl(var(--color-text-muted))]">
-                      Pending Balance
-                    </span>
-                    <span className="font-bold text-[hsl(var(--color-text))]">
-                      EGP {(wallet?.pendingBalance || 0).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
 
-            {/* Transferred Section */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 hover:shadow-md transition-shadow">
-              <div className="flex items-center justify-between mb-4">
-                <span className="text-[14px] font-bold text-[hsl(var(--color-text-muted))]">Total Transferred / Withdrawn</span>
-                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-success-bg))] flex items-center justify-center text-[hsl(var(--color-success))]">
-                  <LuArrowDownToLine className="text-xl" />
-                </div>
-              </div>
-              <div>
-                <p className="text-[32px] font-black text-[hsl(var(--color-text))]">
-                  {data?.kpis?.totalWithdrawn?.toLocaleString() || 0} EGP
-                </p>
-                <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mt-1 flex items-center gap-1">
-                  Selected Period
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
 
         <ReportsCharts
           visitTrends={data?.visitTrends}
