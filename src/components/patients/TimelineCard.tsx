@@ -35,7 +35,7 @@ export default function TimelineCard({ entry }: Props) {
 
   // Fallback for entries without rawRecord
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden p-4">
+    <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden p-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
       <div className="flex items-start justify-between gap-3 mb-1.5">
         <div className="flex items-center gap-1.5 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
           {entry.date}

@@ -39,7 +39,7 @@ export default function MedicalTimeline({ entries, loading, searchTerm }: Props)
           {entries.length > 3 && (
             <Link
               href="/patient/history"
-              className="mt-2 w-full max-w-[220px] mx-auto flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text-muted))] text-sm font-bold hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors group cursor-pointer"
+              className="mt-2 w-full max-w-[220px] mx-auto flex items-center justify-center gap-1.5 py-2 px-4 rounded-xl border border-[hsl(var(--color-border))] bg-transparent text-[hsl(var(--color-text))] text-sm font-semibold hover:border-[hsl(var(--color-primary))] hover:text-[hsl(var(--color-primary))] transition-all duration-300 hover:-translate-y-px group cursor-pointer shadow-sm"
             >
               View Full History ({entries.length}) <LuChevronRight className="text-base transition-transform group-hover:translate-x-1" />
             </Link>

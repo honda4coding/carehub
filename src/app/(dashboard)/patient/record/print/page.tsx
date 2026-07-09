@@ -21,10 +21,13 @@ import {
   LuSearch,
   LuChevronLeft,
   LuChevronRight,
+  LuHeartPulse,
 } from "react-icons/lu";
 import Link from "next/link";
 import Image from "next/image";
 import TimelineCard from "@/components/patients/TimelineCard";
+import DashboardHeader from "@/components/global/DashboardHeader";
+import VisitCard from "@/components/shared/VisitCard";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -290,23 +293,15 @@ export default function PrintMedicalRecordPage() {
       {mode === "select" && (
         <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-base))]">
           {/* Header */}
-          <div className="sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))]">
-            <div className="max-w-4xl mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
-              <div className="flex items-center gap-3">
-                <Link
-                  href="/patient"
-                  className="flex items-center gap-1.5 text-sm font-semibold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
-                >
-                  <LuArrowLeft className="text-base" />
-                  Back to Dashboard
-                </Link>
-                <span className="text-[hsl(var(--color-border-strong))]">|</span>
-                <div className="flex items-center gap-1.5">
-                  <LuPrinter className="text-[hsl(var(--color-primary))] text-base" />
-                  <span className="text-sm font-black text-[hsl(var(--color-text))]">Select Records to Print</span>
-                </div>
+          <DashboardHeader
+            title={
+              <div className="flex items-center gap-2">
+                <LuPrinter className="text-[hsl(var(--color-primary))] text-lg" />
+                <span className="text-sm font-black text-[hsl(var(--color-text))]">Select Records to Print</span>
               </div>
-              
+            }
+            backPath="/patient"
+            rightElement={
               <button
                 onClick={() => setMode("preview")}
                 disabled={loading || !profile || selectedIds.length === 0}
@@ -314,8 +309,8 @@ export default function PrintMedicalRecordPage() {
               >
                 Preview Document ({selectedIds.length})
               </button>
-            </div>
-          </div>
+            }
+          />
 
           {/* Body */}
           <div className="max-w-4xl mx-auto px-4 md:px-6 py-8 w-full">
@@ -423,24 +418,33 @@ export default function PrintMedicalRecordPage() {
       {mode === "preview" && profile && (
         <>
           {/* Action Header for Preview */}
-          <div className="print:hidden sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border-soft))]">
-            <div className="max-w-4xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between gap-4 flex-wrap">
-              <button
-                onClick={() => setMode("select")}
-                className="flex items-center gap-1.5 text-sm font-semibold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors"
-              >
-                <LuArrowLeft className="text-base" />
-                Back to Selection
-              </button>
-              
-              <button
-                onClick={handlePrint}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white text-sm font-bold  active:scale-95 transition-all animate-fade-in"
-              >
-                <LuPrinter className="text-base animate-pulse" />
-                Print Document
-              </button>
-            </div>
+          <div className="print:hidden">
+            <DashboardHeader
+              title={
+                <div className="flex items-center gap-2">
+                  <LuPrinter className="text-[hsl(var(--color-primary))] text-lg" />
+                  <span className="text-sm font-black text-[hsl(var(--color-text))]">Preview Document</span>
+                </div>
+              }
+              rightElement={
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => setMode("select")}
+                    className="flex items-center gap-1.5 text-sm font-semibold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] transition-colors px-3 py-2 cursor-pointer"
+                  >
+                    <LuArrowLeft className="text-base" />
+                    Back to Selection
+                  </button>
+                  <button
+                    onClick={handlePrint}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white text-sm font-bold active:scale-95 transition-all animate-fade-in cursor-pointer"
+                  >
+                    <LuPrinter className="text-base animate-pulse" />
+                    Print Document
+                  </button>
+                </div>
+              }
+            />
           </div>
 
           <div
@@ -459,19 +463,16 @@ export default function PrintMedicalRecordPage() {
               <header className="flex items-start justify-between border-b-2 border-[hsl(var(--color-border))] pb-5 mb-8">
                 <div>
                   <div className="flex items-center gap-3 mb-1">
-                    <div 
-                      className="w-9 h-9 rounded-lg bg-[hsl(var(--color-primary))] flex items-center justify-center text-white font-black text-lg -[0_4px_12px_hsl(var(--color-primary)/0.35)]"
-                      style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}
-                    >
-                      +
+                    <LuActivity className="w-11 h-11 text-[hsl(var(--color-primary))]" strokeWidth={2.5} />
+                    <div className="flex flex-col">
+                      <h1 className="text-3xl font-black tracking-tight text-[#001b3a] dark:text-white print:text-[#001b3a]">
+                        CareHub
+                      </h1>
+                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] mt-0.5 text-[#6a899c] dark:text-[#a0b5c1] print:text-[#6a899c]">
+                        Patient Portal
+                      </p>
                     </div>
-                    <h1 className="text-2xl font-black tracking-tight text-[hsl(var(--color-text))]">
-                      Care<span className="text-[hsl(var(--color-primary))]">Hub</span>
-                    </h1>
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] pl-12">
-                    Patient Medical Profile
-                  </p>
                 </div>
                 <div className="text-right">
                   <p className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider">
@@ -558,7 +559,9 @@ export default function PrintMedicalRecordPage() {
                       </p>
                     </header>
 
-                    <EncounterCard encounter={enc} index={idx + 1} />
+                    <div className="print-visit-wrapper" style={{ breakInside: 'avoid' }}>
+                      <VisitCard record={enc.rawData} defaultExpanded={true} printMode={true} />
+                    </div>
 
                     <footer className="border-t border-[hsl(var(--color-border))] pt-3 flex items-end justify-between mt-10">
                       <div>
@@ -684,7 +687,7 @@ function InfoCell({
       className={`
         p-3 border-r border-b border-[hsl(var(--color-border-soft))] last:border-r-0
         ${wide ? "col-span-2" : ""}
-        ${highlight ? "bg-[hsl(var(--color-text))] text-white" : "bg-[hsl(var(--color-bg-surface))]"}
+        ${highlight ? "bg-[hsl(var(--color-primary))] text-white" : "bg-[hsl(var(--color-bg-surface))]"}
       `}
     >
       <p
