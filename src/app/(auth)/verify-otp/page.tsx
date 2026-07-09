@@ -25,7 +25,7 @@ import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 import { Suspense } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 // ========== Schemas ==========
 const confirmSchema = Yup.object({
@@ -65,20 +65,11 @@ function VerifyOtpContent() {
   ) => {
     try {
       setServerError("");
-      const res = await fetch(`${BASE_URL}/users/confirm-email`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: emailInput, code: values.code }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.message || "Something went wrong.");
-        return;
-      }
+      await fetchClient.patch("/users/confirm-email", { email: emailInput, code: values.code });
       setServerSuccess("Email confirmed! Redirecting to login...");
       setTimeout(() => router.push("/login"), 2000);
-    } catch {
-      setServerError("Something went wrong. Please check your connection.");
+    } catch (err: any) {
+      setServerError(err.message || "Something went wrong. Please check your connection.");
     } finally {
       setSubmitting(false);
     }
@@ -92,25 +83,16 @@ function VerifyOtpContent() {
   ) => {
     try {
       setServerError("");
-      const res = await fetch(`${BASE_URL}/users/reset-password`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: emailInput,
-          code: values.code,
-          newpassword: values.newpassword,
-          cpassword: values.cpassword,
-        }),
+      await fetchClient.patch("/users/reset-password", {
+        email: emailInput,
+        code: values.code,
+        newpassword: values.newpassword,
+        cpassword: values.cpassword,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.message || "Something went wrong.");
-        return;
-      }
       setServerSuccess("Password reset successfully! Redirecting to login...");
       setTimeout(() => router.push("/login"), 2000);
-    } catch {
-      setServerError("Something went wrong. Please check your connection.");
+    } catch (err: any) {
+      setServerError(err.message || "Something went wrong. Please check your connection.");
     } finally {
       setSubmitting(false);
     }
@@ -125,22 +107,13 @@ const handleResend = async () => {
     setServerError("");
     setResendSuccess("");
 
-    const url = isReset
-      ? `${BASE_URL}/users/forget-password`
-      : `${BASE_URL}/users/resend-otp`;
-
+    const url = isReset ? "/users/forget-password" : "/users/resend-otp";
     const method = isReset ? "PATCH" : "POST";
 
-    const res = await fetch(url, {
+    await fetchClient.request(url, {
       method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email: emailInput }),
+      data: { email: emailInput },
     });
-    const data = await res.json();
-    if (!res.ok) {
-      setServerError(data.message || "Failed to resend OTP.");
-      return;
-    }
     setResendSuccess("OTP resent! Check your email.");
     setCountdown(60);
     intervalRef.current = setInterval(() => {
@@ -152,8 +125,8 @@ const handleResend = async () => {
         return prev - 1;
       });
     }, 1000);
-  } catch {
-    setServerError("Something went wrong.");
+  } catch (err: any) {
+    setServerError(err.message || "Something went wrong.");
   }
 };
 

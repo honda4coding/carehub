@@ -10,23 +10,10 @@ import { LuLoader } from 'react-icons/lu';
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
 
-async function parseErrorMessage(res: Response): Promise<string> {
-  const raw = await res.text();
-  try {
-    const json = JSON.parse(raw);
-    if (json.message === "validation error" && Array.isArray(json.error)) {
-      return json.error.map((e: any) => e.message).join(", ");
-    }
-    return json.message || "Something went wrong";
-  } catch {
-    return raw || "Something went wrong";
-  }
-}
 
 export default function PatientRegisterForm() {
   const [loading, setLoading] = useState(false);
@@ -61,15 +48,7 @@ export default function PatientRegisterForm() {
         if (values.address) formData.append("address", values.address);
         if (values.bloodType) formData.append("bloodType", values.bloodType);
 
-        const res = await fetch(`${BASE_URL}/users/signup`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const message = await parseErrorMessage(res);
-          throw new Error(message);
-        }
+        await fetchClient.post("/users/signup", formData);
 
         router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=confirm`);
 

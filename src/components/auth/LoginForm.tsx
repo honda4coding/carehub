@@ -20,8 +20,7 @@ import {
   loginInitialValues,
   type LoginValues,
 } from "../schemas/loginSchema";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 export const LoginForm = () => {
   const { login } = useAuth();
@@ -72,22 +71,10 @@ export const LoginForm = () => {
   ) => {
     try {
       // 1. signin
-      const response = await fetch(`${BASE_URL}/users/signin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+      const data = await fetchClient.post("/users/signin", {
+        email: values.email,
+        password: values.password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        let errorMsg = data.message || "Invalid credentials. Please try again.";
-        if (data.message === "validation error" && Array.isArray(data.error)) {
-          errorMsg = data.error.map((e: any) => e.message).join(", ");
-        }
-        setStatus(errorMsg);
-        return;
-      }
 
       const actualRole = data.data.role?.toLowerCase();
 
@@ -109,8 +96,12 @@ export const LoginForm = () => {
         subscriptionPlan: data.data.subscriptionPlan,
       });
 
-    } catch (error) {
-      setStatus("Something went wrong. Please check your connection.");
+    } catch (error: any) {
+      let errorMsg = error.message || "Something went wrong. Please check your connection.";
+      if (error.message === "validation error" && Array.isArray(error.error)) {
+        errorMsg = error.error.map((e: any) => e.message).join(", ");
+      }
+      setStatus(errorMsg);
       console.error("Login Error:", error);
     } finally {
       setSubmitting(false);

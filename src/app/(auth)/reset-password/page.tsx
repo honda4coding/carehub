@@ -27,8 +27,7 @@ import { LuMail, LuLock } from "react-icons/lu";
 import { LuArrowRight } from "react-icons/lu";
 import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 const resetPasswordSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -60,19 +59,10 @@ const handleSendOtp = async (email: string) => {
   setSendingOtp(true);
   try {
     setServerError("");
-    const res = await fetch(`${BASE_URL}/users/forget-password`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      setServerError(data.message || "Something went wrong.");
-      return;
-    }
+    await fetchClient.patch("/users/forget-password", { email });
     setOtpSent(true);
-  } catch {
-    setServerError("Something went wrong.");
+  } catch (err: any) {
+    setServerError(err.message || "Something went wrong.");
   } finally {
     setSendingOtp(false);
   }
@@ -84,25 +74,16 @@ const handleSendOtp = async (email: string) => {
   ) => {
     try {
       setServerError("");
-      const res = await fetch(`${BASE_URL}/users/reset-password`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: values.email,
-          code: values.code,
-          newpassword: values.newpassword,
-          cpassword: values.cpassword,
-        }),
+      await fetchClient.patch("/users/reset-password", {
+        email: values.email,
+        code: values.code,
+        newpassword: values.newpassword,
+        cpassword: values.cpassword,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setServerError(data.message || "Something went wrong.");
-        return;
-      }
       setServerSuccess("Password reset successfully! Redirecting to login...");
       setTimeout(() => router.push("/login"), 2000);
-    } catch {
-      setServerError("Something went wrong. Please check your connection.");
+    } catch (err: any) {
+      setServerError(err.message || "Something went wrong. Please check your connection.");
     } finally {
       setSubmitting(false);
     }

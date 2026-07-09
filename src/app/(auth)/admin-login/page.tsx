@@ -10,9 +10,8 @@ import { LuMail, LuLock, LuShieldCheck } from "react-icons/lu";
 import { LuLoader } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
 import { adminLoginSchema } from "@/components/schemas/adminLoginSchema";
+import { fetchClient } from "@/services/fetchClient";
 
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 export default function AdminLoginPage() {
   const { login } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -20,21 +19,10 @@ export default function AdminLoginPage() {
  const handleSubmit = async (values: { email: string; password: string }) => {
   setLoading(true);
   try {
-    const res = await fetch(`${BASE_URL}/users/signin`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email: values.email,
-        password: values.password,
-      }),
+    const data = await fetchClient.post("/users/signin", {
+      email: values.email,
+      password: values.password,
     });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      alert(data.message || "Invalid credentials");
-      return;
-    }
 
     login(data.data.access_token, "admin", {
       id: data.data.id,
@@ -42,8 +30,12 @@ export default function AdminLoginPage() {
       name: "System Admin",
     });
 
-  } catch {
-    alert("Something went wrong. Please check your connection.");
+  } catch (err: any) {
+    let errorMsg = err.message || "Invalid credentials. Please try again.";
+    if (err.message === "validation error" && Array.isArray(err.error)) {
+      errorMsg = err.error.map((e: any) => e.message).join(", ");
+    }
+    alert(errorMsg);
   } finally {
     setLoading(false);
   }

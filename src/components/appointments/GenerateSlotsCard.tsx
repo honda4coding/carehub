@@ -101,41 +101,7 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
 
       <div className="flex flex-col gap-6">
         <div className="flex justify-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl p-4 overflow-x-auto">
-          <style dangerouslySetInnerHTML={{__html: `
-            .rdp-root {
-              --rdp-accent-color: hsl(var(--color-primary));
-              --rdp-accent-background-color: hsl(var(--color-primary) / 0.1);
-              --rdp-today-color: hsl(var(--color-primary));
-              --rdp-selected-border: none;
-              --rdp-day-height: 38px;
-              --rdp-day-width: 38px;
-              margin: 0;
-            }
-            .rdp-months {
-              justify-content: center;
-              gap: 2rem;
-            }
-            /* Override selected day */
-            .rdp-selected {
-              color: white !important;
-              background-color: hsl(var(--color-primary)) !important;
-              font-weight: bold !important;
-            }
-            /* Override today's day */
-            .rdp-today:not(.rdp-selected) {
-              color: hsl(var(--color-primary)) !important;
-              background-color: hsl(var(--color-primary) / 0.15) !important;
-              font-weight: bold !important;
-            }
-            /* Nav buttons */
-            .rdp-nav_button {
-              color: hsl(var(--color-text-muted)) !important;
-            }
-            .rdp-nav_button:hover {
-              color: hsl(var(--color-text)) !important;
-              background-color: hsl(var(--color-bg-subtle)) !important;
-            }
-          `}} />
+
           <DayPicker
             mode="multiple"
             min={1}

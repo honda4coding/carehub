@@ -375,3 +375,35 @@
   }
 }
 
+/* ========================================================
+   React Day Picker Global Overrides
+   ======================================================== */
+:root .rdp-root {
+  --rdp-accent-color: hsl(var(--color-primary));
+  --rdp-accent-background-color: hsl(var(--color-primary) / 0.1);
+  --rdp-today-color: hsl(var(--color-primary));
+  --rdp-selected-border: none;
+  --rdp-day-height: 38px;
+  --rdp-day-width: 38px;
+  --rdp-day_button-border-radius: 12px;
+}
+
+:root .rdp-selected {
+  font-weight: bold !important;
+  background-color: var(--rdp-accent-color) !important;
+  color: white !important;
+}
+
+:root .rdp-today:not(.rdp-selected) {
+  background-color: var(--rdp-accent-background-color);
+  font-weight: bold;
+}
+
+:root .rdp-nav_button {
+  border-radius: 8px;
+  background-color: hsl(var(--color-bg-surface-hover));
+}
+
+:root .rdp-nav_button:hover {
+  background-color: hsl(var(--color-bg-soft));
+}
