@@ -35,14 +35,15 @@ export default function TransactionTable({ transactions, pagination, page, setPa
               </thead>
               <tbody className="divide-y divide-[hsl(var(--color-border-soft))]">
                 {transactions.map(t => {
-                  const isDebit = t.type === 'debit';
+                  const isDebit = t.amount < 0 || ['online_booking_payment', 'payout_withdrawal', 'cancellation_fee', 'platform_commission'].includes(t.type);
                   const isCredit = !isDebit;
+                  const displayAmount = Math.abs(t.amount);
                   return (
                     <tr key={t._id} className="text-sm font-medium text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
                       <td className="p-4 whitespace-nowrap">{dayjs(t.createdAt).format('DD MMM, YYYY')}</td>
                       <td className="p-4 font-semibold opacity-90">{t.type.replace(/_/g, ' ')}</td>
                       <td className={`p-4 font-bold tracking-tight text-right ${isCredit ? 'text-[hsl(var(--color-success))]' : 'text-[hsl(var(--color-danger))]'}`}>
-                        {isCredit ? '+' : '-'}{t.amount} EGP
+                        {isCredit ? '+' : '-'}{displayAmount} EGP
                       </td>
                     </tr>
                   );
