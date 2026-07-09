@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/Badge";
 
 const Hero = () => {
   return (
-    <section className="w-full bg-[hsl(var(--color-bg))] overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6 lg:px-10 pt-20 lg:pt-28 pb-16 lg:pb-24 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+    <section className="w-full min-h-screen bg-[hsl(var(--color-bg))] overflow-hidden flex items-center pt-20">
+      <div className="mx-auto w-full max-w-7xl px-6 lg:px-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         
         {/* Left Content */}
         <div className="flex flex-col">
