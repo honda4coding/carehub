@@ -2,7 +2,7 @@ import { fetchClient } from "./fetchClient";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -70,33 +70,21 @@ export async function updatePatientProfile(
 
 /** PATCH /patient/profile-image */
 export async function uploadPatientAvatar(file: File): Promise<{ secure_url: string; public_id: string }> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("profilepicture", file);
-  const res = await fetch(`${BASE_URL}/patient/profile-image`, {
-    method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  
+  const res = await fetchClient.patch("/patient/profile-image", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to upload image");
-  }
-  const json = await res.json();
-  return json.data.profilepicture;
+  
+  return res.data?.data?.profilepicture || res.data?.profilepicture;
 }
 
 /** DELETE /patient/profile-image */
 export async function deletePatientAvatar(): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  const res = await fetch(`${BASE_URL}/patient/profile-image`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete image");
-  }
+  await fetchClient.delete("/patient/profile-image");
 }
 
 // ─── Delete Account ───────────────────────────────────────────────────────────

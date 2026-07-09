@@ -7,8 +7,7 @@ import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import { registerBiometrics } from "@/services/webAuthnService";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 const updatePasswordSchema = Yup.object({
   oldpassword: Yup.string().required("Old password is required"),
@@ -77,30 +76,16 @@ export default function UpdatePasswordForm() {
     try {
       setToastMsg(null);
 
-      const res = await fetch(`${BASE_URL}/users/update-password`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          oldpassword: values.oldpassword,
-          newpassword: values.newpassword,
-          cpassword: values.cpassword,
-        }),
+      await fetchClient.patch("/users/update-password", {
+        oldpassword: values.oldpassword,
+        newpassword: values.newpassword,
+        cpassword: values.cpassword,
       });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setToastMsg({ msg: data.message || "Something went wrong.", variant: "error" });
-        return;
-      }
 
       setToastMsg({ msg: "Password updated successfully!", variant: "success" });
       resetForm();
-    } catch {
-      setToastMsg({ msg: "Something went wrong. Please check your connection.", variant: "error" });
+    } catch (err: any) {
+      setToastMsg({ msg: err.message || "Something went wrong. Please check your connection.", variant: "error" });
     } finally {
       setSubmitting(false);
     }
