@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { LuCircleHelp } from "react-icons/lu";
-import NotificationBell from "@/components/global/NotificationBell";
+
 import {
   LuUsers,
   LuCalendarDays,
@@ -354,7 +354,6 @@ export default function DoctorDashboard() {
       <DashboardHeader
         title="Doctor Workspace"
         subtitle="Manage your daily encounters and patient care"
-        rightElement={<NotificationBell basePath="/doctor/notifications" />}
       />
 
       {/* Content */}

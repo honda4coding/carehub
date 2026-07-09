@@ -390,7 +390,7 @@ export default function BookAppointmentPage() {
           : step === "confirm" ? "Confirm booking"
           : "Booking confirmed!"}
         subtitle={step === "success" ? "You're all set" : doctorName}
-        backPath="/patient/doctors"
+        showBack={true}
       />
 
       {/* ── Main ── */}

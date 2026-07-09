@@ -78,7 +78,7 @@ export default function AdminDoctorsPage() {
       <DashboardHeader
         title="Doctor Directory"
         subtitle="View all registered doctors and their approval status"
-        backPath="/admin"
+        showBack={true}
         rightElement={
           <button
             onClick={fetchDoctors}

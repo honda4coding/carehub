@@ -13,7 +13,7 @@ import { adminService } from "@/services/adminService";
 import { PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
 import { fetchClient } from "@/services/fetchClient";
-import NotificationBell from "@/components/global/NotificationBell";
+
 import { Topbar } from "@/components/global/Topbar";
 
 import { StatCard } from "@/components/admin/dashboard/StatCard";
@@ -109,10 +109,9 @@ export default function AdminDashboard() {
 
   return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <Topbar 
-        title="Dashboard Overview" 
-        subtitle="Welcome back. Here is what's happening today."
-        rightElement={<NotificationBell basePath="/admin/notifications" />}
+      <DashboardHeader
+        title="Admin Dashboard"
+        subtitle="Overview of system performance and activity"
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">

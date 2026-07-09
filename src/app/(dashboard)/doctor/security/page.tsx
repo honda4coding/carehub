@@ -9,7 +9,7 @@ export default function DoctorSecurityPage() {
       <DashboardHeader
         title="Security"
         subtitle="Update your password and account security"
-        backPath="/doctor"
+        showBack={true}
       />
       <main className="flex-1 p-6 flex justify-center items-start pt-12">
         <UpdatePasswordForm />

@@ -56,7 +56,7 @@ function PrescriptionsContent() {
       <DashboardHeader
         title="My Prescriptions"
         subtitle={filterParam === "today" ? "Prescriptions issued today" : "Your complete archive of issued prescriptions"}
-        backPath="/doctor"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-hidden flex">

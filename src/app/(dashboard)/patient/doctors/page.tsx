@@ -88,7 +88,7 @@ export default function DoctorsPage() {
       <DashboardHeader
         title="Doctor Directory"
         subtitle="Browse our network of verified specialists"
-        backPath="/patient"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">

@@ -111,8 +111,15 @@ export const adminService = {
       body: JSON.stringify({ reason }),
     }),
 
-  getSupportMessages: (page: number = 1, limit: number = 10): Promise<any> => {
-    return fetchClient.get("/support", { params: { page: String(page), limit: String(limit) } });
+  getSupportMessages: (page: number = 1, limit: number = 10, search?: string, filter?: string): Promise<any> => {
+    const params: Record<string, string> = { page: String(page), limit: String(limit) };
+    if (search) params.search = search;
+    if (filter && filter !== 'all') params.filter = filter;
+    return fetchClient.get("/support", { params });
+  },
+
+  getUnreadSupportMessagesCount: (): Promise<any> => {
+    return fetchClient.get("/support/unread-count");
   },
 
   toggleSupportMessageReadStatus: (messageId: string): Promise<any> => {

@@ -23,7 +23,7 @@ export default function AssistantSchedulePage() {
       <DashboardHeader
         title="Loading Schedule..."
         subtitle="Redirecting to your clinic settings"
-        backPath="/assistant/appointments"
+        showBack={true}
       />
       <div className="flex-1 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-[hsl(var(--color-primary)/0.3)] border-t-[hsl(var(--color-primary))] rounded-full animate-spin"></div>

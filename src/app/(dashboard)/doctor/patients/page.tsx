@@ -126,7 +126,7 @@ function PatientDirectoryContent() {
       <DashboardHeader
         title="Patient Directory"
         subtitle="Your complete archive of all clinic patients"
-        backPath="/doctor"
+        showBack={true}
         rightElement={
           <span className="text-sm font-bold bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] px-3 py-1.5 rounded-full border border-[hsl(var(--color-primary)/0.2)]">
             Total: {totalRecords}

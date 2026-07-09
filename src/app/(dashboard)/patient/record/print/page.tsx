@@ -300,7 +300,7 @@ export default function PrintMedicalRecordPage() {
                 <span className="text-sm font-black text-[hsl(var(--color-text))]">Select Records to Print</span>
               </div>
             }
-            backPath="/patient"
+            showBack={true}
             rightElement={
               <button
                 onClick={() => setMode("preview")}

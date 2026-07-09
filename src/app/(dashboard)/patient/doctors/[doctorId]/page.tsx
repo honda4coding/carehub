@@ -64,7 +64,7 @@ export default function DoctorProfilePage() {
       <DashboardHeader
         title="Doctor Profile Details"
         subtitle="View doctor information and book an appointment"
-        backPath="/patient/doctors"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col gap-6">

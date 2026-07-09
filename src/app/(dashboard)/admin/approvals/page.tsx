@@ -140,7 +140,7 @@ export default function ApprovalsPage() {
   return (
     <>
       <div className="flex flex-col flex-1 min-h-screen">
-        <DashboardHeader title="Doctor Approvals" subtitle="Review and manage doctor registration requests" backPath="/admin" />
+        <DashboardHeader title="Doctor Approvals" subtitle="Review and manage doctor registration requests" showBack={true} />
         <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
           <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
 

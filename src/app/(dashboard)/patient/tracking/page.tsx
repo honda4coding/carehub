@@ -204,7 +204,7 @@ export default function TrackingPage() {
       <DashboardHeader
         title="Personal Tracking"
         subtitle="Monitor your vital signs, earn badges, and track your progress!"
-        backPath="/patient"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">

@@ -90,7 +90,7 @@ export default function DoctorSubscriptionPage() {
     if (loading) {
         return (
             <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
-                <DashboardHeader title="Subscriptions" subtitle="Manage your Carehub plan" backPath="/doctor" />
+                <DashboardHeader title="Subscriptions" subtitle="Manage your Carehub plan" showBack={true} />
                 <div className="flex-1 flex items-center justify-center">
                     <p className="text-[hsl(var(--color-text-muted))] font-bold text-sm">Loading plans...</p>
                 </div>
@@ -105,7 +105,7 @@ export default function DoctorSubscriptionPage() {
             <DashboardHeader 
                 title="Subscriptions" 
                 subtitle="Manage your Carehub plan and features" 
-                backPath="/doctor" 
+                showBack={true} 
             />
 
             <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">

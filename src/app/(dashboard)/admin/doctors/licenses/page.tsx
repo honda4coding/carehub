@@ -77,7 +77,7 @@ export default function AdminLicensesPage() {
       <DashboardHeader
         title="License Updates"
         subtitle="Review new license submissions from approved doctors"
-        backPath="/admin"
+        showBack={true}
       />
 
       <main className="flex-1 p-6">

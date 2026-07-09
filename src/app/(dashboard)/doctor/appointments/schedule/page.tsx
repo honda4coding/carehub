@@ -41,7 +41,7 @@ export default function DoctorSchedulePage() {
       <DashboardHeader
         title="My Schedule"
         subtitle="Your weekly hours for each clinic"
-        backPath={role === "assistant" ? "/assistant/appointments" : "/doctor/appointments"}
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">

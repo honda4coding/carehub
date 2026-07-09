@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
       <DashboardHeader
         title="Detailed Analytics"
         subtitle="Deep dive into platform metrics and statistics"
-        backPath="/admin"
+        showBack={true}
       />
       <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">

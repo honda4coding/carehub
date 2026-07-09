@@ -311,7 +311,7 @@ export default function MedicalHistoryPage() {
       <DashboardHeader
         title="Medical History"
         subtitle="Your complete clinical encounter records"
-        backPath="/patient"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
