@@ -123,20 +123,37 @@ export default function GenerateSlotsModal({ isOpen, onClose, clinicId, onSucces
 
         <div className="p-6 flex flex-col items-center">
           <style dangerouslySetInnerHTML={{__html: `
-            .rdp {
-              --rdp-cell-size: 38px;
+            .rdp-root {
               --rdp-accent-color: hsl(var(--color-primary));
-              --rdp-background-color: hsl(var(--color-primary) / 0.1);
-              --rdp-outline: 2px solid var(--rdp-accent-color);
+              --rdp-accent-background-color: hsl(var(--color-primary) / 0.1);
+              --rdp-today-color: hsl(var(--color-primary));
+              --rdp-selected-border: none;
+              --rdp-day-height: 38px;
+              --rdp-day-width: 38px;
               margin: 0;
-              font-family: inherit;
             }
-            .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
-              color: white;
-              background-color: var(--rdp-accent-color);
+            /* Override selected day */
+            .rdp-selected {
+              color: white !important;
+              background-color: hsl(var(--color-primary)) !important;
+              font-weight: bold !important;
+            }
+            /* Override today's day */
+            .rdp-today:not(.rdp-selected) {
+              color: hsl(var(--color-primary)) !important;
+              background-color: hsl(var(--color-primary) / 0.15) !important;
+              font-weight: bold !important;
+            }
+            /* Nav buttons */
+            .rdp-nav_button {
+              color: hsl(var(--color-text-muted)) !important;
+            }
+            .rdp-nav_button:hover {
+              color: hsl(var(--color-text)) !important;
+              background-color: hsl(var(--color-bg-subtle)) !important;
             }
           `}} />
-          <div className="bg-white border border-[hsl(var(--color-border))] rounded-xl p-3 shadow-sm w-full flex justify-center mb-4">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3 shadow-sm w-full flex justify-center mb-4">
             <DayPicker
               mode="multiple"
               min={1}

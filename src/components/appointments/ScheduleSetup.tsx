@@ -290,7 +290,7 @@ export default function ScheduleSetup({
               key={day}
               className={`rounded-xl transition-all duration-200 border ${
                 isSelected
-                  ? isExpanded ? "bg-white border-[hsl(var(--color-border))] shadow-md" : "bg-[hsl(var(--color-bg-subtle))] border-[hsl(var(--color-border))]"
+                  ? isExpanded ? "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] shadow-md" : "bg-[hsl(var(--color-bg-subtle))] border-[hsl(var(--color-border))]"
                   : "bg-transparent border-transparent hover:bg-[hsl(var(--color-bg-subtle))] hover:border-[hsl(var(--color-border))]"
               }`}
             >
@@ -314,7 +314,7 @@ export default function ScheduleSetup({
                   className={`w-5 h-5 rounded-[6px] border flex items-center justify-center shrink-0 transition-all duration-200 disabled:opacity-40 ${
                     isSelected
                       ? "bg-[hsl(var(--color-primary))] border-[hsl(var(--color-primary))] text-white"
-                      : "border-[hsl(var(--color-border))] bg-white"
+                      : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))]"
                   }`}
                 >
                   {isSelected && <LuCheck className="text-[12px] font-black" />}
@@ -363,7 +363,7 @@ export default function ScheduleSetup({
               </div>
 
               {isSelected && isExpanded && (
-                <div className="p-5 bg-white rounded-b-xl">
+                <div className="p-5 bg-[hsl(var(--color-bg-surface))] rounded-b-xl">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
                     <div>
                       <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
@@ -419,7 +419,7 @@ export default function ScheduleSetup({
                           className={`px-3 py-1.5 rounded-lg text-[13px] font-bold transition-all border ${
                             tc?.appointmentDuration === d
                               ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] border-[hsl(var(--color-primary)/0.3)]"
-                              : "border-[hsl(var(--color-border))] bg-white text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary)/0.5)] hover:text-[hsl(var(--color-text))]"
+                              : "border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] text-[hsl(var(--color-text-muted))] hover:border-[hsl(var(--color-primary)/0.5)] hover:text-[hsl(var(--color-text))]"
                           }`}
                         >
                           {d} min

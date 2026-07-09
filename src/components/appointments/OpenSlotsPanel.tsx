@@ -302,19 +302,19 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
                                       </button>
                                     )}
                                   </div>
-                                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                                    {daySlots.map((slot: any) => (
-                                      <div key={slot._id} className={`flex flex-col gap-2 border rounded-xl p-3 shadow-sm transition-all hover:shadow-md ${slot.isBooked ? 'bg-red-50 border-red-200' : 'bg-white border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)]'}`}>
-                                        <div className="flex items-center gap-2">
-                                            <LuClock className={`w-3.5 h-3.5 ${slot.isBooked ? 'text-red-500' : 'text-[hsl(var(--color-primary))]'}`} />
-                                            <span className={`text-[13px] font-bold ${slot.isBooked ? 'text-red-700' : 'text-[hsl(var(--color-text))]'}`}>
-                                                {format(new Date(slot.startDateTime), "hh:mm a")}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                                      {daySlots.map((slot: any) => (
+                                        <div key={slot._id} className={`flex flex-col gap-2 border rounded-xl p-3 shadow-sm transition-all hover:shadow-md ${slot.isBooked ? 'bg-[hsl(var(--color-danger)/0.05)] border-[hsl(var(--color-danger)/0.2)]' : 'bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)]'}`}>
+                                          <div className="flex items-center gap-2">
+                                              <LuClock className={`w-3.5 h-3.5 ${slot.isBooked ? 'text-[hsl(var(--color-danger))]' : 'text-[hsl(var(--color-primary))]'}`} />
+                                              <span className={`text-[13px] font-bold ${slot.isBooked ? 'text-[hsl(var(--color-danger))]' : 'text-[hsl(var(--color-text))]'}`}>
+                                                  {format(new Date(slot.startDateTime), "hh:mm a")}
+                                              </span>
+                                          </div>
+                                          <div className="flex items-center justify-between mt-1">
+                                            <span className={`text-[10px] font-bold uppercase tracking-wider ${slot.isBooked ? 'text-[hsl(var(--color-danger))]' : 'text-[hsl(var(--color-success))]'}`}>
+                                                {slot.isBooked ? "Booked" : "Open"}
                                             </span>
-                                        </div>
-                                        <div className="flex items-center justify-between mt-1">
-                                          <span className={`text-[10px] font-bold uppercase tracking-wider ${slot.isBooked ? 'text-red-600' : 'text-[hsl(var(--color-success))]'}`}>
-                                              {slot.isBooked ? "Booked" : "Open"}
-                                          </span>
                                           <button 
                                               onClick={(e) => handleDeleteSlot(e, slot, day.dayStr)}
                                               className="p-1.5 text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger)/0.1)] rounded-lg transition-colors shadow-sm cursor-pointer"
