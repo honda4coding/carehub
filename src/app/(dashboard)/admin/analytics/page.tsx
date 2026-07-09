@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <>
-          <FinancialOverview />
+          <FinancialOverview startDate={startDate} endDate={endDate} />
           
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

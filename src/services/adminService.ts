@@ -71,11 +71,19 @@ export const adminService = {
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
-  getFinancialStats: (): Promise<{ data: FinancialStats }> => 
-    fetchClient.get("/admindashboard/financial-stats"),
+  getFinancialStats: (startDate?: string, endDate?: string): Promise<{ data: FinancialStats }> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admindashboard/financial-stats", { params });
+  },
 
-  getPaymentAnalytics: (): Promise<{ data: any }> =>
-    fetchClient.get("/admin/stats/payments"),
+  getPaymentAnalytics: (startDate?: string, endDate?: string): Promise<{ data: any }> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admin/stats/payments", { params });
+  },
 
   getDoctors: (params: { status?: string, page?: number, limit?: number, search?: string } = {}): Promise<GetDoctorsResponse> => {
     const query: Record<string, string> = {};
