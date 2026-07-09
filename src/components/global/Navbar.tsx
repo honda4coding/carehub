@@ -41,9 +41,10 @@ export default function Navbar() {
     switch (role) {
       case 'admin':
         return [
-          { label: "Admin Panel", href: "/admin" },
+          { label: "Admin Panel", href: "/admin/analytics" },
           { label: "Users Control", href: "/admin/users" },
           { label: "Approvals", href: "/admin/approvals" },
+          { label: "Support", href: "/admin/support-messages" },
         ];
       case 'doctor':
         return [

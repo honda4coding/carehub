@@ -15,6 +15,7 @@ import {
   LuUsers,
   LuCalendarDays,
   LuShieldCheck,
+  LuLifeBuoy,
   LuSettings,
   LuUser,
   LuClipboardList,
@@ -65,11 +66,8 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
-      {
-        label: "Approvals",
-        href: "/admin/approvals",
-        icon: <LuShieldCheck />,
-      },
+      { label: "Approvals", href: "/admin/approvals", icon: <LuShieldCheck /> },
+      { label: "Support", href: "/admin/support-messages", icon: <LuLifeBuoy /> },
       {
         label: "Doctor Licenses",
         href: "/admin/doctors/licenses",

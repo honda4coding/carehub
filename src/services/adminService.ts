@@ -111,6 +111,14 @@ export const adminService = {
       body: JSON.stringify({ reason }),
     }),
 
+  getSupportMessages: (page: number = 1, limit: number = 10): Promise<any> => {
+    return fetchClient.get("/support", { params: { page: String(page), limit: String(limit) } });
+  },
+
+  toggleSupportMessageReadStatus: (messageId: string): Promise<any> => {
+    return fetchClient.request(`/support/${messageId}/read`, { method: "PATCH" });
+  }
+
 };
 
 export interface PendingLicenseDoctor {
