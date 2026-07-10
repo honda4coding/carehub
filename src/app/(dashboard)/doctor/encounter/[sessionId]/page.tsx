@@ -562,7 +562,7 @@ export default function PatientDashboardPage() {
               frequency={frequency} setFrequency={setFrequency}
               duration={duration} setDuration={setDuration}
               patientComplaint={diagnosis}
-              patientId={sessionData?.patientId?._id}
+              patientId={sessionData?.patientId?._id || sessionData?.patientId}
               instructions={instructions} setInstructions={setInstructions}
               handleAddDrug={handleAddDrug}
               removeDrug={removeDrug}
