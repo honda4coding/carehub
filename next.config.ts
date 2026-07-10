@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'Content-Security-Policy',
-            value: "default-src 'self'; connect-src 'self' http://localhost:3000 https://hospital-managment-backend-liart.vercel.app https://carehub-two.vercel.app https://*.vercel.app ws://localhost:3000 wss://*.vercel.app https://www.transparenttextures.com https://res.cloudinary.com; img-src 'self' data: https://www.transparenttextures.com blob: https://res.cloudinary.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
+            value: "default-src 'self'; connect-src 'self' http://localhost:3000 http://localhost:3001 https://hospital-managment-backend-liart.vercel.app https://carehub-two.vercel.app https://*.vercel.app ws://localhost:3000 ws://localhost:3001 wss://*.vercel.app https://www.transparenttextures.com https://res.cloudinary.com; img-src 'self' data: https://www.transparenttextures.com blob: https://res.cloudinary.com; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'",
           },
         ],
       },
@@ -56,7 +56,7 @@ const isDev = process.env.NODE_ENV === "development";
 const finalConfig = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
-  disable: process.env.NODE_ENV !== "production", // Fixes Turbopack warning
+  disable: false, // Enabled for both dev and production
   additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
 })(nextConfig);
 

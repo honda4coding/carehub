@@ -24,8 +24,19 @@ export default function InstallButton() {
       setIsInstalled(true);
     }
 
+    const checkPrompt = () => {
+      const globalPrompt = (window as any).deferredPWA;
+      if (globalPrompt) {
+        setDeferredPrompt(globalPrompt as BeforeInstallPromptEvent);
+        setIsInstallable(true);
+      }
+    };
+
+    checkPrompt();
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
+      (window as any).deferredPWA = e;
       setDeferredPrompt(e as BeforeInstallPromptEvent);
       setIsInstallable(true);
     };
@@ -34,12 +45,15 @@ export default function InstallButton() {
       setIsInstallable(false);
       setIsInstalled(true);
       setDeferredPrompt(null);
+      (window as any).deferredPWA = null;
     };
 
+    window.addEventListener("pwa-ready", checkPrompt);
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
     window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
+      window.removeEventListener("pwa-ready", checkPrompt);
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
       window.removeEventListener("appinstalled", handleAppInstalled);
     };
