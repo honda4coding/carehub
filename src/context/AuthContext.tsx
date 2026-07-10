@@ -69,13 +69,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = (newToken: string, newRole: string, newUser: User) => {
+  const login = (newToken: string, newRole: string, newUser: User, rememberMe: boolean = true) => {
     setToken(newToken);
     setRole(newRole);
     setUser(newUser);
 
-    Cookies.set(AUTH_COOKIE_NAME, newToken, { expires: 7, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/' });
-    Cookies.set(ROLE_COOKIE_NAME, newRole, { expires: 7, secure: process.env.NODE_ENV === 'production', sameSite: 'strict', path: '/' });
+    const cookieOptions: Cookies.CookieAttributes = {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/'
+    };
+
+    if (rememberMe) {
+      cookieOptions.expires = 7;
+    }
+
+    Cookies.set(AUTH_COOKIE_NAME, newToken, cookieOptions);
+    Cookies.set(ROLE_COOKIE_NAME, newRole, cookieOptions);
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
 
     // Request push notification subscription upon login

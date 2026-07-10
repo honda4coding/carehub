@@ -9,11 +9,13 @@ export const loginSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),
+  rememberMe: Yup.boolean().default(false),
 });
 
 export const loginInitialValues = {
   email: "",
   password: "",
+  rememberMe: false,
 };
 
 export type LoginValues = typeof loginInitialValues;

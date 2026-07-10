@@ -94,7 +94,7 @@ export const LoginForm = () => {
         doctorName: data.data.doctorName,
         clinicName: data.data.clinicName,
         subscriptionPlan: data.data.subscriptionPlan,
-      });
+      }, values.rememberMe);
 
     } catch (error: any) {
       let errorMsg = error.message || "Something went wrong. Please check your connection.";
@@ -178,8 +178,9 @@ export const LoginForm = () => {
               {/* Remember + Forgot */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input
+                  <Field
                     type="checkbox"
+                    name="rememberMe"
                     className="w-5 h-5 rounded-md border-slate-300 shrink-0"
                     style={{ accentColor: "hsl(var(--color-primary))" }}
                   />
@@ -192,7 +193,6 @@ export const LoginForm = () => {
                 </label>
                 <div className="flex items-center gap-3 flex-wrap">
                   <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
-                  <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Reset Password</Link>
                 </div>
               </div>
 
