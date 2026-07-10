@@ -10,6 +10,7 @@ interface EncounterHeaderProps {
   onBack: () => void;
   onPrint: () => void;
   onEndSession: (fees: number) => void;
+  onCancelSession: () => void;
 }
 
 // Top header bar for the encounter page, handles printing and saving
@@ -21,7 +22,8 @@ export default function EncounterHeader({
   isEnding,
   onBack,
   onPrint,
-  onEndSession
+  onEndSession,
+  onCancelSession
 }: EncounterHeaderProps) {
   const [fees, setFees] = useState<number | "">("");
 
@@ -54,7 +56,12 @@ export default function EncounterHeader({
           <LuPrinter className="text-lg shrink-0" /> <span className="hidden sm:inline">Print Report</span>
         </button>
         {isAssessmentMode && (
-          <div className="flex items-center flex-1 sm:flex-none">
+          <div className="flex items-center flex-1 sm:flex-none gap-2">
+            {sessionData?.isOfflineEntry && (
+              <button onClick={onCancelSession} disabled={isEnding} className="bg-red-500/10 text-red-600 hover:bg-red-500/20 text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
+                Cancel Session
+              </button>
+            )}
             <button onClick={() => onEndSession(0)} disabled={isEnding} className="bg-[hsl(var(--color-primary))] text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
               {isEnding ? "Saving..." : <><LuSave className="text-lg hidden sm:block shrink-0" /> End Session</>}
             </button>

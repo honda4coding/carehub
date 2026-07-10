@@ -185,8 +185,15 @@ export const CurrentQueue = ({
                       {s.type}
                     </td>
 
-                    <td className="py-3.5 pr-2 text-[13px] font-semibold text-[hsl(var(--color-text-muted))] text-left whitespace-nowrap">
-                      {s.time}
+                    <td className="py-3.5 pr-2 text-left whitespace-nowrap">
+                      <div className="flex flex-col gap-0.5">
+                        <span className="text-[13px] font-bold text-[hsl(var(--color-text))]">{s.queueTime || s.time}</span>
+                        {s.scheduledTime && (
+                          <span className="text-[10px] bg-[hsl(var(--color-bg-soft))] px-1.5 py-0.5 rounded-md inline-block w-fit text-[hsl(var(--color-text-muted))] border border-[hsl(var(--color-border))]">
+                            Slot: {s.scheduledTime}
+                          </span>
+                        )}
+                      </div>
                     </td>
 
                     <td className="py-3.5 pr-2 text-left whitespace-nowrap">

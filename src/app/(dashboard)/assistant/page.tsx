@@ -224,14 +224,16 @@ export default function AssistantDashboard() {
           return {
             id: s._id,
             patient: name,
-            type: s.isOfflinePatient ? "Walk-in" : "Online",
-            time: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            type: s.isOfflinePatient ? "Walk-in" : (s.isOfflineEntry ? "Offline" : "Online"),
+            time: s.order && s.order > 0 ? new Date(s.order).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            queueTime: new Date(s.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            scheduledTime: s.order && s.order > 0 ? new Date(s.order).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : null,
             status: s.status,
             initials: name.slice(0, 2).toUpperCase(),
             phone: phone,
             order: s.order || 0,
             fees: s.fees || 0,
-            avatarStyle: s.isOfflinePatient 
+            avatarStyle: (s.isOfflinePatient || s.isOfflineEntry)
               ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]"
               : "bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))]",
             validUntil: s.validUntil ? new Date(s.validUntil).getTime() : undefined
