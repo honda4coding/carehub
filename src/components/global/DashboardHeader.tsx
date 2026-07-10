@@ -37,10 +37,10 @@ export default function DashboardHeader({
 
   return (
     <header className="bg-[hsl(var(--color-bg-surface))/85] backdrop-blur-2xl border-b border-[hsl(var(--color-border))] px-5 md:px-8 min-h-[76px] py-3 flex items-center justify-between gap-4 z-40 sticky top-0 shrink-0 shadow-[var(--shadow-card)]">
-      <div className="flex items-center gap-4 min-w-0 flex-1 md:flex-none">
+      <div className="flex items-center gap-4 min-w-0 pl-11 md:pl-0 flex-1 md:flex-none">
         {(backPath || showBack) && (
           <button
-            onClick={() => backPath ? router.push(backPath) : router.back()}
+            onClick={() => router.back()}
             className="w-10 h-10 flex items-center justify-center rounded-xl bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-all duration-200 border border-[hsl(var(--color-border))] shrink-0 active:scale-95"
           >
             <LuChevronLeft className="text-xl" />
@@ -90,7 +90,9 @@ export default function DashboardHeader({
             <LuRefreshCw className="text-[15px]" />
           </button>
         )}
-        <NotificationBell basePath={`/${role}`} />
+        {role !== 'assistant' && (
+          <NotificationBell basePath={`/${role}`} />
+        )}
         <ThemeToggle />
         {rightElement && (
           <div className="flex items-center gap-3 ml-2">

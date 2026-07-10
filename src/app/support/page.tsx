@@ -143,14 +143,14 @@ export default function SupportPage() {
           </div>
 
           {/* Contact Form Panel */}
-          <div className="flex-1 p-8 lg:p-12 xl:p-16 relative">
-            <h2 className="text-3xl font-bold text-[hsl(var(--color-text))] mb-8 lg:mb-10">
+          <div className="flex-1 p-8 lg:p-12 xl:p-16 relative flex flex-col">
+            <h2 className="text-3xl font-bold text-[hsl(var(--color-text))] mb-8 lg:mb-10 shrink-0">
               Send us a message
             </h2>
             
             {!isAuthenticated ? (
-              <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center p-8 bg-[hsl(var(--color-bg-soft))] rounded-[2rem] border border-[hsl(var(--color-border))]">
-                <div className="w-20 h-20 bg-[hsl(var(--color-primary)/0.1)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[hsl(var(--color-primary)/0.2)]">
+              <div className="flex-1 min-h-[350px] flex flex-col items-center justify-center text-center p-8 bg-[hsl(var(--color-bg-soft))] rounded-[2rem] border border-[hsl(var(--color-border))]">
+                <div className="w-20 h-20 bg-[hsl(var(--color-primary)/0.1)] rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[hsl(var(--color-primary)/0.2)] shrink-0">
                   <LuLock className="w-10 h-10 text-[hsl(var(--color-primary))]" />
                 </div>
                 <h3 className="text-2xl font-bold text-[hsl(var(--color-text))] mb-3">Authentication Required</h3>

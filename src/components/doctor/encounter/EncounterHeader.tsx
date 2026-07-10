@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { LuArrowLeft, LuPrinter, LuSave } from "react-icons/lu";
+import ThemeToggle from "@/components/ThemeToggle";
+import NotificationBell from "@/components/global/NotificationBell";
 
 interface EncounterHeaderProps {
   loading: boolean;
@@ -57,6 +59,8 @@ export default function EncounterHeader({
       </div>
       
       <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto shrink-0 mt-3 lg:mt-0">
+        <NotificationBell basePath="/doctor" />
+        <ThemeToggle />
         <button onClick={onPrint} className="flex items-center gap-2 text-[13px] sm:text-sm font-bold bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-[hsl(var(--color-border))] transition-colors shrink-0">
           <LuPrinter className="text-lg shrink-0" /> <span className="hidden sm:inline">Print Report</span>
         </button>
