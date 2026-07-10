@@ -53,18 +53,31 @@ export async function subscribeToPushNotifications() {
     console.error("Failed to register Web Push subscription:", error);
   }
 }
+
 export async function unsubscribeFromPushNotifications() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
     return;
   }
   try {
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) return;
+    
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
+      // First, remove it from the backend DB
+      try {
+        await fetchClient.delete("/notifications/push-permission", {
+          data: { endpoint: subscription.endpoint }
+        });
+      } catch (err) {
+        console.error("Failed to delete push subscription from backend:", err);
+      }
+      
+      // Then unsubscribe locally
       await subscription.unsubscribe();
       console.log("Unsubscribed from push notifications successfully.");
     }
-  } catch (error) {
-    console.error("Failed to unsubscribe from push notifications:", error);
+  } catch (err) {
+    console.error("Error unsubscribing from push notifications:", err);
   }
 }

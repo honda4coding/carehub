@@ -105,7 +105,7 @@ export default function AdminUserManagementPage() {
       <DashboardHeader
         title="User Directory"
         subtitle="Manage all registered accounts and suspension statuses"
-        backPath="/admin"
+        showBack={true}
         rightElement={
           <button
             onClick={fetchUsers}

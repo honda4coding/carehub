@@ -67,7 +67,7 @@ export default function DoctorProfilePage() {
       <DashboardHeader
         title="Profile Settings"
         subtitle="Manage your personal information and license"
-        backPath="/doctor"
+        showBack={true}
       />
 
       <main className="flex-1 p-6">

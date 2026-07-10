@@ -88,6 +88,34 @@
     --shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
   }
 
+  @media print {
+    .dark {
+      /* Force Light Theme variables for print */
+      --color-bg: 210 40% 98%;
+      --color-bg-surface: 0 0% 100%;
+      --color-bg-surface-hover: 210 40% 96%;
+      --color-bg-soft: 210 40% 93%;
+      --color-bg-base: var(--color-bg);
+      --color-text: 222 47% 11%;
+      --color-text-muted: 215 16% 47%;
+      --color-text-inverse: 0 0% 100%;
+      --color-primary: 195 75% 58%;
+      --color-primary-strong: 195 75% 45%;
+      --color-secondary: 330 80% 70%;
+      --color-secondary-strong: 330 75% 60%;
+      --color-border: 215 16% 47% / 0.12;
+      --color-border-soft: 215 16% 47% / 0.07;
+      --color-success: 142 60% 35%;
+      --color-success-bg: 142 60% 94%;
+      --color-warning: 38 90% 35%;
+      --color-warning-bg: 38 90% 93%;
+      --color-danger: 0 84% 60%;
+      --color-danger-bg: 0 100% 95%;
+      --color-indigo: 245 58% 60%;
+      --color-indigo-bg: 245 58% 95%;
+    }
+  }
+
   body {
     background-color: hsl(var(--color-bg));
     color: hsl(var(--color-text));
@@ -347,3 +375,35 @@
   }
 }
 
+/* ========================================================
+   React Day Picker Global Overrides
+   ======================================================== */
+:root .rdp-root {
+  --rdp-accent-color: hsl(var(--color-primary));
+  --rdp-accent-background-color: hsl(var(--color-primary) / 0.1);
+  --rdp-today-color: hsl(var(--color-primary));
+  --rdp-selected-border: none;
+  --rdp-day-height: 38px;
+  --rdp-day-width: 38px;
+  --rdp-day_button-border-radius: 12px;
+}
+
+:root .rdp-selected {
+  font-weight: bold !important;
+  background-color: var(--rdp-accent-color) !important;
+  color: white !important;
+}
+
+:root .rdp-today:not(.rdp-selected) {
+  background-color: var(--rdp-accent-background-color);
+  font-weight: bold;
+}
+
+:root .rdp-nav_button {
+  border-radius: 8px;
+  background-color: hsl(var(--color-bg-surface-hover));
+}
+
+:root .rdp-nav_button:hover {
+  background-color: hsl(var(--color-bg-soft));
+}

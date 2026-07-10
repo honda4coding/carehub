@@ -35,7 +35,7 @@ export default function PatientApptCard({
   const clinicPhone   = clinic?.phone || clinic?.whatsapp;
 
   return (
-    <div className={`group relative bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden mb-4 ${
+    <div className={`group relative bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px cursor-pointer overflow-hidden ${
       status === "cancelled" ? "opacity-60 saturate-50 hover:opacity-100" : ""
     }`}>
       <div className={`absolute top-0 bottom-0 left-0 w-[4px] rounded-l-2xl ${
@@ -47,15 +47,15 @@ export default function PatientApptCard({
           {docPic ? (
             <img src={docPic} alt={docName || "Doctor"} className="w-12 h-12 rounded-full object-cover border border-[hsl(var(--color-border))]" />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] flex items-center justify-center text-[14px] font-black shrink-0">
+            <div className="w-12 h-12 rounded-full bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] border border-[hsl(var(--color-primary)/0.2)] flex items-center justify-center text-sm font-bold tracking-tight shrink-0">
               {initialsOf(docName || "Doctor")}
             </div>
           )}
         </Link>
 
         <div className="flex-1 min-w-0">
-          <Link href={doctor?._id ? `/patient/doctors/${doctor._id}` : "#"} className="hover:underline decoration-primary underline-offset-2">
-            <p className={`text-[15px] font-black truncate ${status === "cancelled" ? "text-[hsl(var(--color-text-muted))] line-through" : "text-[hsl(var(--color-text))]"}`}>
+          <Link href={doctor?._id ? `/patient/doctors/${doctor._id}` : "#"} className="hover:underline decoration-[hsl(var(--color-primary))] underline-offset-2">
+            <p className={`text-base font-bold tracking-tight truncate ${status === "cancelled" ? "text-[hsl(var(--color-text-muted))] line-through" : "text-[hsl(var(--color-text))]"}`}>
               {docName ? `Dr. ${docName}` : "Doctor"}
             </p>
           </Link>
@@ -109,7 +109,7 @@ export default function PatientApptCard({
           <>
             <button
               onClick={(e) => { e.preventDefault(); onPayClick(appt); }}
-              className="flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:-translate-y-[1px] cursor-pointer transition-all"
+              className="flex items-center gap-1.5 text-[13px] font-bold tracking-tight px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:opacity-90 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-px cursor-pointer transition-all"
             >
               <LuCreditCard className="text-[14px]" /> Pay
             </button>
@@ -124,7 +124,7 @@ export default function PatientApptCard({
         {isFollowUpAction && (
           <Link
             href={doctor?._id ? `/patient/doctors/${doctor._id}/book?clinicId=${clinic?._id || ""}` : "#"}
-            className="flex items-center gap-1.5 text-[13px] font-bold px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:-translate-y-[1px] cursor-pointer transition-all"
+            className="flex items-center gap-1.5 text-[13px] font-bold tracking-tight px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:opacity-90 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-px cursor-pointer transition-all"
           >
             <LuCalendarDays className="text-[14px]" /> Book Now
           </Link>

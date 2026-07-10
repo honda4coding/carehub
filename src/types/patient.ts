@@ -5,9 +5,10 @@ export interface PatientFormValues {
   phoneNumber: string;
   password: string;
   confirmPassword: string;
-  age: number;
+  dateOfBirth: string;
   gender: 'male' | 'female';
   bloodType: string;
+  governorate: string;
   address: string;
 }
 
@@ -17,8 +18,10 @@ export interface HealthHubProfile {
   bloodType: string;
   chronicDiseases: string[];
   allergies: string[];
-  age: number;
+  age?: number;
+  dateOfBirth?: string;
   gender: "Male" | "Female";
+  governorate?: string;
   address: string;
   phoneNumber: string;
   height?: number;

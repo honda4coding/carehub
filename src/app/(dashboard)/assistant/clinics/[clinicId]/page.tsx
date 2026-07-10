@@ -13,7 +13,7 @@ export default function AssistantClinicDetailsPage() {
       <DashboardHeader
         title="Clinic Details"
         subtitle="View and manage clinic schedule and information"
-        backPath="/assistant/appointments/schedule"
+        showBack={true}
       />
       <div className="p-4 md:p-6 flex-1 overflow-auto">
         <ClinicDetailsPanel clinicId={clinicId} />

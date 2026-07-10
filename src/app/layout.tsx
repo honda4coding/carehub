@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import { AuthProvider } from "@/context/AuthContext";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,7 +27,6 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "CareHub",
   description: "Medical Reports",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -38,6 +38,7 @@ export const metadata: Metadata = {
 };
 
 import { ThemeProvider } from "@/components/ThemeProvider";
+import PWARegister from "@/components/PWARegister";
 
 export default function RootLayout({
   children,
@@ -50,7 +51,22 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.deferredPWA = null;
+              window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                window.deferredPWA = e;
+                window.dispatchEvent(new Event('pwa-ready'));
+              });
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
+        <PWARegister />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider>
             <Navbar />
@@ -59,6 +75,7 @@ export default function RootLayout({
             </main>
             <Footer />
           </AuthProvider>
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>

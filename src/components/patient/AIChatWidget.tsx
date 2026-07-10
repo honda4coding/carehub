@@ -79,7 +79,7 @@ export default function AIChatWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-dark))] transition-transform hover:scale-105 z-50"
+          className="fixed bottom-6 right-6 w-14 h-14 bg-[hsl(var(--color-primary))] text-white rounded-full flex items-center justify-center hover:bg-[hsl(var(--color-primary-strong))] shadow-[var(--shadow-lg)] hover:shadow-xl hover:-translate-y-1 transition-all duration-300 z-50 print:hidden"
         >
           <LuBot size={28} />
         </button>
@@ -87,7 +87,7 @@ export default function AIChatWidget() {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col">
+        <div className="fixed bottom-6 right-6 w-[350px] sm:w-[400px] h-[500px] max-h-[80vh] bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-2xl flex flex-col z-50 overflow-hidden flex-col print:hidden">
           {/* Header */}
           <div className="flex items-center justify-between p-4 bg-[hsl(var(--color-primary))] text-white">
             <div className="flex items-center gap-2 font-bold">
@@ -148,7 +148,7 @@ export default function AIChatWidget() {
             <button 
               onClick={handleSend}
               disabled={loading || !input.trim()}
-              className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center disabled:opacity-50 hover:bg-[hsl(var(--color-primary-dark))] transition-colors shrink-0"
+              className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary))] text-white flex items-center justify-center disabled:opacity-50 hover:bg-[hsl(var(--color-primary-strong))] transition-colors shrink-0"
             >
               <LuSend size={18} className="rtl:rotate-180" />
             </button>

@@ -77,7 +77,7 @@ export default function AnalyticsPage() {
       <DashboardHeader
         title="Detailed Analytics"
         subtitle="Deep dive into platform metrics and statistics"
-        backPath="/admin"
+        showBack={true}
       />
       <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
@@ -100,7 +100,7 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <>
-          <FinancialOverview />
+          <FinancialOverview startDate={startDate} endDate={endDate} />
           
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

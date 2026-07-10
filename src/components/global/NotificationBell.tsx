@@ -81,7 +81,7 @@ export default function NotificationBell({ basePath }: { basePath: string }) {
       const data = resData.notifications ?? [];
       setNotifications(data);
       
-      const count = resData.unreadCount ?? data.filter((n: Notification) => !n.isRead).length;
+      const count = resData.unreadCount ?? 0;
       setUnreadCount(count);
       window.dispatchEvent(new CustomEvent("notifications-updated", { detail: count }));
     } catch (err) {

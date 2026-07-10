@@ -5,7 +5,7 @@ import { GetDashboardData, MonthlyStats, DailyStats, AnalyticsData, FinancialSta
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AdminProfile {
@@ -71,11 +71,19 @@ export const adminService = {
     return fetchClient.get("/admin/stats/analytics", { params });
   },
 
-  getFinancialStats: (): Promise<{ data: FinancialStats }> => 
-    fetchClient.get("/admindashboard/financial-stats"),
+  getFinancialStats: (startDate?: string, endDate?: string): Promise<{ data: FinancialStats }> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admindashboard/financial-stats", { params });
+  },
 
-  getPaymentAnalytics: (): Promise<{ data: any }> =>
-    fetchClient.get("/admin/stats/payments"),
+  getPaymentAnalytics: (startDate?: string, endDate?: string): Promise<{ data: any }> => {
+    const params: Record<string, string> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    return fetchClient.get("/admin/stats/payments", { params });
+  },
 
   getDoctors: (params: { status?: string, page?: number, limit?: number, search?: string } = {}): Promise<GetDoctorsResponse> => {
     const query: Record<string, string> = {};
@@ -111,6 +119,21 @@ export const adminService = {
       body: JSON.stringify({ reason }),
     }),
 
+  getSupportMessages: (page: number = 1, limit: number = 10, search?: string, filter?: string): Promise<any> => {
+    const params: Record<string, string> = { page: String(page), limit: String(limit) };
+    if (search) params.search = search;
+    if (filter && filter !== 'all') params.filter = filter;
+    return fetchClient.get("/support", { params });
+  },
+
+  getUnreadSupportMessagesCount: (): Promise<any> => {
+    return fetchClient.get("/support/unread-count");
+  },
+
+  toggleSupportMessageReadStatus: (messageId: string): Promise<any> => {
+    return fetchClient.request(`/support/${messageId}/read`, { method: "PATCH" });
+  }
+
 };
 
 export interface PendingLicenseDoctor {
@@ -128,33 +151,17 @@ export interface PendingLicenseDoctor {
 
 /** PATCH /admin/profile-image */
 export async function uploadAdminAvatar(file: File): Promise<{ secure_url: string; public_id: string }> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("profilepicture", file);
-  const res = await fetch(`${BASE_URL}/admin/profile-image`, {
-    method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  const res = await fetchClient.patch("/admin/profile-image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to upload image");
-  }
-  const json = await res.json();
-  return json.data.profilepicture;
+  return res.data?.data?.profilepicture || res.data?.profilepicture;
 }
 
 /** DELETE /admin/profile-image */
 export async function deleteAdminAvatar(): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  const res = await fetch(`${BASE_URL}/admin/profile-image`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete image");
-  }
+  await fetchClient.delete("/admin/profile-image");
 }
 
 /** DELETE /user/profile */

@@ -47,7 +47,7 @@ export default function DoctorBillingPage() {
       <DashboardHeader 
         title="Billing & Transactions" 
         subtitle="Manage invoices and financial records" 
-        backPath={`/${role}`} 
+        showBack={true} 
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-y-auto">
@@ -131,7 +131,7 @@ export default function DoctorBillingPage() {
                                 onClick={async () => {
                                   if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
                                     try {
-                                      await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`, {});
+                                      await fetchClient.patch(`/appointments/${s.appointmentId}/override-followup`, {});
                                       alert("Follow-up discount cancelled.");
                                       window.location.reload();
                                     } catch (err) {
@@ -213,7 +213,7 @@ export default function DoctorBillingPage() {
                                   onClick={async () => {
                                     if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
                                       try {
-                                        await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`, {});
+                                        await fetchClient.patch(`/appointments/${s.appointmentId}/override-followup`, {});
                                         alert("Follow-up discount cancelled.");
                                         window.location.reload();
                                       } catch (err) {

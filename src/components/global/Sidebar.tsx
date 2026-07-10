@@ -15,6 +15,7 @@ import {
   LuUsers,
   LuCalendarDays,
   LuShieldCheck,
+  LuLifeBuoy,
   LuSettings,
   LuUser,
   LuClipboardList,
@@ -65,11 +66,8 @@ const adminNav: NavSection[] = [
     items: [
       { label: "Doctors", href: "/admin/doctors", icon: <LuStethoscope /> },
       { label: "Users", href: "/admin/users", icon: <LuUsers /> },
-      {
-        label: "Approvals",
-        href: "/admin/approvals",
-        icon: <LuShieldCheck />,
-      },
+      { label: "Approvals", href: "/admin/approvals", icon: <LuShieldCheck /> },
+      { label: "Support", href: "/admin/support-messages", icon: <LuLifeBuoy /> },
       {
         label: "Doctor Licenses",
         href: "/admin/doctors/licenses",
@@ -453,12 +451,14 @@ function SidebarContent({
   pendingApprovals,
   unreadNotifications,
   pendingLicenses,
+  unreadSupport,
 }: {
   role: string;
   onClose?: () => void;
   pendingApprovals: number | null;
   unreadNotifications: number | null;
   pendingLicenses: number | null;
+  unreadSupport: number | null;
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -556,6 +556,7 @@ function SidebarContent({
         } catch {
           // ignore
         }
+        
       };
       fetchAvatar();
     }
@@ -611,11 +612,13 @@ function SidebarContent({
               const badgeValue =
                 role === "admin" && item.href === "/admin/approvals"
                   ? pendingApprovals
-                  : role === "admin" && item.href === "/admin/doctors/licenses"
-                    ? pendingLicenses
-                    : item.href.endsWith("/notifications")
-                      ? unreadNotifications
-                      : item.badge;
+                  : role === "admin" && item.href === "/admin/support-messages"
+                    ? unreadSupport
+                    : role === "admin" && item.href === "/admin/doctors/licenses"
+                      ? pendingLicenses
+                      : item.href.endsWith("/notifications")
+                        ? unreadNotifications
+                        : item.badge;
               return (
                 <Link
                   key={item.href}
@@ -696,6 +699,7 @@ export default function Sidebar({ role }: { role: string }) {
     null,
   );
   const [pendingLicenses, setPendingLicenses] = useState<number | null>(null);
+  const [unreadSupport, setUnreadSupport] = useState<number | null>(null);
 
   // â”€â”€ Pending approvals badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
@@ -741,17 +745,36 @@ export default function Sidebar({ role }: { role: string }) {
       );
   }, [role]);
 
+  // â”€â”€ Support unread badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  useEffect(() => {
+    if (role !== "admin") return;
+
+    const fetchUnreadSupport = async () => {
+      try {
+        const res = await adminService.getUnreadSupportMessagesCount();
+        if (res?.data?.count !== undefined && res.data.count > 0) {
+          setUnreadSupport(res.data.count);
+        } else {
+          setUnreadSupport(null);
+        }
+      } catch {
+        setUnreadSupport(null);
+      }
+    };
+
+    fetchUnreadSupport();
+    const interval = setInterval(fetchUnreadSupport, 60000); // poll every minute
+    return () => clearInterval(interval);
+  }, [role]);
+
   // â”€â”€ Unread notifications badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const fetchUnreadCount = useCallback(async () => {
     if (role !== "admin" && role !== "patient" && role !== "doctor") return;
     try {
       const res = await fetchClient.get("/notifications", {
-        params: { limit: "100" },
+        params: { limit: "1" },
       });
-      const notifications = res.data?.notifications ?? [];
-      const count = notifications.filter(
-        (n: { isRead: boolean }) => !n.isRead,
-      ).length;
+      const count = res.data?.unreadCount ?? 0;
       setUnreadNotifications(count > 0 ? count : null);
     } catch {
       setUnreadNotifications(null);
@@ -788,6 +811,7 @@ export default function Sidebar({ role }: { role: string }) {
           pendingApprovals={pendingApprovals}
           unreadNotifications={unreadNotifications}
           pendingLicenses={pendingLicenses}
+          unreadSupport={unreadSupport}
         />
       </aside>
 
@@ -795,7 +819,7 @@ export default function Sidebar({ role }: { role: string }) {
         <button
           id="sidebar-toggle"
           onClick={() => setOpen(true)}
-          className="md:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+          className="md:hidden print:hidden fixed top-3.5 left-4 z-50 w-9 h-9 flex items-center justify-center rounded-[10px] bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
           aria-label="Open menu"
         >
           <LuMenu className="text-lg" />
@@ -816,6 +840,7 @@ export default function Sidebar({ role }: { role: string }) {
               pendingApprovals={pendingApprovals}
               unreadNotifications={unreadNotifications}
               pendingLicenses={pendingLicenses}
+              unreadSupport={unreadSupport}
             />
           </aside>
         </>

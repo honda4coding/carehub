@@ -101,24 +101,7 @@ export default function GenerateSlotsCard({ clinicId, onSuccess }: GenerateSlots
 
       <div className="flex flex-col gap-6">
         <div className="flex justify-center bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] rounded-xl p-4 overflow-x-auto">
-          <style dangerouslySetInnerHTML={{__html: `
-            .rdp {
-              --rdp-cell-size: 38px;
-              --rdp-accent-color: hsl(var(--color-primary));
-              --rdp-background-color: hsl(var(--color-primary) / 0.1);
-              --rdp-outline: 2px solid var(--rdp-accent-color);
-              margin: 0;
-              font-family: inherit;
-            }
-            .rdp-months {
-              justify-content: center;
-              gap: 2rem;
-            }
-            .rdp-day_selected, .rdp-day_selected:focus-visible, .rdp-day_selected:hover {
-              color: white;
-              background-color: var(--rdp-accent-color);
-            }
-          `}} />
+
           <DayPicker
             mode="multiple"
             min={1}

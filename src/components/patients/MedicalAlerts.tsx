@@ -14,10 +14,10 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
     <div className="flex flex-col gap-4">
       {/* Allergies */}
       {allergies.length > 0 && (
-        <Card className="p-4 border-[hsl(var(--color-danger-bg))]">
+        <Card className="p-4 border-[hsl(var(--color-danger-bg))] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
           <div className="flex items-center gap-2 mb-3">
             <LuShieldAlert className="text-[hsl(var(--color-danger))]" />
-            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-danger))] tracking-wider">Allergies</h3>
+            <h3 className="text-sm font-bold uppercase text-[hsl(var(--color-danger))] tracking-widest">Allergies</h3>
           </div>
           <div className="flex flex-wrap gap-2">
             {allergies.map((a, idx) => (
@@ -31,10 +31,10 @@ export default function MedicalAlerts({ allergies, chronicDiseases }: Props) {
 
       {/* Chronic Diseases */}
       {chronicDiseases.length > 0 && (
-        <Card className="p-4 border-[hsl(var(--color-warning-bg))]">
+        <Card className="p-4 border-[hsl(var(--color-warning-bg))] shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
           <div className="flex items-center gap-2 mb-3">
             <LuActivity className="text-[hsl(var(--color-warning))]" />
-            <h3 className="text-sm font-black uppercase text-[hsl(var(--color-warning))] tracking-wider">Chronic Conditions</h3>
+            <h3 className="text-sm font-bold uppercase text-[hsl(var(--color-warning))] tracking-widest">Chronic Conditions</h3>
           </div>
           <div className="flex flex-col gap-2">
             {chronicDiseases.map((c, idx) => (

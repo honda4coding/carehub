@@ -10,8 +10,7 @@ import { LuLoader } from 'react-icons/lu';
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 const specialties = [
   { value: "general_practice", label: "General Practice" },
@@ -23,19 +22,6 @@ const specialties = [
   { value: "neurology", label: "Neurology" },
   { value: "psychiatry", label: "Psychiatry" },
 ];
-
-async function parseErrorMessage(res: Response): Promise<string> {
-  const raw = await res.text();
-  try {
-    const json = JSON.parse(raw);
-    if (json.message === "validation error" && Array.isArray(json.error)) {
-      return json.error.map((e: any) => e.message).join(", ");
-    }
-    return json.message || "Something went wrong";
-  } catch {
-    return raw || "Something went wrong";
-  }
-}
 
 export default function DoctorRegisterForm() {
   const [loading, setLoading] = useState(false);
@@ -72,15 +58,7 @@ export default function DoctorRegisterForm() {
         if (values.licenseImage) formData.append("licenseImage", values.licenseImage);
         if (values.nationalId) formData.append("nationalId", values.nationalId);
 
-        const res = await fetch(`${BASE_URL}/users/signup`, {
-          method: "POST",
-          body: formData,
-        });
-
-        if (!res.ok) {
-          const message = await parseErrorMessage(res);
-          throw new Error(message);
-        }
+        await fetchClient.post("/users/signup", formData);
 
         alert("Registration submitted successfully! Awaiting admin approval.");
 

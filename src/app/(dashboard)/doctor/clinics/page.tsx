@@ -249,7 +249,7 @@ function ClinicsContent() {
         <DashboardHeader
           title="My Clinics"
           subtitle="Manage your physical clinics and schedules"
-          backPath="/doctor"
+          showBack={true}
         />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center shadow-sm">
@@ -280,7 +280,7 @@ function ClinicsContent() {
       <DashboardHeader
         title="My Clinics"
         subtitle="Pick a clinic to manage its services and schedule"
-        backPath="/doctor"
+        showBack={true}
         rightElement={
           <div className="flex items-center gap-4">
             {subscription?.subscriptionId?.limits && (

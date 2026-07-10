@@ -13,7 +13,7 @@ export default function ClinicDetailsPage() {
       <DashboardHeader
         title="Clinic Details"
         subtitle="View and manage clinic information"
-        backPath="/doctor/clinics"
+        showBack={true}
       />
       <div className="p-4 md:p-6 flex-1 overflow-auto">
         <ClinicDetailsPanel clinicId={clinicId} />

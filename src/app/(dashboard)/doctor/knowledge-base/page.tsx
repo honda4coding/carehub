@@ -171,7 +171,7 @@ export default function KnowledgeBasePage() {
         <DashboardHeader
           title="Knowledge Base"
           subtitle="Manage the documents your Clinical Assistant learns from"
-          backPath="/doctor"
+          showBack={true}
         />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="max-w-md w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-8 text-center shadow-sm">
@@ -202,7 +202,7 @@ export default function KnowledgeBasePage() {
       <DashboardHeader
         title="Knowledge Base"
         subtitle="Manage the documents your Clinical Assistant learns from"
-        backPath="/doctor"
+        showBack={true}
       />
       <div className="flex-1 overflow-auto min-w-0">
         <div className="p-4 md:p-8 max-w-5xl mx-auto w-full space-y-6">

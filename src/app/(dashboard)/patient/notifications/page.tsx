@@ -97,7 +97,7 @@ export default function NotificationsPage() {
       <DashboardHeader
         title="Notifications"
         subtitle="View and manage all your notifications"
-        backPath="/patient"
+        showBack={true}
       />
       <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">

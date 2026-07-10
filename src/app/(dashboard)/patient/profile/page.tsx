@@ -22,7 +22,7 @@ export default function PatientProfilePage() {
       <DashboardHeader
         title="Profile"
         subtitle="Update your personal information and profile picture"
-        backPath="/patient"
+        showBack={true}
       />
 
       {loading ? (

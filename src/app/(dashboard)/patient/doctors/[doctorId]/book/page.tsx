@@ -248,11 +248,15 @@ export default function BookAppointmentPage() {
 
   function handlePickDay(date: Date) {
     const key = localDateKey(date);
-    if (!groupsByLocalKey.has(key)) return;
+    const group = groupsByLocalKey.get(key);
+    if (!group) return;
     if (bookedDates.has(key)) return;
     setSelectedDateKey(key);
     setBookingMode(null);
-    setSelectedSlot(null);
+    
+    // Auto-select first available slot
+    const firstSlot = [...group.slots].sort(byStartTime)[0];
+    setSelectedSlot(firstSlot || null);
   }
 
   function handleBookOnline() {
@@ -386,34 +390,51 @@ export default function BookAppointmentPage() {
           : step === "confirm" ? "Confirm booking"
           : "Booking confirmed!"}
         subtitle={step === "success" ? "You're all set" : doctorName}
-        backPath="/patient/doctors"
-        rightElement={
-          step !== "success" ? (
-            <div className="flex items-center gap-2">
-              {ALL_STEPS.map((s, i) => (
-                <div key={s} className="flex items-center gap-2">
-                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold tracking-widest border-2 transition-all ${
-                    i < stepIndex
-                      ? "bg-[hsl(var(--color-primary-strong))] border-sky-800 text-white"
-                      : step === s
-                      ? "bg-sky-200 border-sky-500 text-[hsl(var(--color-primary-strong))]"
-                      : "border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
-                  }`}>{i + 1}</div>
-                  {i < ALL_STEPS.length - 1 && (
-                    <div className={`w-8 h-0.5 rounded ${i < stepIndex ? "bg-[hsl(var(--color-primary-strong))]" : "bg-[hsl(var(--color-border))]"}`} />
-                  )}
-                </div>
-              ))}
-              <button onClick={handleCancel} className="py-2 px-4 rounded-xl border border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-xs font-semibold tracking-wide hover:bg-[hsl(var(--color-danger)/0.15)]">
-                Cancel
-              </button>
-            </div>
-          ) : undefined
-        }
+        showBack={true}
       />
 
       {/* ── Main ── */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-auto flex flex-col relative bg-[hsl(var(--color-bg-base))]">
+        {/* ── Progress Wizard Bar ── */}
+        {step !== "success" && (
+          <div className="w-full bg-[hsl(var(--color-bg-base))] pt-6 pb-2 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="bg-[hsl(var(--color-bg-surface))] rounded-2xl border border-[hsl(var(--color-border))] p-3 sm:p-4 md:px-6 flex items-center justify-between gap-3 shadow-[var(--shadow-card)]">
+                <div className="flex items-center flex-1 min-w-0">
+                  {ALL_STEPS.map((s, i) => (
+                    <div key={s} className={`flex items-center ${i < ALL_STEPS.length - 1 ? "flex-1" : "shrink-0"}`}>
+                      <div className="flex items-center shrink-0 gap-1.5 md:gap-2">
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-[12px] font-bold tracking-widest border-[2px] transition-all duration-300 ${
+                          i < stepIndex
+                            ? "bg-[hsl(var(--color-primary))] border-[hsl(var(--color-primary))] text-white"
+                            : step === s
+                            ? "bg-[hsl(var(--color-primary)/0.1)] border-[hsl(var(--color-primary))] text-[hsl(var(--color-primary-strong))] shadow-[0_0_0_4px_hsl(var(--color-primary)/0.05)]"
+                            : "bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]"
+                        }`}>
+                          {i < stepIndex ? <LuCheck className="text-[16px]" /> : i + 1}
+                        </div>
+                        <div className={`flex-col ${step === s ? "flex" : "hidden lg:flex"}`}>
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${i <= stepIndex ? "text-[hsl(var(--color-primary-strong))]" : "text-[hsl(var(--color-text-muted))]"}`}>Step {i + 1}</span>
+                          <span className={`text-[13px] font-semibold ${i <= stepIndex ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"}`}>
+                            {s === "clinic" ? "Location" : s === "calendar" ? "Date & Time" : "Confirm"}
+                          </span>
+                        </div>
+                      </div>
+                      
+                      {i < ALL_STEPS.length - 1 && (
+                        <div className={`flex-1 mx-2 md:mx-4 h-[2px] rounded-full transition-colors duration-300 min-w-[8px] max-w-[48px] ${i < stepIndex ? "bg-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-border))]"}`} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+                
+                <button onClick={handleCancel} className="py-2 px-3 sm:px-5 rounded-xl border border-[hsl(var(--color-danger)/0.3)] bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-[12px] sm:text-[13px] font-bold tracking-wide hover:bg-[hsl(var(--color-danger)/0.15)] hover:border-[hsl(var(--color-danger)/0.5)] transition-all shrink-0">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {isEligibleForFollowUpDiscount && step !== "success" && (
           <div className="bg-[hsl(var(--color-primary-soft))] border-b border-[hsl(var(--color-primary)/0.2)] p-3 flex items-center justify-center gap-2">
             <LuStar className="text-sky-500 shrink-0" />
@@ -435,7 +456,7 @@ export default function BookAppointmentPage() {
 
         ) : step === "clinic" ? (
           /* ── Step 1: clinic selector ── */
-          <div className="p-4 md:p-6 max-w-xl mx-auto w-full">
+          <div className="p-4 md:p-8 max-w-7xl mx-auto w-full">
             {clinics.length === 0 ? (
               <EmptyState
                 icon={<LuBuilding2 />}
@@ -444,42 +465,67 @@ export default function BookAppointmentPage() {
               />
             ) : (
               <>
-                <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] mb-5">
-                  {doctorName} operates from {clinics.length > 1 ? "multiple clinics" : "the following clinic"}. Choose one to see its availability.
-                </p>
-                <div className="space-y-3">
+                <div className="mb-8 md:mb-10 text-center max-w-2xl mx-auto">
+                  <h2 className="text-2xl font-black text-[hsl(var(--color-text))] mb-3">Where would you like to visit?</h2>
+                  <p className="text-[15px] font-medium text-[hsl(var(--color-text-muted))] leading-relaxed">
+                    <span className="text-[hsl(var(--color-primary))] font-semibold">{doctorName}</span> operates from {clinics.length > 1 ? "multiple clinics" : "the following clinic"}. Choose a convenient location to see availability.
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                   {clinics.map((c) => (
-                    <button
+                    <div
                       key={c._id}
                       onClick={() => handleSelectClinic(c)}
-                      className="w-full text-left p-4 rounded-2xl border-2 border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-sky-500 hover:bg-[hsl(var(--color-primary-soft))]/50 transition-all group"
+                      role="button"
+                      tabIndex={0}
+                      className="w-full p-5 rounded-2xl border-[2px] border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] hover:border-[hsl(var(--color-primary))] hover:-translate-y-1 hover:shadow-[var(--shadow-float)] transition-all duration-300 group cursor-pointer"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary-strong))] flex items-center justify-center shrink-0 mt-0.5">
-                          <LuBuilding2 className="text-white text-[17px]" />
+                      <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--color-primary)/0.03)] to-transparent opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none rounded-2xl" />
+                      
+                      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 text-left" dir="ltr">
+                        {/* Icon - Left Fixed */}
+                        <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 border border-[hsl(var(--color-primary)/0.2)] group-hover:bg-[hsl(var(--color-primary))] group-hover:border-[hsl(var(--color-primary))] transition-colors shadow-sm">
+                          <LuBuilding2 className="text-[hsl(var(--color-primary-strong))] group-hover:text-white text-[22px] transition-colors" />
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary-strong))] transition-colors">
-                            {c.name}
-                          </p>
-                          <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-text-muted))]">
-                            <LuMapPin className="text-[12px] shrink-0" /> {c.address} — {c.governorate}
+                        
+                        {/* Text Content - Middle Fluid */}
+                        <div className="flex flex-col gap-1.5 overflow-hidden">
+                          <h3 className="text-left text-[16px] md:text-[17px] font-bold text-[hsl(var(--color-text))] group-hover:text-[hsl(var(--color-primary-strong))] transition-colors truncate">
+                            <bdi>{c.name}</bdi>
+                          </h3>
+                          
+                          <div className="flex items-start gap-2 text-[13px] font-medium text-[hsl(var(--color-text-muted))]">
+                            <LuMapPin className="text-[15px] shrink-0 text-[hsl(var(--color-primary))] mt-0.5" /> 
+                            <span className="text-left line-clamp-2 break-words w-full">
+                              <bdi>{c.address}</bdi> <span className="mx-1">—</span> <bdi className="font-bold text-[hsl(var(--color-text))]">{c.governorate}</bdi>
+                            </span>
                           </div>
+                          
                           {(c.phone || c.whatsapp || c.landline) && (
-                            <div className="flex items-center gap-1.5 mt-1 text-[11.5px] font-semibold text-[hsl(var(--color-primary-strong))]">
-                              <LuPhone className="text-[12px] shrink-0" />
-                              {c.phone || c.whatsapp || c.landline}
+                            <div className="flex items-center gap-2 text-[13px] font-bold text-[hsl(var(--color-text))]">
+                              <LuPhone className="text-[14px] shrink-0 text-[hsl(var(--color-success))]" />
+                              <span className="text-left truncate w-full">
+                                <bdi>{c.phone || c.whatsapp || c.landline}</bdi>
+                              </span>
                             </div>
                           )}
+
                           {c.services && c.services.length > 0 && (
-                            <div className="mt-1.5 text-[11px] font-bold text-[hsl(var(--color-primary-strong))]">
-                              {c.services.length} service{c.services.length !== 1 ? "s" : ""} available
+                            <div className="mt-1 flex items-center justify-start">
+                              <div className="bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] px-2.5 py-1 rounded-lg text-[11px] font-bold tracking-wide border border-[hsl(var(--color-primary)/0.2)]">
+                                {c.services.length} Service{c.services.length !== 1 ? "s" : ""}
+                              </div>
                             </div>
                           )}
                         </div>
-                        <LuChevronRight className="text-[hsl(var(--color-text-muted))] group-hover:text-sky-600 transition-colors mt-1 shrink-0" />
+                        
+                        {/* Chevron - Right Fixed */}
+                        <div className="hidden sm:flex w-10 h-10 rounded-full bg-[hsl(var(--color-bg-soft))] items-center justify-center group-hover:bg-[hsl(var(--color-primary)/0.15)] shrink-0 transition-colors">
+                          <LuChevronRight className="text-[hsl(var(--color-text-muted))] group-hover:text-[hsl(var(--color-primary))] transition-colors text-[20px]" />
+                        </div>
                       </div>
-                    </button>
+                    </div>
                   ))}
                 </div>
               </>
@@ -489,23 +535,28 @@ export default function BookAppointmentPage() {
         ) : step === "calendar" ? (
           /* ── Step 2: calendar ── */
           <div className="flex flex-col h-full">
-            {/* Doctor + clinic mini bar */}
-            <div className="bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-4 md:px-6 py-3 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-sm font-medium font-black shrink-0">
-                {doctorInitials}
+            {/* Doctor + clinic premium card */}
+            <div className="w-full max-w-6xl mx-auto px-4 md:px-6 md:px-8 mt-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-5 shadow-[var(--shadow-card)] gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-800 to-sky-600 flex items-center justify-center text-white text-[15px] font-black shrink-0 shadow-sm border border-sky-700/50">
+                    {doctorInitials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-black text-[hsl(var(--color-text))] mb-0.5">{doctorName}</p>
+                    <div className="flex items-center gap-1.5 text-[12px] font-bold text-sky-600 truncate">
+                      <LuMapPin className="shrink-0 text-[13px]" />
+                      <span className="truncate" dir="auto">{selectedClinic?.name} · {selectedClinic?.address}</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setStep("clinic")}
+                  className="py-2.5 px-5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] text-[12.5px] font-bold hover:bg-[hsl(var(--color-bg-base))] hover:text-[hsl(var(--color-primary-strong))] transition-all shrink-0 w-full sm:w-auto text-center shadow-sm"
+                >
+                  Change Location
+                </button>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-[hsl(var(--color-text))]">{doctorName}</p>
-                <p className="text-[11px] font-bold text-sky-600 truncate">
-                  {selectedClinic?.name} · {selectedClinic?.address}
-                </p>
-              </div>
-              <button
-                onClick={() => setStep("clinic")}
-                className="text-[11px] font-bold text-sky-600 hover:text-[hsl(var(--color-primary-strong))] transition-colors shrink-0"
-              >
-                Change
-              </button>
             </div>
 
             {dateGroups.length === 0 ? (
@@ -513,37 +564,36 @@ export default function BookAppointmentPage() {
                 <EmptyState icon={<LuCircleAlert />} title="No open slots" description="This clinic doesn't have any available slots yet." />
               </div>
             ) : (
-              <div className="flex flex-col md:flex-row gap-6 p-4 md:p-6 w-full justify-center items-start">
-
+              <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-6 p-4 md:p-6 md:px-8 w-full max-w-6xl mx-auto items-start">
                 {/* Calendar */}
-                <div className="w-full md:w-[40vw] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5">
-                  <div className="flex items-center justify-between mb-3">
+                <div className="w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-6 shadow-[var(--shadow-card)]">
+                  <div className="flex items-center justify-between mb-4">
                     <button
                       onClick={() => goToMonth(-1)}
                       aria-label="Previous month"
-                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 transition-all"
+                      className="w-9 h-9 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 hover:bg-sky-50 transition-all"
                     >
-                      <LuChevronLeft className="text-[14px]" />
+                      <LuChevronLeft className="text-[18px]" />
                     </button>
-                    <p className="text-sm font-semibold text-[hsl(var(--color-text))]">
+                    <p className="text-[15px] font-bold text-[hsl(var(--color-text))]">
                       {viewMonth ? `${MONTHS[viewMonth.getMonth()]} ${viewMonth.getFullYear()}` : ""}
                     </p>
                     <button
                       onClick={() => goToMonth(1)}
                       aria-label="Next month"
-                      className="w-8 h-8 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 transition-all"
+                      className="w-9 h-9 rounded-lg border border-[hsl(var(--color-border))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary-strong))] hover:border-sky-500 hover:bg-sky-50 transition-all"
                     >
-                      <LuChevronRight className="text-[14px]" />
+                      <LuChevronRight className="text-[18px]" />
                     </button>
                   </div>
 
                   <div className="grid grid-cols-7 gap-1 mb-2">
                     {WEEKDAYS.map((w) => (
-                      <div key={w} className="text-center text-[10px] font-bold text-[hsl(var(--color-text-muted))]">{w}</div>
+                      <div key={w} className="text-center text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))]">{w}</div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-7 gap-y-3">
+                  <div className="grid grid-cols-7 gap-1 sm:gap-2">
                     {monthCells.map((date, idx) => {
                       if (!date) return <div key={idx} />;
                       const key = localDateKey(date);
@@ -564,27 +614,27 @@ export default function BookAppointmentPage() {
                       })();
 
                       return (
-                        <div key={idx} className="flex items-center justify-center relative">
+                        <div key={idx} className="flex items-center justify-center relative aspect-square">
                           <button
                             disabled={!isAvailable || isAlreadyBooked}
                             onClick={() => handlePickDay(date)}
                             title={isAlreadyBooked ? "You already have an appointment with this doctor that day" : isFollowUpDate ? `Follow-up discount applies! Pay ${doctor?.followUpFee ?? ((doctor?.consultationFee ?? 0) * 0.5)} EGP` : undefined}
-                            className={`w-11 h-11 rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
+                            className={`w-full h-full max-w-[44px] max-h-[44px] rounded-full text-[13.5px] font-bold transition-all flex items-center justify-center border-2 ${
                               isSelected
-                                ? "bg-[hsl(var(--color-primary-strong))] border-sky-800 text-white"
+                                ? "bg-[hsl(var(--color-primary-strong))] border-sky-800 text-white shadow-md shadow-sky-500/20"
                                 : isAlreadyBooked
-                                ? "border-amber-400 bg-amber-50 text-amber-600 cursor-not-allowed"
+                                ? "border-amber-400 bg-amber-50 text-amber-600 cursor-not-allowed opacity-50"
                                 : isFollowUpDate
-                                ? "border-emerald-500 text-emerald-700 bg-emerald-50 hover:bg-emerald-100"
+                                ? "border-emerald-500 text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:shadow-sm"
                                 : isAvailable
-                                ? "border-sky-500 text-[hsl(var(--color-primary-strong))] bg-[hsl(var(--color-bg-surface))] hover:bg-[hsl(var(--color-primary-soft))]"
-                                : "border-transparent text-[hsl(var(--color-text-muted))] cursor-default"
+                                ? "border-sky-500 text-[hsl(var(--color-primary-strong))] bg-[hsl(var(--color-bg-surface))] hover:bg-sky-50 hover:border-sky-600 hover:shadow-sm"
+                                : "border-transparent text-[hsl(var(--color-text-muted))] cursor-default opacity-40"
                             }`}
                           >
                             {date.getDate()}
                           </button>
                           {isFollowUpDate && !isSelected && (
-                            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border border-white flex items-center justify-center pointer-events-none">
+                            <span className="absolute top-0 right-0 sm:-top-0.5 sm:-right-0.5 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center pointer-events-none">
                               <LuStar className="text-white" style={{ fontSize: 7 }} />
                             </span>
                           )}
@@ -594,14 +644,14 @@ export default function BookAppointmentPage() {
                   </div>
 
                   {/* Legend */}
-                  <div className="flex flex-col gap-2 mt-4 pt-3 border-t border-[hsl(var(--color-border))]">
+                  <div className="flex flex-col sm:flex-row flex-wrap gap-x-4 gap-y-2 mt-6 pt-4 border-t border-[hsl(var(--color-border))]">
                     <div className="flex items-center gap-2 text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
-                      <span className="w-4 h-4 rounded-full border-2 border-sky-500 inline-block" />
+                      <span className="w-3.5 h-3.5 rounded-full border-[2px] border-sky-500 inline-block" />
                       Available day
                     </div>
                     {validFollowUp && (
                       <div className="flex items-center gap-2 text-[11px] font-semibold text-emerald-700">
-                        <span className="w-4 h-4 rounded-full border-2 border-emerald-500 bg-emerald-50 inline-block relative">
+                        <span className="w-3.5 h-3.5 rounded-full border-[2px] border-emerald-500 bg-emerald-50 inline-block relative">
                           <LuStar className="absolute -top-1 -right-1 text-emerald-500" style={{ fontSize: 8 }} />
                         </span>
                         Follow-up discount ({selectedClinic?.followUpFee ?? ((selectedClinic?.consultationFee ?? 0) * 0.5)} EGP)
@@ -616,14 +666,14 @@ export default function BookAppointmentPage() {
                       </div>
                     )}
                     <div className="flex items-center gap-2 text-[11px] font-semibold text-amber-600">
-                      <span className="w-4 h-4 rounded-full border-2 border-amber-400 bg-amber-50 inline-block" />
+                      <span className="w-3.5 h-3.5 rounded-full border-[2px] border-amber-400 bg-amber-50 inline-block opacity-50" />
                       Already booked
                     </div>
                   </div>
                 </div>
 
                 {/* Right panel */}
-                <div className="w-full md:w-[40vw] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-6 md:sticky md:top-6">
+                <div className="w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 sm:p-6 lg:sticky lg:top-6 shadow-[var(--shadow-card)]">
                   {!selectedGroup ? (
                     <div className="flex flex-col items-center justify-center text-center py-12">
                       <LuCalendarDays className="text-[26px] text-[hsl(var(--color-text-muted))] mb-3" />
@@ -668,109 +718,51 @@ export default function BookAppointmentPage() {
                       )}
 
                       <div className="border-t border-[hsl(var(--color-border))] pt-4">
-                        {!bookingMode && (
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                            <button
-                              onClick={handleBookOnline}
-                              className="py-3 rounded-xl border border-sky-500 bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-600 transition-all"
-                            >
-                              Book online
-                            </button>
-                            <button
-                              onClick={() => setBookingMode("contact")}
-                              className="py-3 rounded-xl border border-sky-400 bg-[hsl(var(--color-primary-soft))] text-[hsl(var(--color-primary-strong))] text-[12.5px] font-bold hover:bg-sky-100 hover:border-sky-500 transition-all"
-                            >
-                              Contact to confirm
-                            </button>
-                          </div>
-                        )}
-
-                        {bookingMode === "online" && (
-                          <div>
-                            <label className="block text-[11px] font-bold text-[hsl(var(--color-text-muted))] mb-1.5">
-                              Choose a time
-                            </label>
-                            <select
-                              value={selectedSlot?._id ?? ""}
-                              onChange={(e) => {
-                                const slot = sortedDaySlots.find((s) => s._id === e.target.value);
-                                if (slot) setSelectedSlot(slot);
-                              }}
-                              className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-sm font-medium font-bold text-[hsl(var(--color-primary-strong))] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
-                            >
-                              {sortedDaySlots.map((s) => {
-                                const remainingMs = s.isReserved && s.reservedAt
-                                  ? Math.max(0, 5 * 60 * 1000 - (Date.now() - new Date(s.reservedAt).getTime()))
-                                  : 0;
-                                const remainingMin = Math.ceil(remainingMs / 60000);
-                                return (
-                                  <option key={s._id} value={s._id} disabled={remainingMs > 0 || s.isBooked}>
-                                    {slotTimeRangeLabel(s)}
-                                    {s.isBooked ? ' (Booked)' : remainingMs > 0 ? ` (Available in ${remainingMin} min)` : ''}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                            <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mb-4">
-                              We've pre-selected the next available time — pick another from the list if you'd prefer.
-                            </p>
-                            <div className="flex items-center gap-2">
-                              <button
-                                onClick={() => { setBookingMode(null); setSelectedSlot(null); }}
-                                className="flex-1 py-3 rounded-xl border border-[hsl(var(--color-border))] text-[12.5px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all"
-                              >
-                                ← Back
-                              </button>
-                              <button
-                                onClick={handleHold}
-                                disabled={confirming}
-                                className="flex-1 py-3 rounded-xl bg-gradient-to-r from-sky-800 to-sky-600 text-white text-[12.5px] font-black transition-all disabled:opacity-50"
-                              >
-                                {confirming ? "Holding..." : "Continue →"}
-                              </button>
-                            </div>
-                          </div>
-                        )}
-
-                        {bookingMode === "contact" && (
-                          <div>
-                            {selectedClinic && (selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline) ? (
-                              <div className="flex flex-col gap-2 mb-4">
-                                {selectedClinic.phone && (
-                                  <a href={`tel:${selectedClinic.phone}`}
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
-                                    <LuPhone className="text-[15px]" /> Call: {selectedClinic.phone}
-                                  </a>
-                                )}
-                                {selectedClinic.whatsapp && (
-                                  <a href={`https://wa.me/${selectedClinic.whatsapp.replace(/\D/g, "")}`} target="_blank" rel="noreferrer"
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
-                                    <LuMessageCircle className="text-[15px]" /> WhatsApp: {selectedClinic.whatsapp}
-                                  </a>
-                                )}
-                                {selectedClinic.landline && (
-                                  <a href={`tel:${selectedClinic.landline}`}
-                                    className="flex items-center gap-2.5 py-3 px-3.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-[12.5px] font-bold text-[hsl(var(--color-primary-strong))] hover:bg-sky-100 transition-all">
-                                    <LuPhoneCall className="text-[15px]" /> Landline: {selectedClinic.landline}
-                                  </a>
-                                )}
-                              </div>
+                        <div>
+                          <label className="block text-[11px] font-bold text-[hsl(var(--color-text-muted))] mb-1.5">
+                            Choose a time
+                          </label>
+                          <select
+                            value={selectedSlot?._id ?? ""}
+                            onChange={(e) => {
+                              const slot = sortedDaySlots.find((s) => s._id === e.target.value);
+                              if (slot) setSelectedSlot(slot);
+                            }}
+                            className="w-full px-3 py-2.5 rounded-xl border border-sky-300 bg-[hsl(var(--color-primary-soft))] text-sm font-medium font-bold text-[hsl(var(--color-primary-strong))] outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-200 transition-all mb-1.5"
+                          >
+                            {sortedDaySlots.map((s) => {
+                              const remainingMs = s.isReserved && s.reservedAt
+                                ? Math.max(0, 5 * 60 * 1000 - (Date.now() - new Date(s.reservedAt).getTime()))
+                                : 0;
+                              const remainingMin = Math.ceil(remainingMs / 60000);
+                              return (
+                                <option key={s._id} value={s._id} disabled={remainingMs > 0 || s.isBooked}>
+                                  {slotTimeRangeLabel(s)}
+                                  {s.isBooked ? ' (Booked)' : remainingMs > 0 ? ` (Available in ${remainingMin} min)` : ''}
+                                </option>
+                              );
+                            })}
+                          </select>
+                          <p className="text-[11px] font-medium text-[hsl(var(--color-text-muted))] mb-4">
+                            We've pre-selected the next available time — pick another from the list if you'd prefer.
+                          </p>
+                          
+                          <button
+                            onClick={handleHold}
+                            disabled={!selectedSlot || confirming}
+                            className={`w-full py-3.5 rounded-xl text-[13.5px] font-black transition-all flex items-center justify-center gap-2 ${
+                              !selectedSlot || confirming
+                                ? "bg-sky-100 text-sky-400 cursor-not-allowed border border-sky-200"
+                                : "bg-gradient-to-r from-sky-600 to-sky-500 text-white hover:from-sky-700 hover:to-sky-600 hover:shadow-md border border-transparent shadow-sm"
+                            }`}
+                          >
+                            {confirming ? (
+                              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                             ) : (
-                              <div className="flex items-start gap-2.5 bg-[hsl(var(--color-primary-soft))] border border-sky-300 rounded-xl p-3 mb-4">
-                                <LuInfo className="text-sky-600 text-[14px] mt-0.5 shrink-0" />
-                                <p className="text-[12px] font-medium text-[hsl(var(--color-primary-strong))] leading-relaxed">
-                                  Contact details aren't available for this clinic yet.
-                                </p>
-                              </div>
+                              "Continue to Confirm"
                             )}
-                            <button
-                              onClick={() => setBookingMode(null)}
-                              className="w-full py-3 rounded-xl border border-[hsl(var(--color-border))] text-[12.5px] font-bold text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-bg-soft))] transition-all"
-                            >
-                              ← Back
-                            </button>
-                          </div>
-                        )}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}

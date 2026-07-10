@@ -24,7 +24,7 @@ import { LuArrowRight } from "react-icons/lu";
 import { LuLoader } from "react-icons/lu";
 import * as Yup from "yup";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 const forgotPasswordSchema = Yup.object({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -43,28 +43,14 @@ export default function ForgotPasswordPage() {
     { setSubmitting }: FormikHelpers<ForgotPasswordValues>
   ) => {
     try {
-      setServerError("");
-      const response = await fetch(`${BASE_URL}/users/forget-password`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email }),
-      });
-
-      const data = await response.json();
-
-    if (!response.ok) {
-      // Ù„Ùˆ Ø¹Ù†Ø¯Ù‡ OTP Ø´ØºØ§Ù„ØŒ ÙˆØ¯ÙŠÙ‡ Ø¹Ù„Ù‰ Ø·ÙˆÙ„ Ù„ØµÙØ­Ø© Ø§Ù„Ù€ verify
-      if (data.message?.includes("already have otp")) {
+      await fetchClient.patch("/users/forget-password", { email: values.email });
+      router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=reset`);
+    } catch (err: any) {
+      if (err.message?.includes("already have otp")) {
         router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=reset`);
         return;
       }
-      setServerError(data.message || "Something went wrong.");
-      return;
-    }
-
-     router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=reset`);
-    } catch {
-      setServerError("Something went wrong. Please check your connection.");
+      setServerError(err.message || "Something went wrong. Please check your connection.");
     } finally {
       setSubmitting(false);
     }

@@ -2,7 +2,7 @@ import { fetchClient } from "./fetchClient";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -66,31 +66,16 @@ export async function updateDoctorProfile(
 
 /** PATCH /doctor/license — multipart/form-data */
 export async function uploadDoctorLicense(file: File): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("license", file);
-  const res = await fetch(`${BASE_URL}/doctor/license`, {
-    method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  await fetchClient.patch("/doctor/license", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to upload license");
-  }
 }
 
 /** DELETE /doctor/license/pending — cancel pending license */
 export async function cancelPendingLicense(): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  const res = await fetch(`${BASE_URL}/doctor/license/pending`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to cancel pending license");
-  }
+  await fetchClient.delete("/doctor/license/pending");
 }
 
 // ─── Certificates ────────────────────────────────────────────────────────────────
@@ -102,70 +87,38 @@ export async function uploadDoctorCertificate(
   issuer: string,
   issueDate?: string
 ): Promise<DoctorProfile["certificates"]> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("certificate", file);
   formData.append("title", title);
   formData.append("issuer", issuer);
   if (issueDate) formData.append("issueDate", issueDate);
 
-  const res = await fetch(`${BASE_URL}/doctor/profile/certificates`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  const res = await fetchClient.post("/doctor/profile/certificates", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to upload certificate");
-  }
-  const data = await res.json();
-  return data.data;
+  return res.data?.data;
 }
 
 /** DELETE /doctor/profile/certificates/:id */
 export async function deleteDoctorCertificate(id: string): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  const res = await fetch(`${BASE_URL}/doctor/profile/certificates/${id}`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete certificate");
-  }
+  await fetchClient.delete(`/doctor/profile/certificates/${id}`);
 }
 
 // ─── Profile Image & Delete Account ──────────────────────────────────────────
 
 /** PATCH /doctor/profile-image */
 export async function uploadDoctorAvatar(file: File): Promise<{ secure_url: string; public_id: string }> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
   const formData = new FormData();
   formData.append("profilepicture", file);
-  const res = await fetch(`${BASE_URL}/doctor/profile-image`, {
-    method: "PATCH",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  const res = await fetchClient.patch("/doctor/profile-image", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
   });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to upload image");
-  }
-  const json = await res.json();
-  return json.data.profilepicture;
+  return res.data?.data?.profilepicture || res.data?.profilepicture;
 }
 
 /** DELETE /doctor/profile-image */
 export async function deleteDoctorAvatar(): Promise<void> {
-  const token = Cookies.get(AUTH_COOKIE_NAME);
-  const res = await fetch(`${BASE_URL}/doctor/profile-image`, {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(err.message || "Failed to delete image");
-  }
+  await fetchClient.delete("/doctor/profile-image");
 }
 
 /** DELETE /user/profile */

@@ -1,55 +1,29 @@
+import axios, { AxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME } from "@/constants/auth";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-type FetchOptions = RequestInit & {
+type FetchOptions = Omit<AxiosRequestConfig, "headers"> & {
   params?: Record<string, string>;
   skipClinicContext?: boolean;
+  headers?: Record<string, string>;
+  body?: any; // For backwards compatibility with fetch
 };
-
-async function handleResponse(response: Response) {
-  if (!response.ok) {
-    if (response.status === 401) {
-      Cookies.remove(AUTH_COOKIE_NAME);
-      Cookies.remove(ROLE_COOKIE_NAME);
-      if (typeof window !== "undefined") {
-        window.location.href = "/login";
-      }
-    }
-    
-    if (response.status === 403) {
-      console.error("Forbidden: You do not have permission to perform this action.");
-    }
-
-    const error = await response.json().catch(() => ({ message: "Unknown error" }));
-    const finalError = new Error(error.message || "Request failed");
-    (finalError as any).status = response.status;
-    (finalError as any).data = error.data;
-    (finalError as any).error = error.error; // Backend validation array
-    throw finalError;
-  }
-  return response.json();
-}
 
 export const fetchClient = {
   async request(endpoint: string, options: FetchOptions = {}) {
     const token = Cookies.get(AUTH_COOKIE_NAME);
     
-    const headers = new Headers(options.headers);
-    if (!(options.body instanceof FormData)) {
-      headers.set("Content-Type", "application/json");
+    const headers: Record<string, string> = { ...options.headers };
+    const data = options.data || options.body;
+    
+    if (!(data instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
     }
     if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+      headers["Authorization"] = `Bearer ${token}`;
     }
-
-    const config: RequestInit = {
-      ...options,
-      credentials: "include",
-      headers,
-      cache: "no-store",
-    };
 
     let fullUrlString = endpoint.startsWith("http") ? endpoint : `${BASE_URL}${endpoint}`;
     let urlObj = new URL(fullUrlString);
@@ -70,21 +44,51 @@ export const fetchClient = {
 
     const finalUrl = urlObj.toString();
 
-    const response = await fetch(finalUrl, config);
-    return handleResponse(response);
+    try {
+      const response = await axios({
+        url: finalUrl,
+        method: options.method || "GET",
+        data,
+        headers,
+        withCredentials: true,
+      });
+      return response.data;
+    } catch (err: any) {
+      if (axios.isAxiosError(err) && err.response) {
+        const { status, data: errData } = err.response;
+        if (status === 401) {
+          Cookies.remove(AUTH_COOKIE_NAME);
+          Cookies.remove(ROLE_COOKIE_NAME);
+          if (typeof window !== "undefined") {
+            window.location.href = "/login";
+          }
+        }
+        
+        if (status === 403) {
+          console.error("Forbidden: You do not have permission to perform this action.");
+        }
+
+        const finalError = new Error(errData?.message || "Request failed");
+        (finalError as any).status = status;
+        (finalError as any).data = errData?.data;
+        (finalError as any).error = errData?.error; // Backend validation array
+        throw finalError;
+      }
+      throw err;
+    }
   },
 
   get: (endpoint: string, options?: FetchOptions) => 
     fetchClient.request(endpoint, { ...options, method: "GET" }),
     
   post: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "POST", body: body instanceof FormData ? body : JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "POST", data: body }),
     
   put: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "PUT", body: body instanceof FormData ? body : JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "PUT", data: body }),
     
   patch: (endpoint: string, body: any, options?: FetchOptions) => 
-    fetchClient.request(endpoint, { ...options, method: "PATCH", body: body instanceof FormData ? body : JSON.stringify(body) }),
+    fetchClient.request(endpoint, { ...options, method: "PATCH", data: body }),
 
   delete: (endpoint: string, options?: FetchOptions) => 
     fetchClient.request(endpoint, { ...options, method: "DELETE" }),

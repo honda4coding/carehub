@@ -20,8 +20,7 @@ import {
   loginInitialValues,
   type LoginValues,
 } from "../schemas/loginSchema";
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { fetchClient } from "@/services/fetchClient";
 
 export const LoginForm = () => {
   const { login } = useAuth();
@@ -72,22 +71,10 @@ export const LoginForm = () => {
   ) => {
     try {
       // 1. signin
-      const response = await fetch(`${BASE_URL}/users/signin`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: values.email, password: values.password }),
+      const data = await fetchClient.post("/users/signin", {
+        email: values.email,
+        password: values.password,
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        let errorMsg = data.message || "Invalid credentials. Please try again.";
-        if (data.message === "validation error" && Array.isArray(data.error)) {
-          errorMsg = data.error.map((e: any) => e.message).join(", ");
-        }
-        setStatus(errorMsg);
-        return;
-      }
 
       const actualRole = data.data.role?.toLowerCase();
 
@@ -107,10 +94,14 @@ export const LoginForm = () => {
         doctorName: data.data.doctorName,
         clinicName: data.data.clinicName,
         subscriptionPlan: data.data.subscriptionPlan,
-      });
+      }, values.rememberMe);
 
-    } catch (error) {
-      setStatus("Something went wrong. Please check your connection.");
+    } catch (error: any) {
+      let errorMsg = error.message || "Something went wrong. Please check your connection.";
+      if (error.message === "validation error" && Array.isArray(error.error)) {
+        errorMsg = error.error.map((e: any) => e.message).join(", ");
+      }
+      setStatus(errorMsg);
       console.error("Login Error:", error);
     } finally {
       setSubmitting(false);
@@ -187,8 +178,9 @@ export const LoginForm = () => {
               {/* Remember + Forgot */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2 pt-2">
                 <label className="flex items-center gap-2 cursor-pointer">
-                  <input
+                  <Field
                     type="checkbox"
+                    name="rememberMe"
                     className="w-5 h-5 rounded-md border-slate-300 shrink-0"
                     style={{ accentColor: "hsl(var(--color-primary))" }}
                   />
@@ -201,7 +193,6 @@ export const LoginForm = () => {
                 </label>
                 <div className="flex items-center gap-3 flex-wrap">
                   <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
-                  <Link href="/reset-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Reset Password</Link>
                 </div>
               </div>
 

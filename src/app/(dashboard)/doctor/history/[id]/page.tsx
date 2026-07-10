@@ -102,7 +102,7 @@ function OnlinePatientHistoryContent() {
       <DashboardHeader
         title="Patient Medical History"
         subtitle={`Visit timeline for: ${patientName}${patientPhone ? ` (${patientPhone})` : ''}`}
-        backPath={role === "assistant" ? "/assistant/patients" : "/doctor/patients"}
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-y-auto">

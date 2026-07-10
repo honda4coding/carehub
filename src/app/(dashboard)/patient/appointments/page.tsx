@@ -156,89 +156,45 @@ export default function PatientAppointmentsPage() {
       <DashboardHeader
         title="My Appointments"
         subtitle="Track your upcoming and past visits"
-        backPath="/patient"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-auto bg-[hsl(var(--color-bg-base))]">
-        <div className="max-w-7xl mx-auto w-full flex flex-col lg:flex-row gap-6">
-
         {/* ══════════════════════════════════════════════════════
-            LEFT — Clinics / Doctors sidebar
+            MAIN AREA
         ══════════════════════════════════════════════════════ */}
-        <aside className="w-full lg:w-64 shrink-0">
-          <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-2 px-1">
-            Your Clinics
-          </p>
-
-          {loading ? (
-            <div className="flex flex-row lg:flex-col gap-2">
-              {[1, 2].map((i) => (
-                <div key={i} className="h-14 rounded-xl bg-[hsl(var(--color-border-soft))] animate-pulse shrink-0 lg:w-full w-40" />
-              ))}
+        <div className="max-w-7xl mx-auto w-full flex flex-col gap-6">
+          
+          {/* Header Controls: Tabs & Clinics Filter */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            
+            {/* Tab bar (Segmented Control Style) */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[16px] w-full md:w-auto">
+              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
+              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
+              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
             </div>
-          ) : bookingGroups.length === 0 ? (
-            <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] px-1">
-              No bookings yet.
-            </p>
-          ) : (
-            <div className="flex flex-row lg:flex-col gap-2 overflow-x-auto scrollbar-hide lg:overflow-visible pb-1">
-              <button
-                onClick={() => setSelectedGroupKey(null)}
-                className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl text-[13px] font-bold border transition-all shrink-0 cursor-pointer ${
-                  selectedGroupKey === null
-                    ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                    : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
-                }`}
+
+            {/* Clinics Dropdown */}
+            <div className="relative shrink-0 w-full md:w-auto">
+              <select
+                value={selectedGroupKey || ""}
+                onChange={(e) => { setSelectedGroupKey(e.target.value || null); setTab("upcoming"); }}
+                className="appearance-none bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-4 py-2.5 pr-10 rounded-[12px] text-[13px] font-bold outline-none cursor-pointer w-full md:w-[250px] shadow-sm transition-colors"
               >
-                <LuUsers className="text-[15px] shrink-0" />
-                <span className="flex-1 text-left">All</span>
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${selectedGroupKey === null ? "bg-white/20" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
-                  {appointments.length}
-                </span>
-              </button>
-
-              {bookingGroups.map((group) => {
-                const isActive = selectedGroupKey === group.key;
-                return (
-                  <button
-                    key={group.key}
-                    onClick={() => { setSelectedGroupKey(group.key); setTab("upcoming"); }}
-                    className={`flex items-center gap-2.5 px-3.5 py-3 rounded-xl border transition-all shrink-0 lg:w-full text-left cursor-pointer ${
-                      isActive
-                        ? "bg-[hsl(var(--color-primary))] text-[hsl(var(--color-text-inverse))] border-[hsl(var(--color-primary))] shadow-[0_2px_8px_hsl(var(--color-primary)/0.3)]"
-                        : "bg-[hsl(var(--color-bg-surface))] border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] hover:border-[hsl(var(--color-primary))]"
-                    }`}
-                  >
-                    <LuBuilding2 className="text-[15px] shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-bold truncate">{group.clinicName}</p>
-                      <p className={`text-[10.5px] font-medium truncate ${isActive ? "text-white/80" : "text-[hsl(var(--color-text-muted))]"}`}>
-                        {group.clinicAddress || group.doctorName}
-                      </p>
-                    </div>
-                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${isActive ? "bg-white/20" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
-                      {group.items.length}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </aside>
-
-        {/* ══════════════════════════════════════════════════════
-            RIGHT — Bookings for the selected clinic (or all)
-        ══════════════════════════════════════════════════════ */}
-        <div className="flex-1 min-w-0">
-          <div className="max-w-3xl mx-auto">
-            {/* Tabs */}
-            <div className="flex justify-center mb-6">
-              <div className="w-full lg:w-auto flex flex-nowrap overflow-x-auto scrollbar-hide items-center justify-start lg:justify-center p-1.5 bg-[hsl(var(--color-bg-soft))] rounded-[16px] border border-[hsl(var(--color-border))]">
-                <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-                <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-                <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+                <option value="">All Appointments</option>
+                {bookingGroups.map((group) => (
+                  <option key={group.key} value={group.key}>
+                    {group.doctorName} {group.clinicName && group.clinicName !== "Clinic" ? `(${group.clinicName})` : ''}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[hsl(var(--color-text-muted))]">
+                <LuBuilding2 className="text-base" />
               </div>
             </div>
+          </div>
+
 
             {loading ? (
               <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
@@ -257,7 +213,9 @@ export default function PatientAppointmentsPage() {
                     <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{group.items.length} visit{group.items.length !== 1 ? "s" : ""}</span>
                     <div className="flex-1 h-px bg-[hsl(var(--color-border))]" />
                   </div>
-                  {group.items.map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {group.items.map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+                  </div>
                 </div>
               ))
             ) : grouped[tab].length === 0 ? (
@@ -267,7 +225,9 @@ export default function PatientAppointmentsPage() {
                 description="Nothing to show here yet."
               />
             ) : (
-              <div>{grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}</div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+              </div>
             )}
 
             {!loading && paginationInfo && paginationInfo.totalPages > 1 && (
@@ -279,8 +239,6 @@ export default function PatientAppointmentsPage() {
                 />
               </div>
             )}
-          </div>
-        </div>
         </div>
       </main>
 

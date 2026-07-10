@@ -49,7 +49,7 @@ export default function AdminProfilePage() {
       <DashboardHeader
         title="Profile Settings"
         subtitle="Manage your account information"
-        backPath="/admin"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full space-y-4">

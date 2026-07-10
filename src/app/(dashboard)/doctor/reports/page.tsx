@@ -118,7 +118,7 @@ export default function DoctorReportsPage() {
       <DashboardHeader
         title="Reports & Analytics"
         subtitle="Clinic performance overview"
-        backPath="/doctor"
+        showBack={true}
       />
 
       <main className="print-area flex-1 overflow-auto min-w-0">

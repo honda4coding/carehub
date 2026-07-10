@@ -3,7 +3,7 @@ import React from "react";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-start pt-24 md:pt-32 px-4 sm:px-6 pb-12 relative overflow-hidden"
+      className="min-h-[calc(100vh-73px)] mt-[73px] flex flex-col items-center justify-start pt-10 md:pt-16 px-4 sm:px-6 pb-12 relative overflow-hidden"
       style={{
         background: `
           radial-gradient(circle at top right, hsl(var(--color-secondary) / 0.12) 0%, transparent 40%),

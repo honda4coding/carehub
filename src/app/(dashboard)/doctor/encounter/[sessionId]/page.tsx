@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { LuUser, LuHistory, LuStethoscope, LuPill } from "react-icons/lu";
+import { calculateAge } from "@/utils/ageUtils";
 
 import EncounterHeader from "@/components/doctor/encounter/EncounterHeader";
 import VitalsPanel from "@/components/doctor/encounter/VitalsPanel";
@@ -115,7 +116,7 @@ export default function PatientDashboardPage() {
             ? { name: currentSession.guestName, age: "--", bloodType: "-", height: "-", weight: "-", allergies: [], chronic: [], surgeries: [] }
             : {
                 name: currentSession.patientId?.fullName,
-                age: "--",
+                age: currentSession.patientProfile?.dateOfBirth ? calculateAge(currentSession.patientProfile.dateOfBirth).toString() : (currentSession.patientProfile?.age?.toString() || "--"),
                 bloodType: currentSession.patientProfile?.bloodType || "-",
                 height: currentSession.patientProfile?.height || "-",
                 weight: currentSession.patientProfile?.weight || "-",
@@ -333,6 +334,26 @@ export default function PatientDashboardPage() {
     }
   };
 
+  const handleCancelSession = async () => {
+    if (!token || !sessionId) return;
+    const confirmCancel = window.confirm("Are you sure you want to cancel this session without diagnosing? This action cannot be undone.");
+    if (!confirmCancel) return;
+    
+    setIsEnding(true);
+    try {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+      await axios.delete(`${baseUrl}/doctor/session/${sessionId}/cancel`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      alert("Session cancelled successfully.");
+      router.push("/doctor");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Failed to cancel session");
+      setIsEnding(false);
+    }
+  };
+
   // Final submission when doctor clicks End & Save
   const handleEndSession = async (fees: number) => {
     if (!token) return;
@@ -444,6 +465,7 @@ export default function PatientDashboardPage() {
         }}
         onPrint={handlePrint}
         onEndSession={handleEndSession}
+        onCancelSession={handleCancelSession}
       />
 
       {/* Main Workspace */}
@@ -541,7 +563,7 @@ export default function PatientDashboardPage() {
               frequency={frequency} setFrequency={setFrequency}
               duration={duration} setDuration={setDuration}
               patientComplaint={diagnosis}
-              patientId={sessionData?.patientId?._id}
+              patientId={sessionData?.patientId?._id || sessionData?.patientId}
               instructions={instructions} setInstructions={setInstructions}
               handleAddDrug={handleAddDrug}
               removeDrug={removeDrug}

@@ -58,13 +58,13 @@ export const subscriptionService = {
         return { paymentUrl: res.data?.paymentUrl };
     },
 
-    /** POST /appointmens/:id/schedule-followup */
+    /** POST /appointments/:id/schedule-followup */
     scheduleFollowUp: async (appointmentId: string, payload: { followUpScheduledDate: string, graceWindowHours?: number }): Promise<void> => {
-        await fetchClient.post(`/appointmens/${appointmentId}/schedule-followup`, payload);
+        await fetchClient.post(`/appointments/${appointmentId}/schedule-followup`, payload);
     },
 
-    /** PATCH /appointmens/:id/override-followup */
+    /** PATCH /appointments/:id/override-followup */
     overrideFollowUp: async (appointmentId: string): Promise<void> => {
-        await fetchClient.patch(`/appointmens/${appointmentId}/override-followup`, {});
+        await fetchClient.patch(`/appointments/${appointmentId}/override-followup`, {});
     }
 };

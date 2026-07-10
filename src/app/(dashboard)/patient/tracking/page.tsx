@@ -204,7 +204,7 @@ export default function TrackingPage() {
       <DashboardHeader
         title="Personal Tracking"
         subtitle="Monitor your vital signs, earn badges, and track your progress!"
-        backPath="/patient"
+        showBack={true}
       />
 
       <main className="flex-1 p-4 md:p-6 overflow-auto">
@@ -212,63 +212,63 @@ export default function TrackingPage() {
         
         {/* GAMIFICATION BANNER */}
         {!loading && (
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
             
             {/* XP & Level Card */}
-            <Card className="md:col-span-4 p-4 flex items-center gap-4">
+            <Card className="xl:col-span-4 p-4 flex items-center gap-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
               <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center border-2 border-[hsl(var(--color-primary))] shrink-0">
-                <span className="font-black text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
+                <span className="font-extrabold tracking-tighter text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
               </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-end mb-1">
-                  <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Level {currentLevel} Tracker</h3>
-                  <span className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">{xpInCurrentLevel} / 50 XP</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap justify-between items-end mb-1 gap-x-2">
+                  <h3 className="text-[15px] font-bold tracking-tight text-[hsl(var(--color-text))] truncate">Level {currentLevel} Tracker</h3>
+                  <span className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">{xpInCurrentLevel} / 50 XP</span>
                 </div>
-                <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-2 overflow-hidden">
+                <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-2 overflow-hidden shadow-inner mt-1">
                   <div className="bg-[hsl(var(--color-primary))] h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
                 </div>
               </div>
             </Card>
 
             {/* Streak Card */}
-            <Card className="md:col-span-3 p-4 flex items-center justify-between">
-              <div>
-                <h3 className="text-[15px] font-black text-[hsl(var(--color-text))]">Current Streak</h3>
-                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] mt-0.5">Log daily to keep the fire alive!</p>
+            <Card className="xl:col-span-3 p-4 flex flex-wrap items-center justify-between gap-3 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-[15px] font-bold tracking-tight text-[hsl(var(--color-text))] truncate">Current Streak</h3>
+                <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-0.5 line-clamp-2">Log daily to keep the fire alive!</p>
               </div>
-              <div className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-3 py-1.5 rounded-xl border border-[hsl(var(--color-border))]">
+              <div className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-3 py-1.5 rounded-xl border border-[hsl(var(--color-border))] shadow-sm shrink-0">
                 <LuFlame className={`text-2xl ${currentStreak > 0 ? "text-[hsl(var(--color-warning))] animate-pulse" : "text-[hsl(var(--color-text-muted))]"}`} />
-                <span className={`text-xl font-black ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
+                <span className={`text-xl font-extrabold tracking-tighter ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
               </div>
             </Card>
 
             {/* Badges Card */}
-            <Card className="md:col-span-5 p-4 flex flex-col justify-center">
-              <h3 className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
-              <div className="flex items-center justify-around">
+            <Card className="xl:col-span-5 p-4 flex flex-col justify-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
+              <h3 className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
+              <div className="flex items-center justify-around flex-wrap gap-2">
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasBeginner ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasBeginner ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuMedal className="text-xl" />
                   </div>
-                  <span className="text-xs font-bold text-center w-16">First Log</span>
+                  <span className="text-xs font-semibold text-center w-16">First Log</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasConsistent ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasConsistent ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuFlame className="text-xl" />
                   </div>
-                  <span className="text-xs font-bold text-center w-16">3-Day Streak</span>
+                  <span className="text-xs font-semibold text-center w-16">3-Day Streak</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasHealthy ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasHealthy ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuHeart className="text-xl" />
                   </div>
-                  <span className="text-xs font-bold text-center w-16">Normal BMI</span>
+                  <span className="text-xs font-semibold text-center w-16">Normal BMI</span>
                 </div>
                 <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] ${hasWizard ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-danger))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasWizard ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-danger))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
                     <LuStar className="text-xl" />
                   </div>
-                  <span className="text-xs font-bold text-center w-16">10 Logs</span>
+                  <span className="text-xs font-semibold text-center w-16">10 Logs</span>
                 </div>
               </div>
             </Card>
@@ -282,21 +282,21 @@ export default function TrackingPage() {
           </div>
 
           <div className="lg:col-span-7 flex flex-col">
-            <Card className="p-6 h-full">
-          <h2 className="text-[16px] font-black uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
+            <Card className="p-6 h-full shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
+          <h2 className="text-[16px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
-            <form onSubmit={handleSubmit} className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
               <input type="number" step="0.1" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 75" />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
               <input type="number" step="1" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 175" />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
               <input 
                 type="text" 
                 value={formData.bloodPressure} 
@@ -312,11 +312,11 @@ export default function TrackingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
               <input type="number" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="mg/dL" />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
               <input 
                 type="text" 
                 value={formData.temperature} 
@@ -331,11 +331,11 @@ export default function TrackingPage() {
               />
             </div>
             <div className="flex flex-col">
-              <label className="text-xs font-bold uppercase text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
+              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
               <input type="number" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 72" />
             </div>
-            <div className="flex flex-col justify-end col-span-2 md:col-span-3 items-end mt-2">
-              <button disabled={isSubmitting} type="submit" className="cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+            <div className="flex flex-col justify-end col-span-1 sm:col-span-2 xl:col-span-3 items-end mt-2">
+              <button disabled={isSubmitting} type="submit" className="w-full sm:w-auto cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:-translate-y-px shadow-sm hover:shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
                 {isSubmitting ? "Saving..." : <><LuPlus /> Log & Earn XP</>}
               </button>
             </div>
@@ -345,8 +345,8 @@ export default function TrackingPage() {
     </div>
 
         {/* Filters Section */}
-        <Card className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4">
-          <h3 className="text-[15px] font-black text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto">
+        <Card className="flex flex-col sm:flex-row justify-between items-center p-4 gap-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
+          <h3 className="text-[15px] font-bold tracking-tight text-[hsl(var(--color-text))] flex items-center gap-2 w-full sm:w-auto">
             <LuFilter className="text-[hsl(var(--color-primary))]" /> Compare Periods
           </h3>
           <DateRangeFilter
@@ -371,9 +371,9 @@ export default function TrackingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             
             {/* BMI & Weight Card */}
-            <Card className="p-5 flex flex-col">
+            <Card className="p-5 flex flex-col shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
               <div className="flex justify-between items-start mb-6">
-                <h3 className="text-[15px] font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
+                <h3 className="text-[15px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
                   <LuScale className="text-[hsl(var(--color-primary))]" /> Weight & BMI Trends
                 </h3>
                 {currentBMI && (
@@ -399,8 +399,8 @@ export default function TrackingPage() {
             </Card>
 
             {/* Blood Pressure Card */}
-            <Card className="p-5 flex flex-col">
-              <h3 className="text-base font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+            <Card className="p-5 flex flex-col shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
+              <h3 className="text-[15px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
                 <LuHeart className="text-[hsl(var(--color-danger))]" /> Blood Pressure History
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
@@ -419,8 +419,8 @@ export default function TrackingPage() {
             </Card>
 
             {/* Blood Sugar & Temp Card */}
-            <Card className="p-5 flex flex-col lg:col-span-2">
-              <h3 className="text-base font-black uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
+            <Card className="p-5 flex flex-col lg:col-span-2 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
+              <h3 className="text-[15px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
                 <LuDroplets className="text-[hsl(var(--color-primary))]" /> Sugar & Pulse Trends
               </h3>
               <div className="flex-1 min-h-[250px] w-full">
