@@ -14,7 +14,7 @@ import { PendingDoctorRequest } from "@/types/doctor";
 import { DailyStats } from "@/types/admin";
 import { fetchClient } from "@/services/fetchClient";
 
-import { Topbar } from "@/components/global/Topbar";
+import DashboardHeader from "@/components/global/DashboardHeader";
 
 import { StatCard } from "@/components/admin/dashboard/StatCard";
 import { ActivityFeed, Activity } from "@/components/admin/dashboard/ActivityFeed";

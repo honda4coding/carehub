@@ -29,7 +29,7 @@ export default function SupportPage() {
 
   useEffect(() => {
     if (user) {
-      const names = user.fullName ? user.fullName.split(" ") : ["", ""];
+      const names = user.name ? user.name.split(" ") : ["", ""];
       setFormData(prev => ({
         ...prev,
         firstName: names[0] || "",
