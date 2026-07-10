@@ -112,8 +112,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Clear IndexedDB for offline tracking
-    const { clearOfflineTracking } = await import('@/lib/offlineSync');
-    await clearOfflineTracking();
+    if ('indexedDB' in window) {
+      indexedDB.deleteDatabase('carehub-db');
+    }
 
     window.location.href = '/login';
   };

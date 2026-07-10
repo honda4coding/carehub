@@ -53,12 +53,15 @@ export async function subscribeToPushNotifications() {
     console.error("Failed to register Web Push subscription:", error);
   }
 }
+
 export async function unsubscribeFromPushNotifications() {
   if (typeof window === "undefined" || !("serviceWorker" in navigator) || !("PushManager" in window)) {
     return;
   }
   try {
-    const registration = await navigator.serviceWorker.ready;
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) return;
+    
     const subscription = await registration.pushManager.getSubscription();
     if (subscription) {
       // First, remove it from the backend DB
