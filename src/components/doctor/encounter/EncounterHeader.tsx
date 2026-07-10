@@ -40,6 +40,11 @@ export default function EncounterHeader({
           <div className="flex items-center gap-2 md:gap-3 flex-wrap">
             <h1 className="text-base md:text-xl font-black text-[hsl(var(--color-text))] truncate max-w-[150px] sm:max-w-xs md:max-w-sm">
               {loading ? "Loading Patient..." : patientData?.name}
+              {!loading && patientData?.age && patientData.age !== "--" && (
+                <span className="ml-2 text-sm md:text-base font-semibold text-[hsl(var(--color-text-muted))]">
+                  ({patientData.age} years)
+                </span>
+              )}
             </h1>
             {sessionData?.status === 'in_progress' && (
               <span className="px-2 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[10px] font-bold bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] rounded-full flex items-center gap-1 shrink-0">

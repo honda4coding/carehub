@@ -12,8 +12,9 @@ import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } fro
 const schema = Yup.object({
   fullName:       Yup.string().min(3, "Min 3 characters").required("Full name is required"),
   phoneNumber:    Yup.string().min(10, "Min 10 digits").optional(),
-  age:            Yup.number().min(1).max(120).optional(),
+  dateOfBirth:    Yup.date().max(new Date(), "Cannot be in the future").optional(),
   gender:         Yup.string().oneOf(["male", "female"]).optional(),
+  governorate:    Yup.string().optional(),
   address:        Yup.string().optional(),
   sharingSetting: Yup.string().oneOf(["all", "own_only", "otp"]).optional(),
 });
@@ -21,8 +22,9 @@ const schema = Yup.object({
 type FormValues = {
   fullName:       string;
   phoneNumber:    string;
-  age:            number | "";
+  dateOfBirth:    string;
   gender:         "male" | "female" | "";
+  governorate:    string;
   address:        string;
   sharingSetting: "all" | "own_only" | "otp" | "";
 };
@@ -66,8 +68,9 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
   const initialValues: FormValues = {
     fullName:       profile?.fullName       ?? "",
     phoneNumber:    profile?.phoneNumber    ?? "",
-    age:            profile?.age            ?? "",
+    dateOfBirth:    profile?.dateOfBirth ? new Date(profile.dateOfBirth).toISOString().split('T')[0] : "",
     gender:         profile?.gender         ?? "",
+    governorate:    profile?.governorate    ?? "",
     address:        profile?.address        ?? "",
     sharingSetting: profile?.sharingSetting ?? "",
   };
@@ -79,8 +82,9 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
       const payload: UpdatePatientProfilePayload = {
         fullName:       values.fullName,
         phoneNumber:    values.phoneNumber    || undefined,
-        age:            values.age === "" ? undefined : Number(values.age),
+        dateOfBirth:    values.dateOfBirth    || undefined,
         gender:         values.gender         || undefined,
+        governorate:    values.governorate    || undefined,
         address:        values.address        || undefined,
         sharingSetting: (values.sharingSetting || undefined) as "all" | "own_only" | "otp" | undefined,
       };
@@ -134,9 +138,9 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
               {/* Phone */}
               <EditField name="phoneNumber" label="Phone" icon={<LuPhone />} placeholder="0100 000 0000" errors={errors} touched={touched} />
 
-              {/* Age + Gender — 2 cols */}
+              {/* DateOfBirth + Gender — 2 cols */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <EditField name="age" label="Age" icon={<LuCalendar />} placeholder="25" type="number" errors={errors} touched={touched} />
+                <EditField name="dateOfBirth" label="Date of Birth" icon={<LuCalendar />} placeholder="YYYY-MM-DD" type="date" errors={errors} touched={touched} />
 
                 {/* Gender dropdown */}
                 <div className="space-y-1.5">
@@ -162,8 +166,11 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                 </div>
               </div>
 
-              {/* Address */}
-              <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St, Cairo" errors={errors} touched={touched} />
+              {/* Governorate + Address — 2 cols */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <EditField name="governorate" label="Governorate" icon={<LuMapPin />} placeholder="Cairo" errors={errors} touched={touched} />
+                <EditField name="address" label="Address" icon={<LuMapPin />} placeholder="123 Main St" errors={errors} touched={touched} />
+              </div>
 
               {/* Privacy Setting */}
               <div className="space-y-2">

@@ -12,7 +12,9 @@ export interface PatientProfile {
   phoneNumber: string;
   address?: string;
   profilepicture?: { secure_url: string; public_id: string };
-  age?: number;
+  dateOfBirth?: string;
+  age?: number; // for backward compatibility
+  governorate?: string;
   gender?: "male" | "female";
   bloodType?: string;
   height?: string;
@@ -33,7 +35,8 @@ export interface UpdatePatientProfilePayload {
   fullName?: string;
   phoneNumber?: string;
   address?: string;
-  age?: number;
+  dateOfBirth?: string;
+  governorate?: string;
   gender?: "male" | "female";
   bloodType?: string;
   allergies?: string[];

@@ -22,10 +22,9 @@ export const patientRegisterSchema = Yup.object({
     .oneOf([Yup.ref('password')], 'Passwords do not match')
     .required('Confirm password is required'),
     
-  age: Yup.number()
-    .min(0, 'Invalid age')
-    .max(120, 'Invalid age')
-    .required('Age is required'),
+  dateOfBirth: Yup.date()
+    .max(new Date(), "Date of birth cannot be in the future")
+    .required("Date of birth is required"),
     
   gender: Yup.string()
     .oneOf(['male', 'female'], 'Invalid gender')
@@ -36,4 +35,7 @@ export const patientRegisterSchema = Yup.object({
     .optional(),
     
   address: Yup.string().optional(),
+
+  governorate: Yup.string()
+    .required('Governorate is required'),
 });

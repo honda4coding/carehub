@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { LuUser, LuHistory, LuStethoscope, LuPill } from "react-icons/lu";
+import { calculateAge } from "@/utils/ageUtils";
 
 import EncounterHeader from "@/components/doctor/encounter/EncounterHeader";
 import VitalsPanel from "@/components/doctor/encounter/VitalsPanel";
@@ -115,7 +116,7 @@ export default function PatientDashboardPage() {
             ? { name: currentSession.guestName, age: "--", bloodType: "-", height: "-", weight: "-", allergies: [], chronic: [], surgeries: [] }
             : {
                 name: currentSession.patientId?.fullName,
-                age: "--",
+                age: currentSession.patientProfile?.dateOfBirth ? calculateAge(currentSession.patientProfile.dateOfBirth).toString() : (currentSession.patientProfile?.age?.toString() || "--"),
                 bloodType: currentSession.patientProfile?.bloodType || "-",
                 height: currentSession.patientProfile?.height || "-",
                 weight: currentSession.patientProfile?.weight || "-",

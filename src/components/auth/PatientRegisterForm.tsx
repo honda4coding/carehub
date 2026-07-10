@@ -13,6 +13,13 @@ import { Button } from "@/components/ui/Button";
 import { fetchClient } from "@/services/fetchClient";
 
 const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+const egyptianGovernorates = [
+    "Cairo", "Giza", "Alexandria", "Dakahlia", "Red Sea", "Beheira",
+    "Fayoum", "Gharbia", "Ismailia", "Menofia", "Minya", "Qaliubiya",
+    "New Valley", "North Sinai", "Port Said", "Qalyubia", "Qena",
+    "Sharqia", "South Sinai", "Suez", "Aswan", "Asyut", "Beni Suef",
+    "Damietta", "Kafr El Sheikh", "Matruh", "Luxor", "Sohag"
+];
 
 
 export default function PatientRegisterForm() {
@@ -26,9 +33,10 @@ export default function PatientRegisterForm() {
       phoneNumber: '',
       password: '',
       confirmPassword: '',
-      age: 0,
+      dateOfBirth: '',
       gender: 'male',
       bloodType: '',
+      governorate: '',
       address: '',
     },
     validationSchema: patientRegisterSchema,
@@ -42,9 +50,10 @@ export default function PatientRegisterForm() {
         formData.append("phoneNumber", values.phoneNumber);
         formData.append("password", values.password);
         formData.append("confirmPassword", values.confirmPassword);
-        formData.append("age", values.age.toString());
+        formData.append("dateOfBirth", values.dateOfBirth);
         formData.append("gender", values.gender);
         formData.append("role", "patient");
+        formData.append("governorate", values.governorate);
         if (values.address) formData.append("address", values.address);
         if (values.bloodType) formData.append("bloodType", values.bloodType);
 
@@ -110,16 +119,17 @@ export default function PatientRegisterForm() {
           />
           {formik.touched.phoneNumber && formik.errors.phoneNumber && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.phoneNumber}</p>}
         </div>
+        {/* Date of Birth */}
         <div>
-          <Label>Age <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+          <Label>Date of Birth <span className="text-[hsl(var(--color-danger))]">*</span></Label>
           <Input 
-            type="number" 
-            {...formik.getFieldProps('age')} 
-            placeholder="e.g. 25" 
+            type="date" 
+            {...formik.getFieldProps('dateOfBirth')} 
             leftIcon={<LuCake className="w-5 h-5" />}
-            error={!!(formik.touched.age && formik.errors.age)}
+            error={!!(formik.touched.dateOfBirth && formik.errors.dateOfBirth)}
+            max={new Date().toISOString().split('T')[0]}
           />
-          {formik.touched.age && formik.errors.age && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.age}</p>}
+          {formik.touched.dateOfBirth && formik.errors.dateOfBirth && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.dateOfBirth}</p>}
         </div>
       </div>
 
@@ -183,18 +193,36 @@ export default function PatientRegisterForm() {
         </div>
       </div>
 
+      {/* Governorate */}
+      <div>
+        <Label>Governorate <span className="text-[hsl(var(--color-danger))]">*</span></Label>
+        <div className="relative">
+          <LuMapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
+          <select 
+            {...formik.getFieldProps('governorate')} 
+            className={`w-full py-4 pl-12 pr-10 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] cursor-pointer appearance-none ${
+              formik.touched.governorate && formik.errors.governorate 
+              ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger)/0.05)] focus:ring-4 focus:ring-[hsl(var(--color-danger)/0.1)]'
+              : 'border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]'
+            }`}
+          >
+            <option value="">Select Governorate</option>
+            {egyptianGovernorates.map((gov) => <option key={gov} value={gov}>{gov}</option>)}
+          </select>
+          <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">▾</span>
+        </div>
+        {formik.touched.governorate && formik.errors.governorate && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.governorate}</p>}
+      </div>
+
       {/* Address */}
       <div>
         <Label>Address (Optional)</Label>
-        <div className="relative">
-          <LuMapPin className="absolute left-4 top-4 w-5 h-5 text-[hsl(var(--color-text-muted))]" />
-          <textarea 
-            {...formik.getFieldProps('address')} 
-            rows={2} 
-            className="w-full py-4 pl-12 pr-4 rounded-2xl outline-none transition-all bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] border-[1.5px] border-transparent focus:border-[hsl(var(--color-primary))] focus:ring-4 focus:ring-[hsl(var(--color-primary)/0.1)]" 
-            placeholder="Enter your city and street" 
-          />
-        </div>
+        <Input 
+          type="text" 
+          {...formik.getFieldProps('address')} 
+          placeholder="Enter your city and street" 
+          leftIcon={<LuMapPin className="w-5 h-5" />}
+        />
       </div>
 
       <div className="pt-2">
