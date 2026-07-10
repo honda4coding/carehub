@@ -1,6 +1,6 @@
 import { fetchClient } from "./fetchClient";
 
-const APPOINTMENTS_BASE = "/appointmens";
+const APPOINTMENTS_BASE = "/appointments";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

@@ -131,7 +131,7 @@ export default function DoctorBillingPage() {
                                 onClick={async () => {
                                   if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
                                     try {
-                                      await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`, {});
+                                      await fetchClient.patch(`/appointments/${s.appointmentId}/override-followup`, {});
                                       alert("Follow-up discount cancelled.");
                                       window.location.reload();
                                     } catch (err) {
@@ -213,7 +213,7 @@ export default function DoctorBillingPage() {
                                   onClick={async () => {
                                     if(confirm("Are you sure you want to cancel the follow-up discount for this patient? They will be charged full price.")) {
                                       try {
-                                        await fetchClient.patch(`/appointmens/${s.appointmentId}/override-followup`, {});
+                                        await fetchClient.patch(`/appointments/${s.appointmentId}/override-followup`, {});
                                         alert("Follow-up discount cancelled.");
                                         window.location.reload();
                                       } catch (err) {

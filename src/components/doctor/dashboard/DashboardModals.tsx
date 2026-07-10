@@ -35,7 +35,7 @@ export const DashboardModals = ({
       setSlotsLoading(true);
       const startOfToday = new Date();
       startOfToday.setHours(0,0,0,0);
-      fetchClient.get(`/appointmens/available-slots/me?limit=50&startDate=${startOfToday.toISOString()}`)
+      fetchClient.get(`/appointments/available-slots/me?limit=50&startDate=${startOfToday.toISOString()}`)
         .then(res => {
           const responseData = res.data ?? res;
           setAvailableSlots(Array.isArray(responseData) ? responseData : (responseData.slots ?? responseData.data?.slots ?? []));
