@@ -84,9 +84,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     router.replace(`/${newRole}`);
   };
 
-  const logout = () => {
+  const logout = async () => {
     // Unsubscribe from push notifications before clearing user data
-    unsubscribeFromPushNotifications().catch(err => console.error("Push unsubscribe error on logout:", err));
+    try {
+      await unsubscribeFromPushNotifications();
+    } catch (err) {
+      console.error("Push unsubscribe error on logout:", err);
+    }
 
     setToken(null);
     setRole(null);
@@ -108,11 +112,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     // Clear IndexedDB for offline tracking
-    if ('indexedDB' in window) {
-      indexedDB.deleteDatabase('carehub-db');
-    }
+    const { clearOfflineTracking } = await import('@/lib/offlineSync');
+    await clearOfflineTracking();
 
-    router.replace('/login');
+    window.location.href = '/login';
   };
 
   const updateUser = (partialUser: Partial<User>) => {

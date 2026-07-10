@@ -11,31 +11,32 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#0891B2",
     icons: [
       {
-        src: "/icons/icon-192x192.png",
-        sizes: "192x192",
-        type: "image/png",
+        src: "/icons/pulse.svg",
+        sizes: "any",
+        type: "image/svg+xml",
+        purpose: "any",
       },
       {
-        src: "/icons/icon-512x512.png",
-        sizes: "512x512",
-        type: "image/png",
+        src: "/icons/pulse.svg",
+        sizes: "any",
+        type: "image/svg+xml",
         purpose: "maskable",
       },
     ],
     shortcuts: [
+      {
+        name: "Dashboard / Encounters",
+        short_name: "Dashboard",
+        description: "Go to your dashboard",
+        url: "/",
+        icons: [{ src: "/icons/shortcut-records.svg", sizes: "192x192", type: "image/svg+xml" }],
+      },
       {
         name: "Book Appointment",
         short_name: "Book",
         description: "Book a new appointment",
         url: "/patient/appointments/book",
         icons: [{ src: "/icons/shortcut-book.svg", sizes: "192x192", type: "image/svg+xml" }],
-      },
-      {
-        name: "Medical Records",
-        short_name: "Records",
-        description: "View your medical history",
-        url: "/patient/history",
-        icons: [{ src: "/icons/shortcut-records.svg", sizes: "192x192", type: "image/svg+xml" }],
       },
       {
         name: "Notifications",
