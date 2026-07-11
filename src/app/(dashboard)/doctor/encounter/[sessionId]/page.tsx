@@ -170,6 +170,7 @@ export default function PatientDashboardPage() {
         if (sessionData.guestPhone) queryParams.append('guestPhone', sessionData.guestPhone);
       } else {
         queryParams.append('patientId', sessionData.patientId._id);
+        queryParams.append('scope', 'global');
       }
 
       queryParams.append('page', page.toString());

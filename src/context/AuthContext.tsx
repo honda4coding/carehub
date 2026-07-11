@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
 
 import { User, AuthContextType } from '@/types/auth';
-import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
+import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME } from '@/constants/auth';
 import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from '@/services/pushNotificationService';
 import { fetchClient } from '@/services/fetchClient';
 
@@ -19,54 +19,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Sync state with cookies and storage on mount
-    try {
-      const savedToken = Cookies.get(AUTH_COOKIE_NAME);
-      const savedRole = Cookies.get(ROLE_COOKIE_NAME);
-      const savedUser = localStorage.getItem(USER_STORAGE_KEY);
+    // Sync state with cookies on mount
+    const loadAuth = async () => {
+      try {
+        const savedToken = Cookies.get(AUTH_COOKIE_NAME);
+        const savedRole = Cookies.get(ROLE_COOKIE_NAME);
 
-      if (savedToken && savedRole && savedUser && savedUser !== 'undefined') {
-        setToken(savedToken);
-        setRole(savedRole);
-        setUser(JSON.parse(savedUser));
-        // Subscribe to push notifications on mount if authenticated
-        subscribeToPushNotifications().catch(err => console.error("Push subscribe error on mount:", err));
-        
-        // Background fetch to update user permissions (without blocking hydration)
-        fetchClient.get('/users/profile')
-          .then(res => {
-            if (res.data) {
-              const updatedUser = { ...JSON.parse(savedUser), ...res.data };
-              // Ensure backend 'fullName' maps correctly to frontend 'name'
-              if (res.data.fullName) {
-                updatedUser.name = res.data.fullName;
-              }
-              setUser(updatedUser);
-              localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+        if (savedToken && savedRole) {
+          setToken(savedToken);
+          setRole(savedRole);
+
+          // Fetch user profile securely via API using HTTP-only/secure cookies or the token
+          const res = await fetchClient.get('/users/profile');
+          if (res.data) {
+            const fetchedUser = { ...res.data };
+            // Ensure backend 'fullName' maps correctly to frontend 'name'
+            if (res.data.fullName) {
+              fetchedUser.name = res.data.fullName;
             }
-          })
-          .catch(err => {
-            console.error("Failed to fetch updated profile:", err);
-            if (err.message.includes("jwt") || err.message.includes("expired") || err.message.includes("401")) {
-              Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
-              Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
-              localStorage.removeItem(USER_STORAGE_KEY);
-              setToken(null);
-              setRole(null);
-              setUser(null);
-              router.push('/login');
-            }
-          });
+            setUser(fetchedUser);
+            // Subscribe to push notifications if authenticated
+            subscribeToPushNotifications().catch(err => console.error("Push subscribe error on mount:", err));
+          }
+        } else {
+          // No token or role means not authenticated
+          setToken(null);
+          setRole(null);
+          setUser(null);
+        }
+      } catch (error: any) {
+        console.error("Auth hydration error:", error);
+        // Fallback: clear bad data
+        Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
+        Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
+        setToken(null);
+        setRole(null);
+        setUser(null);
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error("Auth hydration error:", error);
-      // Fallback: clear bad data
-      Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
-      Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
-      localStorage.removeItem(USER_STORAGE_KEY);
-    } finally {
-      setIsLoading(false);
-    }
+    };
+
+    loadAuth();
   }, []);
 
   const login = (newToken: string, newRole: string, newUser: User, rememberMe: boolean = true) => {
@@ -86,7 +80,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     Cookies.set(AUTH_COOKIE_NAME, newToken, cookieOptions);
     Cookies.set(ROLE_COOKIE_NAME, newRole, cookieOptions);
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
 
     // Request push notification subscription upon login
     subscribeToPushNotifications().catch(err => console.error("Push subscribe error on login:", err));
@@ -108,7 +101,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     Cookies.remove(AUTH_COOKIE_NAME, { path: '/' });
     Cookies.remove(ROLE_COOKIE_NAME, { path: '/' });
-    localStorage.removeItem(USER_STORAGE_KEY);
 
     // Clear Service Worker runtime caches but keep precaches
     if ('caches' in window) {
@@ -132,9 +124,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = (partialUser: Partial<User>) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
-      const updatedUser = { ...prevUser, ...partialUser };
-      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
-      return updatedUser;
+      return { ...prevUser, ...partialUser };
     });
   };
 

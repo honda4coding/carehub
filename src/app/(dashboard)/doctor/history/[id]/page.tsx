@@ -17,6 +17,7 @@ function OnlinePatientHistoryContent() {
   const searchParams = useSearchParams();
   const patientName = searchParams.get('name') || "Unknown Patient";
   const patientPhone = searchParams.get('phone');
+  const scope = searchParams.get('scope');
 
   const router = useRouter();
   const [history, setHistory] = useState<any[]>([]);
@@ -55,6 +56,10 @@ function OnlinePatientHistoryContent() {
       const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
       let url = `${baseUrl}/doctor/patient/history?patientId=${id}&page=${pageNum}&limit=${LIMIT}&sortOrder=${sortOrder}`;
       
+      if (scope) {
+        url += `&scope=${encodeURIComponent(scope)}`;
+      }
+
       if (debouncedSearch) {
         url += `&search=${encodeURIComponent(debouncedSearch)}`;
       }
