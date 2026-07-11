@@ -19,6 +19,7 @@ const ITEMS_PER_PAGE = 10;
 export default function AdminDoctorsPage() {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [pagination, setPagination] = useState<{ totalPages: number; currentPage: number; totalRecords: number } | null>(null);
+  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -60,6 +61,9 @@ export default function AdminDoctorsPage() {
       });
       setDoctors(res.data ?? []);
       setPagination(res.pagination ?? null);
+      if (res.statusCounts) {
+        setStatusCounts(res.statusCounts);
+      }
     } catch (err: any) {
       setError(err?.message ?? "Failed to load doctors. Please try again.");
     } finally {
@@ -71,10 +75,8 @@ export default function AdminDoctorsPage() {
     fetchDoctors();
   }, [fetchDoctors]);
 
-  const tabCounts = doctors.reduce<Record<string, number>>((acc, d) => ({ ...acc, [d.status]: (acc[d.status] ?? 0) + 1 }), {});
-
   return (
-    <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg))]">
+    <div className="flex flex-col flex-1 h-full bg-[hsl(var(--color-bg))]">
       <DashboardHeader
         title="Doctor Directory"
         subtitle="View all registered doctors and their approval status"
@@ -90,7 +92,7 @@ export default function AdminDoctorsPage() {
           </button>
         }
       />
-      <main className="flex-1 overflow-auto min-w-0">
+      <main className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm">
           <DoctorsFilters
@@ -100,7 +102,7 @@ export default function AdminDoctorsPage() {
             setStatusFilter={setStatusFilter}
             isLoading={isLoading}
             totalDoctors={pagination?.totalRecords ?? 0}
-            tabCounts={tabCounts}
+            tabCounts={statusCounts}
           />
 
           {error && (

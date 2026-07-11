@@ -287,7 +287,7 @@ export default function MedicationTrackingPage() {
                                                 onClick={() => setScheduleModalData(med)}
                                                 className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold rounded-xl transition-colors cursor-pointer border border-[hsl(var(--color-border))] shadow-sm"
                                             >
-                                                ⏰ Set Alarm
+                                                Remind Me
                                             </button>
                                         </div>
                                     </div>
