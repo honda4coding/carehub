@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import { useRouter, usePathname } from 'next/navigation';
 
 import { User, AuthContextType } from '@/types/auth';
-import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME } from '@/constants/auth';
+import { AUTH_COOKIE_NAME, ROLE_COOKIE_NAME, USER_STORAGE_KEY } from '@/constants/auth';
 import { subscribeToPushNotifications, unsubscribeFromPushNotifications } from '@/services/pushNotificationService';
 import { fetchClient } from '@/services/fetchClient';
 
@@ -80,6 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     Cookies.set(AUTH_COOKIE_NAME, newToken, cookieOptions);
     Cookies.set(ROLE_COOKIE_NAME, newRole, cookieOptions);
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser));
 
     // Request push notification subscription upon login
     subscribeToPushNotifications().catch(err => console.error("Push subscribe error on login:", err));
