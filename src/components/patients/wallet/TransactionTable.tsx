@@ -35,7 +35,7 @@ export default function TransactionTable({ transactions, pagination, page, setPa
               </thead>
               <tbody className="divide-y divide-[hsl(var(--color-border-soft))]">
                 {transactions.map(t => {
-                  const isDebit = t.amount < 0 || ['online_booking_payment', 'payout_withdrawal', 'cancellation_fee', 'platform_commission'].includes(t.type);
+                  const isDebit = t.amount < 0 || ['debit', 'online_booking_payment', 'payout_withdrawal', 'cancellation_fee', 'platform_commission'].includes(t.type);
                   const isCredit = !isDebit;
                   const displayAmount = Math.abs(t.amount);
                   return (
