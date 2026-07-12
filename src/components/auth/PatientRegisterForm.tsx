@@ -2,6 +2,7 @@
 
 import { useFormik } from 'formik';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { patientRegisterSchema } from '@/components/schemas/patientRegisterSchema';
 import { PatientFormValues } from '@/types/patient';
 import { useState } from 'react';
@@ -24,6 +25,7 @@ const egyptianGovernorates = [
 
 export default function PatientRegisterForm() {
   const [loading, setLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const router = useRouter();
   const formik = useFormik<PatientFormValues>({
@@ -225,12 +227,27 @@ export default function PatientRegisterForm() {
         />
       </div>
 
+      {/* Terms and Conditions */}
+      <div className="flex items-start gap-3 pt-2">
+        <input 
+          type="checkbox" 
+          id="termsPatient"
+          className="mt-1 w-4 h-4 rounded border-gray-300 text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]"
+          checked={agreedToTerms}
+          onChange={(e) => setAgreedToTerms(e.target.checked)}
+        />
+        <label htmlFor="termsPatient" className="text-sm text-[hsl(var(--color-text-muted))] leading-relaxed">
+          I agree to CareHub's <Link href="/terms" className="text-[hsl(var(--color-primary))] font-semibold hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-[hsl(var(--color-primary))] font-semibold hover:underline">Privacy Policy</Link>.
+        </label>
+      </div>
+
       <div className="pt-2">
         <Button
           type="submit"
           variant="primary"
           className="w-full py-4 text-lg"
           isLoading={loading}
+          disabled={!agreedToTerms}
         >
           Register as Patient
         </Button>

@@ -11,7 +11,7 @@ export const doctorRegisterSchema = Yup.object({
     .required("Email is required"),
 
   phoneNumber: Yup.string()
-    .matches(/^[0-9]{10,15}$/, "Phone number must be 10-15 digits")
+    .matches(/^(010|011|012|015)[0-9]{8}$/, "Phone number must be a valid Egyptian mobile number (e.g. 010xxxxxxxx)")
     .required("Phone number is required"),
 
   nationalId: Yup.mixed()
@@ -22,7 +22,7 @@ export const doctorRegisterSchema = Yup.object({
     }),
 
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character")
     .required("Password is required"),
 
   confirmPassword: Yup.string()

@@ -560,7 +560,7 @@ export default function PrintMedicalRecordPage() {
                     </header>
 
                     <div className="print-visit-wrapper" style={{ breakInside: 'avoid' }}>
-                      <VisitCard record={enc.rawData} defaultExpanded={true} printMode={true} />
+                      <VisitCard record={enc.rawData} index={idx} defaultExpanded={true} printMode={true} />
                     </div>
 
                     <footer className="border-t border-[hsl(var(--color-border))] pt-3 flex items-end justify-between mt-10">
@@ -624,14 +624,12 @@ export default function PrintMedicalRecordPage() {
           /* Hide non-printable layout elements */
           aside,
           #sidebar-toggle,
-          .print\:hidden,
-          header.print\:hidden {
+          .print\\:hidden {
             display: none !important;
           }
 
           /* Force all scrollable/flex containers to block/visible to allow pagination */
-          html, body, #__next, body > div, main, 
-          #dashboard-shell-root, #dashboard-shell-main {
+          html, body, #__next, body > div, main, #dashboard-shell-root, #dashboard-shell-main {
             background: #ffffff !important;
             color: #000000 !important;
             padding: 0 !important;
@@ -642,7 +640,7 @@ export default function PrintMedicalRecordPage() {
             height: auto !important;
             min-height: 0 !important;
             overflow: visible !important;
-            : none !important;
+            position: static !important;
           }
 
           #printable-record, #printable-record * {

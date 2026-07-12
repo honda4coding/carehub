@@ -9,5 +9,5 @@ interface MedicalHistoryCardProps {
 
 export default function MedicalHistoryCard({ record, hideHeader = false }: MedicalHistoryCardProps) {
   // We now delegate rendering to the unified VisitCard component to maintain consistency across the app.
-  return <VisitCard record={record} />;
+  return <VisitCard record={record} index={0} />;
 }

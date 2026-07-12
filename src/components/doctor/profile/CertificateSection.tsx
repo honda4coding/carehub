@@ -6,6 +6,7 @@ import { LuLoader } from "react-icons/lu";
 import { DoctorProfile } from "@/services/doctorService";
 import { uploadDoctorCertificate, deleteDoctorCertificate } from "@/services/doctorService";
 import { Button } from "@/components/ui/Button";
+import { DocumentModal } from "@/components/shared/DocumentModal";
 
 interface CertificateSectionProps {
   profile: DoctorProfile;
@@ -16,6 +17,7 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isUploading, setIsUploading] = useState(false);
+  const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form State for new certificate
@@ -167,14 +169,12 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
                   )}
                   
                   {/* Overlay for view */}
-                  <a 
-                    href={cert.secure_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-semibold"
+                  <button 
+                    onClick={() => setDocModalUrl(cert.secure_url)}
+                    className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-sm font-semibold cursor-pointer border-none"
                   >
                     View File
-                  </a>
+                  </button>
                 </div>
                 <div className="p-3">
                   <h3 className="font-bold text-[14px] truncate" title={cert.title}>{cert.title}</h3>
@@ -197,6 +197,12 @@ export default function CertificateSection({ profile, onUpdate }: CertificateSec
           </div>
         )}
       </div>
+
+      <DocumentModal 
+        url={docModalUrl} 
+        onClose={() => setDocModalUrl(null)} 
+        title="View Certificate"
+      />
     </div>
   );
 }

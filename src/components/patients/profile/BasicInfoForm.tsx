@@ -4,7 +4,7 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import * as Yup from "yup";
 import { LuLoader } from "react-icons/lu";
 import { LuArrowRight } from "react-icons/lu";
-import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck, LuShield } from "react-icons/lu";
+import { LuUser, LuPhone, LuCalendar, LuMapPin, LuMail, LuCheck, LuShield, LuChevronDown } from "react-icons/lu";
 import { useState } from "react";
 import { PatientProfile, UpdatePatientProfilePayload, updatePatientProfile } from "@/services/patientService";
 
@@ -160,7 +160,7 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                     </Field>
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">â–¾</span>
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]"><LuChevronDown className="w-4 h-4" /></span>
                   </div>
                   <ErrorMessage name="gender" component="p" className="text-danger text-xs pl-1 font-medium" />
                 </div>
