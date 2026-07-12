@@ -390,13 +390,13 @@ export default function MedicalHistoryPage() {
           ) : (
             <div className="flex flex-col lg:flex-row gap-4 items-start">
               <div className="flex-1 flex flex-col gap-4 w-full">
-                {displayedRecords.filter((_, i) => i % 2 === 0).map(r => (
-                  <VisitCard key={r._id} record={r} />
+                {displayedRecords.filter((_, i) => i % 2 === 0).map((r, i) => (
+                  <VisitCard key={r._id} record={r} index={i * 2} />
                 ))}
               </div>
               <div className="flex-1 flex flex-col gap-4 w-full">
-                {displayedRecords.filter((_, i) => i % 2 === 1).map(r => (
-                  <VisitCard key={r._id} record={r} />
+                {displayedRecords.filter((_, i) => i % 2 === 1).map((r, i) => (
+                  <VisitCard key={r._id} record={r} index={i * 2 + 1} />
                 ))}
               </div>
             </div>

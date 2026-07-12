@@ -560,7 +560,7 @@ export default function PrintMedicalRecordPage() {
                     </header>
 
                     <div className="print-visit-wrapper" style={{ breakInside: 'avoid' }}>
-                      <VisitCard record={enc.rawData} defaultExpanded={true} printMode={true} />
+                      <VisitCard record={enc.rawData} index={idx} defaultExpanded={true} printMode={true} />
                     </div>
 
                     <footer className="border-t border-[hsl(var(--color-border))] pt-3 flex items-end justify-between mt-10">
