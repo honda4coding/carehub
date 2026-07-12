@@ -56,4 +56,5 @@ export interface GetDoctorsResponse {
     currentPage: number;
     totalRecords: number;
   };
+  statusCounts?: Record<string, number>;
 }

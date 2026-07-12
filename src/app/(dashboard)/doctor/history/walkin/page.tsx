@@ -18,6 +18,7 @@ function WalkinHistoryContent() {
   const searchParams = useSearchParams();
   const guestName = searchParams.get('guestName');
   const guestPhone = searchParams.get('guestPhone');
+  const scope = searchParams.get('scope');
   
   const router = useRouter();
   const [history, setHistory] = useState<any[]>([]);
@@ -57,6 +58,7 @@ function WalkinHistoryContent() {
       let url = `${baseUrl}/doctor/patient/history?isOfflinePatient=true&page=${pageNum}&limit=${LIMIT}&sortOrder=${sortOrder}`;
       if (guestName) url += `&guestName=${encodeURIComponent(guestName)}`;
       if (guestPhone) url += `&guestPhone=${encodeURIComponent(guestPhone)}`;
+      if (scope) url += `&scope=${encodeURIComponent(scope)}`;
       
       if (debouncedSearch) {
         url += `&search=${encodeURIComponent(debouncedSearch)}`;

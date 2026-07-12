@@ -6,6 +6,8 @@ import { useAuth } from "@/context/AuthContext";
 import axios from "axios";
 import { LuPill, LuSearch, LuCalendar, LuFileText, LuUser, LuEye } from "react-icons/lu";
 import DashboardHeader from "@/components/global/DashboardHeader";
+import Pagination from "@/components/ui/Pagination";
+import { useDebounce } from "@/hooks/useDebounce";
 
 function PrescriptionsContent() {
   const [prescriptions, setPrescriptions] = useState<any[]>([]);
@@ -16,26 +18,40 @@ function PrescriptionsContent() {
   const filterParam = searchParams.get("filter");
   const { token } = useAuth();
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const debouncedSearch = useDebounce(searchTerm, 400);
+
+  // Reset page on search change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, filterParam]);
+
   useEffect(() => {
     const fetchPrescriptions = async () => {
       if (!token) return;
       setIsLoading(true);
       try {
         const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        let url = `${baseUrl}/doctor/my-prescriptions`;
+        let url = `${baseUrl}/doctor/my-prescriptions?page=${page}&limit=10`;
 
         if (filterParam === "today") {
           const today = new Date();
           today.setHours(0, 0, 0, 0);
           const endOfDay = new Date();
           endOfDay.setHours(23, 59, 59, 999);
-          url += `?startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}`;
+          url += `&startDate=${today.toISOString()}&endDate=${endOfDay.toISOString()}`;
+        }
+
+        if (debouncedSearch) {
+          url += `&search=${encodeURIComponent(debouncedSearch)}`;
         }
 
         const response = await axios.get(url, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPrescriptions(response.data.data.prescriptions || []);
+        setTotalPages(response.data.data.pagination?.totalPages || 1);
       } catch (error) {
         console.error("Failed to fetch prescriptions:", error);
       } finally {
@@ -44,12 +60,9 @@ function PrescriptionsContent() {
     };
 
     fetchPrescriptions();
-  }, [token, filterParam]);
+  }, [token, filterParam, page, debouncedSearch]);
 
-  const filteredPrescriptions = prescriptions.filter(p => {
-    const patientName = p.isOfflinePatient ? p.guestName : (p.patientId?.fullName || "Unknown");
-    return patientName?.toLowerCase().includes(searchTerm.toLowerCase());
-  });
+  const filteredPrescriptions = prescriptions;
 
   return (
     <div className="flex flex-col flex-1 min-h-screen relative">
@@ -216,6 +229,16 @@ function PrescriptionsContent() {
                 </table>
               </div>
             </div>
+            
+            {totalPages > 1 && (
+              <div className="p-4 border-t border-[hsl(var(--color-border))]">
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              </div>
+            )}
           </div>
 
         </div>

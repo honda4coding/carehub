@@ -86,9 +86,9 @@ export default function DoctorsList({
   setModal,
 }: DoctorsListProps) {
   return (
-    <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+    <div className="overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
       {/* Desktop Table */}
-      <table className="w-full min-w-[680px] hidden lg:table">
+      <table className="w-full min-w-[680px] hidden xl:table">
         <thead>
           <tr className="border-b border-[hsl(var(--color-border))]">
             {[
@@ -226,7 +226,7 @@ export default function DoctorsList({
       </table>
 
       {/* Mobile Card View */}
-      <div className="lg:hidden flex flex-col gap-4 py-2">
+      <div className="xl:hidden flex flex-col gap-4 py-2">
         {isLoading &&
           Array.from({ length: 4 }).map((_, i) => (
             <div

@@ -34,6 +34,7 @@ import {
   LuFileCheck,
   LuCreditCard,
   LuWallet,
+  LuFileText,
 } from "react-icons/lu";
 
 interface NavItem {
@@ -150,6 +151,11 @@ const doctorNav: NavSection[] = [
         label: "Patient Directory",
         href: "/doctor/patients",
         icon: <LuUsers />,
+      },
+      {
+        label: "My Prescriptions",
+        href: "/doctor/prescriptions",
+        icon: <LuFileText />,
       },
       {
         label: "Manage Assistant",

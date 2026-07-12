@@ -39,7 +39,7 @@ export default function DoctorsFilters({
         <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
           {STATUS_TABS.map((tab) => {
             const isActive = statusFilter === tab.value;
-            const count = tab.value === "" ? totalDoctors : tabCounts[tab.value] ?? 0;
+            const count = tab.value === "" ? Object.values(tabCounts).reduce((a, b) => a + b, 0) : tabCounts[tab.value] ?? 0;
             return (
               <button
                 key={tab.value}

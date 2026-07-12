@@ -100,11 +100,13 @@ function PatientDirectoryContent() {
       const queryParams = new URLSearchParams();
       if (patient.guestName) queryParams.set('guestName', patient.guestName);
       if (patient.guestPhone) queryParams.set('guestPhone', patient.guestPhone);
+      queryParams.set('scope', 'own');
       router.push(`${basePath}/history/walkin?${queryParams.toString()}`);
     } else {
       const queryParams = new URLSearchParams();
       if (patient.fullName) queryParams.set('name', patient.fullName);
       if (patient.phoneNumber) queryParams.set('phone', patient.phoneNumber);
+      queryParams.set('scope', 'own');
       router.push(`${basePath}/history/${patient.patientId}?${queryParams.toString()}`);
     }
   };
