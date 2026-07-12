@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { DocumentModal } from "@/components/shared/DocumentModal";
 import Image from "next/image";
 import {
   LuShieldCheck,
@@ -33,7 +34,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
   const hasPending  = !!profile?.pendingLicenseImage?.secure_url;
   const hasPrevious = !!profile?.previousLicenseImage?.secure_url;
 
-  // â”€â”€â”€ File pick â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ——— File pick —————————————————————————————————————————————————————
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const picked = e.target.files?.[0];
     if (!picked) return;
@@ -54,7 +55,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
     setPreview(URL.createObjectURL(picked));
   };
 
-  // â”€â”€â”€ Upload â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ——— Upload ———————————————————————————————————————————————————————
   const handleUpload = async () => {
     if (!file) return;
     try {
@@ -74,7 +75,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
     }
   };
 
-  // â”€â”€â”€ Cancel pending â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ——— Cancel pending ————————————————————————————————————————————————
   const handleCancelPending = async () => {
     try {
       setCancelling(true);
@@ -99,7 +100,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
 
   return (
     <div className="p-6 space-y-5">
-      {/* â”€â”€ Section title â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* — Section title —————————————————————————————————————————————————— */}
       <div className="flex items-center gap-2">
         <LuShieldCheck className="w-4 h-4 text-[hsl(var(--color-primary))]" />
         <h3 className="text-[13px] font-black text-[hsl(var(--color-text))]">
@@ -107,7 +108,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         </h3>
       </div>
 
-      {/* â”€â”€ Server messages â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* — Server messages ———————————————————————————————————————————————— */}
       {(error || success) && (
         <div
           className={`flex items-center gap-2 px-4 py-3 rounded-xl text-[13px] font-medium ${
@@ -121,7 +122,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         </div>
       )}
 
-      {/* â”€â”€ Cards row â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* — Cards row —————————————————————————————————————————————————————— */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Current license */}
         <LicenseCard
@@ -158,7 +159,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
           </div>
         )}
 
-        {/* Previous license â€” collapsed by default */}
+        {/* Previous license — collapsed by default */}
         {hasPrevious && !hasPending && (
           <LicenseCard
             title="Previous License"
@@ -171,7 +172,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
         )}
       </div>
 
-      {/* â”€â”€ Upload area â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
+      {/* — Upload area ———————————————————————————————————————————————————— */}
       <div className="border border-dashed border-[hsl(var(--color-border))] rounded-2xl p-5 space-y-4">
         <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))]">
           {hasPending
@@ -191,7 +192,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
               Click to choose an image
             </span>
             <span className="text-[11px] text-[hsl(var(--color-text-muted))]">
-              PNG, JPG, WEBP â€” max 5 MB
+              PNG, JPG, WEBP — max 5 MB
             </span>
           </button>
         ) : (
@@ -241,7 +242,7 @@ export default function LicenseSection({ profile, onUploadSuccess }: Props) {
   );
 }
 
-// â”€â”€â”€ LicenseCard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ——— LicenseCard ——————————————————————————————————————————————————————
 type BadgeColor = "success" | "warning" | "muted";
 
 const badgeStyles: Record<BadgeColor, string> = {
@@ -265,6 +266,8 @@ function LicenseCard({
   emptyText: string;
   icon: React.ReactNode;
 }) {
+  const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
+
   return (
     <div className="border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden">
       {/* Card header */}
@@ -285,24 +288,27 @@ function LicenseCard({
       {url ? (
         <div className="relative w-full h-40 bg-[hsl(var(--color-bg-soft))] group">
           <Image src={url} alt={title} fill className="object-contain p-3" />
-          {/* Hover overlay â€” open in new tab */}
-          <a
-            href={url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+          {/* Hover overlay — open in modal */}
+          <button
+            onClick={() => setDocModalUrl(url)}
+            className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer border-none w-full"
           >
             <span className="flex items-center gap-1.5 text-white text-[12px] font-black bg-black/60 px-3 py-1.5 rounded-lg">
               <LuExternalLink className="w-3.5 h-3.5" /> View Full
             </span>
-          </a>
+          </button>
         </div>
       ) : (
-        <div className="flex items-center justify-center h-40 text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-          {emptyText}
+        <div className="h-40 flex items-center justify-center bg-[hsl(var(--color-bg-soft))]">
+          <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">{emptyText}</p>
         </div>
       )}
+
+      <DocumentModal 
+        url={docModalUrl} 
+        onClose={() => setDocModalUrl(null)} 
+        title={title}
+      />
     </div>
   );
 }
-

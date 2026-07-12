@@ -16,6 +16,7 @@ import {
   LuFileText,
   LuExternalLink,
 } from "react-icons/lu";
+import { DocumentModal } from "@/components/shared/DocumentModal";
 
 /* ─── Shared Components & Helpers ─── */
 function TabBtn({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
@@ -65,9 +66,10 @@ export const SEVERITY_STYLES: Record<Severity, { bar: string; dot: string; badge
 type ExpandTab = "diagnosis" | "vitals" | "medications" | "notes" | "documents";
 
 /* ─── Visit Card ─────────────────────────────────────────────────────────── */
-export default function VisitCard({ record, defaultExpanded = false, printMode = false }: { record: any, defaultExpanded?: boolean, printMode?: boolean }) {
+export default function VisitCard({ record, index, defaultExpanded = false, printMode = false }: { record: any; index: number; defaultExpanded?: boolean; printMode?: boolean }) {
   const [expanded, setExpanded] = useState(defaultExpanded || printMode);
   const [activeTab, setActiveTab] = useState<ExpandTab>("diagnosis");
+  const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
 
   const severity = getSeverity(record);
   const styles = SEVERITY_STYLES[severity];
@@ -126,14 +128,42 @@ export default function VisitCard({ record, defaultExpanded = false, printMode =
               <LuStethoscope className="text-[15px] text-[hsl(var(--color-primary))] shrink-0" />
               <span className="text-[hsl(var(--color-text))] truncate">{record.doctorId?.fullName ?? record.doctorId?.userName ?? "Doctor"}</span>
               {record.doctorId?.specialization && (
-                <span className="opacity-70 shrink-0">· {record.doctorId.specialization}</span>
+                <span className="hidden sm:inline opacity-70">
+                  ({record.doctorId.specialization.replace(/_/g, " ")})
+                </span>
               )}
             </p>
-            <p className="text-[12.5px] font-medium text-[hsl(var(--color-text-muted))] flex items-center gap-1.5">
+            <p className="text-[12.5px] font-medium text-[hsl(var(--color-text-muted))] flex items-center gap-1.5 flex-wrap">
               <LuCalendar className="text-[14px] shrink-0" />
               <span>{monthStr} {dayStr}, {yearStr}</span>
               <span className="opacity-50">·</span>
               <span>{timeStr}</span>
+              {(() => {
+                let ageAtVisit = null;
+                const visitDate = new Date(record.createdAt);
+                
+                if (record.patientId?.dateOfBirth) {
+                  const dob = new Date(record.patientId.dateOfBirth);
+                  ageAtVisit = visitDate.getFullYear() - dob.getFullYear();
+                  const m = visitDate.getMonth() - dob.getMonth();
+                  if (m < 0 || (m === 0 && visitDate.getDate() < dob.getDate())) ageAtVisit--;
+                } else if (record.patientId?.age) {
+                  // Fallback if patient only has static 'age' in DB (no DOB)
+                  const currentAge = record.patientId.age;
+                  const currentYear = new Date().getFullYear();
+                  ageAtVisit = currentAge - (currentYear - visitDate.getFullYear());
+                } else if (record.patientAge) {
+                   ageAtVisit = record.patientAge;
+                }
+
+                if (ageAtVisit === null || ageAtVisit < 0 || isNaN(ageAtVisit)) return null;
+                return (
+                  <>
+                    <span className="opacity-50">·</span>
+                    <span className="font-semibold text-[hsl(var(--color-primary-strong))]">Age: {ageAtVisit}</span>
+                  </>
+                );
+              })()}
             </p>
           </div>
         </div>
@@ -309,20 +339,21 @@ export default function VisitCard({ record, defaultExpanded = false, printMode =
                   {documents.map((doc: any, dIdx: number) => {
                     const isImage = ["prescription", "xray", "mri", "ct"].includes(doc.type);
                     return (
-                      <a
+                      <button
                         key={dIdx}
-                        href={doc.secure_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setDocModalUrl(doc.secure_url);
+                        }}
                         className="inline-flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] font-semibold
                           bg-[hsl(var(--color-primary)/0.06)] text-[hsl(var(--color-primary-strong))]
                           border border-[hsl(var(--color-primary)/0.15)] hover:bg-[hsl(var(--color-primary)/0.12)]
-                          transition-colors"
+                          transition-colors cursor-pointer text-left"
                       >
                         {isImage ? <LuImage className="text-[13px]" /> : <LuFileText className="text-[13px]" />}
                         {doc.title || "Document"}
-                        <LuExternalLink className="text-[11px] opacity-60" />
-                      </a>
+                      </button>
                     );
                   })}
                 </div>
@@ -331,6 +362,13 @@ export default function VisitCard({ record, defaultExpanded = false, printMode =
           </div>
         </div>
       )}
+
+      {/* Document Viewer Modal */}
+      <DocumentModal 
+        url={docModalUrl} 
+        onClose={() => setDocModalUrl(null)} 
+        title="View Document"
+      />
     </div>
   );
 }

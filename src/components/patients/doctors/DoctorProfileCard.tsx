@@ -2,6 +2,8 @@ import { LuMapPin, LuPhone, LuAward, LuBuilding, LuImage, LuSmartphone } from "r
 import { DoctorListItem } from "@/services/appointmentService";
 import { Clinic } from "@/services/clinicService";
 import { initialsOf } from "@/components/appointments/format";
+import { useState } from "react";
+import { DocumentModal } from "@/components/shared/DocumentModal";
 
 interface Props {
   doctor: DoctorListItem;
@@ -10,6 +12,7 @@ interface Props {
 }
 
 export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Props) {
+  const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
   const fullName = doctor.userId.fullName;
   const initials = initialsOf(fullName);
   const specialization = doctor.specialization ?? "General Practice";
@@ -90,12 +93,10 @@ export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Prop
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {doctor.certificates.map((cert) => (
-                  <a 
+                  <button 
                     key={cert._id} 
-                    href={cert.secure_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="group block border border-[hsl(var(--color-border))] rounded-lg overflow-hidden bg-[hsl(var(--color-bg))] hover:border-[hsl(var(--color-primary))] transition-colors"
+                    onClick={() => setDocModalUrl(cert.secure_url)}
+                    className="group block border border-[hsl(var(--color-border))] rounded-lg overflow-hidden bg-[hsl(var(--color-bg))] hover:border-[hsl(var(--color-primary))] transition-colors text-left"
                   >
                     <div className="aspect-[4/3] bg-black/5 relative flex items-center justify-center">
                       {cert.secure_url.endsWith(".pdf") ? (
@@ -114,7 +115,7 @@ export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Prop
                       <h4 className="font-bold text-[12px] truncate" title={cert.title}>{cert.title}</h4>
                       <p className="text-[11px] text-[hsl(var(--color-text-muted))] truncate" title={cert.issuer}>{cert.issuer}</p>
                     </div>
-                  </a>
+                  </button>
                 ))}
               </div>
             )}
@@ -149,6 +150,12 @@ export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Prop
       >
         Book Appointment Now
       </button>
+
+      <DocumentModal 
+        url={docModalUrl} 
+        onClose={() => setDocModalUrl(null)} 
+        title="View Certificate"
+      />
     </div>
   );
 }

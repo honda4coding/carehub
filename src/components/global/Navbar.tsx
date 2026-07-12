@@ -70,7 +70,7 @@ export default function Navbar() {
   const links = getLinks();
 
   return (
-    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${scrolled ? 'bg-[hsl(var(--color-bg-surface))/80] backdrop-blur-xl border-b border-[hsl(var(--color-border))] shadow-[var(--shadow-sm)] py-2' : 'bg-transparent py-4'}`}>
+    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 print:hidden ${scrolled ? 'bg-[hsl(var(--color-bg-surface))/80] backdrop-blur-xl border-b border-[hsl(var(--color-border))] shadow-[var(--shadow-sm)] py-2' : 'bg-transparent py-4'}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-12">
 

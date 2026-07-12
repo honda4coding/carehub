@@ -624,14 +624,12 @@ export default function PrintMedicalRecordPage() {
           /* Hide non-printable layout elements */
           aside,
           #sidebar-toggle,
-          .print\:hidden,
-          header.print\:hidden {
+          .print\\:hidden {
             display: none !important;
           }
 
           /* Force all scrollable/flex containers to block/visible to allow pagination */
-          html, body, #__next, body > div, main, 
-          #dashboard-shell-root, #dashboard-shell-main {
+          html, body, #__next, body > div, main, #dashboard-shell-root, #dashboard-shell-main {
             background: #ffffff !important;
             color: #000000 !important;
             padding: 0 !important;
@@ -642,7 +640,7 @@ export default function PrintMedicalRecordPage() {
             height: auto !important;
             min-height: 0 !important;
             overflow: visible !important;
-            : none !important;
+            position: static !important;
           }
 
           #printable-record, #printable-record * {

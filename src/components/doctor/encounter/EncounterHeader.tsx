@@ -40,14 +40,16 @@ export default function EncounterHeader({
         </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 md:gap-3 flex-wrap">
-            <h1 className="text-base md:text-xl font-black text-[hsl(var(--color-text))] truncate max-w-[150px] sm:max-w-xs md:max-w-sm">
-              {loading ? "Loading Patient..." : patientData?.name}
+            <div className="flex items-center gap-2 min-w-0">
+              <h1 className="text-base md:text-xl font-black text-[hsl(var(--color-text))] truncate max-w-[120px] sm:max-w-xs md:max-w-sm">
+                {loading ? "Loading Patient..." : patientData?.name}
+              </h1>
               {!loading && patientData?.age && patientData.age !== "--" && (
-                <span className="ml-2 text-sm md:text-base font-semibold text-[hsl(var(--color-text-muted))]">
+                <span className="text-sm md:text-base font-semibold text-[hsl(var(--color-text-muted))] shrink-0 whitespace-nowrap">
                   ({patientData.age} years)
                 </span>
               )}
-            </h1>
+            </div>
             {sessionData?.status === 'in_progress' && (
               <span className="px-2 md:px-2.5 py-0.5 md:py-1 text-[9px] md:text-[10px] font-bold bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] rounded-full flex items-center gap-1 shrink-0">
                 <div className="w-1.5 h-1.5 rounded-full bg-current animate-pulse"></div>

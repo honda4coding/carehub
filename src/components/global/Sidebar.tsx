@@ -810,8 +810,8 @@ export default function Sidebar({ role }: { role: string }) {
 
   return (
     <>
-      {/* â”€â”€ Desktop sidebar â”€â”€ */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0">
+      {/* — Desktop sidebar — */}
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0 print:hidden">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}
@@ -839,7 +839,7 @@ export default function Sidebar({ role }: { role: string }) {
             className="md:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
             onClick={() => setOpen(false)}
           />
-          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))]">
+          <aside className="md:hidden fixed inset-y-0 left-0 z-50 w-[260px] flex flex-col bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border))] print:hidden">
             <SidebarContent
               role={role}
               onClose={() => setOpen(false)}
