@@ -36,7 +36,7 @@ export default function DashboardHeader({
   const isFree = planName.toLowerCase().includes("free");
 
   return (
-    <header className="bg-[hsl(var(--color-bg-surface))/85] backdrop-blur-2xl border-b border-[hsl(var(--color-border))] px-5 md:px-8 min-h-[76px] py-3 flex items-center justify-between gap-4 z-40 sticky top-0 shrink-0 shadow-[var(--shadow-card)]">
+    <header className="bg-[hsl(var(--color-bg-surface))/85] backdrop-blur-2xl px-5 md:px-8 min-h-[76px] py-3 flex items-center justify-between gap-4 z-40 sticky top-0 shrink-0">
       <div className="flex items-center gap-4 min-w-0 pl-11 md:pl-0 flex-1 md:flex-none">
         {(backPath || showBack) && (
           <button

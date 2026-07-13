@@ -1,11 +1,12 @@
 "use client";
+import React from "react";
 
 import { LuPill } from "react-icons/lu";
 import ClinicalAssessment from "@/components/doctor/encounter/ClinicalAssessment";
 
 export interface AssessmentTabProps {
-  symptoms: string; setSymptoms: (val: string) => void;
-  diagnosis: string; setDiagnosis: (val: string) => void;
+  symptoms: string; setSymptoms: React.Dispatch<React.SetStateAction<string>>;
+  diagnosis: string; setDiagnosis: React.Dispatch<React.SetStateAction<string>>;
   setIsAssessmentMode: () => void;
   onProceedToPrescription: () => void;
 }
