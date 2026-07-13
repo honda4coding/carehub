@@ -19,6 +19,7 @@ export interface SubscriptionPlan {
     isActive: boolean;
     features: SubscriptionFeature[];
     limits: SubscriptionLimit[];
+    commissionRate?: number;
 }
 
 export interface DoctorSubscription {

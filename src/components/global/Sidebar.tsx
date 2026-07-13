@@ -254,7 +254,11 @@ const settingsSub: Record<
       href: "/doctor/profile",
       icon: <LuUser className="text-sm" />,
     },
-
+    {
+      label: "Manage Subscription",
+      href: "/doctor/settings/subscription",
+      icon: <LuCreditCard className="text-sm" />,
+    },
     {
       label: "Security",
       href: "/doctor/security",
@@ -474,23 +478,24 @@ function SidebarContent({
   // Filter doctorNav based on subscription
   if (role === "doctor") {
     const isFree = user?.subscriptionPlan?.toLowerCase().includes("free") ?? true;
-    const hasStaff = user?.subscriptionFeatures?.some(f => f.code === 'staff' && f.enabled) ?? !isFree;
-    const hasAI = user?.subscriptionFeatures?.some(f => f.code === 'ai' && f.enabled) ?? false;
-    const clinicLimit = user?.clinicLimit ?? (isFree ? 0 : 1);
+    const hasStaff = user?.subscriptionFeatures?.some((f: any) => (f.code === 'assistants' || f.code === 'staff') && f.enabled) ?? false;
+    const hasAI = user?.subscriptionFeatures?.some((f: any) => f.code === 'ai' && f.enabled) ?? false;
+    const hasReports = user?.subscriptionFeatures?.some((f: any) => f.code === 'reports' && f.enabled) ?? false;
+    const clinicLimit = user?.clinicLimit ?? 1;
 
     const hiddenLabels: string[] = [];
 
     // Clinics requires at least 1 clinic limit
     if (clinicLimit === 0) hiddenLabels.push("Clinics");
 
-    // Staff requires staff feature
-    if (!hasStaff) hiddenLabels.push("Staff & Logs");
+    // Staff requires assistants feature
+    if (!hasStaff) hiddenLabels.push("Manage Assistant");
 
     // AI requires AI feature
     if (!hasAI) hiddenLabels.push("My Knowledge Base");
-
-    // Free users can't see Patient Directory
-    if (isFree) hiddenLabels.push("Patient Directory");
+    
+    // Reports requires reports feature
+    if (!hasReports) hiddenLabels.push("Reports");
 
     sections = sections.map((section) => ({
       ...section,

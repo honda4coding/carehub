@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { subscriptionService, SubscriptionPlan, DoctorSubscription } from "@/services/subscriptionService";
-import { LuCircleCheck, LuCrown, LuBan, LuZap, LuActivity, LuCalendarRange, LuShieldCheck, LuTriangleAlert } from "react-icons/lu";
+import { LuCircleCheck, LuCrown, LuBan, LuZap, LuActivity, LuCalendarRange, LuShieldCheck, LuTriangleAlert, LuTrendingUp } from "react-icons/lu";
 import { useAuth } from "@/context/AuthContext";
 import { fetchClient } from "@/services/fetchClient";
 
@@ -234,6 +234,20 @@ export default function DoctorSubscriptionPage() {
                                                     </span>
                                                 </li>
                                             ))}
+
+                                            {plan.commissionRate !== undefined && (
+                                                <li className="flex items-start gap-3 mt-6 pt-4 border-t border-[hsl(var(--color-border))]">
+                                                    <LuTrendingUp className="w-5 h-5 text-[hsl(var(--color-primary))] shrink-0" />
+                                                    <div className="flex flex-col">
+                                                        <span className="text-sm font-black text-[hsl(var(--color-text))]">
+                                                            {plan.commissionRate}% Platform Fee
+                                                        </span>
+                                                        <span className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">
+                                                            Applied per booking
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            )}
                                         </ul>
 
                                         <button
@@ -249,7 +263,7 @@ export default function DoctorSubscriptionPage() {
                                                         : 'bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] border border-[hsl(var(--color-border))] hover:bg-[hsl(var(--color-bg-surface))] hover:border-[hsl(var(--color-text-muted))]'
                                             }`}
                                         >
-                                            {processing === plan._id ? "Processing..." : isCurrent ? "Current Plan" : plan.price === 0 ? "Current Plan" : "Upgrade"}
+                                            {processing === plan._id ? "Processing..." : isCurrent ? "Current Plan" : plan.price === 0 ? "Default Tier" : "Upgrade"}
                                         </button>
                                     </div>
                                 );
