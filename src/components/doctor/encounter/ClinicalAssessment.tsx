@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { LuClipboardList, LuX, LuMic, LuWand } from "react-icons/lu";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
@@ -6,9 +6,9 @@ import AIDiagnosisModal from "./AIDiagnosisModal";
 
 interface ClinicalAssessmentProps {
   symptoms: string;
-  setSymptoms: (text: string) => void;
+  setSymptoms: React.Dispatch<React.SetStateAction<string>>;
   diagnosis: string;
-  setDiagnosis: (text: string) => void;
+  setDiagnosis: React.Dispatch<React.SetStateAction<string>>;
   setIsAssessmentMode: (mode: boolean) => void;
 }
 
@@ -26,7 +26,16 @@ export default function ClinicalAssessment({
   const sessionId = params.sessionId as string;
   const { token } = useAuth();
 
+  const recognitionRef = typeof window !== "undefined" ? (window as any).recognitionRef || {} : {};
+
   const startListening = (field: "symptoms" | "diagnosis") => {
+    // If already listening, stop it.
+    if (listeningTo === field && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setListeningTo(null);
+      return;
+    }
+
     const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (!SpeechRecognition) {
       alert("Your browser does not support Speech Recognition. Please use Google Chrome or Microsoft Edge.");
@@ -34,8 +43,11 @@ export default function ClinicalAssessment({
     }
     
     const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    
     recognition.lang = 'ar-SA'; // Default to Arabic, often works with mixed English
     recognition.interimResults = false;
+    // recognition.continuous = true; // Optional: Enable this if doctors speak for a long time with pauses
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => setListeningTo(field);
@@ -43,9 +55,9 @@ export default function ClinicalAssessment({
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       if (field === "symptoms") {
-        setSymptoms(symptoms ? `${symptoms} ${transcript}` : transcript);
+        setSymptoms((prev: string) => prev ? `${prev} ${transcript}` : transcript);
       } else {
-        setDiagnosis(diagnosis ? `${diagnosis} ${transcript}` : transcript);
+        setDiagnosis((prev: string) => prev ? `${prev} ${transcript}` : transcript);
       }
     };
 
@@ -53,8 +65,8 @@ export default function ClinicalAssessment({
       if (event.error === 'not-allowed') {
         alert("Microphone access was denied. Please allow microphone access in your browser settings to use the Dictate feature.");
       } else if (event.error === 'network') {
-        alert("Network error: Voice dictation requires an active internet connection to connect to the speech recognition servers. Please check your connection (or VPN) and try again.");
-      } else {
+        alert("Network error: Voice dictation requires an active internet connection.");
+      } else if (event.error !== 'aborted') { // Ignore aborted if user stops it manually
         alert(`Microphone error: ${event.error}. Please try again.`);
       }
       setListeningTo(null);

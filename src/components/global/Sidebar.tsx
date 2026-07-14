@@ -576,7 +576,7 @@ function SidebarContent({
   return (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="h-[73px] shrink-0 flex items-center justify-between gap-3 px-5 border-b border-[hsl(var(--color-border))]">
+      <div className="h-[73px] shrink-0 flex items-center justify-between gap-3 px-5">
         <Link
           href="/"
           className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
@@ -816,7 +816,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* — Desktop sidebar — */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent border-r border-[hsl(var(--color-border))] h-screen sticky top-0 print:hidden">
+      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent h-screen sticky top-0 print:hidden">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}
