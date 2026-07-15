@@ -150,7 +150,7 @@ function ClinicsContent() {
   }, []);
 
   function openAddModal() {
-    if (maxAllowedClinics !== -1 && clinics.length >= maxAllowedClinics) {
+    if (maxAllowedClinics !== -1 && clinics.filter(c => c.isActive).length >= maxAllowedClinics) {
       setUpgradeModalOpen(true);
       return;
     }
@@ -331,16 +331,6 @@ function ClinicsContent() {
           <div className="flex flex-col gap-6">
             {(() => {
               const selectedClinic = clinics.find(c => c._id === selectedClinicId);
-              if (!selectedClinic) {
-                return (
-                  <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
-                    <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
-                    <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
-                      Select a clinic to manage it
-                    </p>
-                  </div>
-                );
-              }
 
               return (
                 <div className="flex flex-col gap-6">
@@ -359,7 +349,7 @@ function ClinicsContent() {
                             className="flex items-center justify-between w-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-[12px] text-[13px] sm:text-[14px] font-black cursor-pointer shadow-sm transition-colors min-w-0"
                           >
                             <span className="truncate pr-2">
-                              {selectedClinic.name}
+                              {selectedClinic ? selectedClinic.name : "Select a clinic"}
                             </span>
                             <LuChevronDown className={`text-[hsl(var(--color-text-muted))] shrink-0 transition-transform ${clinicDropdownOpen ? "rotate-180" : ""}`} />
                           </button>
@@ -391,11 +381,11 @@ function ClinicsContent() {
                           )}
                         </div>
 
-                        {!selectedClinic.isActive && (
+                        {selectedClinic && !selectedClinic.isActive && (
                           <LuLock className="text-[hsl(var(--color-danger))] text-sm shrink-0 hidden sm:block" title="Deactivated" />
                         )}
 
-                        {selectedClinic.isActive && (
+                        {selectedClinic && selectedClinic.isActive && (
                           <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                             <button
                               onClick={() => openEditModal(selectedClinic)}
@@ -413,7 +403,7 @@ function ClinicsContent() {
                             </button>
                           </div>
                         )}
-                        {!selectedClinic.isActive && (
+                        {selectedClinic && !selectedClinic.isActive && (
                           <button
                             onClick={() => handleReactivate(selectedClinic)}
                             disabled={activatingClinicId === selectedClinic._id}
@@ -432,20 +422,29 @@ function ClinicsContent() {
                       </button>
                     </div>
                     
-                    <div className="flex flex-wrap items-center gap-4 pl-[52px] text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
-                      <span className="flex items-center gap-1.5">
-                        <LuMapPin className="text-[hsl(var(--color-primary))]" /> {selectedClinic.address} — {selectedClinic.governorate}
-                      </span>
-                      {(selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline) && (
+                    {selectedClinic && (
+                      <div className="flex flex-wrap items-center gap-4 pl-[52px] text-[12px] font-medium text-[hsl(var(--color-text-muted))]">
                         <span className="flex items-center gap-1.5">
-                          <LuPhone className="text-[hsl(var(--color-primary))]" /> {selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline}
+                          <LuMapPin className="text-[hsl(var(--color-primary))]" /> {selectedClinic.address} — {selectedClinic.governorate}
                         </span>
-                      )}
-                    </div>
+                        {(selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline) && (
+                          <span className="flex items-center gap-1.5">
+                            <LuPhone className="text-[hsl(var(--color-primary))]" /> {selectedClinic.phone || selectedClinic.whatsapp || selectedClinic.landline}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Clinic Details Panel */}
-                  {selectedClinic.isActive ? (
+                  {!selectedClinic ? (
+                    <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-border))] rounded-2xl">
+                      <LuBuilding2 className="text-3xl text-[hsl(var(--color-text-muted))] mb-2" />
+                      <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
+                        Select a clinic to manage it
+                      </p>
+                    </div>
+                  ) : selectedClinic.isActive ? (
                     <ClinicDetailsPanel clinicId={selectedClinic._id} />
                   ) : (
                     <div className="flex flex-col items-center justify-center text-center py-20 bg-[hsl(var(--color-bg-surface))] border border-dashed border-[hsl(var(--color-danger)/0.3)] rounded-2xl">

@@ -485,9 +485,6 @@ function SidebarContent({
 
     const hiddenLabels: string[] = [];
 
-    // Clinics requires at least 1 clinic limit
-    if (clinicLimit === 0) hiddenLabels.push("Clinics");
-
     // Staff requires assistants feature
     if (!hasStaff) hiddenLabels.push("Manage Assistant");
 
@@ -712,7 +709,7 @@ export default function Sidebar({ role }: { role: string }) {
   const [pendingLicenses, setPendingLicenses] = useState<number | null>(null);
   const [unreadSupport, setUnreadSupport] = useState<number | null>(null);
 
-  // â”€â”€ Pending approvals badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ─── Pending approvals badge ───────────────────────────────────────────────
   useEffect(() => {
     if (role !== "admin") return;
 
@@ -778,7 +775,7 @@ export default function Sidebar({ role }: { role: string }) {
     return () => clearInterval(interval);
   }, [role]);
 
-  // â”€â”€ Unread notifications badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Unread notifications badge ──────────────────────────────────────────────────
   const fetchUnreadCount = useCallback(async () => {
     if (role !== "admin" && role !== "patient" && role !== "doctor") return;
     try {
@@ -816,7 +813,7 @@ export default function Sidebar({ role }: { role: string }) {
   return (
     <>
       {/* — Desktop sidebar — */}
-      <aside className="hidden md:flex w-[228px] shrink-0 flex-col bg-transparent h-screen sticky top-0 print:hidden">
+      <aside className="hidden md:flex flex-col w-[260px] bg-[hsl(var(--color-bg-surface))] border-r border-[hsl(var(--color-border-soft))] shrink-0 z-40 transition-all duration-300 relative shadow-[var(--shadow-subtle)]">
         <SidebarContent
           role={role}
           pendingApprovals={pendingApprovals}

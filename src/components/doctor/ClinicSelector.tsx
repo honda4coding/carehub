@@ -31,27 +31,49 @@ export default function ClinicSelector() {
     }
   }, [role]);
 
+  const activeClinics = clinics.filter(c => c.isActive);
+
   useEffect(() => {
-    // Auto-select first clinic if not set or set to "all"
-    if (clinics.length > 0 && (!activeClinicId || activeClinicId === "all")) {
-      setActiveClinicId(clinics[0]._id);
+    // Auto-select first active clinic if not set or set to "all"
+    if (activeClinics.length > 0 && (!activeClinicId || activeClinicId === "all")) {
+      setActiveClinicId(activeClinics[0]._id);
+    } else if (activeClinics.length === 0 && activeClinicId) {
+      setActiveClinicId("");
     }
   }, [clinics, activeClinicId, setActiveClinicId]);
 
-  const activeClinics = clinics.filter(c => c.isActive);
-
-  if (role !== "doctor" || loading || activeClinics.length <= 1) {
+  if (role !== "doctor" || loading) {
     return null;
   }
 
+  if (activeClinics.length === 0) {
+    return (
+      <div className="flex items-center shrink-0 pl-1">
+         <span className="text-[hsl(var(--color-danger))] text-[12px] px-1 font-bold whitespace-nowrap">
+           No Active Clinics
+         </span>
+      </div>
+    );
+  }
+
+  if (activeClinics.length === 1) {
+    return (
+      <div className="flex items-center shrink-0 pl-1">
+         <span className="text-[hsl(var(--color-primary-strong))] text-[12px] px-1 font-bold whitespace-nowrap">
+           {activeClinics[0].name}
+         </span>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center shrink-0 pl-1">
       <select
         value={activeClinicId}
         onChange={(e) => setActiveClinicId(e.target.value)}
-        className="bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] text-[hsl(var(--color-text))] text-xs md:text-sm rounded-lg px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--color-primary))] cursor-pointer font-medium"
+        className="bg-transparent border-none text-[hsl(var(--color-primary-strong))] text-[12px] focus:outline-none cursor-pointer font-bold max-w-[130px] sm:max-w-[160px] truncate"
       >
-        {clinics.map((clinic) => (
+        {activeClinics.map((clinic) => (
           <option key={clinic._id} value={clinic._id}>
             {clinic.name}
           </option>
