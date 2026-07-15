@@ -29,6 +29,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setToken(savedToken);
           setRole(savedRole);
 
+          try {
+            const stored = localStorage.getItem(USER_STORAGE_KEY);
+            if (stored) setUser(JSON.parse(stored));
+          } catch (e) {}
+
           // Fetch user profile securely via API using HTTP-only/secure cookies or the token
           const res = await fetchClient.get('/users/profile');
           if (res.data) {
@@ -38,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               fetchedUser.name = res.data.fullName;
             }
             setUser(fetchedUser);
+            localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(fetchedUser));
             // Subscribe to push notifications if authenticated
             subscribeToPushNotifications().catch(err => console.error("Push subscribe error on mount:", err));
           }
@@ -125,7 +131,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const updateUser = (partialUser: Partial<User>) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
-      return { ...prevUser, ...partialUser };
+      const updatedUser = { ...prevUser, ...partialUser };
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
     });
   };
 

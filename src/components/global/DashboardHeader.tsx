@@ -80,7 +80,6 @@ export default function DashboardHeader({
             )}
           </div>
         )}
-        {(role === "doctor" || role === "assistant") && <ClinicSelector />}
         {onRefresh && (
           <button
             onClick={onRefresh}

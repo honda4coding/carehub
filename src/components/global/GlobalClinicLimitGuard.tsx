@@ -31,10 +31,24 @@ export default function GlobalClinicLimitGuard() {
         const allActive = (clinicsData.clinics || []).filter((c: Clinic) => c.isActive);
         setActiveClinics(allActive);
 
-        let maxClinics = 1; // Default
+        let dbLimitValue: number | undefined;
         if (subscription?.subscriptionId?.limits) {
-          const limit = subscription.subscriptionId.limits.find((l: any) => l.code === "maxClinics");
-          if (limit) maxClinics = limit.value;
+          const limitObj = subscription.subscriptionId.limits.find((l: any) => l.code === "maxClinics");
+          if (limitObj && limitObj.value !== undefined) {
+            dbLimitValue = limitObj.value;
+          }
+        }
+
+        const planName = subscription?.subscriptionId?.name?.toLowerCase() || '';
+        let maxClinics = 1; // Default
+        if (planName.includes('premium')) {
+          maxClinics = (dbLimitValue === undefined || dbLimitValue === 0) ? -1 : dbLimitValue;
+        } else if (planName.includes('gold')) {
+          maxClinics = (dbLimitValue === undefined || dbLimitValue === 0) ? 2 : dbLimitValue;
+        } else if (planName.includes('silver')) {
+          maxClinics = (dbLimitValue === undefined || dbLimitValue === 0) ? 1 : dbLimitValue;
+        } else {
+          maxClinics = dbLimitValue !== undefined ? dbLimitValue : 1;
         }
 
         setMaxAllowedClinics(maxClinics);

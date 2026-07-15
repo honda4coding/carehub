@@ -1,5 +1,7 @@
 import { LuSearch, LuShieldCheck, LuUserPlus } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
+import { useClinicContext } from "@/context/ClinicContext";
+import ClinicSelector from "@/components/doctor/ClinicSelector";
 
 export const DoctorActions = ({
   searchQuery,
@@ -14,6 +16,9 @@ export const DoctorActions = ({
   setWalkInModalOpen,
   user,
 }: any) => {
+  const { activeClinicId } = useClinicContext();
+  const hasActiveClinic = !!activeClinicId && activeClinicId !== "all";
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">
       {/* Welcome Card - Left, larger */}
@@ -51,22 +56,27 @@ export const DoctorActions = ({
       {/* Start Consultation - Larger Card */}
       <div className="md:col-span-1 lg:col-span-8 xl:col-span-5 relative">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-center relative">
-          <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] mb-2 leading-tight">Start Consultation</h2>
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] leading-tight">Start Consultation</h2>
+          </div>
           
           <div className="relative w-full">
             <div className="flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all min-w-0">
-              <LuSearch className="ml-2.5 mr-2 text-[hsl(var(--color-text-muted))] text-[14px] shrink-0" />
+              <ClinicSelector />
+              <div className="w-px h-5 bg-[hsl(var(--color-border))] mx-1 shrink-0"></div>
+              <LuSearch className="ml-1 mr-2 text-[hsl(var(--color-text-muted))] text-[14px] shrink-0" />
               <input 
                 type="text" 
-                placeholder="Search patient phone or name..." 
-                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] font-medium py-1.5"
+                placeholder={hasActiveClinic ? "Search patient phone or name..." : "No active clinic selected"} 
+                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] font-medium py-1.5 disabled:opacity-50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                onKeyDown={(e) => e.key === 'Enter' && hasActiveClinic && handleSearch()}
+                disabled={!hasActiveClinic}
               />
               <Button 
                 onClick={handleSearch}
-                disabled={isSearching}
+                disabled={isSearching || !hasActiveClinic}
                 className="!text-[12px] !px-4 !py-1.5 !h-auto !rounded-[6px] ml-0.5 shrink-0"
               >
                 {isSearching ? "..." : "Search"}
@@ -140,6 +150,7 @@ export const DoctorActions = ({
           <Button 
             size="sm"
             onClick={() => setWalkInModalOpen(true)}
+            disabled={!hasActiveClinic}
             className="!text-[12px] !py-1.5 !px-3 2xl:!px-4 !h-auto !rounded-lg shrink-0"
           >
             Register
