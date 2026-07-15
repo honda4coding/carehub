@@ -286,8 +286,8 @@ function ClinicsContent() {
             {subscription?.subscriptionId?.limits && (
               <div className="px-3 py-1.5 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg text-sm font-semibold flex items-center gap-2">
                 <span className="text-[hsl(var(--color-text-muted))]">Clinics:</span>
-                <span className={`${clinics.filter(c => c.isActive).length >= (subscription.subscriptionId.limits.find((l: any) => l.code === 'maxClinics')?.value || 1) ? 'text-[hsl(var(--color-danger))]' : 'text-[hsl(var(--color-text))]'}`}>
-                  {clinics.filter(c => c.isActive).length} / {subscription.subscriptionId.limits.find((l: any) => l.code === 'maxClinics')?.value || 1}
+                <span className={`${clinics.filter(c => c.isActive).length >= (maxAllowedClinics === -1 ? Infinity : maxAllowedClinics) ? 'text-[hsl(var(--color-danger))]' : 'text-[hsl(var(--color-text))]'}`}>
+                  {clinics.filter(c => c.isActive).length} / {maxAllowedClinics === -1 ? '∞' : maxAllowedClinics}
                 </span>
               </div>
             )}
