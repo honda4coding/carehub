@@ -167,7 +167,7 @@ export default function DoctorSubscriptionPage() {
                             </p>
                         </div>
                         
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                             {plans.map((plan, index) => {
                                 const isCurrent = isCurrentPlan(plan.name);
                                 const isPopular = index === 2; // Highlight Gold plan
@@ -183,7 +183,7 @@ export default function DoctorSubscriptionPage() {
                                     >
                                         {isPopular && (
                                             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                                <span className="bg-[hsl(var(--color-primary))] text-white text-[10px] uppercase font-black px-3 py-1 rounded-full shadow-md">
+                                                <span className="bg-[hsl(var(--color-primary))] text-white text-[10px] uppercase font-black px-3 py-1 rounded-full shadow-md whitespace-nowrap">
                                                     Most Popular
                                                 </span>
                                             </div>
@@ -222,18 +222,46 @@ export default function DoctorSubscriptionPage() {
                                                 </li>
                                             ))}
                                             
-                                            {plan.features?.map((feature, idx) => (
-                                                <li key={idx} className="flex items-start gap-3 opacity-90">
-                                                    {feature.enabled ? (
-                                                        <LuCircleCheck className="w-5 h-5 text-[hsl(var(--color-success))] shrink-0" />
-                                                    ) : (
-                                                        <LuBan className="w-5 h-5 text-[hsl(var(--color-text-muted))] shrink-0 opacity-50" />
-                                                    )}
-                                                    <span className={`text-sm font-semibold ${feature.enabled ? 'text-[hsl(var(--color-text))]' : 'text-[hsl(var(--color-text-muted))] opacity-50'}`}>
-                                                        {feature.name || feature.code}
-                                                    </span>
-                                                </li>
-                                            ))}
+                                            {(() => {
+                                                // For Free Plan, hardcode exactly to match the design requested by user
+                                                if (plan.price === 0) {
+                                                    const freePlanDesign = [
+                                                        { name: "Online Booking", enabled: true },
+                                                        { name: "Records & Prescriptions", enabled: true },
+                                                        { name: "Financials & Wallet", enabled: true },
+                                                        { name: "Assistants", enabled: false },
+                                                        { name: "Reports", enabled: false },
+                                                        { name: "AI Clinical Assistant", enabled: false }
+                                                    ];
+                                                    return freePlanDesign.map((feature, idx) => (
+                                                        <li key={idx} className="flex items-start gap-3 opacity-90">
+                                                            {feature.enabled ? (
+                                                                <LuCircleCheck className="w-5 h-5 text-[hsl(var(--color-success))] shrink-0" />
+                                                            ) : (
+                                                                <LuBan className="w-5 h-5 text-[hsl(var(--color-text-muted))] shrink-0 opacity-50" />
+                                                            )}
+                                                            <span className={`text-sm font-semibold ${feature.enabled ? 'text-[hsl(var(--color-text))]' : 'text-[hsl(var(--color-text-muted))] opacity-50'}`}>
+                                                                {feature.name}
+                                                            </span>
+                                                        </li>
+                                                    ));
+                                                }
+
+                                                // For other plans, use DB features
+                                                const featuresToDisplay = plan.features ? [...plan.features] : [];
+                                                return featuresToDisplay.map((feature, idx) => (
+                                                    <li key={idx} className="flex items-start gap-3 opacity-90">
+                                                        {feature.enabled ? (
+                                                            <LuCircleCheck className="w-5 h-5 text-[hsl(var(--color-success))] shrink-0" />
+                                                        ) : (
+                                                            <LuBan className="w-5 h-5 text-[hsl(var(--color-text-muted))] shrink-0 opacity-50" />
+                                                        )}
+                                                        <span className={`text-sm font-semibold ${feature.enabled ? 'text-[hsl(var(--color-text))]' : 'text-[hsl(var(--color-text-muted))] opacity-50'}`}>
+                                                            {feature.name || feature.code}
+                                                        </span>
+                                                    </li>
+                                                ));
+                                            })()}
 
                                             {plan.commissionRate !== undefined && (
                                                 <li className="flex items-start gap-3 mt-6 pt-4 border-t border-[hsl(var(--color-border))]">
