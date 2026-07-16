@@ -111,7 +111,7 @@ export interface MyAppointment {
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
 export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
-  const res = await fetchClient.get("/doctor/all");
+  const res = await fetchClient.get("/doctor/all?limit=all");
   return res.data ?? res;
 }
 

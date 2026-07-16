@@ -29,6 +29,7 @@ export default function DoctorsPage() {
   const router = useRouter();
   const [doctors, setDoctors] = useState<DoctorListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(12);
   const [toastMsg, setToastMsg] = useState<{ msg: string; variant?: "success" | "error" } | null>(null);
   const [search, setSearch] = useState("");
   const [specialty, setSpecialty] = useState("All Specialties");
@@ -123,15 +124,27 @@ export default function DoctorsPage() {
             <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))]">Try adjusting your filters.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map((d) => (
-              <DoctorCard
-                key={d._id}
-                doctor={d}
-                onBook={(uid) => router.push(`/patient/doctors/${uid}/book`)}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {filtered.slice(0, visibleCount).map((d) => (
+                <DoctorCard
+                  key={d._id}
+                  doctor={d}
+                  onBook={(uid) => router.push(`/patient/doctors/${uid}/book`)}
+                />
+              ))}
+            </div>
+            {visibleCount < filtered.length && (
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={() => setVisibleCount((v) => v + 12)}
+                  className="py-2.5 px-6 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold hover:bg-[hsl(var(--color-primary)/0.2)] transition-colors"
+                >
+                  Load More
+                </button>
+              </div>
+            )}
+          </>
         )}
         </div>
       </main>
