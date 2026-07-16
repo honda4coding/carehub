@@ -33,10 +33,10 @@ export default function DoctorsFilters({
   const router = useRouter();
 
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-      <div className="w-full lg:w-auto shrink-0 order-2 lg:order-1">
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+      <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto order-2 lg:order-1 min-w-0">
         {/* Status tabs */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto shrink-0">
           {STATUS_TABS.map((tab) => {
             const isActive = statusFilter === tab.value;
             const count = tab.value === "" ? Object.values(tabCounts).reduce((a, b) => a + b, 0) : tabCounts[tab.value] ?? 0;
@@ -66,7 +66,7 @@ export default function DoctorsFilters({
         </div>
       </div>
 
-      <div className="w-full flex flex-row gap-2 order-1 lg:order-2">
+      <div className="w-full lg:w-[420px] shrink-0 order-1 lg:order-2 flex justify-between gap-2">
         <div className="flex-1">
           <Input
             size="sm"

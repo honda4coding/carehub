@@ -25,6 +25,9 @@ interface UsersFiltersProps {
   setRoleFilter: (val: UserRole | "") => void;
   statusFilter: UserStatus | "";
   setStatusFilter: (val: UserStatus | "") => void;
+  statusFilter: UserStatus | "";
+  setStatusFilter: (val: UserStatus | "") => void;
+  statusCounts: Record<string, number>;
 }
 
 export default function UsersFilters({
@@ -34,49 +37,57 @@ export default function UsersFilters({
   setRoleFilter,
   statusFilter,
   setStatusFilter,
+  statusCounts,
 }: UsersFiltersProps) {
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-      <div className="w-full lg:w-auto shrink-0 order-2 lg:order-1">
-        {/* Role & Status filters */}
-        <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto">
-          <div className="flex items-center gap-2 flex-1 lg:flex-none">
-            <div className="relative flex items-center w-full lg:w-auto">
-              <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value as any)}
-                className="pl-7 pr-8 py-1.5 text-[12px] font-bold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-pointer appearance-none w-full lg:min-w-[110px]"
-              >
-                {ROLE_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
-                ▾
-              </span>
-            </div>
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 w-full mb-6 relative">
+      <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto order-2 lg:order-1 min-w-0">
+        <div className="relative flex items-center shrink-0">
+          <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
+          <select
+            value={roleFilter}
+            onChange={(e) => setRoleFilter(e.target.value as any)}
+            className="pl-7 pr-8 py-1.5 text-[12px] font-bold rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-pointer appearance-none w-full lg:min-w-[110px]"
+          >
+            {ROLE_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
+            ▾
+          </span>
+        </div>
 
-            <div className="relative flex items-center w-full lg:w-auto">
-              <LuFilter className="absolute left-2.5 text-[12px] text-[hsl(var(--color-text-muted))] pointer-events-none" />
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value as any)}
-                className="pl-7 pr-8 py-1.5 text-[12px] font-bold rounded-[8px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary)/0.5)] focus:ring-2 focus:ring-[hsl(var(--color-primary)/0.1)] transition-all cursor-pointer appearance-none w-full lg:min-w-[120px]"
+        {/* Status tabs */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto shrink-0">
+          {STATUS_OPTIONS.map((tab) => {
+            const isActive = statusFilter === tab.value;
+            const count = tab.value === "" ? Object.values(statusCounts).reduce((a, b) => a + b, 0) : statusCounts[tab.value] ?? 0;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => setStatusFilter(tab.value)}
+                className={`flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  isActive
+                    ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
+                    : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+                }`}
               >
-                {STATUS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-              <span className="absolute right-2.5 text-[11px] text-[hsl(var(--color-text-muted))] pointer-events-none">
-                ▾
-              </span>
-            </div>
-          </div>
+                {tab.label}
+                <span
+                  className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
+                    isActive
+                      ? "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
+                      : "bg-[hsl(var(--color-bg))] text-[hsl(var(--color-text-muted))]"
+                  }`}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

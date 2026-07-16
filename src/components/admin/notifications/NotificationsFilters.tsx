@@ -88,7 +88,7 @@ export default function NotificationsFilters({
             <Button
               onClick={handleMarkAllAsRead}
               icon={LuCheckCheck}
-              className="!text-[12px] !font-bold !px-3 !py-1.5 !h-auto !rounded-[8px] shadow-sm flex-1 sm:flex-none cursor-pointer"
+              className="!text-[12px] !font-bold !px-3 !py-1.5 !h-auto !rounded-[8px] shadow-sm shrink-0 cursor-pointer"
             >
               Mark All Read
             </Button>

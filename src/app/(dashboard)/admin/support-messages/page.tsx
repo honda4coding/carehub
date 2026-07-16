@@ -8,6 +8,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
 
 const PAGE_SIZE = 10;
@@ -82,32 +83,37 @@ export default function AdminSupportMessagesPage() {
       <main className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg-base))]">
         <div className="p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col gap-6 min-h-[500px]">
           
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center shadow-sm">
-            <div className="relative w-full sm:w-80">
-              <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[hsl(var(--color-text-muted))]" />
-              <input
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
+            <div className="w-full lg:w-auto shrink-0 order-2 lg:order-1 flex flex-col md:flex-row gap-4">
+              <div className="grid grid-cols-3 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
+                {['all', 'unread', 'read'].map((f) => {
+                  const isActive = filter === f;
+                  return (
+                    <button
+                      key={f}
+                      onClick={() => setFilter(f)}
+                      className={`flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap capitalize ${
+                        isActive
+                          ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
+                          : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+                      }`}
+                    >
+                      {f}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="w-full flex-1 order-1 lg:order-2">
+              <Input
+                size="sm"
                 type="text"
                 placeholder="Search by name, email, or subject..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] rounded-xl text-sm outline-none focus:border-[hsl(var(--color-primary))] focus:ring-1 focus:ring-[hsl(var(--color-primary))] transition-all text-[hsl(var(--color-text))]"
+                leftIcon={<LuSearch />}
+                className="w-full !bg-[hsl(var(--color-bg-soft))] focus:!bg-[hsl(var(--color-bg-surface))] text-sm font-medium"
               />
-            </div>
-            
-            <div className="flex bg-[hsl(var(--color-bg))] p-1 rounded-xl border border-[hsl(var(--color-border))]">
-              {['all', 'unread', 'read'].map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-4 py-1.5 rounded-lg text-[13px] font-medium transition-colors capitalize ${
-                    filter === f 
-                      ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border)/0.5)]" 
-                      : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
             </div>
           </div>
 

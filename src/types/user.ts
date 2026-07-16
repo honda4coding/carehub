@@ -30,6 +30,8 @@ export interface GetUsersResponse {
   data: {
     users: AdminUser[];
     pagination: UsersPagination;
+    roleCounts: Record<string, number>;
+    statusCounts: Record<string, number>;
   };
 }
 

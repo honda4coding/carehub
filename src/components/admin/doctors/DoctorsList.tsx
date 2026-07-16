@@ -169,7 +169,15 @@ export default function DoctorsList({
                   </td>
 
                   <td className="py-3.5 pr-4 max-w-[170px] text-left">
-                    <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate">
+                    <p 
+                      className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))] truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                      title={doc.email}
+                      onClick={(e) => {
+                        e.currentTarget.classList.toggle("truncate");
+                        e.currentTarget.classList.toggle("break-all");
+                        e.currentTarget.classList.toggle("whitespace-normal");
+                      }}
+                    >
                       {doc.email}
                     </p>
                   </td>
@@ -265,11 +273,19 @@ export default function DoctorsList({
                     >
                       {getInitials(doc.fullName)}
                     </div>
-                    <div>
-                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight">
+                    <div className="flex flex-col min-w-0 max-w-[160px] sm:max-w-[200px]">
+                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight truncate" title={doc.fullName}>
                         {doc.fullName}
                       </p>
-                      <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                      <p 
+                        className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                        title={doc.email}
+                        onClick={(e) => {
+                          e.currentTarget.classList.toggle("truncate");
+                          e.currentTarget.classList.toggle("break-all");
+                          e.currentTarget.classList.toggle("whitespace-normal");
+                        }}
+                      >
                         {doc.email}
                       </p>
                     </div>

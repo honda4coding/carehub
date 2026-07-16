@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService } from "@/services/walletService";
-import { LuWallet } from "react-icons/lu";
+import { LuWallet, LuRefreshCw } from "react-icons/lu";
 import PlatformLedgerCards from "@/components/admin/finance/PlatformLedgerCards";
 import ManualWalletAdjustmentForm from "@/components/admin/finance/ManualWalletAdjustmentForm";
 import toast from "react-hot-toast";
@@ -36,7 +36,20 @@ export default function AdminFinancePage() {
 
   return (
     <div className="flex-1 flex flex-col h-screen bg-[hsl(var(--color-bg))] overflow-y-auto">
-      <DashboardHeader title="Finance & Ledger" subtitle="Monitor platform revenue and manage wallets" />
+      <DashboardHeader 
+        title="Finance & Ledger" 
+        subtitle="Monitor platform revenue and manage wallets" 
+        rightElement={
+          <button
+            onClick={loadData}
+            disabled={loading}
+            title="Refresh"
+            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+          >
+            <LuRefreshCw className={`text-[14px] ${loading ? "animate-spin" : ""}`} />
+          </button>
+        }
+      />
       <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8">
         <div className="flex flex-col gap-2">
           <h1 className="text-[24px] font-black text-[hsl(var(--color-text))] flex items-center gap-2">

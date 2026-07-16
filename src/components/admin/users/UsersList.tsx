@@ -155,7 +155,7 @@ export default function UsersList({
   return (
     <div className="overflow-x-auto -mx-4 px-4">
       {/* Desktop Table View */}
-      <table className="w-full min-w-[600px] hidden lg:table">
+      <table className="w-full min-w-[600px] hidden xl:table">
         <thead>
           <tr className="border-b border-[hsl(var(--color-border))]">
             {["User", "Email", "Role", "Joined", "Status", "Actions"].map((h) => (
@@ -227,7 +227,15 @@ export default function UsersList({
                     </div>
                   </td>
                   <td className="py-3.5 pr-4 max-w-[170px] text-left">
-                    <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] truncate">
+                    <p 
+                      className="text-sm font-semibold text-[hsl(var(--color-text-muted))] truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                      title={user.email}
+                      onClick={(e) => {
+                        e.currentTarget.classList.toggle("truncate");
+                        e.currentTarget.classList.toggle("break-all");
+                        e.currentTarget.classList.toggle("whitespace-normal");
+                      }}
+                    >
                       {user.email}
                     </p>
                   </td>
@@ -263,7 +271,7 @@ export default function UsersList({
       </table>
 
       {/* Mobile Card View */}
-      <div className="lg:hidden flex flex-col gap-4 py-2">
+      <div className="xl:hidden flex flex-col gap-4 py-2">
         {isLoading &&
           Array.from({ length: 4 }).map((_, i) => (
             <div
@@ -299,11 +307,19 @@ export default function UsersList({
                     >
                       {getAvatarChars(user.fullName)}
                     </div>
-                    <div>
-                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight">
+                    <div className="flex flex-col min-w-0 max-w-[160px] sm:max-w-[200px]">
+                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight truncate" title={user.fullName}>
                         {user.fullName}
                       </p>
-                      <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                      <p 
+                        className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                        title={user.email}
+                        onClick={(e) => {
+                          e.currentTarget.classList.toggle("truncate");
+                          e.currentTarget.classList.toggle("break-all");
+                          e.currentTarget.classList.toggle("whitespace-normal");
+                        }}
+                      >
                         {user.email}
                       </p>
                     </div>

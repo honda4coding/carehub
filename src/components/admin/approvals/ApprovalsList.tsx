@@ -82,7 +82,7 @@ export default function ApprovalsList({
   return (
     <>
       {/* Desktop Table View */}
-      <table className="w-full min-w-[620px] hidden lg:table">
+      <table className="w-full min-w-[620px] hidden xl:table">
         <thead>
           <tr className="border-b border-[hsl(var(--color-border))]">
             {[
@@ -120,11 +120,19 @@ export default function ApprovalsList({
                     >
                       {initials}
                     </div>
-                    <div>
-                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap leading-tight">
+                    <div className="flex flex-col min-w-0 max-w-[150px] 2xl:max-w-[200px]">
+                      <p className="text-[14px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap leading-tight truncate" title={doc.fullName}>
                         {doc.fullName}
                       </p>
-                      <p className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate max-w-[170px]">
+                      <p 
+                        className="text-sm font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                        title={doc.email}
+                        onClick={(e) => {
+                          e.currentTarget.classList.toggle("truncate");
+                          e.currentTarget.classList.toggle("break-all");
+                          e.currentTarget.classList.toggle("whitespace-normal");
+                        }}
+                      >
                         {doc.email}
                       </p>
                     </div>
@@ -237,7 +245,7 @@ export default function ApprovalsList({
       </table>
 
       {/* Mobile Card View */}
-      <div className="lg:hidden flex flex-col gap-4 py-2">
+      <div className="xl:hidden flex flex-col gap-4 py-2">
         {doctors.map((doc, index) => {
           const sc = statusConfig[doc.status];
           const initials = (doc.fullName ?? "??").slice(0, 2).toUpperCase();
@@ -254,11 +262,19 @@ export default function ApprovalsList({
                   >
                     {initials}
                   </div>
-                  <div>
-                    <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight">
+                  <div className="flex flex-col min-w-0 max-w-[160px] sm:max-w-[200px]">
+                    <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight truncate" title={doc.fullName}>
                       {doc.fullName}
                     </p>
-                    <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5">
+                    <p 
+                      className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                      title={doc.email}
+                      onClick={(e) => {
+                        e.currentTarget.classList.toggle("truncate");
+                        e.currentTarget.classList.toggle("break-all");
+                        e.currentTarget.classList.toggle("whitespace-normal");
+                      }}
+                    >
                       {doc.email}
                     </p>
                   </div>

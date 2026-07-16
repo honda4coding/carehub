@@ -666,30 +666,63 @@ function SidebarContent({
 
       {/* User footer */}
       <div className="p-4 border-t border-[hsl(var(--color-border))] mt-auto shrink-0">
-        <div className="flex items-center gap-3 p-2.5 rounded-[12px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] hover:border-[hsl(var(--color-border))] transition-colors group cursor-pointer">
-          <div className="relative w-10 h-10 rounded-[8px] bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] text-[14px] font-black shrink-0 overflow-hidden">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt="Avatar"
-                fill
-                className="object-cover"
-              />
-            ) : (
-              initials
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-[14px] font-bold text-[hsl(var(--color-text))] truncate leading-tight mb-0.5">
-              {user?.name ? user.name.split(" ")[0] : "Admin"}
-            </p>
-            <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[hsl(var(--color-primary))] leading-tight">
-              {role}
-            </p>
-          </div>
+        <div className="flex items-center gap-3 p-2.5 rounded-[12px] bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border-soft))] hover:border-[hsl(var(--color-border))] transition-colors group">
+          
+          {role !== "assistant" ? (
+            <Link
+              href={`/${role}/profile`}
+              onClick={onClose}
+              className="flex items-center gap-3 flex-1 min-w-0 cursor-pointer"
+            >
+              <div className="relative w-10 h-10 rounded-[8px] bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] text-[14px] font-black shrink-0 overflow-hidden group-hover:bg-[hsl(var(--color-primary)/0.15)] transition-colors">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt="Avatar"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  initials
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-bold text-[hsl(var(--color-text))] truncate leading-tight mb-0.5 group-hover:text-[hsl(var(--color-primary))] transition-colors">
+                  {user?.name ? user.name.split(" ")[0] : "Admin"}
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[hsl(var(--color-primary))] leading-tight">
+                  {role}
+                </p>
+              </div>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="relative w-10 h-10 rounded-[8px] bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center text-[hsl(var(--color-primary))] text-[14px] font-black shrink-0 overflow-hidden">
+                {avatarUrl ? (
+                  <Image
+                    src={avatarUrl}
+                    alt="Avatar"
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  initials
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-[14px] font-bold text-[hsl(var(--color-text))] truncate leading-tight mb-0.5">
+                  {user?.name ? user.name.split(" ")[0] : "Admin"}
+                </p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[hsl(var(--color-primary))] leading-tight">
+                  {role}
+                </p>
+              </div>
+            </div>
+          )}
+
           <button
             onClick={logout}
-            className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] flex items-center justify-center hover:bg-[hsl(var(--color-danger)/0.2)] transition-all shrink-0"
+            className="w-8 h-8 rounded-[8px] bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))] flex items-center justify-center hover:bg-[hsl(var(--color-danger)/0.2)] transition-all shrink-0 z-10"
             title="Sign out"
           >
             <LuLogOut className="text-[16px]" />

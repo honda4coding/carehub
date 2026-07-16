@@ -29,10 +29,10 @@ export default function ApprovalsFilters({
   tabCounts,
 }: ApprovalsFiltersProps) {
   return (
-    <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-4">
-      <div className="w-full lg:w-auto shrink-0 order-2 lg:order-1">
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-4">
+      <div className="flex items-center gap-2 flex-wrap w-full lg:w-auto order-2 lg:order-1 min-w-0">
         {/* Status tabs */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full sm:w-auto shrink-0">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.value;
             const count = tab.value === "all" ? totalDoctors : tabCounts[tab.value] ?? 0;
@@ -62,7 +62,7 @@ export default function ApprovalsFilters({
         </div>
       </div>
 
-      <div className="w-full flex-1 order-1 lg:order-2">
+      <div className="w-full lg:w-[320px] shrink-0 order-1 lg:order-2">
         <Input
           size="sm"
           type="text"

@@ -66,7 +66,7 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
   return (
     <>
       {/* â”€â”€ Desktop Table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <table className="w-full min-w-[700px] hidden lg:table">
+      <table className="w-full min-w-[700px] hidden xl:table">
         <thead>
           <tr className="border-b border-[hsl(var(--color-border))]">
             {["Doctor", "Specialty", "Submitted", "Current License", "New License", "Actions"].map((h) => (
@@ -96,9 +96,19 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-[12px] font-black shrink-0 ${avatarStyle}`}>
                       {initials}
                     </div>
-                    <div>
-                      <p className="text-[13px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap">{doc.fullName}</p>
-                      <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] truncate max-w-[160px]">{doc.email}</p>
+                    <div className="flex flex-col min-w-0 max-w-[150px] 2xl:max-w-[200px]">
+                      <p className="text-[13px] font-bold text-[hsl(var(--color-text))] whitespace-nowrap leading-tight truncate" title={doc.fullName}>{doc.fullName}</p>
+                      <p 
+                        className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                        title={doc.email}
+                        onClick={(e) => {
+                          e.currentTarget.classList.toggle("truncate");
+                          e.currentTarget.classList.toggle("break-all");
+                          e.currentTarget.classList.toggle("whitespace-normal");
+                        }}
+                      >
+                        {doc.email}
+                      </p>
                     </div>
                   </div>
                 </td>
@@ -169,8 +179,8 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
         </tbody>
       </table>
 
-      {/* â”€â”€ Mobile Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-      <div className="lg:hidden flex flex-col gap-4 py-2">
+      {/* ———————————————————————————————————————————————— */}
+      <div className="xl:hidden flex flex-col gap-4 py-2">
         {doctors.map((doc, i) => {
           const initials = (doc.fullName ?? "??").slice(0, 2).toUpperCase();
           const avatarStyle = avatarColors[i % avatarColors.length];
@@ -184,9 +194,19 @@ export default function LicensePendingList({ doctors, loading, onApprove, onReje
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[13px] font-black shrink-0 ${avatarStyle}`}>
                     {initials}
                   </div>
-                  <div>
-                    <p className="text-[14px] font-bold text-[hsl(var(--color-text))]">{doc.fullName}</p>
-                    <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">{doc.email}</p>
+                  <div className="flex flex-col min-w-0 max-w-[160px] sm:max-w-[200px]">
+                    <p className="text-[14px] font-bold text-[hsl(var(--color-text))] leading-tight truncate" title={doc.fullName}>{doc.fullName}</p>
+                    <p 
+                      className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] mt-0.5 truncate cursor-pointer transition-all hover:text-[hsl(var(--color-text))]" 
+                      title={doc.email}
+                      onClick={(e) => {
+                        e.currentTarget.classList.toggle("truncate");
+                        e.currentTarget.classList.toggle("break-all");
+                        e.currentTarget.classList.toggle("whitespace-normal");
+                      }}
+                    >
+                      {doc.email}
+                    </p>
                   </div>
                 </div>
                 <span className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-[hsl(var(--color-warning-bg))] text-[hsl(var(--color-warning))]">

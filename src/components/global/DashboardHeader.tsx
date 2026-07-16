@@ -80,6 +80,10 @@ export default function DashboardHeader({
             )}
           </div>
         )}
+        <ThemeToggle />
+        {role !== 'assistant' && (
+          <NotificationBell basePath={`/${role}`} />
+        )}
         {onRefresh && (
           <button
             onClick={onRefresh}
@@ -89,10 +93,6 @@ export default function DashboardHeader({
             <LuRefreshCw className="text-[15px]" />
           </button>
         )}
-        {role !== 'assistant' && (
-          <NotificationBell basePath={`/${role}`} />
-        )}
-        <ThemeToggle />
         {rightElement && (
           <div className="flex items-center gap-3 ml-2">
             {rightElement}
