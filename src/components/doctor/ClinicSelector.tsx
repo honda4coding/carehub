@@ -58,8 +58,16 @@ export default function ClinicSelector() {
 
   if (activeClinics.length === 1) {
     return (
-      <div className="flex items-center shrink-0 pl-1">
-         <span className="text-[hsl(var(--color-primary-strong))] text-[12px] px-1 font-bold whitespace-nowrap">
+      <div className="flex items-center shrink min-w-0 pl-1 max-w-[200px] sm:max-w-[300px]">
+         <span 
+           className="text-[hsl(var(--color-primary-strong))] text-[12px] px-1 font-bold whitespace-nowrap truncate w-full cursor-pointer transition-all"
+           title={activeClinics[0].name}
+           onClick={(e) => {
+             e.currentTarget.classList.toggle("truncate");
+             e.currentTarget.classList.toggle("break-all");
+             e.currentTarget.classList.toggle("whitespace-normal");
+           }}
+         >
            {activeClinics[0].name}
          </span>
       </div>
@@ -67,11 +75,12 @@ export default function ClinicSelector() {
   }
 
   return (
-    <div className="flex items-center shrink-0 pl-1">
+    <div className="flex items-center shrink min-w-0 pl-1">
       <select
         value={activeClinicId}
         onChange={(e) => setActiveClinicId(e.target.value)}
-        className="bg-transparent border-none text-[hsl(var(--color-primary-strong))] text-[12px] focus:outline-none cursor-pointer font-bold max-w-[130px] sm:max-w-[160px] truncate"
+        className="bg-transparent border-none text-[hsl(var(--color-primary-strong))] text-[12px] focus:outline-none cursor-pointer font-bold max-w-[200px] sm:max-w-[350px] truncate"
+        title={activeClinics.find(c => c._id === activeClinicId)?.name || "Select Clinic"}
       >
         {activeClinics.map((clinic) => (
           <option key={clinic._id} value={clinic._id}>

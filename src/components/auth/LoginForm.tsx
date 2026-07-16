@@ -106,7 +106,6 @@ export const LoginForm = () => {
         errorMsg = error.error.map((e: any) => e.message).join(", ");
       }
       setStatus(errorMsg);
-      console.error("Login Error:", error);
     } finally {
       setSubmitting(false);
     }

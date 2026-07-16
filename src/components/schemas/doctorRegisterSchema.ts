@@ -22,7 +22,11 @@ export const doctorRegisterSchema = Yup.object({
     }),
 
   password: Yup.string()
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character")
+    .min(8, "Password must be at least 8 characters")
+    .matches(/[a-z]/, "Missing a lowercase letter")
+    .matches(/[A-Z]/, "Missing an uppercase letter")
+    .matches(/\d/, "Missing a number")
+    .matches(/[@$!%*?&#]/, "Missing a special character (@$!%*?&#)")
     .required("Password is required"),
 
   confirmPassword: Yup.string()

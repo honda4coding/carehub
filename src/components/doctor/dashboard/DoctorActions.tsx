@@ -54,21 +54,20 @@ export const DoctorActions = ({
       </div>
 
       {/* Start Consultation - Larger Card */}
-      <div className="md:col-span-1 lg:col-span-8 xl:col-span-5 relative">
+      <div className="md:col-span-1 lg:col-span-8 xl:col-span-5 relative z-20">
         <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl p-3.5 h-full flex flex-col justify-center relative">
-          <div className="flex items-center justify-between mb-2">
-            <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] leading-tight">Start Consultation</h2>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-2 sm:gap-4 min-w-0">
+            <h2 className="text-[15px] font-black text-[hsl(var(--color-text))] leading-tight shrink-0">Start Consultation</h2>
+            <ClinicSelector />
           </div>
           
           <div className="relative w-full">
             <div className="flex items-center border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-[8px] p-0.5 focus-within:border-[hsl(var(--color-primary)/0.5)] focus-within:ring-2 focus-within:ring-[hsl(var(--color-primary)/0.1)] transition-all min-w-0">
-              <ClinicSelector />
-              <div className="w-px h-5 bg-[hsl(var(--color-border))] mx-1 shrink-0"></div>
-              <LuSearch className="ml-1 mr-2 text-[hsl(var(--color-text-muted))] text-[14px] shrink-0" />
+              <LuSearch className="ml-2 mr-2 text-[hsl(var(--color-text-muted))] text-[14px] shrink-0" />
               <input 
                 type="text" 
-                placeholder={hasActiveClinic ? "Search patient phone or name..." : "No active clinic selected"} 
-                className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] font-medium py-1.5 disabled:opacity-50"
+                placeholder={hasActiveClinic ? "Search phone or name..." : "No active clinic"} 
+                className="w-full min-w-0 flex-1 bg-transparent border-none outline-none text-[13px] font-medium py-1.5 disabled:opacity-50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && hasActiveClinic && handleSearch()}
