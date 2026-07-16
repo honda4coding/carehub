@@ -27,6 +27,7 @@ import { walletService, Wallet, Transaction } from "@/services/walletService";
 import { LuWallet, LuArrowDownToLine } from "react-icons/lu";
 
 import { useAuth } from "@/context/AuthContext";
+import ClinicSelector from "@/components/doctor/ClinicSelector";
 
 export default function DoctorReportsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -158,6 +159,11 @@ export default function DoctorReportsPage() {
 
             {/* Filters & Actions (Right) */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              {/* Clinic Selector */}
+              <div className="flex items-center h-10 border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface-hover))] rounded-xl px-2 shrink-0">
+                 <ClinicSelector />
+              </div>
+
               {/* Date Range Picker */}
               <div className="flex items-center bg-[hsl(var(--color-bg-surface-hover))] border border-[hsl(var(--color-border))] rounded-xl overflow-hidden shrink-0 w-full sm:w-auto">
                 <div className="flex items-center px-2 sm:px-3 h-10 border-r border-[hsl(var(--color-border))] shrink-0">

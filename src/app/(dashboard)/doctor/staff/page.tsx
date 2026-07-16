@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { LuPlus, LuTrash2, LuUserX, LuShieldCheck, LuPencil } from "react-icons/lu";
 import Link from "next/link";
 import { useClinicContext } from "@/context/ClinicContext";
+import ClinicSelector from "@/components/doctor/ClinicSelector";
 
 export default function StaffManagementPage() {
     const { user } = useAuth();
@@ -29,12 +30,16 @@ export default function StaffManagementPage() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [staffRes, clinicsRes] = await Promise.all([
-                    fetchClient.get("/doctor/staff"),
-                    fetchClient.get("/clinics")
-                ]);
-                setStaff(staffRes.data || []);
-                setClinics(clinicsRes.data?.clinics || clinicsRes.data || []);
+                const clinicsRes = await fetchClient.get("/clinics");
+                const fetchedClinics = clinicsRes.data?.clinics || clinicsRes.data || [];
+                setClinics(fetchedClinics);
+
+                if (activeClinicId) {
+                    const staffRes = await fetchClient.get("/doctor/staff");
+                    setStaff(staffRes.data || []);
+                } else if (fetchedClinics.length === 0) {
+                    setStaff([]);
+                }
             } catch (err) {
                 console.error("Failed to load data", err);
             } finally {
@@ -109,11 +114,14 @@ export default function StaffManagementPage() {
                             <h2 className="text-[16px] font-black text-[hsl(var(--color-text))]">Team Overview</h2>
                             <p className="text-sm font-medium text-[hsl(var(--color-text-muted))]">View and manage all active team members</p>
                         </div>
-                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                            <Button variant="secondary" className="w-full sm:w-auto justify-center font-bold" href="/doctor/staff/logs" icon={LuShieldCheck}>
+                        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto items-center">
+                            <div className="flex items-center h-[38px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] rounded-xl px-2">
+                                <ClinicSelector />
+                            </div>
+                            <Button variant="secondary" className="w-full sm:w-auto justify-center font-bold h-[38px]" href="/doctor/staff/logs" icon={LuShieldCheck}>
                                 Activity Logs
                             </Button>
-                            <Button variant="primary" className="w-full sm:w-auto justify-center font-bold shadow-sm" icon={LuPlus} onClick={openAddModal}>
+                            <Button variant="primary" className="w-full sm:w-auto justify-center font-bold shadow-sm h-[38px]" icon={LuPlus} onClick={openAddModal}>
                                 Add Staff
                             </Button>
                         </div>
