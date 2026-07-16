@@ -8,10 +8,11 @@ import { DocumentModal } from "@/components/shared/DocumentModal";
 interface Props {
   doctor: DoctorListItem;
   clinics?: Clinic[];
+  hasBooked?: boolean;
   onBook: () => void;
 }
 
-export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Props) {
+export default function DoctorProfileCard({ doctor, clinics = [], hasBooked = false, onBook }: Props) {
   const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
   const fullName = doctor.userId.fullName;
   const initials = initialsOf(fullName);
@@ -144,12 +145,18 @@ export default function DoctorProfileCard({ doctor, clinics = [], onBook }: Prop
       </div>
 
       {/* Book Button */}
-      <button
-        onClick={onBook}
-        className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white text-[15px] font-black transition-all cursor-pointer shadow-lg shadow-[hsl(var(--color-primary)/0.2)]"
-      >
-        Book Appointment Now
-      </button>
+      {!hasBooked ? (
+        <button
+          onClick={onBook}
+          className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white text-[15px] font-black transition-all cursor-pointer shadow-lg shadow-[hsl(var(--color-primary)/0.2)]"
+        >
+          Book Appointment Now
+        </button>
+      ) : (
+        <div className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] text-[15px] font-black transition-all text-center border border-[hsl(var(--color-primary)/0.2)]">
+          You already have an upcoming appointment with this doctor
+        </div>
+      )}
 
       <DocumentModal 
         url={docModalUrl} 
