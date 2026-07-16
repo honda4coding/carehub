@@ -247,6 +247,10 @@ export async function cancelAppointment(appointmentId: string): Promise<void> {
   await fetchClient.request(`${APPOINTMENTS_BASE}/cancel/${appointmentId}`, { method: "PATCH" });
 }
 
+export async function cancelAppointmentByDoctor(appointmentId: string): Promise<void> {
+  await fetchClient.request(`${APPOINTMENTS_BASE}/cancel-by-doctor/${appointmentId}`, { method: "PATCH" });
+}
+
 export async function completeAppointment(appointmentId: string): Promise<void> {
   await fetchClient.request(`${APPOINTMENTS_BASE}/complete/${appointmentId}`, { method: "PATCH" });
 }

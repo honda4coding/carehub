@@ -105,14 +105,16 @@ export default function PatientApptCard({
           </span>
         )}
         <StatusBadge status={status} />
-        {status === "upcoming" && !isFollowUpAction && appt.paymentStatus === "pending" && (
+        {status === "upcoming" && !isFollowUpAction && (
           <>
-            <button
-              onClick={(e) => { e.preventDefault(); onPayClick(appt); }}
-              className="flex items-center gap-1.5 text-[13px] font-bold tracking-tight px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:opacity-90 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-px cursor-pointer transition-all"
-            >
-              <LuCreditCard className="text-[14px]" /> Pay
-            </button>
+            {appt.paymentStatus === "pending" && (
+              <button
+                onClick={(e) => { e.preventDefault(); onPayClick(appt); }}
+                className="flex items-center gap-1.5 text-[13px] font-bold tracking-tight px-3 py-1.5 rounded-lg bg-[hsl(var(--color-primary))] text-white hover:opacity-90 shadow-[var(--shadow-sm)] hover:shadow-[var(--shadow-md)] hover:-translate-y-px cursor-pointer transition-all"
+              >
+                <LuCreditCard className="text-[14px]" /> Pay
+              </button>
+            )}
             <button
               onClick={(e) => { e.preventDefault(); onCancelClick(appt); }}
               className="w-8 h-8 rounded-lg flex items-center justify-center bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] cursor-pointer hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] transition-colors"

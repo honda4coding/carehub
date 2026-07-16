@@ -10,10 +10,12 @@ export default function TodayCard({
   appt,
   onStart,
   starting,
+  onCancelClick,
 }: {
   appt: Appointment;
   onStart: (appt: Appointment) => void;
   starting: boolean;
+  onCancelClick?: (appt: Appointment) => void;
 }) {
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
@@ -47,14 +49,24 @@ export default function TodayCard({
       <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-1 sm:mt-0 pl-14 sm:pl-0">
         <StatusBadge status={status} />
         {status === "upcoming" && (
-          <Button
-            onClick={() => onStart(appt)}
-            isLoading={starting}
-            icon={LuCheck}
-            className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-primary-bg))] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
-          >
-            Start Session
-          </Button>
+          <>
+            <Button
+              onClick={() => onStart(appt)}
+              isLoading={starting}
+              icon={LuCheck}
+              className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-primary-bg))] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+            >
+              Start Session
+            </Button>
+            {onCancelClick && (
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancelClick(appt); }}
+                className="h-[34px] px-3 rounded-lg flex items-center justify-center bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] cursor-pointer hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] transition-colors text-[12px] font-bold"
+              >
+                Cancel
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
