@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { LuArrowRight } from "react-icons/lu";
+import { CTAButtons } from "./AuthAwareButtons";
 
 export default function CTASection() {
   return (
@@ -18,21 +17,7 @@ export default function CTASection() {
             Join thousands of patients and medical professionals who have already made the switch to the most intelligent healthcare ecosystem.
           </p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
-            <Link 
-              href="/register?role=patient" 
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto border border-transparent bg-[hsl(var(--color-primary))] text-white font-black hover:-translate-y-1 hover:shadow-[0_10px_40px_-10px_hsl(var(--color-primary)/0.6)] transition-all duration-300"
-            >
-              Start as Patient
-            </Link>
-            <Link 
-              href="/register?role=doctor" 
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 w-full sm:w-auto border border-[hsl(var(--color-primary)/0.3)] !text-[hsl(var(--color-primary))] !bg-[hsl(var(--color-bg-surface))] hover:!bg-[hsl(var(--color-primary))] hover:!text-white font-black hover:-translate-y-1 transition-all duration-300 shadow-sm"
-            >
-              Start as Doctor
-              <LuArrowRight className="w-5 h-5" />
-            </Link>
-          </div>
+          <CTAButtons />
         </div>
       </div>
     </section>
