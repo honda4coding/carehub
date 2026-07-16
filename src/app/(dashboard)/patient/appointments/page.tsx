@@ -65,9 +65,9 @@ export default function PatientAppointmentsPage() {
     (async () => {
       setLoading(true);
       try {
-        const response = await getMyAppointments({ page, limit: 10 });
+        const response = await getMyAppointments({ page: 1, limit: 1000 });
         setAppointments(response.data as any);
-        setPaginationInfo(response.pagination);
+        // We will do client-side pagination, so we ignore the backend paginationInfo
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
@@ -126,15 +126,24 @@ export default function PatientAppointmentsPage() {
     return result;
   }, [scopedAppointments]);
 
+  // Client-side pagination based on the active tab
+  const itemsPerPage = 10;
+  const currentTabItems = grouped[tab] || [];
+  const totalPages = Math.ceil(currentTabItems.length / itemsPerPage);
+  const paginatedItems = useMemo(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    return currentTabItems.slice(startIndex, startIndex + itemsPerPage);
+  }, [currentTabItems, page]);
+
   const upcomingByDay = useMemo(() => {
     const map = new Map<string, { label: string; sortKey: number; items: Appointment[] }>();
-    grouped.upcoming.forEach((a) => {
+    paginatedItems.forEach((a) => {
       const key = new Date(a.appointmentDate).toDateString();
       if (!map.has(key)) map.set(key, { label: dayLabel(a.appointmentDate), sortKey: new Date(a.appointmentDate).getTime(), items: [] });
       map.get(key)!.items.push(a);
     });
     return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
-  }, [grouped.upcoming]);
+  }, [paginatedItems]);
 
   async function handleCancelConfirm() {
     if (!cancelTarget) return;
@@ -170,9 +179,9 @@ export default function PatientAppointmentsPage() {
             
             {/* Tab bar (Segmented Control Style) */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[16px] w-full md:w-auto">
-              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => { setTab("upcoming"); setPage(1); }} />
+              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => { setTab("completed"); setPage(1); }} />
+              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => { setTab("cancelled"); setPage(1); }} />
             </div>
 
             {/* Clinics Dropdown */}
@@ -199,7 +208,7 @@ export default function PatientAppointmentsPage() {
             {loading ? (
               <div className="space-y-3">{[1, 2, 3].map((i) => <div key={i} className="h-[88px] rounded-2xl bg-[hsl(var(--color-border-soft))] animate-pulse" />)}</div>
             ) : tab === "upcoming" ? (
-              grouped.upcoming.length === 0 ? (
+              paginatedItems.length === 0 ? (
                 <EmptyState
                   icon={<LuStethoscope />}
                   title="No upcoming appointments"
@@ -218,7 +227,7 @@ export default function PatientAppointmentsPage() {
                   </div>
                 </div>
               ))
-            ) : grouped[tab].length === 0 ? (
+            ) : paginatedItems.length === 0 ? (
               <EmptyState
                 icon={<LuCalendarDays />}
                 title={`No ${tab} appointments`}
@@ -226,15 +235,15 @@ export default function PatientAppointmentsPage() {
               />
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                {grouped[tab].map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
+                {paginatedItems.map((appt) => <PatientApptCard key={appt._id} appt={appt} onCancelClick={setCancelTarget} onPayClick={setPayTarget} />)}
               </div>
             )}
 
-            {!loading && paginationInfo && paginationInfo.totalPages > 1 && (
+            {!loading && totalPages > 1 && (
               <div className="mt-8">
                 <Pagination
-                  currentPage={paginationInfo.currentPage}
-                  totalPages={paginationInfo.totalPages}
+                  currentPage={page}
+                  totalPages={totalPages}
                   onPageChange={(p) => setPage(p)}
                 />
               </div>

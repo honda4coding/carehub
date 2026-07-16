@@ -74,7 +74,7 @@ function ClinicsContent() {
     try {
       const toDelete = clinics.filter(c => !selectedClinicsToKeep.includes(c._id));
       for (const c of toDelete) {
-        await deleteClinic(c._id);
+        await updateClinic(c._id, { isActive: false });
       }
       setLimitExceeded(false);
       await loadClinics();
@@ -622,8 +622,8 @@ function ClinicsContent() {
             <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
               Delete this clinic?
             </h3>
-            <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
-              &quot;{deleteTarget.name}&quot; will be deactivated. You can&apos;t undo this from here.
+            <p className="text-[13px] font-medium text-[hsl(var(--color-danger))] mb-6 leading-relaxed">
+              All related schedules, settings, and assistants will be permanently lost. Any upcoming bookings will be cancelled. This action cannot be undone.
             </p>
 
             <div className="flex gap-2.5">

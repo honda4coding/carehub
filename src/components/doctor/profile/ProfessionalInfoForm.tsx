@@ -13,6 +13,7 @@ import {
   LuFileText,
   LuCheck,
   LuStethoscope,
+  LuChevronDown,
 } from "react-icons/lu";
 import { useState } from "react";
 import {
@@ -257,7 +258,7 @@ export default function ProfessionalInfoForm({
                     </Field>
                     {/* Dropdown arrow */}
                     <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
-                      â–¾
+                      <LuChevronDown className="w-4 h-4" />
                     </span>
                   </div>
                   <ErrorMessage

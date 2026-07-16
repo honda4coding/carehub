@@ -30,8 +30,8 @@ export default function EncounterHeader({
   const [fees, setFees] = useState<number | "">("");
 
   return (
-    <header className="no-print sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-3 md:px-6 py-3 flex flex-wrap lg:flex-nowrap items-center justify-between gap-4">
-      <div className="flex items-center gap-3 min-w-0 flex-1 lg:flex-none">
+    <header className="no-print sticky top-0 z-30 bg-[hsl(var(--color-bg-surface))] border-b border-[hsl(var(--color-border))] px-3 md:px-6 py-3 flex flex-wrap items-center justify-between gap-3 md:gap-4">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         <button 
           onClick={onBack}
           className="w-8 h-8 md:w-10 md:h-10 shrink-0 flex items-center justify-center rounded-full hover:bg-[hsl(var(--color-bg-soft))] transition-colors"
@@ -60,20 +60,20 @@ export default function EncounterHeader({
         </div>
       </div>
       
-      <div className="flex flex-wrap items-center justify-start lg:justify-end gap-3 w-full lg:w-auto shrink-0 mt-3 lg:mt-0">
+      <div className="flex flex-wrap items-center justify-start sm:justify-end gap-2 md:gap-3 w-full sm:w-auto mt-2 sm:mt-0">
         <NotificationBell basePath="/doctor" />
         <ThemeToggle />
         <button onClick={onPrint} className="flex items-center gap-2 text-[13px] sm:text-sm font-bold bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-[hsl(var(--color-border))] transition-colors shrink-0">
           <LuPrinter className="text-lg shrink-0" /> <span className="hidden sm:inline">Print Report</span>
         </button>
         {isAssessmentMode && (
-          <div className="flex items-center flex-1 sm:flex-none gap-2">
+          <div className="flex flex-wrap items-center w-full sm:w-auto gap-2 mt-2 sm:mt-0">
             {sessionData?.isOfflineEntry && (
-              <button onClick={onCancelSession} disabled={isEnding} className="bg-red-500/10 text-red-600 hover:bg-red-500/20 text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
+              <button onClick={onCancelSession} disabled={isEnding} className="flex-1 sm:flex-none bg-red-500/10 text-red-600 hover:bg-red-500/20 text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-50">
                 Cancel Session
               </button>
             )}
-            <button onClick={() => onEndSession(0)} disabled={isEnding} className="bg-[hsl(var(--color-primary))] text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50 shrink-0">
+            <button onClick={() => onEndSession(0)} disabled={isEnding} className="flex-1 sm:flex-none bg-[hsl(var(--color-primary))] text-white text-[13px] sm:text-sm font-bold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform flex items-center justify-center gap-2 disabled:opacity-50">
               {isEnding ? "Saving..." : <><LuSave className="text-lg hidden sm:block shrink-0" /> End Session</>}
             </button>
           </div>

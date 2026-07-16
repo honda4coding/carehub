@@ -2,6 +2,7 @@ import React from "react";
 import { LuSearch, LuFilter } from "react-icons/lu";
 import { Input } from "@/components/ui/Input";
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
+import ClinicSelector from "@/components/doctor/ClinicSelector";
 
 interface PatientDirectoryFiltersProps {
   searchTerm: string;
@@ -39,6 +40,11 @@ export default function PatientDirectoryFilters({
             leftIcon={<LuSearch className="text-lg text-[hsl(var(--color-text-muted))]" />}
             className="w-full text-[14px] font-bold bg-[hsl(var(--color-bg-base))] focus:bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] placeholder:text-[hsl(var(--color-text-muted))] placeholder:font-medium transition-colors"
           />
+        </div>
+
+        {/* Clinic Filter */}
+        <div className="flex items-center h-[42px] px-2 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] shrink-0 min-w-[130px]">
+          <ClinicSelector />
         </div>
 
         {/* Date Filter */}

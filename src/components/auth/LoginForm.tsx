@@ -57,6 +57,8 @@ export const LoginForm = () => {
         doctorName: data.doctorName,
         clinicName: data.clinicName,
         subscriptionPlan: data.subscriptionPlan,
+        subscriptionFeatures: data.subscriptionFeatures,
+        clinicLimit: data.clinicLimit,
       });
     } catch (err: any) {
       setBioError(err.message || "Biometrics login failed.");
@@ -94,6 +96,8 @@ export const LoginForm = () => {
         doctorName: data.data.doctorName,
         clinicName: data.data.clinicName,
         subscriptionPlan: data.data.subscriptionPlan,
+        subscriptionFeatures: data.data.subscriptionFeatures,
+        clinicLimit: data.data.clinicLimit,
       }, values.rememberMe);
 
     } catch (error: any) {

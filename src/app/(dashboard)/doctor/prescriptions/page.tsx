@@ -65,17 +65,17 @@ function PrescriptionsContent() {
   const filteredPrescriptions = prescriptions;
 
   return (
-    <div className="flex flex-col flex-1 min-h-screen relative">
+    <div className="flex flex-col flex-1 h-full">
       <DashboardHeader
         title="My Prescriptions"
         subtitle={filterParam === "today" ? "Prescriptions issued today" : "Your complete archive of issued prescriptions"}
         showBack={true}
       />
 
-      <main className="flex-1 p-4 md:p-6 overflow-hidden flex">
-        <div className="flex-1 flex flex-col max-w-7xl mx-auto w-full">
+      <main className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
+        <div className="flex flex-col max-w-7xl mx-auto w-full gap-6">
           
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 mb-6">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-5 shadow-sm">
             <div className="relative flex-1 max-w-md">
               <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-lg text-[hsl(var(--color-text-muted))]" />
               <input
@@ -88,8 +88,8 @@ function PrescriptionsContent() {
             </div>
           </div>
 
-          <div className="flex-1 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden flex flex-col">
-            <div className="w-full">
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl shadow-sm overflow-hidden flex flex-col">
+            <div className="w-full overflow-x-auto">
               {/* Mobile View: Cards */}
               <div className="lg:hidden flex flex-col p-4 gap-3">
                 {isLoading ? (
@@ -151,13 +151,13 @@ function PrescriptionsContent() {
               </div>
 
               {/* Desktop View: Table */}
-              <div className="hidden lg:block overflow-x-auto overflow-y-auto custom-scrollbar flex-1">
-                <table className="w-full min-w-[800px] text-left border-collapse">
-                  <thead className="bg-[hsl(var(--color-bg-soft))] sticky top-0 z-10">
+              <div className="hidden lg:block w-full">
+                <table className="w-full text-left border-collapse">
+                  <thead className="bg-[hsl(var(--color-bg-soft))]">
                     <tr>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Patient</th>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Date</th>
-                      <th className="px-5 py-4 text-[11px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Medications</th>
+                      <th className="px-6 py-4 text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Patient</th>
+                      <th className="px-6 py-4 text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Date</th>
+                      <th className="px-6 py-4 text-[12px] font-black uppercase tracking-wider text-[hsl(var(--color-text-muted))] border-b border-[hsl(var(--color-border))]">Medications</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[hsl(var(--color-border))]">
@@ -188,29 +188,31 @@ function PrescriptionsContent() {
 
                         return (
                         <tr key={p._id} className="hover:bg-[hsl(var(--color-bg-soft)/0.5)] transition-colors group">
-                          <td className="px-5 py-4">
+                          <td className="px-6 py-4 border-b border-[hsl(var(--color-border))]">
                             <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full flex items-center justify-center text-[12px] font-black ${avatarStyle}`}>
+                              <div className={`w-11 h-11 rounded-2xl flex items-center justify-center text-[13px] font-black shadow-sm ${avatarStyle}`}>
                                 {patientName?.slice(0, 2).toUpperCase()}
                               </div>
                               <div>
-                                <h3 className="text-[14px] font-bold text-[hsl(var(--color-text))]">{patientName}</h3>
-                                <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1 mt-0.5">
-                                  <LuUser className="text-[10px]" /> {phone}
+                                <h3 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-0.5">{patientName}</h3>
+                                <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] flex items-center gap-1.5">
+                                  <LuUser className="text-[11px]" /> {phone}
                                 </p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-5 py-4">
-                            <span className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] flex items-center gap-1.5">
+                          <td className="px-6 py-4 border-b border-[hsl(var(--color-border))]">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
                               <LuCalendar className="text-[14px]" />
                               {new Date(p.createdAt).toLocaleDateString()}
                             </span>
                           </td>
-                          <td className="px-5 py-4">
-                            <div className="flex items-center gap-1.5 text-[12px] font-bold text-[hsl(var(--color-text-muted))]">
-                              <LuPill className="text-[14px]" />
-                              <span className="max-w-[300px] truncate" title={medsString}>{medsString}</span>
+                          <td className="px-6 py-4 border-b border-[hsl(var(--color-border))]">
+                            <div className="flex items-center gap-2 text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+                              <div className="w-8 h-8 rounded-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] flex items-center justify-center shrink-0">
+                                <LuPill className="text-[14px]" />
+                              </div>
+                              <span className="max-w-[400px] truncate" title={medsString}>{medsString}</span>
                             </div>
                           </td>
                         </tr>

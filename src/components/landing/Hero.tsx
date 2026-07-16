@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LuArrowRight, LuStethoscope, LuBadgeCheck, LuActivity } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { HeroButtons } from "./AuthAwareButtons";
 
 const Hero = () => {
   return (
@@ -33,21 +34,7 @@ const Hero = () => {
           </p>
 
           {/* Action Buttons */}
-          <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-4 w-full lg:w-auto">
-            <Link href="/register?role=patient" passHref className="w-full sm:w-auto">
-              <Button variant="primary" size="lg" className="w-full shadow-lg shadow-[hsl(var(--color-primary)/0.2)]">
-                Register as Patient
-                <LuArrowRight className="ml-2 w-5 h-5 shrink-0" />
-              </Button>
-            </Link>
-            
-            <Link href="/register?role=doctor" passHref className="w-full sm:w-auto">
-              <Button variant="outline" size="lg" className="w-full bg-[hsl(var(--color-bg-surface))]">
-                Join as Doctor
-                <LuStethoscope className="ml-2 w-5 h-5 shrink-0" />
-              </Button>
-            </Link>
-          </div>
+          <HeroButtons />
         </div>
 
         {/* Right Content - Visuals */}

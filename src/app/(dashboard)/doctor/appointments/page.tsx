@@ -27,6 +27,7 @@ import {
   deleteSlot,
   generateSlots,
   getDoctorAppointments,
+  cancelAppointmentByDoctor,
   getDisplayStatus,
   setAvailability,
 } from "@/services/appointmentService";
@@ -40,6 +41,7 @@ import {
   slotTimeRangeLabel,
 } from "@/components/appointments/format";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
+import CancelModal from "@/components/appointments/CancelModal";
 import StatusBadge from "@/components/appointments/StatusBadge";
 import EmptyState from "@/components/appointments/EmptyState";
 import { Button } from "@/components/ui/Button";
@@ -48,6 +50,8 @@ import ApptRow from "@/components/appointments/ApptRow";
 import ApptTab, { TabType as Tab } from "@/components/appointments/ApptTab";
 
 import SectionToggle from "@/components/appointments/SectionToggle";
+import { useClinicContext } from "@/context/ClinicContext";
+import ClinicSelector from "@/components/doctor/ClinicSelector";
 
 // ─── Main Page ─────────────────────────────────────────────────────────────────
 export default function DoctorAppointmentsPage() {
@@ -68,9 +72,12 @@ export default function DoctorAppointmentsPage() {
   const [apptLoading, setApptLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("today");
   const [completing, setCompleting] = useState<string | null>(null);
+  const [cancelTarget, setCancelTarget] = useState<Appointment | null>(null);
+  const [cancelling, setCancelling] = useState(false);
 
   const [paginationInfo, setPaginationInfo] = useState<any>(null);
   const [page, setPage] = useState(1);
+  const { activeClinicId } = useClinicContext();
 
   // ── Clinics sidebar filter ───────────────────────────────────
   const [clinics, setClinics] = useState<Clinic[]>([]);
@@ -94,26 +101,27 @@ export default function DoctorAppointmentsPage() {
     (async () => {
       setApptLoading(true);
       try {
-        const response = await getDoctorAppointments({ page, limit: 10 });
+        const response = await getDoctorAppointments({ page: 1, limit: 1000 });
         setAppointments(response.data);
-        setPaginationInfo(response.pagination);
+        // We will do client-side pagination, so we ignore the backend paginationInfo
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
       } finally {
         setApptLoading(false);
       }
     })();
-  }, [page]);
+  }, [page, activeClinicId]);
 
   // Appointments filtered to the selected clinic (or all, if none selected)
+  // fetchClient automatically fetches based on activeClinicId, but just in case:
   const filteredAppointments = useMemo(() => {
-    if (!selectedClinicId) return appointments;
+    if (!activeClinicId || activeClinicId === "all") return appointments;
     return appointments.filter((a) => {
       const cid =
         typeof a.clinicId === "string" ? a.clinicId : a.clinicId?._id;
-      return cid === selectedClinicId;
+      return cid === activeClinicId;
     });
-  }, [appointments, selectedClinicId]);
+  }, [appointments, activeClinicId]);
 
   // Count appointments per clinic, for the sidebar badges
   const countByClinic = useMemo(() => {
@@ -175,10 +183,19 @@ export default function DoctorAppointmentsPage() {
     return result;
   }, [filteredAppointments]);
 
-  // Group upcoming by day
+  // Client-side pagination based on the active tab
+  const itemsPerPage = 10;
+  const currentTabItems = grouped[tab] || [];
+  const totalPages = Math.ceil(currentTabItems.length / itemsPerPage);
+  const paginatedItems = useMemo(() => {
+    const startIndex = (page - 1) * itemsPerPage;
+    return currentTabItems.slice(startIndex, startIndex + itemsPerPage);
+  }, [currentTabItems, page]);
+
+  // Group upcoming by day using paginated items
   const upcomingByDay = useMemo(() => {
     const map = new Map<string, { label: string; sortKey: number; items: Appointment[] }>();
-    grouped.upcoming.forEach((a) => {
+    paginatedItems.forEach((a) => {
       const key = new Date(a.appointmentDate).toDateString();
       if (!map.has(key)) {
         map.set(key, {
@@ -190,7 +207,7 @@ export default function DoctorAppointmentsPage() {
       map.get(key)!.items.push(a);
     });
     return Array.from(map.values()).sort((a, b) => a.sortKey - b.sortKey);
-  }, [grouped.upcoming]);
+  }, [paginatedItems]);
 
   async function handleStartSession(appointment: Appointment) {
     setCompleting(appointment._id);
@@ -212,6 +229,23 @@ export default function DoctorAppointmentsPage() {
       setToast({ msg: err.response?.data?.message || err.message || "Could not start session", variant: "error" });
     } finally {
       setCompleting(null);
+    }
+  }
+
+  async function handleCancelConfirm() {
+    if (!cancelTarget) return;
+    setCancelling(true);
+    try {
+      await cancelAppointmentByDoctor(cancelTarget._id);
+      setAppointments((prev) =>
+        prev.map((a) => (a._id === cancelTarget._id ? { ...a, status: "cancelled" } : a))
+      );
+      setToast({ msg: "Appointment cancelled successfully", variant: "success" });
+      setCancelTarget(null);
+    } catch (err: any) {
+      setToast({ msg: err.message || "Could not cancel", variant: "error" });
+    } finally {
+      setCancelling(false);
     }
   }
 
@@ -239,30 +273,16 @@ export default function DoctorAppointmentsPage() {
             
             {/* Tab bar (Segmented Control Style) */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1.5 rounded-[16px] w-full md:w-auto">
-              <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => setTab("today")} />
-              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => setTab("upcoming")} />
-              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => setTab("completed")} />
-              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => setTab("cancelled")} />
+              <ApptTab label="Today" value="today" active={tab} count={grouped.today.length} onClick={() => { setTab("today"); setPage(1); }} />
+              <ApptTab label="Upcoming" value="upcoming" active={tab} count={grouped.upcoming.length} onClick={() => { setTab("upcoming"); setPage(1); }} />
+              <ApptTab label="Completed" value="completed" active={tab} count={grouped.completed.length} onClick={() => { setTab("completed"); setPage(1); }} />
+              <ApptTab label="Cancelled" value="cancelled" active={tab} count={grouped.cancelled.length} onClick={() => { setTab("cancelled"); setPage(1); }} />
             </div>
 
             {/* Clinics Dropdown */}
             {role !== 'assistant' && (
-              <div className="relative shrink-0 w-full md:w-auto">
-                <select
-                  value={selectedClinicId || ""}
-                  onChange={(e) => setSelectedClinicId(e.target.value || null)}
-                  className="appearance-none bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-4 py-2.5 pr-10 rounded-[12px] text-[13px] font-bold outline-none cursor-pointer w-full md:w-[250px] shadow-sm transition-colors"
-                >
-                  <option value="">All Clinics</option>
-                  {clinics.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-[hsl(var(--color-text-muted))]">
-                  <LuChevronDown className="text-base" />
-                </div>
+              <div className="flex items-center h-10 px-2 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] shrink-0 w-full md:w-auto">
+                 <ClinicSelector />
               </div>
             )}
           </div>
@@ -275,7 +295,7 @@ export default function DoctorAppointmentsPage() {
               </div>
 
             ) : tab === "today" ? (
-              grouped.today.length === 0 ? (
+              paginatedItems.length === 0 ? (
                 <EmptyState
                   icon={<LuStethoscope />}
                   title="No patients today"
@@ -284,21 +304,22 @@ export default function DoctorAppointmentsPage() {
               ) : (
                 <div className="space-y-3">
                   <p className="text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--color-text-muted))] mb-3">
-                    {grouped.today.length} patient{grouped.today.length !== 1 ? "s" : ""} today
+                    Showing {paginatedItems.length} patient{paginatedItems.length !== 1 ? "s" : ""} today (Total: {currentTabItems.length})
                   </p>
-                  {grouped.today.map((appt) => (
+                  {paginatedItems.map((appt) => (
                     <TodayCard
                       key={appt._id}
                       appt={appt}
                       onStart={handleStartSession}
                       starting={completing === appt._id}
+                      onCancelClick={setCancelTarget}
                     />
                   ))}
                 </div>
               )
 
             ) : tab === "upcoming" ? (
-              grouped.upcoming.length === 0 ? (
+              paginatedItems.length === 0 ? (
                 <EmptyState
                   icon={<LuCalendarDays />}
                   title="No upcoming appointments"
@@ -319,7 +340,7 @@ export default function DoctorAppointmentsPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                       {group.items.map((appt) => (
-                        <ApptRow key={appt._id} appt={appt} />
+                        <ApptRow key={appt._id} appt={appt} onCancelClick={setCancelTarget} />
                       ))}
                     </div>
                   </div>
@@ -328,7 +349,7 @@ export default function DoctorAppointmentsPage() {
 
             ) : (
               // Completed + Cancelled — flat list
-              grouped[tab].length === 0 ? (
+              paginatedItems.length === 0 ? (
                 <EmptyState
                   icon={<LuCalendarDays />}
                   title={`No ${tab} appointments`}
@@ -336,18 +357,18 @@ export default function DoctorAppointmentsPage() {
                 />
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {grouped[tab].map((appt) => (
+                  {paginatedItems.map((appt) => (
                     <ApptRow key={appt._id} appt={appt} />
                   ))}
                 </div>
               )
             )}
             
-            {!apptLoading && paginationInfo && paginationInfo.totalPages > 1 && (
+            {!apptLoading && totalPages > 1 && (
               <div className="mt-8">
                 <Pagination
-                  currentPage={paginationInfo.currentPage}
-                  totalPages={paginationInfo.totalPages}
+                  currentPage={page}
+                  totalPages={totalPages}
                   onPageChange={(p) => setPage(p)}
                 />
               </div>
@@ -364,6 +385,14 @@ export default function DoctorAppointmentsPage() {
           onClose={() => setToast(null)}
         />
       )}
+
+      <CancelModal
+        open={!!cancelTarget}
+        message={cancelTarget ? `Are you sure you want to cancel the appointment with ${cancelTarget.patientId && typeof cancelTarget.patientId === 'object' ? (cancelTarget.patientId as any).fullName : 'the patient'} on ${dayLabel(cancelTarget.appointmentDate)} at ${isoTo12Hour(cancelTarget.startDateTime)}? The patient will be fully refunded.` : ""}
+        loading={cancelling}
+        onConfirm={handleCancelConfirm}
+        onClose={() => setCancelTarget(null)}
+      />
     </div>
   );
 }

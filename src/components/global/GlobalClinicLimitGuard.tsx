@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Clinic, getMyClinics, updateClinic } from "@/services/clinicService";
+import { Clinic, getMyClinics, updateClinic, deleteClinic } from "@/services/clinicService";
 import { subscriptionService, DoctorSubscription } from "@/services/subscriptionService";
 import { LuTriangleAlert, LuBuilding2 } from "react-icons/lu";
 
@@ -84,7 +84,7 @@ export default function GlobalClinicLimitGuard() {
       }
 
       setShowModal(false);
-      window.location.reload();
+      window.location.href = '/doctor/clinics';
     } catch (err: any) {
       alert(err.message || "Failed to deactivate clinics");
     } finally {

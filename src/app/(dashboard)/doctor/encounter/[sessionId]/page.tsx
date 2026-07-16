@@ -5,7 +5,7 @@ import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
-import { LuUser, LuHistory, LuStethoscope, LuPill } from "react-icons/lu";
+import { LuUser, LuHistory, LuStethoscope, LuPill, LuX } from "react-icons/lu";
 import { calculateAge } from "@/utils/ageUtils";
 
 import EncounterHeader from "@/components/doctor/encounter/EncounterHeader";
@@ -443,6 +443,26 @@ export default function PatientDashboardPage() {
     temperature: lastVisitWithVitals.temperature,
   } : undefined;
 
+  if (!loading && !sessionData) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-[hsl(var(--color-bg-base))] p-4 text-center">
+        <div className="bg-[hsl(var(--color-bg-surface))] p-8 rounded-2xl border border-[hsl(var(--color-border))] max-w-md w-full shadow-sm flex flex-col items-center">
+          <LuX className="text-5xl text-[hsl(var(--color-danger))] mb-4 bg-red-500/10 p-2 rounded-full" />
+          <h2 className="text-xl font-bold text-[hsl(var(--color-text))] mb-2">Session Not Available</h2>
+          <p className="text-[13px] text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
+            This session may have already been completed, cancelled, or doesn't exist. You cannot enter a closed session.
+          </p>
+          <button 
+            onClick={() => router.push("/doctor")} 
+            className="w-full bg-[hsl(var(--color-primary))] text-white text-[14px] font-bold py-2.5 rounded-xl shadow-[0_4px_12px_hsl(var(--color-primary)/0.25)] hover:scale-[1.02] transition-transform"
+          >
+            Go Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-[hsl(var(--color-bg-base))]">
       <style dangerouslySetInnerHTML={{__html: `
@@ -454,7 +474,23 @@ export default function PatientDashboardPage() {
         }
       `}} />
 
-      <EncounterHeader 
+      {!loading && !sessionData ? (
+        <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <LuStethoscope className="text-5xl text-[hsl(var(--color-text-muted))] mb-4 opacity-50" />
+          <h2 className="text-2xl font-black text-[hsl(var(--color-text))] mb-2">Session Not Found or Ended</h2>
+          <p className="text-[hsl(var(--color-text-muted))] mb-6 max-w-md">
+            This session has already been completed, cancelled, or it does not exist. You can no longer edit its details.
+          </p>
+          <button 
+            onClick={() => router.push("/doctor")} 
+            className="bg-[hsl(var(--color-primary))] text-white px-6 py-2.5 rounded-xl font-bold shadow-md hover:scale-105 transition-transform"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      ) : (
+        <>
+          <EncounterHeader 
         loading={loading}
         patientData={patientData}
         sessionData={sessionData}
@@ -582,6 +618,8 @@ export default function PatientDashboardPage() {
           
         </div>
       </main>
+        </>
+      )}
     </div>
   );
 }

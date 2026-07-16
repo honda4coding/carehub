@@ -111,7 +111,7 @@ export interface MyAppointment {
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
 export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
-  const res = await fetchClient.get("/doctor/all");
+  const res = await fetchClient.get("/doctor/all?limit=all");
   return res.data ?? res;
 }
 
@@ -245,6 +245,10 @@ export async function getDoctorAppointments(params?: { page?: number; limit?: nu
 
 export async function cancelAppointment(appointmentId: string): Promise<void> {
   await fetchClient.request(`${APPOINTMENTS_BASE}/cancel/${appointmentId}`, { method: "PATCH" });
+}
+
+export async function cancelAppointmentByDoctor(appointmentId: string): Promise<void> {
+  await fetchClient.request(`${APPOINTMENTS_BASE}/cancel-by-doctor/${appointmentId}`, { method: "PATCH" });
 }
 
 export async function completeAppointment(appointmentId: string): Promise<void> {

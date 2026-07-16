@@ -7,7 +7,7 @@ import {
   LuArrowLeft, LuCalendarPlus, LuBriefcaseMedical,
   LuStar, LuClock, LuUser, LuMapPin, LuPhone, LuAward, LuBuilding
 } from "react-icons/lu";
-import { DoctorListItem, getApprovedDoctors } from "@/services/appointmentService";
+import { DoctorListItem, getApprovedDoctors, getMyAppointments } from "@/services/appointmentService";
 import { initialsOf } from "@/components/appointments/format";
 
 import DoctorProfileCard from "@/components/patients/doctors/DoctorProfileCard";
@@ -20,16 +20,23 @@ export default function DoctorProfilePage() {
   const router = useRouter();
   const [doctor, setDoctor] = useState<DoctorListItem | null>(null);
   const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [hasBooked, setHasBooked] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       getApprovedDoctors(),
-      getDoctorClinics(doctorId).catch(() => []) // Gracefully fail if no clinics
+      getDoctorClinics(doctorId).catch(() => []), // Gracefully fail if no clinics
+      getMyAppointments({ limit: 100 }).catch(() => ({ data: [] }))
     ])
-      .then(([list, fetchedClinics]) => {
+      .then(([list, fetchedClinics, appointments]) => {
         setDoctor(list.find((d) => d.userId._id === doctorId) ?? null);
         setClinics(fetchedClinics);
+        
+        const isBooked = appointments.data?.some(
+          (app) => app.doctorId?._id === doctorId && app.status === "booked"
+        );
+        setHasBooked(!!isBooked);
       })
       .finally(() => setLoading(false));
   }, [doctorId]);
@@ -71,6 +78,7 @@ export default function DoctorProfilePage() {
         <DoctorProfileCard
           doctor={doctor}
           clinics={clinics}
+          hasBooked={hasBooked}
           onBook={() => router.push(`/patient/doctors/${doctorId}/book`)}
         />
       </main>

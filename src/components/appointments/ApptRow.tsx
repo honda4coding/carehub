@@ -5,7 +5,13 @@ import { Appointment, getDisplayStatus } from "@/services/appointmentService";
 import { initialsOf, isoTo12Hour } from "@/components/appointments/format";
 import StatusBadge from "@/components/appointments/StatusBadge";
 
-export default function ApptRow({ appt }: { appt: Appointment }) {
+export default function ApptRow({
+  appt,
+  onCancelClick,
+}: {
+  appt: Appointment;
+  onCancelClick?: (appt: Appointment) => void;
+}) {
   const patient = typeof appt.patientId === "object" ? appt.patientId : null;
   const status = getDisplayStatus(appt);
   const dimmed = status === "cancelled";
@@ -52,6 +58,14 @@ export default function ApptRow({ appt }: { appt: Appointment }) {
       {/* Actions */}
       <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto justify-end mt-1 sm:mt-0 pl-14 sm:pl-0">
         <StatusBadge status={status} />
+        {status === "upcoming" && onCancelClick && (
+          <button
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onCancelClick(appt); }}
+            className="h-[34px] px-3 rounded-lg flex items-center justify-center bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] cursor-pointer hover:bg-[hsl(var(--color-danger-bg))] hover:text-[hsl(var(--color-danger))] transition-colors text-[12px] font-bold"
+          >
+            Cancel
+          </button>
+        )}
       </div>
     </div>
   );
