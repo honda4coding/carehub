@@ -63,14 +63,14 @@ export default function DoctorProfilePage() {
   };
 
   return (
-    <div className="flex flex-col min-h-full w-full bg-[hsl(var(--color-bg-soft))]">
+    <div className="flex flex-col h-full w-full bg-[hsl(var(--color-bg-soft))]">
       <DashboardHeader
         title="Profile Settings"
         subtitle="Manage your personal information and license"
         showBack={true}
       />
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-6 overflow-y-auto custom-scrollbar">
         {/* Loading */}
         {loading && (
           <div className="flex items-center justify-center py-20">
@@ -138,7 +138,7 @@ export default function DoctorProfilePage() {
             </aside>
 
             {/* ── Centered Content Area ── */}
-            <div className="w-full max-w-3xl flex flex-col gap-5">
+            <div className="w-full max-w-3xl flex flex-col gap-5 pb-10">
 
               {activeTab === "profile" && (
                 <>
