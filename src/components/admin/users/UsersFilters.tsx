@@ -25,8 +25,7 @@ interface UsersFiltersProps {
   setRoleFilter: (val: UserRole | "") => void;
   statusFilter: UserStatus | "";
   setStatusFilter: (val: UserStatus | "") => void;
-  statusFilter: UserStatus | "";
-  setStatusFilter: (val: UserStatus | "") => void;
+  roleCounts: Record<string, number>;
   statusCounts: Record<string, number>;
 }
 
@@ -37,6 +36,7 @@ export default function UsersFilters({
   setRoleFilter,
   statusFilter,
   setStatusFilter,
+  roleCounts,
   statusCounts,
 }: UsersFiltersProps) {
   return (
