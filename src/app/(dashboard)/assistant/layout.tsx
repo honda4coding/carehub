@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import Sidebar from "@/components/global/Sidebar";
+import DashboardShell from "@/components/global/DashboardShell";
 
 export default function AssistantDashboardLayout({
   children,
@@ -35,11 +35,8 @@ export default function AssistantDashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen bg-[hsl(var(--color-bg))]">
-      <Sidebar role="assistant" />
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto">
-        {children}
-      </div>
-    </div>
+    <DashboardShell role="assistant">
+      {children}
+    </DashboardShell>
   );
 }

@@ -2,6 +2,7 @@ import { LuSearch, LuShieldCheck, LuUserPlus } from "react-icons/lu";
 import { Button } from "@/components/ui/Button";
 import { useClinicContext } from "@/context/ClinicContext";
 import ClinicSelector from "@/components/doctor/ClinicSelector";
+import { useAuth } from "@/context/AuthContext";
 
 export const DoctorActions = ({
   searchQuery,
@@ -17,7 +18,8 @@ export const DoctorActions = ({
   user,
 }: any) => {
   const { activeClinicId } = useClinicContext();
-  const hasActiveClinic = !!activeClinicId && activeClinicId !== "all";
+  const { role } = useAuth();
+  const hasActiveClinic = role === "assistant" || (!!activeClinicId && activeClinicId !== "all");
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4">

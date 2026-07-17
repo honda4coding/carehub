@@ -217,7 +217,7 @@ export const CurrentQueue = ({
                                 size="sm"
                                 variant="primary"
                                 onClick={() => onRecordVitals && onRecordVitals(s)}
-                                className="!text-[11px] !px-3 !h-[32px] !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+                                className="!text-[11px] !px-3 !h-[32px] !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))] hover:!text-white"
                               >
                                 Update Vitals
                               </Button>
@@ -386,7 +386,7 @@ export const CurrentQueue = ({
                               size="sm"
                               variant="primary"
                               onClick={() => onRecordVitals && onRecordVitals(s)}
-                              className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+                              className="!text-[10px] !px-2 !py-1 !h-auto !rounded-lg bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))] hover:!text-white"
                             >
                               Update Vitals
                             </Button>

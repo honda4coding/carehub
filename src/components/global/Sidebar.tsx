@@ -520,7 +520,7 @@ function SidebarContent({
         ],
       },
     ];
-    sections = assistantDynamicNav;
+    sections = assistantDynamicNav.filter((section) => section.items.length > 0);
   }
 
   const initials = user?.name

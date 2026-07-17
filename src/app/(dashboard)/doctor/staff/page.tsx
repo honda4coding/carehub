@@ -213,19 +213,36 @@ export default function StaffManagementPage() {
                                 <h4 className="font-bold text-sm mb-3 text-[hsl(var(--color-text))]">Permissions</h4>
                                 {[
                                     { key: 'Appointments', label: 'Manage Appointments' },
+                                    { key: 'Clinics', label: 'Manage Clinics & Services', isSub: true, parent: 'Appointments' },
                                     { key: 'PatientsVitals', label: 'Manage Patients (Vitals Only)' },
                                     { key: 'PatientsFull', label: 'Manage Patients (Full Clinical Assessment)' },
                                     { key: 'Billing', label: 'Manage Billing' },
-                                    { key: 'Reports', label: 'Manage Reports' },
-                                    { key: 'Clinics', label: 'Manage Clinics & Services' }
-                                ].map(perm => (
-                                    <label key={perm.key} className="flex items-center gap-3 mb-2 cursor-pointer">
-                                        <input type="checkbox" checked={formData.permissions[`canManage${perm.key}` as keyof typeof formData.permissions]} className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 
-                                            onChange={e => setFormData({...formData, permissions: {...formData.permissions, [`canManage${perm.key}`]: e.target.checked}})} 
-                                        />
-                                        <span className="text-sm font-semibold text-[hsl(var(--color-text))]">{perm.label}</span>
-                                    </label>
-                                ))}
+                                    { key: 'Reports', label: 'Manage Reports' }
+                                ].map(perm => {
+                                    if (perm.isSub && !formData.permissions[`canManage${perm.parent}` as keyof typeof formData.permissions]) {
+                                        return null;
+                                    }
+                                    return (
+                                        <label key={perm.key} className={`flex items-center gap-3 mb-2 cursor-pointer ${perm.isSub ? 'ml-8' : ''}`}>
+                                            <input 
+                                                type="checkbox" 
+                                                checked={formData.permissions[`canManage${perm.key}` as keyof typeof formData.permissions] as boolean} 
+                                                className="w-5 h-5 rounded border-[hsl(var(--color-border))] text-[hsl(var(--color-primary))] focus:ring-[hsl(var(--color-primary))]" 
+                                                onChange={e => {
+                                                    const checked = e.target.checked;
+                                                    const newPermissions = { ...formData.permissions, [`canManage${perm.key}`]: checked };
+                                                    if (perm.key === 'Appointments' && !checked) {
+                                                        newPermissions.canManageClinics = false;
+                                                    }
+                                                    setFormData({...formData, permissions: newPermissions});
+                                                }} 
+                                            />
+                                            <span className={`text-sm font-semibold ${perm.isSub ? 'text-[hsl(var(--color-text-muted))]' : 'text-[hsl(var(--color-text))]'}`}>
+                                                {perm.label}
+                                            </span>
+                                        </label>
+                                    );
+                                })}
                             </div>
 
                             <div className="flex justify-end gap-3 pt-4">
