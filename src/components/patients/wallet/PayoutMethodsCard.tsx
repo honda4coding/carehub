@@ -65,7 +65,7 @@ export default function PayoutMethodsCard({ payoutMethods, profile, onAddMethod 
                 className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors p-1"
                 title="Edit Method"
               >
-                <LuEdit size={16} />
+                <LuPen size={16} />
               </button>
             </div>
           </div>
