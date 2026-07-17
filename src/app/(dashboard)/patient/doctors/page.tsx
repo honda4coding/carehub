@@ -75,7 +75,10 @@ export default function DoctorsPage() {
       const name = d.userId.fullName.toLowerCase();
       const spec = (d.specialization ?? "").toLowerCase();
       const matchSearch = name.includes(search.toLowerCase()) || spec.includes(search.toLowerCase());
-      const matchSpec = specialty === "All Specialties" || d.specialization === specialty;
+      
+      const normalize = (s: string) => s.toLowerCase().replace(/[\s_]/g, '');
+      const matchSpec = specialty === "All Specialties" || normalize(d.specialization || "") === normalize(specialty);
+      
       const matchGov = !matchingGovDoctorIds || matchingGovDoctorIds.has(d.userId._id);
       return matchSearch && matchSpec && matchGov;
     }),
