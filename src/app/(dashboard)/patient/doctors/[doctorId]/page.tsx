@@ -44,11 +44,22 @@ export default function DoctorProfilePage() {
   if (loading) {
     return (
       <div className="flex flex-col flex-1 min-h-screen">
-        <div className="p-6 space-y-4 animate-pulse max-w-2xl mx-auto w-full">
-          <div className="h-36 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
-          <div className="h-28 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
-          <div className="h-40 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
-          <div className="h-16 rounded-2xl bg-[hsl(var(--color-border-soft))]" />
+        <div className="p-6 md:p-8 max-w-6xl mx-auto w-full space-y-8 animate-pulse">
+          {/* Hero Skeleton */}
+          <div className="h-64 rounded-[2rem] bg-[hsl(var(--color-border-soft))]" />
+          
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Left Column (About & Certs) Skeleton */}
+            <div className="xl:col-span-2 space-y-8">
+              <div className="h-48 rounded-[2rem] bg-[hsl(var(--color-border-soft))]" />
+              <div className="h-64 rounded-[2rem] bg-[hsl(var(--color-border-soft))]" />
+            </div>
+            
+            {/* Right Column (Clinics) Skeleton */}
+            <div className="space-y-8">
+              <div className="h-80 rounded-[2rem] bg-[hsl(var(--color-border-soft))]" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -74,7 +85,7 @@ export default function DoctorProfilePage() {
         showBack={true}
       />
 
-      <main className="flex-1 p-4 md:p-8 max-w-4xl mx-auto w-full flex flex-col gap-6">
+      <main className="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full">
         <DoctorProfileCard
           doctor={doctor}
           clinics={clinics}

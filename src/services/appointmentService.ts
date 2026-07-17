@@ -18,6 +18,16 @@ export interface DoctorListItem {
   specialization?: string | null;
   experience?: number | null;
   bio?: string | null;
+  tagline?: string | null;
+  languages?: string[];
+  socialLinks?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    linkedin?: string | null;
+  };
+  patientsTreated?: number | null;
+  university?: string | null;
+  graduationYear?: number | null;
   profilepicture?: { secure_url: string; public_id: string };
   certificates?: Array<{
     _id: string;
@@ -111,7 +121,7 @@ export interface MyAppointment {
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
 export async function getApprovedDoctors(): Promise<DoctorListItem[]> {
-  const res = await fetchClient.get("/doctor/all?limit=all");
+  const res = await fetchClient.get(`/doctor/all?limit=all&_t=${Date.now()}`);
   return res.data ?? res;
 }
 

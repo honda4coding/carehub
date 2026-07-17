@@ -14,6 +14,14 @@ import {
   LuCheck,
   LuStethoscope,
   LuChevronDown,
+  LuMegaphone,
+  LuGlobe,
+  LuGraduationCap,
+  LuCalendar,
+  LuUsers,
+  LuFacebook,
+  LuInstagram,
+  LuLinkedin,
 } from "react-icons/lu";
 import { useState } from "react";
 import {
@@ -22,7 +30,6 @@ import {
   updateDoctorProfile,
 } from "@/services/doctorService";
 
-// Ù†ÙØ³ Ø§Ù„Ù€ list Ø§Ù„Ù…ÙˆØ¬ÙˆØ¯Ø© ÙÙŠ ØµÙØ­Ø© Ø§Ù„Ù€ signup
 const SPECIALTIES = [
   { value: "general_practice", label: "General Practice" },
   { value: "pediatrics", label: "Pediatrics" },
@@ -34,7 +41,6 @@ const SPECIALTIES = [
   { value: "psychiatry", label: "Psychiatry" },
 ];
 
-// â”€â”€â”€ Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const schema = Yup.object({
   fullName: Yup.string()
     .min(3, "Min 3 characters")
@@ -44,6 +50,17 @@ const schema = Yup.object({
   address: Yup.string().optional(),
   phoneNumber: Yup.string().min(10, "Min 10 digits").optional(),
   bio: Yup.string().min(20, "Min 20 characters").optional(),
+  tagline: Yup.string().max(100, "Max 100 characters").optional(),
+  languages: Yup.string().optional(),
+  facebook: Yup.string().url("Must be a valid URL").optional(),
+  instagram: Yup.string().url("Must be a valid URL").optional(),
+  linkedin: Yup.string().url("Must be a valid URL").optional(),
+  patientsTreated: Yup.number().min(0, "Cannot be negative").optional(),
+  university: Yup.string().max(100, "Max 100 characters").optional(),
+  graduationYear: Yup.number()
+    .min(1960, "Must be after 1960")
+    .max(new Date().getFullYear(), "Cannot be in the future")
+    .optional(),
 });
 
 type FormValues = {
@@ -53,9 +70,16 @@ type FormValues = {
   experience: number | "";
   address: string;
   bio: string;
+  tagline: string;
+  languages: string; // Comma separated for simplicity in the form
+  facebook: string;
+  instagram: string;
+  linkedin: string;
+  patientsTreated: number | "";
+  university: string;
+  graduationYear: number | "";
 };
 
-// â”€â”€â”€ Reusable read-only field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function ReadOnlyField({
   label,
   value,
@@ -72,13 +96,12 @@ function ReadOnlyField({
         {label}
       </label>
       <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
-        {value || "â€”"}
+        {value || "—"}
       </div>
     </div>
   );
 }
 
-// â”€â”€â”€ Reusable editable field â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function EditField({
   name,
   label,
@@ -126,7 +149,6 @@ function EditField({
   );
 }
 
-// â”€â”€â”€ Main component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 interface Props {
   profile: DoctorProfile | null;
   onSaveSuccess: (updated: UpdateDoctorProfilePayload) => void;
@@ -146,6 +168,14 @@ export default function ProfessionalInfoForm({
     experience: profile?.experience ?? "",
     address: profile?.address ?? "",
     bio: profile?.bio ?? "",
+    tagline: profile?.tagline ?? "",
+    languages: profile?.languages?.join(", ") ?? "",
+    facebook: profile?.socialLinks?.facebook ?? "",
+    instagram: profile?.socialLinks?.instagram ?? "",
+    linkedin: profile?.socialLinks?.linkedin ?? "",
+    patientsTreated: profile?.patientsTreated ?? "",
+    university: profile?.university ?? "",
+    graduationYear: profile?.graduationYear ?? "",
   };
 
   const handleSubmit = async (
@@ -155,6 +185,11 @@ export default function ProfessionalInfoForm({
     try {
       setServerError("");
       setServerSuccess("");
+      
+      const langs = values.languages
+        ? values.languages.split(",").map((l) => l.trim()).filter(Boolean)
+        : [];
+
       const payload: UpdateDoctorProfilePayload = {
         fullName: values.fullName,
         phoneNumber: values.phoneNumber || undefined,
@@ -163,7 +198,20 @@ export default function ProfessionalInfoForm({
           values.experience === "" ? undefined : Number(values.experience),
         address: values.address || undefined,
         bio: values.bio || undefined,
+        tagline: values.tagline || undefined,
+        languages: langs.length > 0 ? langs : undefined,
+        socialLinks: {
+          facebook: values.facebook || undefined,
+          instagram: values.instagram || undefined,
+          linkedin: values.linkedin || undefined,
+        },
+        patientsTreated:
+          values.patientsTreated === "" ? undefined : Number(values.patientsTreated),
+        university: values.university || undefined,
+        graduationYear:
+          values.graduationYear === "" ? undefined : Number(values.graduationYear),
       };
+
       await updateDoctorProfile(payload);
       setServerSuccess("Profile updated successfully!");
       onSaveSuccess(payload);
@@ -183,8 +231,8 @@ export default function ProfessionalInfoForm({
         <div
           className={`px-6 py-3 text-sm font-medium flex items-center gap-2 ${
             serverError
-              ? "bg-danger-light border-b border-red-200 text-danger"
-              : "bg-success-light border-b border-green-200 text-success"
+              ? "bg-[hsl(var(--color-danger-bg))] border-b border-[hsl(var(--color-danger)/0.2)] text-[hsl(var(--color-danger))]"
+              : "bg-[hsl(var(--color-success-bg))] border-b border-[hsl(var(--color-success)/0.2)] text-[hsl(var(--color-success))]"
           }`}
         >
           {serverSuccess && <LuCheck className="w-4 h-4 shrink-0" />}
@@ -200,116 +248,214 @@ export default function ProfessionalInfoForm({
       >
         {({ errors, touched, isSubmitting }) => (
           <Form>
-            <div className="p-6 space-y-5">
-              {/* Full Name */}
-              <EditField
-                name="fullName"
-                label="Full Name"
-                icon={<LuUser />}
-                placeholder="Dr. Sarah Smith"
-                errors={errors}
-                touched={touched}
-              />
-
-              {/* Email â€” read only */}
-              <ReadOnlyField
-                label="Email"
-                value={profile?.email ?? ""}
-                icon={<LuMail />}
-              />
-              {/* Phone â€” editable */}
-              <EditField
-                name="phoneNumber"
-                label="Phone"
-                icon={<LuPhone />}
-                placeholder="01000000000"
-                errors={errors}
-                touched={touched}
-              />
-
-              {/* Specialization dropdown + Experience â€” 2 cols */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Specialization â€” dropdown */}
-                <div className="space-y-1.5">
-                  <label
-                    htmlFor="specialization"
-                    className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
-                  >
-                    <LuStethoscope className="w-4 h-4" />
-                    Specialization
-                  </label>
-                  <div className="relative">
-                    <Field
-                      as="select"
-                      id="specialization"
-                      name="specialization"
-                      className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer text-[hsl(var(--color-text))] ${
-                        errors.specialization && touched.specialization
-                          ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
-                          : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
-                      }`}
-                    >
-                      <option value="">Select specialization</option>
-                      {SPECIALTIES.map((s) => (
-                        <option key={s.value} value={s.value}>
-                          {s.label}
-                        </option>
-                      ))}
-                    </Field>
-                    {/* Dropdown arrow */}
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
-                      <LuChevronDown className="w-4 h-4" />
-                    </span>
-                  </div>
-                  <ErrorMessage
-                    name="specialization"
-                    component="p"
-                    className="text-danger text-xs pl-1 font-medium"
-                  />
-                </div>
-
-                {/* Experience */}
+            <div className="p-6 space-y-8">
+              
+              {/* SECTION: Basic Professional Info */}
+              <div className="space-y-5">
+                <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))] border-b border-[hsl(var(--color-border))] pb-2">
+                  Basic Information
+                </h3>
+                
+                {/* Full Name */}
                 <EditField
-                  name="experience"
-                  label="Experience (Years)"
-                  icon={<LuBriefcase />}
-                  placeholder="5"
-                  type="number"
+                  name="fullName"
+                  label="Full Name"
+                  icon={<LuUser />}
+                  placeholder="Dr. Sarah Smith"
                   errors={errors}
                   touched={touched}
                 />
+
+                {/* Email — read only */}
+                <ReadOnlyField
+                  label="Email"
+                  value={profile?.email ?? ""}
+                  icon={<LuMail />}
+                />
+                
+                {/* Phone — editable */}
+                <EditField
+                  name="phoneNumber"
+                  label="Phone"
+                  icon={<LuPhone />}
+                  placeholder="01000000000"
+                  errors={errors}
+                  touched={touched}
+                />
+
+                {/* Specialization + Experience */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1.5">
+                    <label
+                      htmlFor="specialization"
+                      className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
+                    >
+                      <LuStethoscope className="w-4 h-4" />
+                      Specialization
+                    </label>
+                    <div className="relative">
+                      <Field
+                        as="select"
+                        id="specialization"
+                        name="specialization"
+                        className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all appearance-none cursor-pointer text-[hsl(var(--color-text))] ${
+                          errors.specialization && touched.specialization
+                            ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                            : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                        }`}
+                      >
+                        <option value="">Select specialization</option>
+                        {SPECIALTIES.map((s) => (
+                          <option key={s.value} value={s.value}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </Field>
+                      <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--color-text-muted))]">
+                        <LuChevronDown className="w-4 h-4" />
+                      </span>
+                    </div>
+                    <ErrorMessage
+                      name="specialization"
+                      component="p"
+                      className="text-[hsl(var(--color-danger))] text-xs pl-1 font-medium"
+                    />
+                  </div>
+
+                  <EditField
+                    name="experience"
+                    label="Experience (Years)"
+                    icon={<LuBriefcase />}
+                    placeholder="5"
+                    type="number"
+                    errors={errors}
+                    touched={touched}
+                  />
+                </div>
+
+                {/* Bio */}
+                <div className="space-y-1.5">
+                  <label
+                    htmlFor="bio"
+                    className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
+                  >
+                    <LuFileText className="w-4 h-4" />
+                    Bio
+                  </label>
+                  <Field
+                    as="textarea"
+                    id="bio"
+                    name="bio"
+                    rows={4}
+                    placeholder="Board-certified internist with 15 years of experience in primary care and chronic disease management."
+                    className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
+                      errors.bio && touched.bio
+                        ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
+                        : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
+                    }`}
+                  />
+                  <ErrorMessage
+                    name="bio"
+                    component="p"
+                    className="text-[hsl(var(--color-danger))] text-xs pl-1 font-medium"
+                  />
+                </div>
               </div>
 
-              {/* Bio */}
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="bio"
-                  className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]"
-                >
-                  <LuFileText className="w-4 h-4" />
-                  Bio
-                </label>
-                <Field
-                  as="textarea"
-                  id="bio"
-                  name="bio"
-                  rows={4}
-                  placeholder="Board-certified internist with 15 years of experience in primary care and chronic disease management."
-                  className={`w-full px-4 py-3 rounded-xl text-[13px] outline-none transition-all resize-none placeholder:text-[hsl(var(--color-text-muted)/0.4)] text-[hsl(var(--color-text))] ${
-                    errors.bio && touched.bio
-                      ? "bg-[hsl(var(--color-danger-bg))] border-[1.5px] border-[hsl(var(--color-danger))]"
-                      : "bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))]"
-                  }`}
+              {/* SECTION: Marketing & Academic */}
+              <div className="space-y-5">
+                <h3 className="text-[15px] font-bold text-[hsl(var(--color-text))] border-b border-[hsl(var(--color-border))] pb-2">
+                  Marketing & Academic Profile
+                </h3>
+                
+                {/* Tagline */}
+                <EditField
+                  name="tagline"
+                  label="Marketing Tagline"
+                  icon={<LuMegaphone />}
+                  placeholder="E.g. Trusted by families across the city for 15 years"
+                  errors={errors}
+                  touched={touched}
                 />
-                <ErrorMessage
-                  name="bio"
-                  component="p"
-                  className="text-danger text-xs pl-1 font-medium"
-                />
+
+                {/* Languages + Patients Treated */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <EditField
+                    name="languages"
+                    label="Languages (comma separated)"
+                    icon={<LuGlobe />}
+                    placeholder="E.g. Arabic, English"
+                    errors={errors}
+                    touched={touched}
+                  />
+                  <EditField
+                    name="patientsTreated"
+                    label="Patients Treated (Approximate)"
+                    icon={<LuUsers />}
+                    placeholder="E.g. 1500"
+                    type="number"
+                    errors={errors}
+                    touched={touched}
+                  />
+                </div>
+
+                {/* University + Graduation Year */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <EditField
+                    name="university"
+                    label="University"
+                    icon={<LuGraduationCap />}
+                    placeholder="E.g. Cairo University"
+                    errors={errors}
+                    touched={touched}
+                  />
+                  <EditField
+                    name="graduationYear"
+                    label="Graduation Year"
+                    icon={<LuCalendar />}
+                    placeholder="E.g. 2010"
+                    type="number"
+                    errors={errors}
+                    touched={touched}
+                  />
+                </div>
+
+                {/* Social Links */}
+                <div className="space-y-4 pt-2">
+                  <p className="text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">Social Links</p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <EditField
+                      name="facebook"
+                      label="Facebook URL"
+                      icon={<LuFacebook />}
+                      placeholder="https://facebook.com/..."
+                      errors={errors}
+                      touched={touched}
+                    />
+                    <EditField
+                      name="instagram"
+                      label="Instagram URL"
+                      icon={<LuInstagram />}
+                      placeholder="https://instagram.com/..."
+                      errors={errors}
+                      touched={touched}
+                    />
+                    <EditField
+                      name="linkedin"
+                      label="LinkedIn URL"
+                      icon={<LuLinkedin />}
+                      placeholder="https://linkedin.com/in/..."
+                      errors={errors}
+                      touched={touched}
+                    />
+                  </div>
+                </div>
+
               </div>
+
             </div>
 
-            {/* Save button â€” full width, attached to bottom */}
+            {/* Save button */}
             <div className="px-6 pb-6 pt-2 flex justify-end">
               <button
                 type="submit"
@@ -333,5 +479,3 @@ export default function ProfessionalInfoForm({
     </div>
   );
 }
-
-

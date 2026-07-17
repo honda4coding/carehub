@@ -16,6 +16,16 @@ export interface DoctorProfile {
   specialization?: string;
   experience?: number;
   bio?: string;
+  tagline?: string;
+  languages?: string[];
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  patientsTreated?: number;
+  university?: string;
+  graduationYear?: number;
   licenseimage?: { secure_url: string; public_id: string };
   pendingLicenseImage?: { secure_url: string; public_id: string };
   previousLicenseImage?: { secure_url: string; public_id: string };
@@ -36,6 +46,16 @@ export interface UpdateDoctorProfilePayload {
   specialization?: string;
   experience?: number;
   bio?: string;
+  tagline?: string;
+  languages?: string[];
+  socialLinks?: {
+    facebook?: string;
+    instagram?: string;
+    linkedin?: string;
+  };
+  patientsTreated?: number;
+  university?: string;
+  graduationYear?: number;
   certificates?: Array<{
     _id: string;
     title: string;

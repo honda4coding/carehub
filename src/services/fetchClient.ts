@@ -68,7 +68,12 @@ export const fetchClient = {
           console.error("Forbidden: You do not have permission to perform this action.");
         }
 
-        const finalError = new Error(errData?.message || "Request failed");
+        let errorMessage = errData?.message || "Request failed";
+        if (errData?.error && Array.isArray(errData.error)) {
+          errorMessage = errData.error.map((e: any) => e.message).join(", ");
+        }
+
+        const finalError = new Error(errorMessage);
         (finalError as any).status = status;
         (finalError as any).data = errData?.data;
         (finalError as any).error = errData?.error; // Backend validation array

@@ -1,8 +1,26 @@
-import { LuMapPin, LuPhone, LuAward, LuBuilding, LuImage, LuSmartphone } from "react-icons/lu";
+"use client";
+
+import { useState } from "react";
+import {
+  LuMapPin,
+  LuPhone,
+  LuAward,
+  LuImage,
+  LuSmartphone,
+  LuBadgeCheck,
+  LuGlobe,
+  LuUsers,
+  LuGraduationCap,
+  LuFacebook,
+  LuInstagram,
+  LuLinkedin,
+  LuBriefcase,
+  LuBuilding2,
+  LuUser
+} from "react-icons/lu";
 import { DoctorListItem } from "@/services/appointmentService";
 import { Clinic } from "@/services/clinicService";
 import { initialsOf } from "@/components/appointments/format";
-import { useState } from "react";
 import { DocumentModal } from "@/components/shared/DocumentModal";
 
 interface Props {
@@ -12,155 +30,358 @@ interface Props {
   onBook: () => void;
 }
 
-export default function DoctorProfileCard({ doctor, clinics = [], hasBooked = false, onBook }: Props) {
+function formatSpecialization(spec: string) {
+  return spec
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+export default function DoctorProfileCard({
+  doctor,
+  clinics = [],
+  hasBooked = false,
+  onBook,
+}: Props) {
   const [docModalUrl, setDocModalUrl] = useState<string | null>(null);
+
   const fullName = doctor.userId.fullName;
   const initials = initialsOf(fullName);
-  const specialization = doctor.specialization ?? "General Practice";
+  const specialization = doctor.specialization 
+    ? formatSpecialization(doctor.specialization) 
+    : "General Practice";
+
+  const {
+    tagline,
+    languages = [],
+    socialLinks,
+    patientsTreated,
+    university,
+    graduationYear,
+    experience,
+    bio,
+    certificates = [],
+  } = doctor;
+
+  // Fix image source path
+  const profileImage = doctor.userId?.profilepicture?.secure_url || doctor.profilepicture?.secure_url;
 
   return (
-    <div className="bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-5 md:p-8 border border-[hsl(var(--color-border-soft))]">
-      <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-stretch">
-        {/* Left: Large Photo */}
-        <div className="w-[220px] sm:w-[260px] md:w-1/3 shrink-0">
-          <div className="w-full aspect-[4/5] rounded-[2rem] bg-gradient-to-b from-[hsl(var(--color-primary)/0.2)] to-[hsl(var(--color-primary)/0.05)] flex items-center justify-center overflow-hidden border border-[hsl(var(--color-primary)/0.1)]">
-            {doctor.userId.profilepicture?.secure_url ? (
-              <img src={doctor.userId.profilepicture.secure_url} alt={fullName} className="w-full h-full object-cover" />
-            ) : (
-              <span className="text-[60px] font-black text-[hsl(var(--color-primary))]">{initials}</span>
-            )}
+    <div className="flex flex-col relative pb-24 md:pb-0">
+      {/* 1. HERO SECTION */}
+      <section className="relative overflow-hidden rounded-[2rem] bg-white dark:bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] mb-8 shadow-[var(--shadow-card)]">
+        {/* Abstract Gradient Background (using opacity instead of /alpha for Turbopack compatibility) */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] opacity-[0.08] pointer-events-none" />
+        
+        {/* Subtle pattern or shape (optional) */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[hsl(var(--color-primary))] opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+
+        <div className="relative p-6 lg:p-10 flex flex-col lg:flex-row items-center lg:items-start gap-8">
+          
+          {/* Photo */}
+          <div className="shrink-0 relative group">
+            <div className="w-[160px] h-[160px] lg:w-[180px] lg:h-[180px] rounded-full p-1.5 bg-gradient-to-br from-[hsl(var(--color-primary))] to-[hsl(var(--color-secondary))] shadow-lg shadow-[hsl(var(--color-primary))]/20">
+              <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(var(--color-bg-surface))] flex items-center justify-center border-4 border-white dark:border-[hsl(var(--color-bg-surface))]">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt={fullName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-[60px] font-black text-[hsl(var(--color-primary))]">
+                    {initials}
+                  </span>
+                )}
+              </div>
+            </div>
+            {/* Verified Badge */}
+            <div className="absolute bottom-2 right-4 bg-white dark:bg-[hsl(var(--color-bg-surface))] rounded-full p-1 shadow-md">
+              <LuBadgeCheck className="w-8 h-8 text-[hsl(var(--color-primary))] fill-[hsl(var(--color-primary))]/10" />
+            </div>
+          </div>
+
+          {/* Info */}
+          <div className="flex-1 min-w-0 flex flex-col items-center lg:items-start text-center lg:text-left pt-2">
+            
+            {/* Specialization Pill */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(var(--color-primary))]/10 text-[hsl(var(--color-primary-strong))] text-[12px] font-bold uppercase tracking-wider mb-3">
+              <LuBriefcase className="w-3.5 h-3.5" />
+              {specialization}
+            </div>
+
+            {/* Name */}
+            <h1 className="text-[32px] lg:text-[40px] font-black text-[hsl(var(--color-text))] leading-tight mb-2 break-words w-full">
+              Dr. {fullName}
+            </h1>
+
+            {/* Tagline */}
+            <p className="text-[16px] lg:text-[18px] font-medium text-[hsl(var(--color-text-muted))] mb-6 max-w-2xl">
+              {tagline || `Providing expert care and consultation in ${specialization.toLowerCase()}.`}
+            </p>
+
+            {/* Languages & Social Row */}
+            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-8">
+              {languages.length > 0 && (
+                <div className="flex items-center gap-2">
+                  <LuGlobe className="text-[hsl(var(--color-text-muted))] w-4 h-4" />
+                  <div className="flex gap-1.5">
+                    {languages.map((lang) => (
+                      <span key={lang} className="text-[12px] font-bold text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-soft))] px-2.5 py-1 rounded-md">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* Divider if both exist */}
+              {languages.length > 0 && (socialLinks?.facebook || socialLinks?.instagram || socialLinks?.linkedin) && (
+                <div className="w-1 h-1 rounded-full bg-[hsl(var(--color-border-strong))]" />
+              )}
+
+              {/* Social Links */}
+              <div className="flex items-center gap-3">
+                {socialLinks?.facebook && (
+                  <a href={socialLinks.facebook} target="_blank" rel="noreferrer" className="text-[hsl(var(--color-text-muted))] hover:text-[#1877F2] transition-colors">
+                    <LuFacebook className="w-5 h-5" />
+                  </a>
+                )}
+                {socialLinks?.instagram && (
+                  <a href={socialLinks.instagram} target="_blank" rel="noreferrer" className="text-[hsl(var(--color-text-muted))] hover:text-[#E4405F] transition-colors">
+                    <LuInstagram className="w-5 h-5" />
+                  </a>
+                )}
+                {socialLinks?.linkedin && (
+                  <a href={socialLinks.linkedin} target="_blank" rel="noreferrer" className="text-[hsl(var(--color-text-muted))] hover:text-[#0A66C2] transition-colors">
+                    <LuLinkedin className="w-5 h-5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Stats Strip */}
+            <div className="flex flex-wrap items-center gap-6 lg:gap-10 border-y border-[hsl(var(--color-border))] py-4 w-full lg:w-auto justify-center lg:justify-start">
+              {experience != null && (
+                <div className="flex flex-col items-center lg:items-start">
+                  <div className="flex items-center gap-1.5 text-[hsl(var(--color-text-muted))] mb-1">
+                    <LuAward className="w-4 h-4" />
+                    <span className="text-[11px] font-bold uppercase tracking-wider">Experience</span>
+                  </div>
+                  <span className="text-[20px] font-black text-[hsl(var(--color-text))]">{experience}+ Yrs</span>
+                </div>
+              )}
+
+              <div className="w-[1px] h-10 bg-[hsl(var(--color-border))]" />
+
+              <div className="flex flex-col items-center lg:items-start">
+                <div className="flex items-center gap-1.5 text-[hsl(var(--color-text-muted))] mb-1">
+                  <LuBuilding2 className="w-4 h-4" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider">Clinics</span>
+                </div>
+                <span className="text-[20px] font-black text-[hsl(var(--color-text))]">{clinics.length}</span>
+              </div>
+
+              {patientsTreated != null && (
+                <>
+                  <div className="w-[1px] h-10 bg-[hsl(var(--color-border))]" />
+                  <div className="flex flex-col items-center lg:items-start">
+                    <div className="flex items-center gap-1.5 text-[hsl(var(--color-text-muted))] mb-1">
+                      <LuUsers className="w-4 h-4" />
+                      <span className="text-[11px] font-bold uppercase tracking-wider">Patients</span>
+                    </div>
+                    <span className="text-[20px] font-black text-[hsl(var(--color-text))]">{patientsTreated}+</span>
+                  </div>
+                </>
+              )}
+            </div>
+
           </div>
         </div>
+      </section>
 
-        {/* Right: Info */}
-        <div className="flex-1 flex flex-col justify-center w-full">
-          <h2 className="text-[26px] md:text-[32px] font-black text-[hsl(var(--color-text))] leading-tight tracking-tight text-center md:text-left mt-2 md:mt-0">
-            Dr. {fullName}
-          </h2>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        
+        {/* LEFT COLUMN: About & Certs */}
+        <div className="xl:col-span-2 space-y-8">
           
-          <p className="text-[14px] md:text-[15px] font-medium text-[hsl(var(--color-text-muted))] mt-1 mb-6 text-center md:text-left">
-            Specialist in {specialization}
-          </p>
+          {/* ABOUT SECTION */}
+          <section className="bg-white dark:bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-6 md:p-8 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)]">
+            <h3 className="text-[18px] font-black text-[hsl(var(--color-text))] mb-6 flex items-center gap-2">
+              <LuUser className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+              About the Doctor
+            </h3>
+            
+            <div className="relative">
+              <span className="absolute -top-4 -left-2 text-[60px] leading-none text-[hsl(var(--color-primary))]/10 font-serif select-none">"</span>
+              <p className="text-[15px] font-medium text-[hsl(var(--color-text))] leading-relaxed relative z-10 pl-4">
+                {bio || "This doctor has not provided a biography yet."}
+              </p>
+            </div>
 
-          <div className="border-t border-dashed border-[hsl(var(--color-border))] my-4"></div>
+            {university && (
+              <div className="mt-6 flex items-center gap-3 bg-[hsl(var(--color-bg-soft))] p-4 rounded-xl border border-[hsl(var(--color-border))]">
+                <div className="w-10 h-10 rounded-full bg-[hsl(var(--color-primary))]/10 flex items-center justify-center text-[hsl(var(--color-primary-strong))]">
+                  <LuGraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-[13px] font-bold text-[hsl(var(--color-text))]">{university}</p>
+                  {graduationYear && (
+                    <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))]">Class of {graduationYear}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          </section>
 
-          {/* Clinics Section */}
-          <div className="py-2">
-            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-              <LuBuilding className="text-[14px]" /> Clinics & Locations
-            </p>
+          {/* CERTIFICATIONS */}
+          {certificates.length > 0 && (
+            <section className="bg-white dark:bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-6 md:p-8 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)]">
+              <h3 className="text-[18px] font-black text-[hsl(var(--color-text))] mb-6 flex items-center gap-2">
+                <LuAward className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+                Certifications & Achievements
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {certificates.map((cert) => (
+                  <button
+                    key={cert._id}
+                    onClick={() => setDocModalUrl(cert.secure_url)}
+                    className="group relative flex flex-col border border-[hsl(var(--color-border))] rounded-2xl overflow-hidden bg-[hsl(var(--color-bg))] hover:border-[hsl(var(--color-primary))]/50 hover:shadow-[var(--shadow-float)] transition-all text-left"
+                  >
+                    <div className="h-32 bg-black/5 relative flex items-center justify-center overflow-hidden">
+                      {cert.secure_url.endsWith(".pdf") ? (
+                        <div className="text-center text-[hsl(var(--color-text-muted))]">
+                          <LuImage className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                          <span className="text-[12px] font-bold tracking-widest uppercase">PDF Document</span>
+                        </div>
+                      ) : (
+                        <img src={cert.secure_url} alt={cert.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      )}
+                      
+                      {/* Hover Overlay */}
+                      <div className="absolute inset-0 bg-[hsl(var(--color-primary))]/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="text-white text-[13px] font-bold px-4 py-2 rounded-full border border-white/30 backdrop-blur-sm">
+                          View Certificate
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h4 className="font-bold text-[14px] text-[hsl(var(--color-text))] truncate mb-1" title={cert.title}>{cert.title}</h4>
+                      <p className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] truncate" title={cert.issuer}>{cert.issuer}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+
+        </div>
+
+        {/* RIGHT COLUMN: Clinics & Booking */}
+        <div className="space-y-8">
+          
+          {/* CLINICS */}
+          <section className="bg-white dark:bg-[hsl(var(--color-bg-surface))] rounded-[2rem] p-6 md:p-8 border border-[hsl(var(--color-border))] shadow-[var(--shadow-card)]">
+            <h3 className="text-[18px] font-black text-[hsl(var(--color-text))] mb-6 flex items-center gap-2">
+              <LuBuilding2 className="w-5 h-5 text-[hsl(var(--color-primary))]" />
+              Clinics & Locations
+            </h3>
+
             {clinics.length === 0 ? (
-              <p className="text-[13px] text-[hsl(var(--color-text-muted))]">No clinics available.</p>
+              <div className="text-center py-8">
+                <LuBuilding2 className="w-12 h-12 text-[hsl(var(--color-border-strong))] mx-auto mb-3 opacity-50" />
+                <p className="text-[14px] font-medium text-[hsl(var(--color-text-muted))]">No clinics available currently.</p>
+              </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="flex flex-col gap-4">
                 {clinics.map((clinic) => (
-                  <div key={clinic._id} className="p-4 rounded-xl bg-[hsl(var(--color-bg))] border border-[hsl(var(--color-border))]">
-                    <h3 className="text-[14px] font-bold text-[hsl(var(--color-text))] mb-2 truncate" title={clinic.name}>{clinic.name}</h3>
+                  <div key={clinic._id} className="group relative p-5 rounded-2xl bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))]/40 transition-colors">
                     
-                    <div className="flex items-start gap-2 mb-2">
-                      <LuMapPin className="text-[hsl(var(--color-primary))] mt-1 shrink-0 w-3.5 h-3.5" />
-                      <p className="text-[13px] font-medium text-[hsl(var(--color-text))] leading-snug">
-                        {clinic.address}, {clinic.governorate}
+                    {/* Fee Badge */}
+                    {clinic.consultationFee != null && (
+                      <div className="absolute top-4 right-4 bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] px-2.5 py-1 rounded-full text-[12px] font-black border border-[hsl(var(--color-success))]/20">
+                        {clinic.consultationFee} LE
+                      </div>
+                    )}
+
+                    <h4 className="text-[15px] font-bold text-[hsl(var(--color-text))] mb-3 pr-16 leading-tight">{clinic.name}</h4>
+                    
+                    <div className="flex items-start gap-2.5 mb-4">
+                      <LuMapPin className="text-[hsl(var(--color-primary))] mt-0.5 shrink-0 w-4 h-4" />
+                      <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] leading-relaxed">
+                        {clinic.address}, <span className="font-bold text-[hsl(var(--color-text))]">{clinic.governorate}</span>
                       </p>
                     </div>
 
-                    {clinic.phone && (
-                      <div className="flex items-center gap-2 mb-1">
-                        <LuPhone className="text-[hsl(var(--color-text-muted))] w-3.5 h-3.5" />
-                        <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">{clinic.phone}</p>
-                      </div>
-                    )}
-                    {clinic.whatsapp && (
-                      <div className="flex items-center gap-2 mb-1">
-                        <LuSmartphone className="text-[hsl(var(--color-text-muted))] w-3.5 h-3.5" />
-                        <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">WA: {clinic.whatsapp}</p>
+                    {/* Action Buttons */}
+                    {(clinic.phone || clinic.whatsapp) && (
+                      <div className="flex items-center gap-2 pt-4 border-t border-[hsl(var(--color-border))]">
+                        {clinic.phone && (
+                          <a href={`tel:${clinic.phone}`} className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-white dark:bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary))] text-[hsl(var(--color-text))] text-[12px] font-bold transition-all">
+                            <LuPhone className="w-3.5 h-3.5 text-[hsl(var(--color-primary))]" />
+                            Call
+                          </a>
+                        )}
+                        {clinic.whatsapp && (
+                          <a href={`https://wa.me/${clinic.whatsapp.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl bg-[#25D366]/10 border border-[#25D366]/20 hover:border-[#25D366]/50 text-[#128C7E] dark:text-[#25D366] text-[12px] font-bold transition-all">
+                            <LuSmartphone className="w-4 h-4" />
+                            WhatsApp
+                          </a>
+                        )}
                       </div>
                     )}
                   </div>
                 ))}
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="border-t border-dashed border-[hsl(var(--color-border))] my-4"></div>
-
-          {/* Certifications & Degrees */}
-          <div className="py-2">
-            <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-4 flex items-center gap-1.5">
-              <LuAward className="text-[14px]" /> Certifications & Achievements
-            </p>
-            {(!doctor.certificates || doctor.certificates.length === 0) ? (
-              <p className="text-[13px] text-[hsl(var(--color-text-muted))]">No certificates uploaded.</p>
+          {/* DESKTOP BOOKING CTA */}
+          <div className="hidden xl:block sticky top-6">
+            {!hasBooked ? (
+              <button
+                onClick={onBook}
+                className="group relative w-full py-4 rounded-2xl overflow-hidden shadow-xl shadow-[hsl(var(--color-primary))]/25 transition-all hover:-translate-y-1 active:scale-[0.98]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--color-primary))] to-[hsl(var(--color-primary-strong))]" />
+                {/* Shine effect */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-20 bg-gradient-to-r from-transparent via-white to-transparent -translate-x-full group-hover:translate-x-full transition-all duration-1000 ease-in-out" />
+                <span className="relative z-10 text-white text-[16px] font-black tracking-wide flex items-center justify-center gap-2">
+                  Book Appointment Now
+                </span>
+              </button>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {doctor.certificates.map((cert) => (
-                  <button 
-                    key={cert._id} 
-                    onClick={() => setDocModalUrl(cert.secure_url)}
-                    className="group block border border-[hsl(var(--color-border))] rounded-lg overflow-hidden bg-[hsl(var(--color-bg))] hover:border-[hsl(var(--color-primary))] transition-colors text-left"
-                  >
-                    <div className="aspect-[4/3] bg-black/5 relative flex items-center justify-center">
-                      {cert.secure_url.endsWith(".pdf") ? (
-                        <div className="text-center text-[hsl(var(--color-text-muted))]">
-                          <LuImage className="w-6 h-6 mx-auto mb-1 opacity-50" />
-                          <span className="text-[10px] font-semibold">PDF</span>
-                        </div>
-                      ) : (
-                        <img src={cert.secure_url} alt={cert.title} className="w-full h-full object-cover" />
-                      )}
-                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-bold">
-                        View
-                      </div>
-                    </div>
-                    <div className="p-2.5">
-                      <h4 className="font-bold text-[12px] truncate" title={cert.title}>{cert.title}</h4>
-                      <p className="text-[11px] text-[hsl(var(--color-text-muted))] truncate" title={cert.issuer}>{cert.issuer}</p>
-                    </div>
-                  </button>
-                ))}
+              <div className="w-full py-4 rounded-2xl bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] text-[14px] font-black text-center border border-[hsl(var(--color-success))]/20">
+                You have an upcoming appointment
               </div>
             )}
           </div>
 
-          {doctor.bio && (
-            <>
-              <div className="border-t border-dashed border-[hsl(var(--color-border))] my-4"></div>
-              <div className="py-2">
-                <p className="text-[12px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">About</p>
-                <p className="text-[14px] font-medium text-[hsl(var(--color-text))] leading-relaxed">
-                  {doctor.bio}
-                </p>
-              </div>
-            </>
+        </div>
+      </div>
+
+      {/* MOBILE STICKY BOOKING CTA */}
+      <div className="xl:hidden sticky bottom-6 mt-8 z-50 flex justify-center pointer-events-none px-4 pb-4">
+        <div className="pointer-events-auto w-full max-w-sm bg-white/90 dark:bg-[hsl(var(--color-bg-surface))/90] backdrop-blur-xl p-2 rounded-2xl border border-[hsl(var(--color-border))] shadow-[0_10px_40px_rgba(0,0,0,0.15)]">
+          {!hasBooked ? (
+            <button
+              onClick={onBook}
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[hsl(var(--color-primary))] to-[hsl(var(--color-primary-strong))] text-white text-[15px] font-black shadow-lg shadow-[hsl(var(--color-primary))]/30 active:scale-[0.98] transition-transform"
+            >
+              Book Appointment
+            </button>
+          ) : (
+            <div className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-success-bg))] text-[hsl(var(--color-success))] text-[14px] font-black text-center border border-[hsl(var(--color-success))]/20">
+              Appointment Booked
+            </div>
           )}
         </div>
       </div>
 
-      {/* Experience Stats Row (Simplified) */}
-      <div className="bg-[hsl(var(--color-bg-soft))] rounded-2xl p-4 md:p-5 border border-[hsl(var(--color-border))] text-center mt-8 mb-8 flex flex-col items-center justify-center max-w-sm mx-auto">
-        <p className="text-[11px] font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">Total Experience</p>
-        <p className="text-[16px] font-black text-[hsl(var(--color-text))]">
-          {doctor.experience != null ? `${doctor.experience}+ Years in Practice` : "Highly Experienced"}
-        </p>
-      </div>
-
-      {/* Book Button */}
-      {!hasBooked ? (
-        <button
-          onClick={onBook}
-          className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary-strong))] text-white text-[15px] font-black transition-all cursor-pointer shadow-lg shadow-[hsl(var(--color-primary)/0.2)]"
-        >
-          Book Appointment Now
-        </button>
-      ) : (
-        <div className="w-full py-3.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary-strong))] text-[15px] font-black transition-all text-center border border-[hsl(var(--color-primary)/0.2)]">
-          You already have an upcoming appointment with this doctor
-        </div>
-      )}
-
-      <DocumentModal 
-        url={docModalUrl} 
-        onClose={() => setDocModalUrl(null)} 
+      <DocumentModal
+        url={docModalUrl}
+        onClose={() => setDocModalUrl(null)}
         title="View Certificate"
       />
     </div>
