@@ -1,6 +1,6 @@
 "use client";
 
-import { LuLock } from "react-icons/lu";
+import { LuLock, LuPen } from "react-icons/lu";
 import { PayoutProfile } from "@/services/walletService";
 
 interface PayoutMethodsCardProps {
@@ -35,7 +35,16 @@ export default function PayoutMethodsCard({ payoutMethods, profile, onAddMethod 
                   <LuLock />
                 </div>
               </div>
-              <p className="text-sm font-bold tracking-wide text-[hsl(var(--color-text))]">{method.accountDetails}</p>
+              <div className="flex justify-between items-end mt-2">
+                <p className="text-sm font-bold tracking-wide text-[hsl(var(--color-text))]">{method.accountDetails}</p>
+                <button 
+                  onClick={onAddMethod}
+                  className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors p-1"
+                  title="Edit Method"
+                >
+                  <LuPen size={16} />
+                </button>
+              </div>
             </div>
           ))
         ) : profile?.paymentMethod ? (
@@ -49,7 +58,16 @@ export default function PayoutMethodsCard({ payoutMethods, profile, onAddMethod 
                 <LuLock />
               </div>
             </div>
-            <p className="text-sm font-bold tracking-wide text-[hsl(var(--color-text))]">{profile.accountDetails}</p>
+            <div className="flex justify-between items-end mt-2">
+              <p className="text-sm font-bold tracking-wide text-[hsl(var(--color-text))]">{profile.accountDetails}</p>
+              <button 
+                onClick={onAddMethod}
+                className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors p-1"
+                title="Edit Method"
+              >
+                <LuEdit size={16} />
+              </button>
+            </div>
           </div>
         ) : (
           <p className="text-[hsl(var(--color-text-muted))] text-sm font-medium">No approved payment methods yet.</p>
