@@ -37,6 +37,10 @@ interface RxBuilderProps {
   attachmentsInputRef?: RefObject<HTMLInputElement | null>;
   patientComplaint?: string;
   patientId?: string;
+  // Real-time patient profile data from the encounter screen (takes priority over DB)
+  allergies?: string[];
+  chronic?: string[];
+  surgeries?: { operationName: string; [key: string]: any }[];
 }
 
 // Handles writing the prescription, managing drugs, and uploading a paper Rx image
@@ -60,7 +64,10 @@ export default function RxBuilder({
   setAttachmentsMetadata,
   attachmentsInputRef,
   patientComplaint,
-  patientId
+  patientId,
+  allergies,
+  chronic,
+  surgeries
 }: RxBuilderProps) {
   
   const handleAddAttachments = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,7 +231,16 @@ export default function RxBuilder({
 
       const response = await axios.post(
         `${baseUrl}/ai/interactions`,
-        { currentDrugs, newDrugs, newComplaint: patientComplaint, patientId },
+        { 
+          currentDrugs, 
+          newDrugs, 
+          newComplaint: patientComplaint, 
+          patientId,
+          // Send real-time encounter data so AI uses latest allergy/chronic info
+          allergies: allergies || [],
+          chronic: chronic || [],
+          surgeries: surgeries || []
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
