@@ -18,6 +18,8 @@ const DEBOUNCE_MS = 350;
 export default function AdminUserManagementPage() {
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [pagination, setPagination] = useState<UsersPagination | null>(null);
+  const [roleCounts, setRoleCounts] = useState<Record<string, number>>({});
+  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,6 +61,8 @@ export default function AdminUserManagementPage() {
       });
       setUsers(res.data.users);
       setPagination(res.data.pagination);
+      if (res.data.roleCounts) setRoleCounts(res.data.roleCounts);
+      if (res.data.statusCounts) setStatusCounts(res.data.statusCounts);
     } catch (err: any) {
       setError(err?.message ?? "Failed to load users. Please try again.");
     } finally {
@@ -128,6 +132,8 @@ export default function AdminUserManagementPage() {
             setRoleFilter={setRoleFilter}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
+            roleCounts={roleCounts}
+            statusCounts={statusCounts}
           />
 
           {error && (

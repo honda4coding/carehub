@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { LuChevronLeft, LuShieldCheck, LuClock } from "react-icons/lu";
+import { LuChevronLeft, LuShieldCheck, LuClock, LuRefreshCw } from "react-icons/lu";
 import { adminService, PendingLicenseDoctor } from "@/services/adminService";
 import { fetchClient } from "@/services/fetchClient";
 import LicensePendingList from "@/components/admin/licenses/LicensePendingList";
@@ -78,43 +78,72 @@ export default function AdminLicensesPage() {
         title="License Updates"
         subtitle="Review new license submissions from approved doctors"
         showBack={true}
+        rightElement={
+          <button
+            onClick={() => {
+              fetchDoctors();
+              fetchReviewedItems();
+            }}
+            disabled={loading}
+            title="Refresh"
+            className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+          >
+            <LuRefreshCw className={`text-[14px] ${loading ? "animate-spin" : ""}`} />
+          </button>
+        }
       />
 
       <main className="flex-1 p-6">
-        {/* ── Stats strip ────────────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 gap-4 mb-6 max-w-sm">
-          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl px-4 py-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--color-warning-bg))] flex items-center justify-center shrink-0">
-              <LuClock className="w-4 h-4 text-[hsl(var(--color-warning))]" />
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Pending</p>
-              <p className="text-[18px] font-black text-[hsl(var(--color-text))]">{loading ? "—" : doctors.length}</p>
+        {/* ── Filter Tabs ────────────────────────────────────────────────────── */}
+        <div className="flex flex-col lg:flex-row lg:items-center gap-4 mb-6">
+          <div className="w-full lg:w-auto shrink-0">
+            <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
+              <button
+                onClick={() => setShowReviewed(false)}
+                className={`flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  !showReviewed
+                    ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
+                    : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+                }`}
+              >
+                Pending
+                <span
+                  className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
+                    !showReviewed
+                      ? "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
+                      : "bg-[hsl(var(--color-bg))] text-[hsl(var(--color-text-muted))]"
+                  }`}
+                >
+                  {loading ? "—" : doctors.length}
+                </span>
+              </button>
+
+              <button
+                onClick={() => setShowReviewed(true)}
+                className={`flex items-center justify-center gap-1.5 px-2 sm:px-3 py-1.5 rounded-[8px] text-[11px] sm:text-[12px] font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  showReviewed
+                    ? "bg-[hsl(var(--color-bg-surface))] text-[hsl(var(--color-text))] shadow-sm border border-[hsl(var(--color-border))]"
+                    : "text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]"
+                }`}
+              >
+                Reviewed
+                <span
+                  className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
+                    showReviewed
+                      ? "bg-[hsl(var(--color-secondary)/0.15)] text-[hsl(var(--color-secondary-strong))]"
+                      : "bg-[hsl(var(--color-bg))] text-[hsl(var(--color-text-muted))]"
+                  }`}
+                >
+                  {reviewedItems === null ? "—" : reviewedItems.length}
+                </span>
+              </button>
             </div>
           </div>
-
-          <button
-            onClick={() => setShowReviewed((s) => !s)}
-            className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl px-4 py-3 flex items-center gap-3 cursor-pointer hover:border-[hsl(var(--color-success)/0.4)] transition-all text-left"
-          >
-            <div className="w-8 h-8 rounded-xl bg-[hsl(var(--color-success-bg))] flex items-center justify-center shrink-0">
-              <LuShieldCheck className="w-4 h-4 text-[hsl(var(--color-success))]" />
-            </div>
-            <div>
-              <p className="text-[11px] font-semibold text-[hsl(var(--color-text-muted))]">Reviewed</p>
-              <p className="text-[18px] font-black text-[hsl(var(--color-text))]">
-                {reviewedItems === null ? "—" : reviewedItems.length}
-              </p>
-            </div>
-          </button>
         </div>
 
-        {/* ── Reviewed history ─────────────────────────────────────────────── */}
-        {showReviewed && (
+        {/* ── Content ─────────────────────────────────────────────── */}
+        {showReviewed ? (
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm mb-6">
-            <p className="text-[12px] font-black text-[hsl(var(--color-text))] uppercase tracking-[.07em] mb-3">
-              Recently Reviewed
-            </p>
             {!reviewedItems || reviewedItems.length === 0 ? (
               <p className="text-center text-[12px] text-[hsl(var(--color-text-muted))] py-6">
                 No reviewed license updates yet
@@ -151,27 +180,16 @@ export default function AdminLicensesPage() {
               </div>
             )}
           </div>
-        )}
-
-        {/* ── Error ──────────────────────────────────────────────────────────── */}
-        {error && (
-          <div className="mb-4 px-4 py-3 rounded-xl bg-[hsl(var(--color-danger-bg))] text-[hsl(var(--color-danger))] text-[13px] font-medium">
-            {error}
-            <button onClick={fetchDoctors} className="ml-2 underline font-bold text-[12px]">
-              Retry
-            </button>
+        ) : (
+          <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm overflow-x-auto">
+            <LicensePendingList
+              doctors={doctors}
+              loading={loading}
+              onApprove={handleApprove}
+              onReject={handleReject}
+            />
           </div>
         )}
-
-        {/* ── List ───────────────────────────────────────────────────────────── */}
-        <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 shadow-sm overflow-x-auto">
-          <LicensePendingList
-            doctors={doctors}
-            loading={loading}
-            onApprove={handleApprove}
-            onReject={handleReject}
-          />
-        </div>
       </main>
     </div>
   );

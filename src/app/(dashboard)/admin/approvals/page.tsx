@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/context/AuthContext";
 import LicenseViewerModal from "@/components/modals/LicenseViewerModal";
 import Pagination from "@/components/ui/Pagination";
@@ -9,6 +9,7 @@ import DashboardHeader from "@/components/global/DashboardHeader";
 import ApprovalsFilters, { ApprovalStatus } from "@/components/admin/approvals/ApprovalsFilters";
 import ApprovalsList, { DoctorApproval } from "@/components/admin/approvals/ApprovalsList";
 import RejectDoctorModal from "@/components/admin/approvals/RejectDoctorModal";
+import { LuRefreshCw } from "react-icons/lu";
 import { adminService } from "@/services/adminService";
 
 const ITEMS_PER_PAGE = 10;
@@ -44,27 +45,28 @@ export default function ApprovalsPage() {
 
   const [pagination, setPagination] = useState<{ totalPages: number; currentPage: number; totalRecords: number } | null>(null);
 
-  useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        setLoading(true);
-        const res = await adminService.getDoctors({
-          status: activeTab === "all" ? undefined : activeTab,
-          page: currentPage,
-          limit: ITEMS_PER_PAGE,
-          search: filter,
-        });
-        setDoctors(res.data || []);
-        setPagination(res.pagination ?? null);
-      } catch (err) {
-        console.error("Failed to fetch doctors", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (token) fetchDoctors();
+  const fetchDoctors = useCallback(async () => {
+    if (!token) return;
+    try {
+      setLoading(true);
+      const res = await adminService.getDoctors({
+        status: activeTab === "all" ? undefined : activeTab,
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        search: filter,
+      });
+      setDoctors(res.data || []);
+      setPagination(res.pagination ?? null);
+    } catch (err) {
+      console.error("Failed to fetch doctors", err);
+    } finally {
+      setLoading(false);
+    }
   }, [token, activeTab, currentPage, filter]);
+
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
 
   const handleApprove = async (id: string) => {
     setActionLoadingId(id);
@@ -140,7 +142,21 @@ export default function ApprovalsPage() {
   return (
     <>
       <div className="flex flex-col flex-1 min-h-screen">
-        <DashboardHeader title="Doctor Approvals" subtitle="Review and manage doctor registration requests" showBack={true} />
+        <DashboardHeader 
+          title="Doctor Approvals" 
+          subtitle="Review and manage doctor registration requests" 
+          showBack={true} 
+          rightElement={
+            <button
+              onClick={fetchDoctors}
+              disabled={loading}
+              title="Refresh"
+              className="w-[33px] h-[33px] rounded-[9px] border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))] flex items-center justify-center text-[hsl(var(--color-text-muted))] hover:bg-[hsl(var(--color-primary))] hover:text-white transition-all disabled:opacity-50 cursor-pointer"
+            >
+              <LuRefreshCw className={`text-[14px] ${loading ? "animate-spin" : ""}`} />
+            </button>
+          }
+        />
         <div className="flex-1 overflow-auto min-w-0 bg-[hsl(var(--color-bg))]">
           <div className="p-4 md:p-6 max-w-7xl mx-auto w-full">
 

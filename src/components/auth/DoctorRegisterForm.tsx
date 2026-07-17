@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Button } from "@/components/ui/Button";
 import { fetchClient } from "@/services/fetchClient";
+import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 
 const specialties = [
   { value: "general_practice", label: "General Practice" },
@@ -152,7 +153,7 @@ export default function DoctorRegisterForm() {
             leftIcon={<LuLock className="w-5 h-5" />}
             error={!!(formik.touched.password && formik.errors.password)}
           />
-          {formik.touched.password && formik.errors.password && <p className="text-[hsl(var(--color-danger))] text-xs mt-1 font-bold">{formik.errors.password}</p>}
+          {formik.values.password && <PasswordStrengthIndicator password={formik.values.password} />}
         </div>
         <div>
           <Label>Confirm <span className="text-[hsl(var(--color-danger))]">*</span></Label>

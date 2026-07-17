@@ -336,14 +336,14 @@ function ClinicsContent() {
                 <div className="flex flex-col gap-6">
                   {/* Unified Clinic Header & Switcher */}
                   <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-4 sm:p-5 flex flex-col gap-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
+                    <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                       
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-1 min-w-[280px]">
                         <div className="w-10 h-10 rounded-xl bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0 hidden sm:flex">
                           <LuBuilding2 className="text-[hsl(var(--color-primary))] text-xl" />
                         </div>
                         
-                        <div className="relative flex-1 sm:flex-none sm:w-[260px]">
+                        <div className="relative flex-1 sm:max-w-[260px] min-w-0">
                           <button
                             onClick={() => setClinicDropdownOpen(!clinicDropdownOpen)}
                             className="flex items-center justify-between w-full bg-[hsl(var(--color-bg-base))] border border-[hsl(var(--color-border))] hover:border-[hsl(var(--color-primary)/0.5)] text-[hsl(var(--color-text))] px-3 sm:px-4 py-2 sm:py-2.5 rounded-[12px] text-[13px] sm:text-[14px] font-black cursor-pointer shadow-sm transition-colors min-w-0"
@@ -416,7 +416,7 @@ function ClinicsContent() {
                       
                       <button
                         onClick={openAddModal}
-                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[13px] font-bold hover:bg-[hsl(var(--color-primary)/0.2)] transition-colors w-full md:w-auto shrink-0 cursor-pointer"
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] text-[13px] font-bold hover:bg-[hsl(var(--color-primary)/0.2)] transition-colors shrink-0 cursor-pointer w-full sm:w-auto"
                       >
                         <LuPlus className="text-base" /> Add Clinic
                       </button>
