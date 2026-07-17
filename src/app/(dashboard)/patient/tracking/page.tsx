@@ -49,7 +49,12 @@ function Skeleton() {
 
 export default function TrackingPage() {
   const { user } = useAuth();
-  const [records, setRecords] = useState<any[]>([]);
+  const [records, setRecords] = useState<any[]>([]); // For charts
+  const [tableRecords, setTableRecords] = useState<any[]>([]); // For table
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 5;
+
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{msg: string, type: "error"|"success"} | null>(null);
 
@@ -65,28 +70,50 @@ export default function TrackingPage() {
     notes: ""
   });
 
+  // Edit State
+  const [editingRecord, setEditingRecord] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState({
+    weight: "",
+    height: "",
+    bloodPressure: "",
+    bloodSugar: "",
+    temperature: "",
+    pulse: ""
+  });
+
   // Filter State
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   const fetchRecords = useCallback(async () => {
     try {
-      const { data } = await axios.get(`${BASE_URL}/patient/tracking`, { headers: authHeaders() });
+      // Fetch all records for charts
+      const { data } = await axios.get(`${BASE_URL}/patient/tracking?getAll=true`, { headers: authHeaders() });
       const result = data.data ?? [];
-      
       setRecords(result.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime()));
     } catch (err: any) {
-      setToast({ msg: err?.response?.data?.message ?? "Failed to load tracking records", type: "error" });
+      setToast({ msg: err?.response?.data?.message ?? "Failed to load tracking charts data", type: "error" });
+    }
+  }, []);
+
+  const fetchTableRecords = useCallback(async (page: number) => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/patient/tracking?page=${page}&limit=${limit}`, { headers: authHeaders() });
+      setTableRecords(data.data ?? []);
+      if (data.pagination) setTotalPages(data.pagination.pages);
+    } catch (err: any) {
+      setToast({ msg: err?.response?.data?.message ?? "Failed to load tracking table data", type: "error" });
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [limit]);
 
   useEffect(() => {
     if (user) {
         fetchRecords();
+        fetchTableRecords(currentPage);
     }
-  }, [user, fetchRecords]);
+  }, [user, fetchRecords, fetchTableRecords, currentPage]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,6 +133,8 @@ export default function TrackingPage() {
       await axios.post(`${BASE_URL}/patient/tracking`, payload, { headers: authHeaders() });
       setToast({ msg: "Record added successfully", type: "success" });
       fetchRecords();
+      fetchTableRecords(1);
+      setCurrentPage(1);
 
       setFormData({
         weight: "",
@@ -120,6 +149,62 @@ export default function TrackingPage() {
       setToast({ msg: err?.response?.data?.message ?? "Failed to add record", type: "error" });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleEditClick = (record: any) => {
+    setEditingRecord(record);
+    setEditFormData({
+      weight: record.weight ? String(record.weight) : "",
+      height: record.height ? String(record.height) : "",
+      bloodPressure: (record.bloodPressureSystolic && record.bloodPressureDiastolic) ? `${record.bloodPressureSystolic}/${record.bloodPressureDiastolic}` : "",
+      bloodSugar: record.bloodSugar ? String(record.bloodSugar) : "",
+      temperature: record.temperature ? String(record.temperature) : "",
+      pulse: record.pulse ? String(record.pulse) : ""
+    });
+  };
+
+  const handleUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingRecord) return;
+    setIsSubmitting(true);
+    try {
+      const payload: any = {};
+      Object.entries(editFormData).forEach(([k, v]) => {
+        if (v !== "" && k !== "bloodPressure") payload[k] = k === "notes" ? v : Number(v);
+        if (v === "") payload[k] = null; // To clear values if needed (requires backend support, but sending empty is fine or we just let it be)
+      });
+
+      if (editFormData.bloodPressure) {
+        const parts = editFormData.bloodPressure.split("/");
+        if (parts[0]) payload.bloodPressureSystolic = Number(parts[0]);
+        if (parts[1]) payload.bloodPressureDiastolic = Number(parts[1]);
+      } else {
+        payload.bloodPressureSystolic = null;
+        payload.bloodPressureDiastolic = null;
+      }
+
+      await axios.put(`${BASE_URL}/patient/tracking/${editingRecord._id}`, payload, { headers: authHeaders() });
+      setToast({ msg: "Record updated successfully", type: "success" });
+      setEditingRecord(null);
+      fetchRecords();
+      fetchTableRecords(currentPage);
+    } catch (err: any) {
+      setToast({ msg: err?.response?.data?.message ?? "Failed to update record", type: "error" });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this record?")) return;
+    try {
+      await axios.delete(`${BASE_URL}/patient/tracking/${id}`, { headers: authHeaders() });
+      setToast({ msg: "Record deleted successfully", type: "success" });
+      fetchRecords();
+      fetchTableRecords(currentPage);
+    } catch (err: any) {
+      setToast({ msg: err?.response?.data?.message ?? "Failed to delete record", type: "error" });
     }
   };
 
@@ -231,7 +316,7 @@ export default function TrackingPage() {
         showBack={true}
       />
 
-      <main className="flex-1 p-4 md:p-6 overflow-auto">
+      <main className="flex-1 p-4 pb-32 md:p-6 md:pb-32 overflow-auto">
         <div className="max-w-5xl mx-auto space-y-6">
         
         {/* TODAY'S STATUS BANNER */}
@@ -516,8 +601,184 @@ export default function TrackingPage() {
 
           </div>
         )}
+
+        {/* History Log Table */}
+        {!loading && tableRecords.length > 0 && (
+          <Card className="p-5 flex flex-col shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px mt-6">
+            <h3 className="text-[15px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] flex items-center gap-2 mb-4">
+              <LuCalendarDays className="text-[hsl(var(--color-primary))]" /> History Log
+            </h3>
+            
+            {/* Desktop Table (Hidden on mobile/tablet) */}
+            <div className="hidden lg:block overflow-x-auto w-full">
+              <table className="w-full text-left border-collapse text-[13px]">
+                <thead>
+                  <tr className="border-b border-[hsl(var(--color-border))] text-[hsl(var(--color-text-muted))]">
+                    <th className="p-3 font-bold uppercase tracking-widest">Date</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">Weight</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">Height</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">BP</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">Sugar</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">Temp</th>
+                    <th className="p-3 font-bold uppercase tracking-widest">Pulse</th>
+                    <th className="p-3 font-bold uppercase tracking-widest text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {tableRecords.map((record, i) => (
+                    <tr key={record._id || i} className="border-b border-[hsl(var(--color-border))] hover:bg-[hsl(var(--color-bg-soft))] transition-colors">
+                      <td className="p-3 font-medium whitespace-nowrap">{new Date(record.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                      <td className="p-3">{record.weight ? `${record.weight} kg` : '-'}</td>
+                      <td className="p-3">{record.height ? `${record.height} cm` : '-'}</td>
+                      <td className="p-3">{(record.bloodPressureSystolic && record.bloodPressureDiastolic) ? `${record.bloodPressureSystolic}/${record.bloodPressureDiastolic}` : '-'}</td>
+                      <td className="p-3">{record.bloodSugar ? `${record.bloodSugar} mg/dL` : '-'}</td>
+                      <td className="p-3">{record.temperature ? `${record.temperature} °C` : '-'}</td>
+                      <td className="p-3">{record.pulse ? `${record.pulse} bpm` : '-'}</td>
+                      <td className="p-3 text-right">
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => handleEditClick(record)} className="px-3 py-1.5 bg-[hsl(var(--color-primary))/0.1] text-[hsl(var(--color-primary))] hover:bg-[hsl(var(--color-primary))] hover:text-white rounded-md text-xs font-bold transition-colors">Edit</button>
+                          <button onClick={() => handleDelete(record._id)} className="px-3 py-1.5 bg-[hsl(var(--color-danger))/0.1] text-[hsl(var(--color-danger))] hover:bg-[hsl(var(--color-danger))] hover:text-white rounded-md text-xs font-bold transition-colors">Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile/Tablet Cards (Hidden on desktop) */}
+            <div className="flex flex-col gap-4 lg:hidden">
+              {tableRecords.map((record, i) => (
+                <div key={record._id || i} className="border border-[hsl(var(--color-border))] rounded-xl p-4 bg-[hsl(var(--color-bg-soft))]">
+                  <div className="flex justify-between items-center mb-3 pb-3 border-b border-[hsl(var(--color-border))]">
+                    <span className="font-bold text-[13px]">{new Date(record.date).toLocaleString('en-GB', { dateStyle: 'short', timeStyle: 'short' })}</span>
+                    <div className="flex gap-2">
+                      <button onClick={() => handleEditClick(record)} className="p-1.5 bg-[hsl(var(--color-primary))/0.1] text-[hsl(var(--color-primary))] rounded-md hover:bg-[hsl(var(--color-primary))] hover:text-white transition-colors"><LuActivity size={16} /></button>
+                      <button onClick={() => handleDelete(record._id)} className="p-1.5 bg-[hsl(var(--color-danger))/0.1] text-[hsl(var(--color-danger))] rounded-md hover:bg-[hsl(var(--color-danger))] hover:text-white transition-colors"><span className="text-[14px] leading-none block px-1">✕</span></button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-y-2 text-[12px]">
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">Weight</span>
+                      <span className="font-medium">{record.weight ? `${record.weight} kg` : '-'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">Height</span>
+                      <span className="font-medium">{record.height ? `${record.height} cm` : '-'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">BP</span>
+                      <span className="font-medium">{(record.bloodPressureSystolic && record.bloodPressureDiastolic) ? `${record.bloodPressureSystolic}/${record.bloodPressureDiastolic}` : '-'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">Sugar</span>
+                      <span className="font-medium">{record.bloodSugar ? `${record.bloodSugar} mg/dL` : '-'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">Temp</span>
+                      <span className="font-medium">{record.temperature ? `${record.temperature} °C` : '-'}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-[hsl(var(--color-text-muted))] uppercase tracking-wider font-bold text-[10px]">Pulse</span>
+                      <span className="font-medium">{record.pulse ? `${record.pulse} bpm` : '-'}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex justify-between items-center mt-6 pt-4 border-t border-[hsl(var(--color-border))]">
+                <button 
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  className="px-4 py-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-lg text-[13px] font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--color-border))] transition-colors"
+                >
+                  Previous
+                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] font-bold text-[hsl(var(--color-text-muted))]">
+                    Page <span className="text-[hsl(var(--color-text))]">{currentPage}</span> of {totalPages}
+                  </span>
+                </div>
+                <button 
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  className="px-4 py-2 bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] rounded-lg text-[13px] font-bold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--color-border))] transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </Card>
+        )}
         </div>
       </main>
+
+      {/* Edit Modal */}
+      {editingRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 animate-in fade-in duration-200">
+          <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto p-6 shadow-2xl relative">
+            <button 
+              onClick={() => setEditingRecord(null)}
+              className="absolute top-4 right-4 text-2xl text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-danger))] transition-colors"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-black mb-6 text-[hsl(var(--color-text))] flex items-center gap-2">
+              <LuActivity className="text-[hsl(var(--color-primary))]" /> Edit Vitals
+            </h2>
+            <form onSubmit={handleUpdate} className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuScale /> Weight (kg)</label>
+                <input type="number" step="0.1" min="20" max="300" value={editFormData.weight} onChange={e => setEditFormData({...editFormData, weight: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" />
+              </div>
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuRuler /> Height (cm)</label>
+                <input type="number" step="1" min="50" max="250" value={editFormData.height} onChange={e => setEditFormData({...editFormData, height: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" />
+              </div>
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuHeart /> Blood Pressure</label>
+                <input type="text" value={editFormData.bloodPressure} onChange={e => {
+                    let val = e.target.value.replace(/[^\d]/g, ""); 
+                    if (val.length > 3) val = val.substring(0, 3) + "/" + val.substring(3, 5);
+                    else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); 
+                    setEditFormData({...editFormData, bloodPressure: val});
+                  }} 
+                  className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" 
+                  maxLength={7}
+                />
+              </div>
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuDroplets /> Blood Sugar</label>
+                <input type="number" min="20" max="600" value={editFormData.bloodSugar} onChange={e => setEditFormData({...editFormData, bloodSugar: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" />
+              </div>
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuThermometer /> Temp (°C)</label>
+                <input type="text" value={editFormData.temperature} onChange={e => {
+                    let val = e.target.value.replace(/[^\d]/g, "");
+                    if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
+                    setEditFormData({...editFormData, temperature: val});
+                  }} 
+                  className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" 
+                  maxLength={4}
+                />
+              </div>
+              <div className="flex flex-col relative">
+                <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuActivity /> Pulse (bpm)</label>
+                <input type="number" min="30" max="250" value={editFormData.pulse} onChange={e => setEditFormData({...editFormData, pulse: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" />
+              </div>
+              <div className="sm:col-span-2 flex justify-end gap-3 mt-2">
+                <button type="button" onClick={() => setEditingRecord(null)} className="px-6 py-2.5 rounded-lg font-bold text-[14px] text-[hsl(var(--color-text))] bg-[hsl(var(--color-bg-soft))] hover:opacity-80 transition-opacity">Cancel</button>
+                <button type="submit" disabled={isSubmitting} className="px-6 py-2.5 rounded-lg font-bold text-[14px] text-white bg-[hsl(var(--color-primary))] hover:opacity-90 transition-opacity disabled:opacity-50">
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </button>
+              </div>
+            </form>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

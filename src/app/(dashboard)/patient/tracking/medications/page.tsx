@@ -62,6 +62,8 @@ export default function MedicationTrackingPage() {
     const [scheduleModalData, setScheduleModalData] = useState<any>(null);
     const [toast, setToast] = useState<{msg: string, type: 'success' | 'error' | 'info'} | null>(null);
     const [historyFilter, setHistoryFilter] = useState<'today' | 'week' | 'all'>('all');
+    const [historyPage, setHistoryPage] = useState(1);
+    const [historyTotalPages, setHistoryTotalPages] = useState(1);
     const [backdateVisible, setBackdateVisible] = useState<Record<string, boolean>>({});
     const [customTime, setCustomTime] = useState<Record<string, string>>({});
     const router = useRouter();
@@ -72,15 +74,13 @@ export default function MedicationTrackingPage() {
             if (!token) return;
             const headers = { Authorization: `Bearer ${token}` };
 
-            const [medsRes, histRes, summRes, rxRes] = await Promise.all([
+            const [medsRes, summRes, rxRes] = await Promise.all([
                 axios.get(`${BASE_URL}/patient/medications/active`, { headers }),
-                axios.get(`${BASE_URL}/patient/medications/history`, { headers }),
                 axios.get(`${BASE_URL}/patient/medications/summary`, { headers }),
                 axios.get(`${BASE_URL}/patient/prescriptions`, { headers }),
             ]);
 
             const active = medsRes.data.data ?? [];
-            const hist = histRes.data.data ?? [];
             const summ = summRes.data.data ?? null;
             const prescriptions = rxRes.data.data ?? (Array.isArray(rxRes.data) ? rxRes.data : []);
 
@@ -134,8 +134,8 @@ export default function MedicationTrackingPage() {
 
             setMedications(active);
             setPastMedications(pastMeds);
-            setHistory(hist);
             setSummary(summ);
+            await fetchHistory(1, 'all');
         } catch (err) {
             console.error("Failed to load medication data", err);
         } finally {
@@ -143,9 +143,27 @@ export default function MedicationTrackingPage() {
         }
     };
 
+    const fetchHistory = async (page = 1, filter = historyFilter) => {
+        try {
+            const token = Cookies.get(AUTH_COOKIE_NAME);
+            const res = await axios.get(`${BASE_URL}/patient/medications/history?page=${page}&limit=5&filter=${filter}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setHistory(res.data.data || []);
+            setHistoryTotalPages(res.data.pagination?.pages || 1);
+            setHistoryPage(page);
+        } catch (err) {
+            console.error("Failed to fetch history", err);
+        }
+    };
+
     useEffect(() => {
         fetchAllData();
     }, []);
+
+    useEffect(() => {
+        fetchHistory(1, historyFilter);
+    }, [historyFilter]);
 
     const handleTrack = async (med: ActiveMedication, status: 'taken' | 'missed', overrideTime?: string) => {
         try {
@@ -459,14 +477,7 @@ export default function MedicationTrackingPage() {
                                 </div>
                             ) : (
                                 <div className="divide-y divide-[hsl(var(--color-border))]">
-                                    {history.filter(record => {
-                                        if (historyFilter === 'all') return true;
-                                        const recordDate = new Date(record.scheduledDoseDateTime).setHours(0,0,0,0);
-                                        const today = new Date().setHours(0,0,0,0);
-                                        if (historyFilter === 'today') return recordDate === today;
-                                        if (historyFilter === 'week') return recordDate >= today - 7 * 86400000;
-                                        return true;
-                                    }).map((record) => {
+                                    {history.map((record) => {
                                         const med = medications.find(m => m.medicationId === record.medicationId) || pastMedications.find((m: any) => m.medicationId === record.medicationId);
                                         const medName = med ? med.medicineName : "Unknown Medication";
                                         
@@ -497,6 +508,29 @@ export default function MedicationTrackingPage() {
                                             </div>
                                         );
                                     })}
+                                </div>
+                            )}
+                            
+                            {/* Pagination Controls */}
+                            {historyTotalPages > 1 && (
+                                <div className="flex justify-between items-center p-4 border-t border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-surface))]">
+                                    <button 
+                                        onClick={() => fetchHistory(historyPage - 1)}
+                                        disabled={historyPage === 1}
+                                        className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50 hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-colors"
+                                    >
+                                        Prev
+                                    </button>
+                                    <span className="text-xs font-bold text-[hsl(var(--color-text-muted))]">
+                                        Page {historyPage} of {historyTotalPages}
+                                    </span>
+                                    <button 
+                                        onClick={() => fetchHistory(historyPage + 1)}
+                                        disabled={historyPage === historyTotalPages}
+                                        className="px-3 py-1.5 text-xs font-bold rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] disabled:opacity-50 hover:bg-[hsl(var(--color-primary))] hover:text-white hover:border-[hsl(var(--color-primary))] transition-colors"
+                                    >
+                                        Next
+                                    </button>
                                 </div>
                             )}
                         </Card>
