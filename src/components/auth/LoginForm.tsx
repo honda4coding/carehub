@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers, FieldProps } from "formik";
 import { useAuth } from "@/context/AuthContext";
 import { AuthCard } from "@/components/auth/AuthCard";
@@ -23,6 +24,7 @@ import {
 import { fetchClient } from "@/services/fetchClient";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [isBioSubmitting, setIsBioSubmitting] = useState(false);
@@ -105,6 +107,12 @@ export const LoginForm = () => {
       if (error.message === "validation error" && Array.isArray(error.error)) {
         errorMsg = error.error.map((e: any) => e.message).join(", ");
       }
+
+      if (errorMsg.includes("please confirm your email first")) {
+        router.push(`/verify-otp?email=${encodeURIComponent(values.email)}&type=confirm`);
+        return;
+      }
+
       setStatus(errorMsg);
     } finally {
       setSubmitting(false);
