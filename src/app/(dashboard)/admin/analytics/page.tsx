@@ -20,6 +20,8 @@ import SystemActivityBarChart from "@/components/admin/dashboard/SystemActivityB
 import DateRangeFilter from "@/components/ui/DateRangeFilter";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import FinancialOverview from "@/components/admin/dashboard/FinancialOverview";
+import SubscriptionPlansChart from "@/components/admin/dashboard/SubscriptionPlansChart";
+import { FinancialStats } from "@/types/admin";
 
 const COLORS = [
   "hsl(var(--color-primary))", 
@@ -40,6 +42,7 @@ export default function AnalyticsPage() {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
   const [dailyStats, setDailyStats] = useState<DailyStats[]>([]);
   const [pendingRequests, setPendingRequests] = useState<PendingDoctorRequest[]>([]);
+  const [financialStats, setFinancialStats] = useState<FinancialStats | null>(null);
   const [pendingLoading, setPendingLoading] = useState(true);
 
   useEffect(() => {
@@ -47,14 +50,16 @@ export default function AnalyticsPage() {
       setLoading(true);
       setPendingLoading(true);
       try {
-        const [res, pendingRes, dailyRes] = await Promise.all([
+        const [res, pendingRes, dailyRes, financialRes] = await Promise.all([
           adminService.getAnalyticsData(startDate, endDate),
           adminService.getPendingDoctors(startDate, endDate),
-          adminService.getDailyStats(startDate, endDate, true)
+          adminService.getDailyStats(startDate, endDate, true),
+          adminService.getFinancialStats(startDate, endDate)
         ]);
         setAnalyticsData(res.data);
         setPendingRequests(pendingRes.data);
         setDailyStats(dailyRes.data);
+        setFinancialStats(financialRes.data);
       } catch (error) {
         console.error("Failed to load analytics data", error);
       } finally {
@@ -100,7 +105,7 @@ export default function AnalyticsPage() {
         </div>
       ) : (
         <>
-          <FinancialOverview startDate={startDate} endDate={endDate} />
+          <FinancialOverview stats={financialStats} loading={loading} />
           
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
@@ -147,10 +152,16 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Bottom Row: Distribution & System Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
               {/* Specialty Distribution */}
               <SpecialtyPieChart
                 data={analyticsData?.doctorsBySpecialty || []}
+                colors={COLORS}
+              />
+
+              {/* Subscriptions by Plan */}
+              <SubscriptionPlansChart
+                data={financialStats?.subscriptions?.byPlan || []}
                 colors={COLORS}
               />
 

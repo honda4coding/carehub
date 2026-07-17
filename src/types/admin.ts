@@ -52,4 +52,11 @@ export interface FinancialStats {
   platformSubscriptionProfits: number;
   platformCancellationProfits: number;
   cancellationRate: number;
+  subscriptions?: {
+    active: number;
+    expired: number;
+    cancelled: number;
+    expiringSoon: number;
+    byPlan: Array<{ planName: string; count: number }>;
+  };
 }

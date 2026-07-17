@@ -13,27 +13,7 @@ import {
 import { LuChartPie } from "react-icons/lu";
 import { LuBanknote } from "react-icons/lu";
 
-export default function FinancialOverview({ startDate, endDate }: { startDate?: string; endDate?: string }) {
-  const [stats, setStats] = useState<FinancialStats | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await adminService.getFinancialStats(startDate, endDate);
-        setStats(res.data);
-      } catch (err: any) {
-        setError(err.message || "Failed to fetch financial stats");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchStats();
-  }, [startDate, endDate]);
-
+export default function FinancialOverview({ stats, loading }: { stats: FinancialStats | null; loading: boolean }) {
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
@@ -44,7 +24,7 @@ export default function FinancialOverview({ startDate, endDate }: { startDate?: 
     );
   }
 
-  if (error || !stats) {
+  if (!stats) {
     return null; // Silent fail or you can render an error state
   }
 
