@@ -9,6 +9,7 @@ import {
   LuPencil,
   LuTrash2,
 } from "react-icons/lu";
+import TimePickerSelect from "@/components/ui/TimePickerSelect";
 import { Button } from "@/components/ui/Button";
 import {
   Availability,
@@ -76,6 +77,7 @@ export default function ScheduleSetup({
   const [savingDay, setSavingDay] = useState<Day | null>(null);
   const [deletingDay, setDeletingDay] = useState<Day | null>(null);
   const prevTimeConfigRef = useRef<Partial<Record<Day, DayConfig>>>(timeConfig);
+  const saveTimersRef = useRef<Partial<Record<Day, ReturnType<typeof setTimeout>>>>({});
 
   // Load existing availability for this clinic on mount
   useEffect(() => {
@@ -116,6 +118,12 @@ export default function ScheduleSetup({
 
   async function toggleDay(day: Day) {
     if (selectedDays.has(day)) {
+      if (saveTimersRef.current[day]) {
+        clearTimeout(saveTimersRef.current[day]!);
+        delete saveTimersRef.current[day];
+        prevTimeConfigRef.current[day] = timeConfig[day];
+      }
+
       const id = savedIds[day];
       if (id) {
         const confirmed = window.confirm(
@@ -128,6 +136,11 @@ export default function ScheduleSetup({
         setSelectedDays((prev) => {
           const n = new Set(prev);
           n.delete(day);
+          return n;
+        });
+        setTimeConfig((prev) => {
+          const n = { ...prev };
+          delete n[day];
           return n;
         });
       }
@@ -170,15 +183,24 @@ export default function ScheduleSetup({
     });
 
     if (changedDays.length > 0) {
-      const timer = setTimeout(async () => {
-        for (const day of changedDays) {
-          if (selectedDays.has(day)) {
-            await handleSaveDay(day, true);
-          }
+      changedDays.forEach(day => {
+        if (saveTimersRef.current[day]) {
+          clearTimeout(saveTimersRef.current[day]!);
         }
-      }, 600);
-      return () => clearTimeout(timer);
+        if (selectedDays.has(day)) {
+          saveTimersRef.current[day] = setTimeout(async () => {
+            await handleSaveDay(day, true);
+            delete saveTimersRef.current[day];
+          }, 600);
+        }
+      });
     }
+
+    return () => {
+      Object.values(saveTimersRef.current).forEach(timer => {
+        if (timer) clearTimeout(timer);
+      });
+    };
   }, [timeConfig, selectedDays, loadingAvailability]);
 
   async function handleSaveDay(day: Day, isSilent: boolean = false) {
@@ -203,8 +225,22 @@ export default function ScheduleSetup({
           endTime: tc.endTime,
           appointmentDuration: tc.appointmentDuration,
         });
+        
         setSavedIds((prev) => ({ ...prev, [day]: saved._id }));
         if (!isSilent) onToast(`${DAY_LABELS[day]} availability saved`, "success");
+
+        // Clean up ghost record if the day was removed while we were saving
+        setSelectedDays(prev => {
+          if (!prev.has(day)) {
+            deleteAvailability(saved._id).catch(() => {});
+            setSavedIds(s => {
+              const n = { ...s };
+              delete n[day];
+              return n;
+            });
+          }
+          return prev;
+        });
       }
       prevTimeConfigRef.current[day] = { ...tc };
     } catch (err: any) {
@@ -369,35 +405,31 @@ export default function ScheduleSetup({
                       <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         Start Time
                       </label>
-                      <input
-                        type="time"
+                      <TimePickerSelect
                         value={tc?.startTime ?? "09:00"}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setTimeConfig((prev) => ({
                             ...prev,
                             [day]: {
                               ...prev[day]!,
-                              startTime: e.target.value,
+                              startTime: val,
                             },
                           }))
                         }
-                        className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] text-[14px] font-bold outline-none focus:border-[hsl(var(--color-primary))] transition-all"
                       />
                     </div>
                     <div>
                       <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         End Time
                       </label>
-                      <input
-                        type="time"
+                      <TimePickerSelect
                         value={tc?.endTime ?? "17:00"}
-                        onChange={(e) =>
+                        onChange={(val) =>
                           setTimeConfig((prev) => ({
                             ...prev,
-                            [day]: { ...prev[day]!, endTime: e.target.value },
+                            [day]: { ...prev[day]!, endTime: val },
                           }))
                         }
-                        className="w-full px-3 py-2.5 rounded-xl border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-base))] text-[14px] font-bold outline-none focus:border-[hsl(var(--color-primary))] transition-all"
                       />
                     </div>
                   </div>

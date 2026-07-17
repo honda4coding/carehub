@@ -48,8 +48,12 @@ export function slotDate(slot: Slot): string {
   return new Date(slot.startDateTime).toISOString().split("T")[0];
 }
 export function slotTime(isoString: string): string {
-  const d = new Date(isoString);
-  return `${d.getHours().toString().padStart(2,"0")}:${d.getMinutes().toString().padStart(2,"0")}`;
+  return new Date(isoString).toLocaleTimeString("en-EG", {
+    timeZone: "Africa/Cairo",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 }
 
 export type AppointmentStatus = "booked" | "completed" | "cancelled";
@@ -160,7 +164,7 @@ export async function setAvailability(payload: {
   appointmentDuration: number;
 }): Promise<Availability> {
   const res = await fetchClient.post(`${APPOINTMENTS_BASE}/availability`, payload);
-  return res.data ?? res;
+  return res.data?.availability ?? res.data ?? res;
 }
 
 export async function getMyAvailability(): Promise<Availability[]> {

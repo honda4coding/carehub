@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LuCamera, LuTrash2 } from "react-icons/lu";
 import { LuLoader } from "react-icons/lu";
 import { DoctorProfile, uploadDoctorAvatar, deleteDoctorAvatar } from "@/services/doctorService";
+import ImageCropperModal from "@/components/global/ImageCropperModal";
 
 interface Props {
   profile: DoctorProfile | null;
@@ -16,6 +17,7 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
   const [uploading, setUploading] = useState(false);
   const [deleting,  setDeleting]  = useState(false);
   const [error,     setError]     = useState("");
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const initials = profile?.fullName
     ? profile.fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -89,7 +91,10 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) handleUpload(file);
+              if (file) {
+                const imageUrl = URL.createObjectURL(file);
+                setSelectedImage(imageUrl);
+              }
               e.target.value = "";
             }}
           />
@@ -134,6 +139,17 @@ export default function DoctorAvatarSection({ profile, onUpdate }: Props) {
 
       {error && (
         <p className="text-danger text-xs font-medium mt-3">{error}</p>
+      )}
+
+      {selectedImage && (
+        <ImageCropperModal
+          imageSrc={selectedImage}
+          onConfirm={(croppedFile) => {
+            setSelectedImage(null);
+            handleUpload(croppedFile);
+          }}
+          onCancel={() => setSelectedImage(null)}
+        />
       )}
     </div>
   );
