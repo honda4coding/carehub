@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuActivity, LuPlus, LuTrendingUp, LuCalendarDays, LuHeart, LuDroplets, 
-  LuThermometer, LuScale, LuRuler, LuFlame, LuTrophy, LuMedal, LuStar, LuFilter, LuCheckCircle
+  LuThermometer, LuScale, LuRuler, LuFlame, LuTrophy, LuMedal, LuStar, LuFilter, LuCheck
 } from "react-icons/lu";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
@@ -236,9 +236,9 @@ export default function TrackingPage() {
         
         {/* TODAY'S STATUS BANNER */}
         {!loading && (
-          <div className={`p-4 rounded-2xl flex items-center justify-between border ${hasLoggedToday ? 'bg-[hsl(var(--color-success-bg))] border-[hsl(var(--color-success))/20 text-[hsl(var(--color-success))]' : 'bg-[hsl(var(--color-warning))/10] border-[hsl(var(--color-warning))/20 text-[hsl(var(--color-warning))]'}`}>
+          <div className={`p-4 rounded-2xl flex items-center justify-between border ${hasLoggedToday ? 'bg-[hsl(var(--color-success))/0.1] border-[hsl(var(--color-success))/0.2] text-[hsl(var(--color-success))]' : 'bg-[hsl(var(--color-warning))/0.1] border-[hsl(var(--color-warning))/0.2] text-[hsl(var(--color-warning))]'}`}>
             <div className="flex items-center gap-3">
-              {hasLoggedToday ? <LuCheckCircle className="text-2xl" /> : <LuActivity className="text-2xl animate-pulse" />}
+              {hasLoggedToday ? <LuCheck className="text-2xl" /> : <LuActivity className="text-2xl animate-pulse" />}
               <div>
                 <h3 className="font-bold text-[15px]">{hasLoggedToday ? "You're all set for today! 🎉" : "You haven't logged your vitals today"}</h3>
                 <p className="text-[13px] opacity-80">{hasLoggedToday ? "Great job keeping up with your health." : "Take a moment to record your health stats."}</p>
@@ -282,60 +282,60 @@ export default function TrackingPage() {
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
             
             {/* XP & Level Card */}
-            <Card className="xl:col-span-4 p-4 flex items-center gap-4 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
-              <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center border-2 border-[hsl(var(--color-primary))] shrink-0">
-                <span className="font-extrabold tracking-tighter text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
+            <Card className="xl:col-span-4 p-5 flex items-center gap-4">
+              <div className="w-14 h-14 rounded-full bg-[hsl(var(--color-primary)/0.1)] flex items-center justify-center shrink-0">
+                <span className="font-bold text-xl text-[hsl(var(--color-primary))]">{currentLevel}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap justify-between items-end mb-1 gap-x-2">
+                <div className="flex flex-wrap justify-between items-end mb-1.5 gap-x-2">
                   <h3 className="text-[15px] font-bold tracking-tight text-[hsl(var(--color-text))] truncate">Level {currentLevel} Tracker</h3>
-                  <span className="text-[13px] font-bold text-[hsl(var(--color-text-muted))] whitespace-nowrap">{xpInCurrentLevel} / 50 XP</span>
+                  <span className="text-[12px] font-semibold text-[hsl(var(--color-text-muted))] whitespace-nowrap">{xpInCurrentLevel} / 50 XP</span>
                 </div>
-                <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-2 overflow-hidden shadow-inner mt-1">
-                  <div className="bg-[hsl(var(--color-primary))] h-2 rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+                <div className="w-full bg-[hsl(var(--color-bg-soft))] rounded-full h-2 overflow-hidden">
+                  <div className="bg-[hsl(var(--color-primary))] h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%` }}></div>
                 </div>
               </div>
             </Card>
 
             {/* Streak Card */}
-            <Card className="xl:col-span-3 p-4 flex flex-wrap items-center justify-between gap-3 shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px">
+            <Card className="xl:col-span-3 p-5 flex flex-wrap items-center justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h3 className="text-[15px] font-bold tracking-tight text-[hsl(var(--color-text))] truncate">Current Streak</h3>
-                <p className="text-[12px] font-medium text-[hsl(var(--color-text-muted))] mt-0.5 line-clamp-2">Log daily to keep the fire alive!</p>
+                <p className="text-[12px] text-[hsl(var(--color-text-muted))] mt-0.5 line-clamp-2">Log daily to keep the fire alive!</p>
               </div>
-              <div className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] px-3 py-1.5 rounded-xl border border-[hsl(var(--color-border))] shadow-sm shrink-0">
-                <LuFlame className={`text-2xl ${currentStreak > 0 ? "text-[hsl(var(--color-warning))] animate-pulse" : "text-[hsl(var(--color-text-muted))]"}`} />
-                <span className={`text-xl font-extrabold tracking-tighter ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
+              <div className="flex flex-col items-center justify-center w-14 h-14 rounded-full bg-[hsl(var(--color-bg-soft))] shrink-0">
+                <LuFlame className={`text-[20px] ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`} />
+                <span className={`text-[13px] font-bold -mt-1 ${currentStreak > 0 ? "text-[hsl(var(--color-warning))]" : "text-[hsl(var(--color-text-muted))]"}`}>{currentStreak}</span>
               </div>
             </Card>
 
             {/* Badges Card */}
-            <Card className="xl:col-span-5 p-4 flex flex-col justify-center shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
-              <h3 className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-2 flex items-center gap-1"><LuTrophy /> Achievements</h3>
+            <Card className="xl:col-span-5 p-5 flex flex-col justify-center min-w-0">
+              <h3 className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-3 flex items-center gap-1.5"><LuTrophy /> Achievements</h3>
               <div className="flex items-center justify-around flex-wrap gap-2">
-                <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasBeginner ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasBeginner ? "bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-border))]"}`}>
                     <LuMedal className="text-xl" />
                   </div>
-                  <span className="text-xs font-semibold text-center w-16">First Log</span>
+                  <span className={`text-[11px] font-medium text-center w-16 ${hasBeginner ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"}`}>First Log</span>
                 </div>
-                <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasConsistent ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-warning))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasConsistent ? "bg-[hsl(var(--color-warning)/0.1)] text-[hsl(var(--color-warning))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-border))]"}`}>
                     <LuFlame className="text-xl" />
                   </div>
-                  <span className="text-xs font-semibold text-center w-16">3-Day Streak</span>
+                  <span className={`text-[11px] font-medium text-center w-16 ${hasConsistent ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"}`}>3-Day</span>
                 </div>
-                <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasHealthy ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasHealthy ? "bg-[hsl(var(--color-success)/0.1)] text-[hsl(var(--color-success))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-border))]"}`}>
                     <LuHeart className="text-xl" />
                   </div>
-                  <span className="text-xs font-semibold text-center w-16">Normal BMI</span>
+                  <span className={`text-[11px] font-medium text-center w-16 ${hasHealthy ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"}`}>Normal BMI</span>
                 </div>
-                <div className="flex flex-col items-center gap-1 group relative">
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border border-[hsl(var(--color-border))] transition-transform group-hover:scale-110 shadow-sm ${hasWizard ? "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-danger))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))]"}`}>
+                <div className="flex flex-col items-center gap-1.5">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${hasWizard ? "bg-[hsl(var(--color-danger)/0.1)] text-[hsl(var(--color-danger))]" : "bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-border))]"}`}>
                     <LuStar className="text-xl" />
                   </div>
-                  <span className="text-xs font-semibold text-center w-16">10 Logs</span>
+                  <span className={`text-[11px] font-medium text-center w-16 ${hasWizard ? "text-[hsl(var(--color-text))]" : "text-[hsl(var(--color-text-muted))]"}`}>10 Logs</span>
                 </div>
               </div>
             </Card>
@@ -349,68 +349,71 @@ export default function TrackingPage() {
           </div>
 
           <div className="lg:col-span-7 flex flex-col">
-            <Card className="p-6 h-full shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-float)] transition-all duration-300 hover:-translate-y-px min-w-0">
-          <h2 className="text-[16px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] mb-5 flex items-center gap-2 border-b border-[hsl(var(--color-border))] pb-3">
-            <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
-          </h2>
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
-              <input type="number" step="0.1" min="20" max="300" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.weight ? `Last: ${latestRecord.weight}` : "e.g. 75"} />
-            </div>
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
-              <input type="number" step="1" min="50" max="250" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.height ? `Last: ${latestRecord.height}` : "e.g. 175"} />
-            </div>
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
-              <input 
-                type="text" 
-                value={formData.bloodPressure} 
-                onChange={e => {
-                  let val = e.target.value.replace(/[^\d]/g, ""); 
-                  if (val.length > 3) val = val.substring(0, 3) + "/" + val.substring(3, 5);
-                  else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); 
-                  setFormData({...formData, bloodPressure: val});
-                }} 
-                className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isHighBP ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} 
-                placeholder={latestRecord?.bloodPressureSystolic ? `Last: ${latestRecord.bloodPressureSystolic}/${latestRecord.bloodPressureDiastolic}` : "120/80"} 
-                maxLength={7}
-              />
-              {isHighBP && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ High BP</span>}
-            </div>
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
-              <input type="number" min="20" max="600" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isHighSugar ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} placeholder={latestRecord?.bloodSugar ? `Last: ${latestRecord.bloodSugar}` : "mg/dL"} />
-              {isHighSugar && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ High Sugar</span>}
-            </div>
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
-              <input 
-                type="text" 
-                value={formData.temperature} 
-                onChange={e => {
-                  let val = e.target.value.replace(/[^\d]/g, "");
-                  if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
-                  setFormData({...formData, temperature: val});
-                }} 
-                className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isFever ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} 
-                placeholder={latestRecord?.temperature ? `Last: ${latestRecord.temperature}` : "37.5"} 
-                maxLength={4}
-              />
-              {isFever && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ Fever</span>}
-            </div>
-            <div className="flex flex-col relative">
-              <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
-              <input type="number" min="30" max="250" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.pulse ? `Last: ${latestRecord.pulse}` : "e.g. 72"} />
-            </div>
-            <div className="flex flex-col justify-end col-span-1 sm:col-span-2 xl:col-span-3 items-end mt-2">
-              <button disabled={isSubmitting} type="submit" className="w-full sm:w-auto cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:-translate-y-px shadow-sm hover:shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
-                {isSubmitting ? "Saving..." : <><LuPlus /> Log & Earn XP</>}
-              </button>
-            </div>
-          </form>
-        </Card>
+            <Card className="p-6 h-full flex flex-col justify-between">
+              <div className="mb-5 flex items-center justify-between border-b border-[hsl(var(--color-border))] pb-4">
+                <h2 className="text-[15px] font-bold tracking-tight uppercase text-[hsl(var(--color-text))] flex items-center gap-2">
+                  <LuPlus size={18} className="text-[hsl(var(--color-primary))]" />
+                  Log New Vitals
+                </h2>
+              </div>
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuScale /> Weight (kg)</label>
+                  <input type="number" step="0.1" min="20" max="300" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] transition-colors" placeholder={latestRecord?.weight ? `Last: ${latestRecord.weight}` : "e.g. 75"} />
+                </div>
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuRuler /> Height (cm)</label>
+                  <input type="number" step="1" min="50" max="250" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] transition-colors" placeholder={latestRecord?.height ? `Last: ${latestRecord.height}` : "e.g. 175"} />
+                </div>
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuHeart /> Blood Pressure</label>
+                  <input 
+                    type="text" 
+                    value={formData.bloodPressure} 
+                    onChange={e => {
+                      let val = e.target.value.replace(/[^\d]/g, ""); 
+                      if (val.length > 3) val = val.substring(0, 3) + "/" + val.substring(3, 5);
+                      else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); 
+                      setFormData({...formData, bloodPressure: val});
+                    }} 
+                    className={`w-full h-11 border rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none transition-colors ${isHighBP ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger))/0.05]' : 'border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]'}`} 
+                    placeholder={latestRecord?.bloodPressureSystolic ? `Last: ${latestRecord.bloodPressureSystolic}/${latestRecord.bloodPressureDiastolic}` : "120/80"} 
+                    maxLength={7}
+                  />
+                  {isHighBP && <span className="text-[10px] text-[hsl(var(--color-danger))] mt-1">⚠️ High BP</span>}
+                </div>
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuDroplets /> Blood Sugar</label>
+                  <input type="number" min="20" max="600" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className={`w-full h-11 border rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none transition-colors ${isHighSugar ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger))/0.05]' : 'border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]'}`} placeholder={latestRecord?.bloodSugar ? `Last: ${latestRecord.bloodSugar}` : "mg/dL"} />
+                  {isHighSugar && <span className="text-[10px] text-[hsl(var(--color-danger))] mt-1">⚠️ High Sugar</span>}
+                </div>
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuThermometer /> Temp (°C)</label>
+                  <input 
+                    type="text" 
+                    value={formData.temperature} 
+                    onChange={e => {
+                      let val = e.target.value.replace(/[^\d]/g, "");
+                      if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
+                      setFormData({...formData, temperature: val});
+                    }} 
+                    className={`w-full h-11 border rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none transition-colors ${isFever ? 'border-[hsl(var(--color-danger))] bg-[hsl(var(--color-danger))/0.05]' : 'border-[hsl(var(--color-border))] focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]'}`} 
+                    placeholder={latestRecord?.temperature ? `Last: ${latestRecord.temperature}` : "37.5"} 
+                    maxLength={4}
+                  />
+                  {isFever && <span className="text-[10px] text-[hsl(var(--color-danger))] mt-1">⚠️ Fever</span>}
+                </div>
+                <div className="flex flex-col relative">
+                  <label className="text-[11px] font-bold uppercase tracking-widest text-[hsl(var(--color-text-muted))] mb-1.5 flex items-center gap-1.5"><LuActivity /> Pulse (bpm)</label>
+                  <input type="number" min="30" max="250" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="w-full h-11 border border-[hsl(var(--color-border))] rounded-lg px-3 text-[14px] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] transition-colors" placeholder={latestRecord?.pulse ? `Last: ${latestRecord.pulse}` : "e.g. 72"} />
+                </div>
+                <div className="flex flex-col justify-end col-span-1 sm:col-span-2 xl:col-span-3 items-end mt-4">
+                  <button disabled={isSubmitting} type="submit" className="w-full sm:w-auto cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-[14px] px-8 py-2.5 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2">
+                    {isSubmitting ? "Saving..." : <><LuPlus size={18} /> Log & Earn XP</>}
+                  </button>
+                </div>
+              </form>
+            </Card>
       </div>
     </div>
 
@@ -431,10 +434,12 @@ export default function TrackingPage() {
 
         {loading ? <Skeleton /> : chartData.length === 0 ? (
           <div className="bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-2xl p-16 text-center">
-            <LuTrendingUp className="text-5xl text-[hsl(var(--color-border))] mx-auto mb-4" />
-            <p className="text-base font-bold text-[hsl(var(--color-text))]">No Data Found</p>
-            <p className="text-sm text-[hsl(var(--color-text-muted))] mt-1">
-              {records.length === 0 ? "Start logging your vitals above to see historical charts." : "No records match the selected dates."}
+            <div className="w-16 h-16 bg-[hsl(var(--color-bg-soft))] rounded-full flex items-center justify-center mx-auto mb-4">
+              <LuTrendingUp className="text-3xl text-[hsl(var(--color-text-muted))]" />
+            </div>
+            <p className="text-lg font-bold text-[hsl(var(--color-text))]">No Data Found</p>
+            <p className="text-[14px] text-[hsl(var(--color-text-muted))] mt-1 font-medium">
+              {records.length === 0 ? "Start logging your vitals above to unlock historical charts." : "No records match the selected dates."}
             </p>
           </div>
         ) : (

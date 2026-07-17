@@ -1,6 +1,4 @@
 "use client";
-import { useEffect } from "react";
-
 
 interface Props {
   message: string;
@@ -8,16 +6,10 @@ interface Props {
 }
 
 export default function Toast({ message, onClose }: Props) {
-  useEffect(() => {
-    const t = setTimeout(onClose, 4000);
-    return () => clearTimeout(t);
-  }, [onClose]);
-
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-danger-light border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl">
-      
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-2 bg-danger-light border border-red-200 text-red-700 text-[12px] font-bold px-4 py-3 rounded-xl shadow-lg">
       {message}
-      <button onClick={onClose} className="ml-2 text-red-400 hover:text-danger">✕</button>
+      <button onClick={onClose} className="ml-2 text-red-400 hover:text-danger font-bold transition-colors">✕</button>
     </div>
   );
 }

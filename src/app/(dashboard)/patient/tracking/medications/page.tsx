@@ -6,13 +6,13 @@ import Cookies from "js-cookie";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import { 
     LuPill, LuClock, LuCalendar, 
-    LuChevronLeft, LuFlame, LuActivity, LuHistory
+    LuChevronLeft, LuFlame, LuActivity, LuHistory, LuBell
 } from "react-icons/lu";
 import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import MedicationScheduleModal from "@/components/patients/MedicationScheduleModal";
-import DashboardHeader from "@/components/patients/DashboardHeader";
+import DashboardHeader from "@/components/global/DashboardHeader";
 import Toast from "@/components/patients/Toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
@@ -277,87 +277,97 @@ export default function MedicationTrackingPage() {
                                             </div>
                                         </div>
                                         
-                                        <div className="flex flex-wrap items-center gap-2">
-                                            {(() => {
-                                                const todaysRecord = history.find(r => r.medicationId === med.medicationId && new Date(r.scheduledDoseDateTime).setHours(0,0,0,0) === new Date().setHours(0,0,0,0));
-                                                if (todaysRecord) {
-                                                    return (
-                                                        <div className="flex items-center gap-2">
-                                                            <div className={`flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] ${todaysRecord.status === 'taken' ? 'text-[hsl(var(--color-success))]' : 'text-[hsl(var(--color-danger))]'} font-medium rounded-xl border border-[hsl(var(--color-border))]`}>
-                                                                {todaysRecord.status === 'taken' ? <FiCheckCircle size={18} /> : <FiXCircle size={18} />} 
-                                                                {todaysRecord.status === 'taken' ? 'Tracked' : 'Missed'}
+                                        <div className="flex flex-col items-start sm:items-end gap-2 mt-4 sm:mt-0">
+                                            <div className="flex flex-wrap items-center sm:justify-end gap-2 w-full">
+                                                {(() => {
+                                                    const todaysRecord = history.find(r => r.medicationId === med.medicationId && new Date(r.scheduledDoseDateTime).setHours(0,0,0,0) === new Date().setHours(0,0,0,0));
+                                                    if (todaysRecord) {
+                                                        return (
+                                                            <div className="flex items-center gap-2">
+                                                                <div className={`flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] ${todaysRecord.status === 'taken' ? 'text-[hsl(var(--color-success))]' : 'text-[hsl(var(--color-danger))]'} font-medium rounded-xl border border-[hsl(var(--color-border))]`}>
+                                                                    {todaysRecord.status === 'taken' ? <FiCheckCircle size={18} /> : <FiXCircle size={18} />} 
+                                                                    {todaysRecord.status === 'taken' ? 'Tracked' : 'Missed'}
+                                                                </div>
+                                                                <button 
+                                                                    onClick={() => handleUntrack(todaysRecord._id)}
+                                                                    className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 px-3 py-2 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] transition-colors cursor-pointer"
+                                                                >
+                                                                    <LuHistory size={14} /> Undo
+                                                                </button>
                                                             </div>
+                                                        );
+                                                    }
+                                                    return backdateVisible[med.medicationId] ? (
+                                                        <div className="flex items-center gap-2">
+                                                            <input 
+                                                                type="time" 
+                                                                className="px-3 py-1.5 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-sm outline-none focus:border-[hsl(var(--color-primary))]"
+                                                                value={customTime[med.medicationId] || ''}
+                                                                onChange={(e) => setCustomTime({...customTime, [med.medicationId]: e.target.value})}
+                                                            />
                                                             <button 
-                                                                onClick={() => handleUntrack(todaysRecord._id)}
-                                                                className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 px-3 py-2 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] transition-colors cursor-pointer"
+                                                                onClick={() => {
+                                                                    if (!customTime[med.medicationId]) return;
+                                                                    const d = new Date();
+                                                                    const [h, m] = customTime[med.medicationId].split(':');
+                                                                    d.setHours(parseInt(h), parseInt(m), 0, 0);
+                                                                    handleTrack(med, 'taken', d.toISOString());
+                                                                    setBackdateVisible({...backdateVisible, [med.medicationId]: false});
+                                                                    setCustomTime({...customTime, [med.medicationId]: ''});
+                                                                }}
+                                                                disabled={!customTime[med.medicationId] || actionLoading === med.medicationId}
+                                                                className="px-3 py-1.5 bg-[hsl(var(--color-primary))] text-white font-bold rounded-lg text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
                                                             >
-                                                                <LuHistory size={14} /> Undo
+                                                                Save
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => setBackdateVisible({...backdateVisible, [med.medicationId]: false})}
+                                                                className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] p-1"
+                                                            >
+                                                                <FiXCircle size={18} />
                                                             </button>
                                                         </div>
+                                                    ) : (
+                                                        <>
+                                                            <button 
+                                                                onClick={() => handleTrack(med, 'taken')}
+                                                                disabled={actionLoading === med.medicationId}
+                                                                className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
+                                                            >
+                                                                <FiCheckCircle size={18} /> Taken
+                                                            </button>
+                                                            <button 
+                                                                onClick={() => handleTrack(med, 'missed')}
+                                                                disabled={actionLoading === med.medicationId}
+                                                                className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
+                                                            >
+                                                                <FiXCircle size={18} /> Missed
+                                                            </button>
+                                                        </>
                                                     );
-                                                }
-                                                return backdateVisible[med.medicationId] ? (
-                                                    <div className="flex items-center gap-2">
-                                                        <input 
-                                                            type="time" 
-                                                            className="px-3 py-1.5 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-sm outline-none focus:border-[hsl(var(--color-primary))]"
-                                                            value={customTime[med.medicationId] || ''}
-                                                            onChange={(e) => setCustomTime({...customTime, [med.medicationId]: e.target.value})}
-                                                        />
-                                                        <button 
-                                                            onClick={() => {
-                                                                if (!customTime[med.medicationId]) return;
-                                                                const d = new Date();
-                                                                const [h, m] = customTime[med.medicationId].split(':');
-                                                                d.setHours(parseInt(h), parseInt(m), 0, 0);
-                                                                handleTrack(med, 'taken', d.toISOString());
-                                                                setBackdateVisible({...backdateVisible, [med.medicationId]: false});
-                                                                setCustomTime({...customTime, [med.medicationId]: ''});
-                                                            }}
-                                                            disabled={!customTime[med.medicationId] || actionLoading === med.medicationId}
-                                                            className="px-3 py-1.5 bg-[hsl(var(--color-primary))] text-white font-bold rounded-lg text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
-                                                        >
-                                                            Save
-                                                        </button>
-                                                        <button 
-                                                            onClick={() => setBackdateVisible({...backdateVisible, [med.medicationId]: false})}
-                                                            className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] p-1"
-                                                        >
-                                                            <FiXCircle size={18} />
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <>
-                                                        <button 
-                                                            onClick={() => handleTrack(med, 'taken')}
-                                                            disabled={actionLoading === med.medicationId}
-                                                            className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
-                                                        >
-                                                            <FiCheckCircle size={18} /> Taken
-                                                        </button>
-                                                        <button 
-                                                            onClick={() => handleTrack(med, 'missed')}
-                                                            disabled={actionLoading === med.medicationId}
-                                                            className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
-                                                        >
-                                                            <FiXCircle size={18} /> Missed
-                                                        </button>
+                                                })()}
+                                                
+                                                <button 
+                                                    onClick={() => setScheduleModalData(med)}
+                                                    className="flex items-center justify-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold rounded-xl transition-colors cursor-pointer border border-[hsl(var(--color-border))] shadow-sm"
+                                                >
+                                                    <LuBell size={18} /> Remind Me
+                                                </button>
+                                            </div>
+                                            {(() => {
+                                                const todaysRecord = history.find(r => r.medicationId === med.medicationId && new Date(r.scheduledDoseDateTime).setHours(0,0,0,0) === new Date().setHours(0,0,0,0));
+                                                if (!todaysRecord && !backdateVisible[med.medicationId]) {
+                                                    return (
                                                         <button 
                                                             onClick={() => setBackdateVisible({...backdateVisible, [med.medicationId]: true})}
-                                                            className="text-xs font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] underline underline-offset-2 ml-1"
+                                                            className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] underline underline-offset-4 mr-2 transition-colors mt-1"
                                                         >
                                                             Took it earlier?
                                                         </button>
-                                                    </>
-                                                );
+                                                    );
+                                                }
+                                                return null;
                                             })()}
-                                            
-                                            <button 
-                                                onClick={() => setScheduleModalData(med)}
-                                                className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:bg-[hsl(var(--color-primary)/0.1)] text-[hsl(var(--color-primary))] font-bold rounded-xl transition-colors cursor-pointer border border-[hsl(var(--color-border))] shadow-sm"
-                                            >
-                                                Remind Me
-                                            </button>
                                         </div>
                                     </div>
 

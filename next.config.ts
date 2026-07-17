@@ -51,13 +51,17 @@ const nextConfig: NextConfig = {
   },
 };
 
-const isDev = process.env.NODE_ENV === "development";
+const isProduction = process.env.NODE_ENV === "production";
 
-const finalConfig = withSerwistInit({
-  swSrc: "src/app/sw.ts",
-  swDest: "public/sw.js",
-  disable: false, // Enabled for both dev and production
-  additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
-})(nextConfig);
+let finalConfig = nextConfig;
+
+if (isProduction) {
+  finalConfig = withSerwistInit({
+    swSrc: "src/app/sw.ts",
+    swDest: "public/sw.js",
+    disable: false,
+    additionalPrecacheEntries: [{ url: "/~offline", revision: "1" }],
+  })(nextConfig);
+}
 
 export default finalConfig;
