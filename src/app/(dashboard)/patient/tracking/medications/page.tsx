@@ -12,6 +12,8 @@ import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import MedicationScheduleModal from "@/components/patients/MedicationScheduleModal";
+import DashboardHeader from "@/components/patients/DashboardHeader";
+import Toast from "@/components/patients/Toast";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
@@ -58,6 +60,10 @@ export default function MedicationTrackingPage() {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [scheduleModalData, setScheduleModalData] = useState<any>(null);
+    const [toast, setToast] = useState<{msg: string, type: 'success' | 'error' | 'info'} | null>(null);
+    const [historyFilter, setHistoryFilter] = useState<'today' | 'week' | 'all'>('all');
+    const [backdateVisible, setBackdateVisible] = useState<Record<string, boolean>>({});
+    const [customTime, setCustomTime] = useState<Record<string, string>>({});
     const router = useRouter();
 
     const fetchAllData = async () => {
@@ -141,12 +147,12 @@ export default function MedicationTrackingPage() {
         fetchAllData();
     }, []);
 
-    const handleTrack = async (med: ActiveMedication, status: 'taken' | 'missed') => {
+    const handleTrack = async (med: ActiveMedication, status: 'taken' | 'missed', overrideTime?: string) => {
         try {
             setActionLoading(med.medicationId);
             const token = Cookies.get(AUTH_COOKIE_NAME);
             
-            const scheduledDoseDateTime = new Date().toISOString();
+            const scheduledDoseDateTime = overrideTime || new Date().toISOString();
             
             const payload = {
                 prescriptionId: med.prescriptionId,
@@ -157,43 +163,55 @@ export default function MedicationTrackingPage() {
 
             const headers = { Authorization: `Bearer ${token}` };
             await axios.post(`${BASE_URL}/patient/medications/track`, payload, { headers });
+            setToast({ msg: `Dose marked as ${status}!`, type: 'success' });
             fetchAllData();
         } catch (err) {
             console.error("Failed to track medication", err);
+            setToast({ msg: "Failed to track dose.", type: 'error' });
         } finally {
             setActionLoading(null);
+        }
+    };
+
+    const handleUntrack = async (recordId: string) => {
+        try {
+            const token = Cookies.get(AUTH_COOKIE_NAME);
+            const headers = { Authorization: `Bearer ${token}` };
+            await axios.delete(`${BASE_URL}/patient/medications/track/${recordId}`, { headers });
+            setToast({ msg: "Tracking undone.", type: 'success' });
+            fetchAllData();
+        } catch (err) {
+            console.error("Failed to untrack", err);
+            setToast({ msg: "Failed to undo tracking.", type: 'error' });
         }
     };
 
     if (loading) {
         return (
             <div className="flex flex-col flex-1 p-6 animate-pulse">
-                <div className="h-8 bg-gray-200 w-1/4 rounded mb-8"></div>
+                <div className="h-8 bg-[hsl(var(--color-bg-soft))] w-1/4 rounded mb-8"></div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="h-32 bg-gray-200 rounded-xl"></div>
-                    <div className="h-32 bg-gray-200 rounded-xl"></div>
-                    <div className="h-32 bg-gray-200 rounded-xl"></div>
+                    <div className="h-32 bg-[hsl(var(--color-bg-soft))] rounded-xl"></div>
+                    <div className="h-32 bg-[hsl(var(--color-bg-soft))] rounded-xl"></div>
+                    <div className="h-32 bg-[hsl(var(--color-bg-soft))] rounded-xl"></div>
                 </div>
-                <div className="h-64 bg-gray-200 rounded-xl"></div>
+                <div className="h-64 bg-[hsl(var(--color-bg-soft))] rounded-xl"></div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))] p-4 md:p-8">
-            <div className="max-w-5xl w-full mx-auto">
-                <button 
-                    onClick={() => router.push("/patient")}
-                    className="flex items-center text-sm font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] transition-colors mb-6 cursor-pointer"
-                >
-                    <LuChevronLeft size={16} className="mr-1" />
-                    Back to Dashboard
-                </button>
+        <div className="flex flex-col flex-1 min-h-screen bg-[hsl(var(--color-bg-soft))]">
+            {toast && <Toast message={toast.msg} type={toast.type} onClose={() => setToast(null)} />}
+            
+            <DashboardHeader
+                title="Medication Organizer"
+                subtitle="Track your doses, monitor your adherence, and stay healthy."
+                showBack={true}
+            />
 
-                <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-[hsl(var(--color-text))] mb-2">Medication Organizer</h1>
-                    <p className="text-[hsl(var(--color-text-muted))] text-sm">Track your doses, monitor your adherence, and stay healthy.</p>
-                </div>
+            <main className="flex-1 p-4 md:p-6 overflow-auto">
+                <div className="max-w-5xl w-full mx-auto">
 
                 {summary && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -260,28 +278,79 @@ export default function MedicationTrackingPage() {
                                         </div>
                                         
                                         <div className="flex flex-wrap items-center gap-2">
-                                            {med.hasTrackedToday ? (
-                                                <div className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text-muted))] font-medium rounded-xl border border-[hsl(var(--color-border))]">
-                                                    <FiCheckCircle size={18} /> Tracked Today
-                                                </div>
-                                            ) : (
-                                                <>
-                                                    <button 
-                                                        onClick={() => handleTrack(med, 'taken')}
-                                                        disabled={actionLoading === med.medicationId}
-                                                        className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
-                                                    >
-                                                        <FiCheckCircle size={18} /> Taken
-                                                    </button>
-                                                    <button 
-                                                        onClick={() => handleTrack(med, 'missed')}
-                                                        disabled={actionLoading === med.medicationId}
-                                                        className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
-                                                    >
-                                                        <FiXCircle size={18} /> Missed
-                                                    </button>
-                                                </>
-                                            )}
+                                            {(() => {
+                                                const todaysRecord = history.find(r => r.medicationId === med.medicationId && new Date(r.scheduledDoseDateTime).setHours(0,0,0,0) === new Date().setHours(0,0,0,0));
+                                                if (todaysRecord) {
+                                                    return (
+                                                        <div className="flex items-center gap-2">
+                                                            <div className={`flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] ${todaysRecord.status === 'taken' ? 'text-[hsl(var(--color-success))]' : 'text-[hsl(var(--color-danger))]'} font-medium rounded-xl border border-[hsl(var(--color-border))]`}>
+                                                                {todaysRecord.status === 'taken' ? <FiCheckCircle size={18} /> : <FiXCircle size={18} />} 
+                                                                {todaysRecord.status === 'taken' ? 'Tracked' : 'Missed'}
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => handleUntrack(todaysRecord._id)}
+                                                                className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 px-3 py-2 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] transition-colors cursor-pointer"
+                                                            >
+                                                                <LuHistory size={14} /> Undo
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                }
+                                                return backdateVisible[med.medicationId] ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <input 
+                                                            type="time" 
+                                                            className="px-3 py-1.5 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-sm outline-none focus:border-[hsl(var(--color-primary))]"
+                                                            value={customTime[med.medicationId] || ''}
+                                                            onChange={(e) => setCustomTime({...customTime, [med.medicationId]: e.target.value})}
+                                                        />
+                                                        <button 
+                                                            onClick={() => {
+                                                                if (!customTime[med.medicationId]) return;
+                                                                const d = new Date();
+                                                                const [h, m] = customTime[med.medicationId].split(':');
+                                                                d.setHours(parseInt(h), parseInt(m), 0, 0);
+                                                                handleTrack(med, 'taken', d.toISOString());
+                                                                setBackdateVisible({...backdateVisible, [med.medicationId]: false});
+                                                                setCustomTime({...customTime, [med.medicationId]: ''});
+                                                            }}
+                                                            disabled={!customTime[med.medicationId] || actionLoading === med.medicationId}
+                                                            className="px-3 py-1.5 bg-[hsl(var(--color-primary))] text-white font-bold rounded-lg text-sm transition-opacity hover:opacity-90 disabled:opacity-50"
+                                                        >
+                                                            Save
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => setBackdateVisible({...backdateVisible, [med.medicationId]: false})}
+                                                            className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] p-1"
+                                                        >
+                                                            <FiXCircle size={18} />
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <>
+                                                        <button 
+                                                            onClick={() => handleTrack(med, 'taken')}
+                                                            disabled={actionLoading === med.medicationId}
+                                                            className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-success))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
+                                                        >
+                                                            <FiCheckCircle size={18} /> Taken
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => handleTrack(med, 'missed')}
+                                                            disabled={actionLoading === med.medicationId}
+                                                            className="flex items-center gap-1.5 px-4 py-2 bg-[hsl(var(--color-bg-soft))] hover:opacity-80 text-[hsl(var(--color-danger))] font-medium rounded-xl transition-opacity disabled:opacity-50 cursor-pointer border border-[hsl(var(--color-border))]"
+                                                        >
+                                                            <FiXCircle size={18} /> Missed
+                                                        </button>
+                                                        <button 
+                                                            onClick={() => setBackdateVisible({...backdateVisible, [med.medicationId]: true})}
+                                                            className="text-xs font-medium text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] underline underline-offset-2 ml-1"
+                                                        >
+                                                            Took it earlier?
+                                                        </button>
+                                                    </>
+                                                );
+                                            })()}
                                             
                                             <button 
                                                 onClick={() => setScheduleModalData(med)}
@@ -361,10 +430,17 @@ export default function MedicationTrackingPage() {
 
                     {/* History */}
                     <div>
-                        <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2 mb-6">
-                            <LuCalendar className="text-[hsl(var(--color-primary))]" size={20} />
-                            Recent Activity
-                        </h2>
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
+                                <LuCalendar className="text-[hsl(var(--color-primary))]" size={20} />
+                                Recent Activity
+                            </h2>
+                            <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-soft))] p-1 rounded-lg border border-[hsl(var(--color-border))]">
+                                <button onClick={() => setHistoryFilter('today')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'today' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Today</button>
+                                <button onClick={() => setHistoryFilter('week')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'week' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Week</button>
+                                <button onClick={() => setHistoryFilter('all')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'all' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>All</button>
+                            </div>
+                        </div>
                         
                         <Card className="overflow-hidden">
                             {history.length === 0 ? (
@@ -373,8 +449,15 @@ export default function MedicationTrackingPage() {
                                 </div>
                             ) : (
                                 <div className="divide-y divide-[hsl(var(--color-border))]">
-                                    {history.map((record) => {
-                                        const med = medications.find(m => m.medicationId === record.medicationId);
+                                    {history.filter(record => {
+                                        if (historyFilter === 'all') return true;
+                                        const recordDate = new Date(record.scheduledDoseDateTime).setHours(0,0,0,0);
+                                        const today = new Date().setHours(0,0,0,0);
+                                        if (historyFilter === 'today') return recordDate === today;
+                                        if (historyFilter === 'week') return recordDate >= today - 7 * 86400000;
+                                        return true;
+                                    }).map((record) => {
+                                        const med = medications.find(m => m.medicationId === record.medicationId) || pastMedications.find((m: any) => m.medicationId === record.medicationId);
                                         const medName = med ? med.medicineName : "Unknown Medication";
                                         
                                         return (
@@ -429,6 +512,7 @@ export default function MedicationTrackingPage() {
                     }
                 }}
             />
+        </main>
         </div>
     );
 }

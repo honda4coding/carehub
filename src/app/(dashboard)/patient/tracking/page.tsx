@@ -7,7 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { AUTH_COOKIE_NAME } from "@/constants/auth";
 import {
   LuActivity, LuPlus, LuTrendingUp, LuCalendarDays, LuHeart, LuDroplets, 
-  LuThermometer, LuScale, LuRuler, LuFlame, LuTrophy, LuMedal, LuStar, LuFilter
+  LuThermometer, LuScale, LuRuler, LuFlame, LuTrophy, LuMedal, LuStar, LuFilter, LuCheckCircle
 } from "react-icons/lu";
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, Legend
@@ -170,6 +170,30 @@ export default function TrackingPage() {
   const hasHealthy = currentBMI !== null && currentBMI >= 18.5 && currentBMI <= 24.9;
   const hasWizard = records.length >= 10;
 
+  // Today's Status
+  const hasLoggedToday = records.some(r => new Date(r.date).setHours(0,0,0,0) === new Date().setHours(0,0,0,0));
+
+  // Quick Stats Validation & Colors
+  const getBPColor = (sys: number, dia: number) => {
+    if (sys > 140 || dia > 90) return 'text-[hsl(var(--color-danger))]';
+    if (sys > 120 || dia > 80) return 'text-[hsl(var(--color-warning))]';
+    return 'text-[hsl(var(--color-success))]';
+  };
+  const getSugarColor = (sugar: number) => {
+    if (sugar > 140) return 'text-[hsl(var(--color-danger))]';
+    if (sugar < 70) return 'text-[hsl(var(--color-warning))]';
+    return 'text-[hsl(var(--color-success))]';
+  };
+  const getPulseColor = (pulse: number) => {
+    if (pulse > 100 || pulse < 60) return 'text-[hsl(var(--color-warning))]';
+    return 'text-[hsl(var(--color-success))]';
+  };
+
+  // Form Warnings
+  const isHighBP = formData.bloodPressure && (parseInt(formData.bloodPressure.split('/')[0]) > 140 || parseInt(formData.bloodPressure.split('/')[1]) > 90);
+  const isHighSugar = formData.bloodSugar && parseInt(formData.bloodSugar) > 200;
+  const isFever = formData.temperature && parseFloat(formData.temperature) > 38.0;
+
   // Chart Data Processing (with filters)
   const chartData = useMemo(() => {
     let filtered = records;
@@ -210,6 +234,49 @@ export default function TrackingPage() {
       <main className="flex-1 p-4 md:p-6 overflow-auto">
         <div className="max-w-5xl mx-auto space-y-6">
         
+        {/* TODAY'S STATUS BANNER */}
+        {!loading && (
+          <div className={`p-4 rounded-2xl flex items-center justify-between border ${hasLoggedToday ? 'bg-[hsl(var(--color-success-bg))] border-[hsl(var(--color-success))/20 text-[hsl(var(--color-success))]' : 'bg-[hsl(var(--color-warning))/10] border-[hsl(var(--color-warning))/20 text-[hsl(var(--color-warning))]'}`}>
+            <div className="flex items-center gap-3">
+              {hasLoggedToday ? <LuCheckCircle className="text-2xl" /> : <LuActivity className="text-2xl animate-pulse" />}
+              <div>
+                <h3 className="font-bold text-[15px]">{hasLoggedToday ? "You're all set for today! 🎉" : "You haven't logged your vitals today"}</h3>
+                <p className="text-[13px] opacity-80">{hasLoggedToday ? "Great job keeping up with your health." : "Take a moment to record your health stats."}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* QUICK STATS ROW */}
+        {!loading && latestRecord && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <Card className="p-4 flex flex-col items-center justify-center shadow-[var(--shadow-card)]">
+              <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">Blood Pressure</span>
+              <span className={`text-xl font-black ${latestRecord.bloodPressureSystolic ? getBPColor(latestRecord.bloodPressureSystolic, latestRecord.bloodPressureDiastolic) : 'text-[hsl(var(--color-text))]'}`}>
+                {latestRecord.bloodPressureSystolic ? `${latestRecord.bloodPressureSystolic}/${latestRecord.bloodPressureDiastolic}` : '-'}
+              </span>
+            </Card>
+            <Card className="p-4 flex flex-col items-center justify-center shadow-[var(--shadow-card)]">
+              <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">Pulse</span>
+              <span className={`text-xl font-black ${latestRecord.pulse ? getPulseColor(latestRecord.pulse) : 'text-[hsl(var(--color-text))]'}`}>
+                {latestRecord.pulse ? `${latestRecord.pulse} bpm` : '-'}
+              </span>
+            </Card>
+            <Card className="p-4 flex flex-col items-center justify-center shadow-[var(--shadow-card)]">
+              <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">Blood Sugar</span>
+              <span className={`text-xl font-black ${latestRecord.bloodSugar ? getSugarColor(latestRecord.bloodSugar) : 'text-[hsl(var(--color-text))]'}`}>
+                {latestRecord.bloodSugar ? `${latestRecord.bloodSugar} mg/dL` : '-'}
+              </span>
+            </Card>
+            <Card className="p-4 flex flex-col items-center justify-center shadow-[var(--shadow-card)]">
+              <span className="text-xs font-bold text-[hsl(var(--color-text-muted))] uppercase tracking-wider mb-1">BMI</span>
+              <span className={`text-xl font-black ${bmiColor}`}>
+                {currentBMI ? currentBMI : '-'}
+              </span>
+            </Card>
+          </div>
+        )}
+
         {/* GAMIFICATION BANNER */}
         {!loading && (
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">
@@ -287,15 +354,15 @@ export default function TrackingPage() {
             <LuPlus className="text-[hsl(var(--color-primary))]" /> Log New Vitals
           </h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuScale /> Weight (kg)</label>
-              <input type="number" step="0.1" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 75" />
+              <input type="number" step="0.1" min="20" max="300" value={formData.weight} onChange={e => setFormData({...formData, weight: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.weight ? `Last: ${latestRecord.weight}` : "e.g. 75"} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuRuler /> Height (cm)</label>
-              <input type="number" step="1" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 175" />
+              <input type="number" step="1" min="50" max="250" value={formData.height} onChange={e => setFormData({...formData, height: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.height ? `Last: ${latestRecord.height}` : "e.g. 175"} />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuHeart /> Blood Pressure</label>
               <input 
                 type="text" 
@@ -306,16 +373,18 @@ export default function TrackingPage() {
                   else if (val.length > 2 && val.startsWith("9")) val = val.substring(0, 2) + "/" + val.substring(2, 4); 
                   setFormData({...formData, bloodPressure: val});
                 }} 
-                className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" 
-                placeholder="120/80" 
+                className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isHighBP ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} 
+                placeholder={latestRecord?.bloodPressureSystolic ? `Last: ${latestRecord.bloodPressureSystolic}/${latestRecord.bloodPressureDiastolic}` : "120/80"} 
                 maxLength={7}
               />
+              {isHighBP && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ High BP</span>}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuDroplets /> Blood Sugar</label>
-              <input type="number" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="mg/dL" />
+              <input type="number" min="20" max="600" value={formData.bloodSugar} onChange={e => setFormData({...formData, bloodSugar: e.target.value})} className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isHighSugar ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} placeholder={latestRecord?.bloodSugar ? `Last: ${latestRecord.bloodSugar}` : "mg/dL"} />
+              {isHighSugar && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ High Sugar</span>}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuThermometer /> Temp (°C)</label>
               <input 
                 type="text" 
@@ -325,14 +394,15 @@ export default function TrackingPage() {
                   if (val.length > 2) val = val.substring(0, 2) + "." + val.substring(2, 3);
                   setFormData({...formData, temperature: val});
                 }} 
-                className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" 
-                placeholder="37.5" 
+                className={`border rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))] ${isFever ? 'border-[hsl(var(--color-danger))]' : 'border-[hsl(var(--color-border))]'}`} 
+                placeholder={latestRecord?.temperature ? `Last: ${latestRecord.temperature}` : "37.5"} 
                 maxLength={4}
               />
+              {isFever && <span className="text-[10px] text-[hsl(var(--color-danger))] font-bold absolute -bottom-4 left-1">⚠️ Fever</span>}
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col relative">
               <label className="text-xs font-bold uppercase tracking-wide text-[hsl(var(--color-text-muted))] mb-1 flex items-center gap-1"><LuActivity /> Pulse (bpm)</label>
-              <input type="number" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder="e.g. 72" />
+              <input type="number" min="30" max="250" value={formData.pulse} onChange={e => setFormData({...formData, pulse: e.target.value})} className="border border-[hsl(var(--color-border))] rounded-xl px-3 py-2 text-sm outline-none focus:border-[hsl(var(--color-primary))] bg-[hsl(var(--color-bg-soft))]" placeholder={latestRecord?.pulse ? `Last: ${latestRecord.pulse}` : "e.g. 72"} />
             </div>
             <div className="flex flex-col justify-end col-span-1 sm:col-span-2 xl:col-span-3 items-end mt-2">
               <button disabled={isSubmitting} type="submit" className="w-full sm:w-auto cursor-pointer bg-[hsl(var(--color-primary))] text-white font-bold text-sm px-6 py-2.5 rounded-xl hover:opacity-90 transition-all duration-300 hover:-translate-y-px shadow-sm hover:shadow-md disabled:opacity-50 flex items-center justify-center gap-2">
