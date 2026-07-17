@@ -193,7 +193,7 @@ React.useEffect(() => {
                       style={{
                         border: "1.5px solid transparent",
                         backgroundColor: "white",
-                        color: "hsl(var(--color-text))",
+                        color: "#0f172a",
                       }}
                     />
                   </div>
@@ -220,7 +220,7 @@ React.useEffect(() => {
                         errors.code && touched.code
                           ? "1.5px solid #fc8181"
                           : "1.5px solid transparent",
-                      color: "hsl(var(--color-text))",
+                      color: "#0f172a",
                     }}
                   />
                   <ErrorMessage
@@ -296,7 +296,7 @@ React.useEffect(() => {
                       style={{
                         border: "1.5px solid transparent",
                         backgroundColor: "white",
-                        color: "hsl(var(--color-text))",
+                        color: "#0f172a",
                       }}
                     />
                   </div>
@@ -357,7 +357,7 @@ React.useEffect(() => {
                           errors.newpassword && touched.newpassword
                             ? "1.5px solid #fc8181"
                             : "1.5px solid transparent",
-                        color: "hsl(var(--color-text))",
+                        color: "#0f172a",
                       }}
                     />
                   </div>
@@ -392,7 +392,7 @@ React.useEffect(() => {
                           errors.cpassword && touched.cpassword
                             ? "1.5px solid #fc8181"
                             : "1.5px solid transparent",
-                        color: "hsl(var(--color-text))",
+                        color: "#0f172a",
                       }}
                     />
                   </div>

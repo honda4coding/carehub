@@ -105,7 +105,7 @@ export default function ForgotPasswordPage() {
                       border: errors.email && touched.email
                         ? "1.5px solid #fc8181"
                         : "1.5px solid transparent",
-                      color: "hsl(var(--color-text))",
+                      color: "#0f172a",
                     }}
                   />
                 </div>

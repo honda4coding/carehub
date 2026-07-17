@@ -5,6 +5,7 @@ import Image from "next/image";
 import { LuCamera, LuTrash2 } from "react-icons/lu";
 import { LuLoader } from "react-icons/lu";
 import { PatientProfile, uploadPatientAvatar, deletePatientAvatar } from "@/services/patientService";
+import ImageCropperModal from "@/components/ui/ImageCropperModal";
 
 interface AvatarSectionProps {
   profile: PatientProfile | null;
@@ -16,6 +17,7 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
   const [uploading, setUploading] = useState(false);
   const [deleting,  setDeleting]  = useState(false);
   const [error,     setError]     = useState("");
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string | null>(null);
 
   const initials = profile?.fullName
     ? profile.fullName.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
@@ -89,7 +91,13 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
             className="hidden"
             onChange={(e) => {
               const file = e.target.files?.[0];
-              if (file) handleUpload(file);
+              if (file) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                  setSelectedImageSrc(reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
               e.target.value = "";
             }}
           />
@@ -135,7 +143,17 @@ export default function AvatarSection({ profile, onUpdate }: AvatarSectionProps)
       {error && (
         <p className="text-danger text-xs font-medium mt-3">{error}</p>
       )}
+
+      {selectedImageSrc && (
+        <ImageCropperModal
+          isOpen={!!selectedImageSrc}
+          onClose={() => setSelectedImageSrc(null)}
+          imageSrc={selectedImageSrc}
+          onCropComplete={(croppedFile) => {
+            handleUpload(croppedFile);
+          }}
+        />
+      )}
     </div>
   );
 }
-
