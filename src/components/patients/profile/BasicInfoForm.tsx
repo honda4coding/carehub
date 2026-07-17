@@ -124,13 +124,12 @@ export default function BasicInfoForm({ profile, onSaveSuccess }: Props) {
               {/* Full Name */}
               <EditField name="fullName" label="Full Name" icon={<LuUser />} placeholder="John Doe" errors={errors} touched={touched} />
 
-              {/* Email â€” read only */}
+              {/* Email — read only */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-[13px] font-semibold text-[hsl(var(--color-text-muted))]">
                   <LuMail className="w-4 h-4" /> Email
                 </label>
                 <div className="w-full px-4 py-3 rounded-xl text-[13px] text-[hsl(var(--color-text-muted))] bg-[hsl(var(--color-bg-soft))] border border-[hsl(var(--color-border))] select-none">
-                  {profile?.email || "â€”"}
                   {profile?.email || "—"}
                 </div>
               </div>
