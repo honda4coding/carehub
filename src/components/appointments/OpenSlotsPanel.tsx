@@ -43,15 +43,14 @@ export default function OpenSlotsPanel({ clinicId, slotsVersion, doctorId }: { c
             return;
           }
           // Force Turbopack to recompile!
-          const startStr = startOfDay(date).toISOString();
-          const endStr = endOfDay(date).toISOString();
+          const startStr = `${dayStr}T00:00:00.000+03:00`;
+          const endStr = `${dayStr}T23:59:59.999+03:00`;
           const res = await getAvailableSlots(doctorId, {
             clinicId, startDate: startStr, endDate: endStr, includeBooked: "true", limit: 500
           });
           console.log(`[OpenSlotsPanel] getAvailableSlots res for ${dayStr}:`, res);
-          const anyRes = res as any;
-          const daySlots = anyRes?.slots || anyRes?.data?.slots || res || [];
-          setSlotsByDay(prev => ({ ...prev, [dayStr]: Array.isArray(daySlots) ? daySlots : [] }));
+          const daySlots = Array.isArray(res) ? res : [];
+          setSlotsByDay(prev => ({ ...prev, [dayStr]: daySlots }));
         } catch (err) {
           console.error(`Failed to load slots for ${dayStr}`, err);
           setSlotsByDay(prev => ({ ...prev, [dayStr]: [] })); // Set empty to prevent infinite loading

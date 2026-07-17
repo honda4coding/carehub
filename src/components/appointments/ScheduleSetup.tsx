@@ -400,8 +400,8 @@ export default function ScheduleSetup({
 
               {isSelected && isExpanded && (
                 <div className="p-5 bg-[hsl(var(--color-bg-surface))] rounded-b-xl">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                    <div>
+                  <div className="flex flex-wrap gap-5 mb-5">
+                    <div className="flex-1 min-w-[240px]">
                       <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         Start Time
                       </label>
@@ -418,7 +418,7 @@ export default function ScheduleSetup({
                         }
                       />
                     </div>
-                    <div>
+                    <div className="flex-1 min-w-[240px]">
                       <label className="block text-[12px] font-bold text-[hsl(var(--color-text-muted))] mb-2">
                         End Time
                       </label>
