@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
 import { walletService, PayoutRequest, PayoutChangeRequest } from "@/services/walletService";
+import { adminService } from "@/services/adminService";
 import { LuArrowDownToLine, LuCircleCheck, LuCircleX, LuClock, LuRefreshCw, LuImage } from "react-icons/lu";
 
 export default function AdminPayoutsPage() {
@@ -10,6 +11,7 @@ export default function AdminPayoutsPage() {
   
   const [payouts, setPayouts] = useState<PayoutRequest[]>([]);
   const [changeRequests, setChangeRequests] = useState<PayoutChangeRequest[]>([]);
+  const [counts, setCounts] = useState({ withdrawals: 0, changes: 0 });
   
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
@@ -37,6 +39,14 @@ export default function AdminPayoutsPage() {
       } else {
         const data = await walletService.getAllChangeRequests();
         setChangeRequests(data);
+      }
+
+      const countsRes = await adminService.getPendingPayoutsCount();
+      if (countsRes?.data) {
+        setCounts({
+          withdrawals: countsRes.data.withdrawals,
+          changes: countsRes.data.changes
+        });
       }
     } catch (err) {
       console.error("Failed to load data", err);
@@ -128,8 +138,8 @@ export default function AdminPayoutsPage() {
           <div className="w-full lg:w-auto shrink-0 flex flex-col md:flex-row gap-4">
             <div className="grid grid-cols-2 sm:flex sm:flex-row items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-xl border border-[hsl(var(--color-border))] w-full">
               {[
-                { id: 'withdrawals', label: 'Withdrawal Requests' },
-                { id: 'changes', label: 'Profile Change Requests' }
+                { id: 'withdrawals', label: 'Withdrawal Requests', count: counts.withdrawals },
+                { id: 'changes', label: 'Profile Change Requests', count: counts.changes }
               ].map((tab) => {
                 const isActive = activeTab === tab.id;
                 return (
@@ -143,6 +153,11 @@ export default function AdminPayoutsPage() {
                     }`}
                   >
                     {tab.label}
+                    {tab.count > 0 && (
+                      <span className="px-1.5 py-0.5 rounded-[6px] text-[10px] font-black bg-[hsl(var(--color-secondary))] text-white">
+                        {tab.count}
+                      </span>
+                    )}
                   </button>
                 );
               })}

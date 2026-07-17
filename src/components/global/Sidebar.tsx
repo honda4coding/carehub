@@ -456,8 +456,6 @@ function SidebarContent({
   pendingLicenses: number | null;
   unreadSupport: number | null;
   pendingPayouts: number | null;
-  pendingLicenses: number | null;
-  unreadSupport: number | null;
 }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -778,6 +776,28 @@ export default function Sidebar({ role }: { role: string }) {
       );
   }, [role]);
 
+  // ── Pending payouts badge ────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (role !== "admin") return;
+
+    const fetchPendingPayouts = async () => {
+      try {
+        const res = await adminService.getPendingPayoutsCount();
+        setPendingPayouts(res?.data?.total || null);
+      } catch {
+        setPendingPayouts(null);
+      }
+    };
+
+    fetchPendingPayouts();
+    window.addEventListener("pending-payouts-changed", fetchPendingPayouts);
+    return () =>
+      window.removeEventListener(
+        "pending-payouts-changed",
+        fetchPendingPayouts,
+      );
+  }, [role]);
+
   // â”€â”€ Support unread badge â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   useEffect(() => {
     if (role !== "admin") return;
@@ -875,6 +895,7 @@ export default function Sidebar({ role }: { role: string }) {
               unreadNotifications={unreadNotifications}
               pendingLicenses={pendingLicenses}
               unreadSupport={unreadSupport}
+              pendingPayouts={pendingPayouts}
             />
           </aside>
         </>

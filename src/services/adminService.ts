@@ -110,7 +110,7 @@ export const adminService = {
   getPendingLicenseDoctors: (): Promise<{ data: PendingLicenseDoctor[] }> =>
     fetchClient.get("/admin/doctors/pending-licenses"),
 
-  getPendingPayoutsCount: (): Promise<{ data: number }> =>
+  getPendingPayoutsCount: (): Promise<{ data: { withdrawals: number, changes: number, total: number } }> =>
     fetchClient.get("/payout/admin/pending-count"),
 
   approveDoctorLicense: (id: string) =>
