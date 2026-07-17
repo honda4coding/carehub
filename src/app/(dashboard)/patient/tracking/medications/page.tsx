@@ -8,7 +8,7 @@ import {
     LuPill, LuClock, LuCalendar, 
     LuChevronLeft, LuFlame, LuActivity, LuHistory, LuBell
 } from "react-icons/lu";
-import { FiAlertCircle, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import { FiAlertCircle, FiCheckCircle, FiXCircle, FiEdit2 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import MedicationScheduleModal from "@/components/patients/MedicationScheduleModal";
@@ -67,6 +67,8 @@ export default function MedicationTrackingPage() {
     const [historyTotalPages, setHistoryTotalPages] = useState(1);
     const [backdateVisible, setBackdateVisible] = useState<Record<string, boolean>>({});
     const [customTime, setCustomTime] = useState<Record<string, string>>({});
+    const [pastDoseModalOpen, setPastDoseModalOpen] = useState(false);
+    const [pastDoseForm, setPastDoseForm] = useState<{ medicationId: string, datetime: string, status: 'taken'|'missed', editRecordId: string | null }>({ medicationId: '', datetime: '', status: 'taken', editRecordId: null });
     const router = useRouter();
 
     const fetchAllData = async () => {
@@ -205,6 +207,54 @@ export default function MedicationTrackingPage() {
         }
     };
 
+    const handleEditDose = (record: HistoryRecord) => {
+        // Format the datetime to YYYY-MM-DDThh:mm for datetime-local input
+        const d = new Date(record.scheduledDoseDateTime);
+        const datetimeLocal = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)).toISOString().slice(0, 16);
+        setPastDoseForm({
+            medicationId: record.medicationId,
+            datetime: datetimeLocal,
+            status: record.status,
+            editRecordId: record._id
+        });
+        setPastDoseModalOpen(true);
+    };
+
+    const handlePastDoseSubmit = async () => {
+        if (!pastDoseForm.medicationId || !pastDoseForm.datetime) return;
+        const med = medications.find(m => m.medicationId === pastDoseForm.medicationId) || pastMedications.find(m => m.medicationId === pastDoseForm.medicationId);
+        if (!med) return;
+        
+        try {
+            setActionLoading('past_dose');
+            const token = Cookies.get(AUTH_COOKIE_NAME);
+            const payload = {
+                prescriptionId: med.prescriptionId,
+                medicationId: med.medicationId,
+                scheduledDoseDateTime: new Date(pastDoseForm.datetime).toISOString(),
+                status: pastDoseForm.status
+            };
+            const headers = { Authorization: `Bearer ${token}` };
+            
+            if (pastDoseForm.editRecordId) {
+                await axios.put(`${BASE_URL}/patient/medications/track/${pastDoseForm.editRecordId}`, payload, { headers });
+                setToast({ msg: `Dose updated successfully!`, type: 'success' });
+            } else {
+                await axios.post(`${BASE_URL}/patient/medications/track`, payload, { headers });
+                setToast({ msg: `Past dose marked as ${pastDoseForm.status}!`, type: 'success' });
+            }
+            
+            setPastDoseModalOpen(false);
+            setPastDoseForm({ medicationId: '', datetime: '', status: 'taken', editRecordId: null });
+            fetchAllData();
+        } catch (err) {
+            console.error("Failed to save past dose", err);
+            setToast({ msg: "Failed to save dose.", type: 'error' });
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col flex-1 p-6 animate-pulse">
@@ -306,12 +356,6 @@ export default function MedicationTrackingPage() {
                                                                 {record.status === 'taken' ? <FiCheckCircle size={18} /> : <FiXCircle size={18} />} 
                                                                 {record.status === 'taken' ? 'Tracked' : 'Missed'}
                                                             </div>
-                                                            <button 
-                                                                onClick={() => handleUntrack(record._id)}
-                                                                className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))] flex items-center gap-1 px-3 py-2 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] transition-colors cursor-pointer"
-                                                            >
-                                                                <LuHistory size={14} /> Undo
-                                                            </button>
                                                         </div>
                                                     ))}
 
@@ -462,15 +506,23 @@ export default function MedicationTrackingPage() {
 
                     {/* History */}
                     <div>
-                        <div className="flex items-center justify-between mb-6">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                             <h2 className="text-lg font-bold text-[hsl(var(--color-text))] flex items-center gap-2">
                                 <LuCalendar className="text-[hsl(var(--color-primary))]" size={20} />
                                 Recent Activity
                             </h2>
-                            <div className="flex items-center gap-2 bg-[hsl(var(--color-bg-soft))] p-1 rounded-lg border border-[hsl(var(--color-border))]">
-                                <button onClick={() => setHistoryFilter('today')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'today' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Today</button>
-                                <button onClick={() => setHistoryFilter('week')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'week' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Week</button>
-                                <button onClick={() => setHistoryFilter('all')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'all' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>All</button>
+                            <div className="flex flex-wrap items-center gap-3">
+                                <button 
+                                    onClick={() => setPastDoseModalOpen(true)}
+                                    className="text-xs font-bold text-[hsl(var(--color-primary))] hover:text-white hover:bg-[hsl(var(--color-primary))] flex items-center gap-1 px-3 py-1.5 bg-[hsl(var(--color-bg-soft))] rounded-lg border border-[hsl(var(--color-primary))] transition-colors"
+                                >
+                                    <LuHistory size={14} /> Track Past Dose
+                                </button>
+                                <div className="flex items-center gap-1 bg-[hsl(var(--color-bg-soft))] p-1 rounded-lg border border-[hsl(var(--color-border))]">
+                                    <button onClick={() => setHistoryFilter('today')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'today' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Today</button>
+                                    <button onClick={() => setHistoryFilter('week')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'week' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>Week</button>
+                                    <button onClick={() => setHistoryFilter('all')} className={`px-3 py-1 text-xs font-bold rounded-md transition-colors ${historyFilter === 'all' ? 'bg-[hsl(var(--color-primary))] text-white' : 'text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]'}`}>All</button>
+                                </div>
                             </div>
                         </div>
                         
@@ -496,7 +548,7 @@ export default function MedicationTrackingPage() {
                                                         <FiXCircle size={16} />
                                                     </div>
                                                 )}
-                                                <div>
+                                                <div className="flex-1">
                                                     <p className="text-sm font-bold text-[hsl(var(--color-text))]">{medName}</p>
                                                     <p className="text-xs text-[hsl(var(--color-text-muted))] mb-1">
                                                         {new Date(record.scheduledDoseDateTime).toLocaleString()}
@@ -509,6 +561,12 @@ export default function MedicationTrackingPage() {
                                                         {record.status}
                                                     </span>
                                                 </div>
+                                                <button 
+                                                    onClick={() => handleEditDose(record)}
+                                                    className="text-xs font-bold text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-primary))] flex items-center gap-1 px-3 py-2 bg-[hsl(var(--color-bg-soft))] rounded-xl border border-[hsl(var(--color-border))] transition-colors cursor-pointer self-center ml-auto"
+                                                >
+                                                    <FiEdit2 size={14} /> Edit
+                                                </button>
                                             </div>
                                         );
                                     })}
@@ -560,6 +618,68 @@ export default function MedicationTrackingPage() {
                     }
                 }}
             />
+            {pastDoseModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-md p-6 animate-in fade-in zoom-in-95">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-bold text-[hsl(var(--color-text))]">
+                                {pastDoseForm.editRecordId ? "Edit Dose" : "Track Past Dose"}
+                            </h3>
+                            <button onClick={() => {
+                                setPastDoseModalOpen(false);
+                                setPastDoseForm({ medicationId: '', datetime: '', status: 'taken', editRecordId: null });
+                            }} className="text-[hsl(var(--color-text-muted))] hover:text-[hsl(var(--color-text))]">
+                                <FiXCircle size={24} />
+                            </button>
+                        </div>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-[hsl(var(--color-text))] mb-1">Medication</label>
+                                <select 
+                                    className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
+                                    value={pastDoseForm.medicationId}
+                                    onChange={(e) => setPastDoseForm({...pastDoseForm, medicationId: e.target.value})}
+                                >
+                                    <option value="">Select an active medication</option>
+                                    {medications.concat(pastMedications).map(m => (
+                                        <option key={m.medicationId} value={m.medicationId}>{m.medicineName}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[hsl(var(--color-text))] mb-1">Date & Time</label>
+                                <input 
+                                    type="datetime-local" 
+                                    className="w-full px-3 py-2 rounded-lg border border-[hsl(var(--color-border))] bg-[hsl(var(--color-bg-soft))] text-[hsl(var(--color-text))] outline-none focus:border-[hsl(var(--color-primary))]"
+                                    value={pastDoseForm.datetime}
+                                    max={new Date().toISOString().slice(0, 16)}
+                                    onChange={(e) => setPastDoseForm({...pastDoseForm, datetime: e.target.value})}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-[hsl(var(--color-text))] mb-1">Status</label>
+                                <div className="flex gap-4 mt-2">
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="status" checked={pastDoseForm.status === 'taken'} onChange={() => setPastDoseForm({...pastDoseForm, status: 'taken'})} className="accent-[hsl(var(--color-success))]" />
+                                        <span className="text-sm font-bold text-[hsl(var(--color-success))]">Taken</span>
+                                    </label>
+                                    <label className="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="status" checked={pastDoseForm.status === 'missed'} onChange={() => setPastDoseForm({...pastDoseForm, status: 'missed'})} className="accent-[hsl(var(--color-danger))]" />
+                                        <span className="text-sm font-bold text-[hsl(var(--color-danger))]">Missed</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={handlePastDoseSubmit}
+                                disabled={!pastDoseForm.medicationId || !pastDoseForm.datetime || actionLoading === 'past_dose'}
+                                className="w-full mt-2 px-4 py-2 bg-[hsl(var(--color-primary))] text-white font-bold rounded-xl disabled:opacity-50 hover:opacity-90 transition-opacity"
+                            >
+                                Save Dose
+                            </button>
+                        </div>
+                    </Card>
+                </div>
+            )}
         </main>
         </div>
     );

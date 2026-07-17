@@ -77,6 +77,7 @@ export default function AdminPayoutsPage() {
         await walletService.suspendPayoutProfile(modal.userId, true, adminNotes);
       }
       loadData();
+      window.dispatchEvent(new Event("pending-payouts-changed"));
     } catch (err: any) {
       alert(err.message || "Failed to process request");
     } finally {

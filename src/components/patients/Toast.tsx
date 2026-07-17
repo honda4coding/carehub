@@ -30,7 +30,7 @@ export default function Toast({ message, type = "error", onClose }: Props) {
   }
 
   return (
-    <div className={`fixed bottom-4 right-4 z-[9999] flex items-center gap-2 ${bgClass} border ${borderClass} ${textClass} text-[13px] font-bold px-4 py-3 rounded-xl shadow-lg`}>
+    <div className={`fixed bottom-24 right-4 sm:right-6 z-[9999] flex items-center gap-2 ${bgClass} border ${borderClass} ${textClass} text-[13px] font-bold px-4 py-3 rounded-xl shadow-lg`}>
       {message}
       <button onClick={onClose} className={`ml-2 ${btnClass} font-bold transition-colors`}>✕</button>
     </div>

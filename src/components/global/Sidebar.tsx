@@ -191,42 +191,27 @@ const patientNav: NavSection[] = [
     title: "Main",
     items: [
       { label: "Dashboard", href: "/patient", icon: <LuLayoutDashboard /> },
-      {
-        label: "Personal Tracking",
-        href: "/patient/tracking",
-        icon: <LuActivity />,
-      },
-      {
-        label: "Wallet",
-        href: "/patient/wallet",
-        icon: <LuWallet />,
-      },
     ],
   },
   {
-    title: "Medical",
-    items: [
-      {
-        label: "Appointments",
-        href: "/patient/appointments",
-        icon: <LuCalendarDays />,
-      },
-      {
-        label: "Medical History",
-        href: "/patient/history",
-        icon: <LuClipboardList />,
-      },
-    ],
-  },
-  {
-    title: "Directory",
+    title: "Services",
     items: [
       { label: "Doctors", href: "/patient/doctors", icon: <LuStethoscope /> },
-      {
-        label: "Notifications",
-        href: "/patient/notifications",
-        icon: <LuBell />,
-      },
+      { label: "Appointments", href: "/patient/appointments", icon: <LuCalendarDays /> },
+      { label: "Wallet", href: "/patient/wallet", icon: <LuWallet /> },
+    ],
+  },
+  {
+    title: "My Health",
+    items: [
+      { label: "Medical History", href: "/patient/history", icon: <LuClipboardList /> },
+      { label: "Personal Tracking", href: "/patient/tracking", icon: <LuActivity /> },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      { label: "Notifications", href: "/patient/notifications", icon: <LuBell /> },
     ],
   },
 ];
@@ -462,11 +447,15 @@ function SidebarContent({
   unreadNotifications,
   pendingLicenses,
   unreadSupport,
+  pendingPayouts,
 }: {
   role: string;
   onClose?: () => void;
   pendingApprovals: number | null;
   unreadNotifications: number | null;
+  pendingLicenses: number | null;
+  unreadSupport: number | null;
+  pendingPayouts: number | null;
   pendingLicenses: number | null;
   unreadSupport: number | null;
 }) {
@@ -624,9 +613,11 @@ function SidebarContent({
                     ? unreadSupport
                     : role === "admin" && item.href === "/admin/doctors/licenses"
                       ? pendingLicenses
-                      : item.href.endsWith("/notifications")
-                        ? unreadNotifications
-                        : item.badge;
+                      : role === "admin" && item.href === "/admin/payouts"
+                        ? pendingPayouts
+                        : item.href.endsWith("/notifications")
+                          ? unreadNotifications
+                          : item.badge;
               return (
                 <Link
                   key={item.href}
@@ -741,6 +732,7 @@ export default function Sidebar({ role }: { role: string }) {
   );
   const [pendingLicenses, setPendingLicenses] = useState<number | null>(null);
   const [unreadSupport, setUnreadSupport] = useState<number | null>(null);
+  const [pendingPayouts, setPendingPayouts] = useState<number | null>(null);
 
   // ─── Pending approvals badge ───────────────────────────────────────────────
   useEffect(() => {
@@ -853,6 +845,7 @@ export default function Sidebar({ role }: { role: string }) {
           unreadNotifications={unreadNotifications}
           pendingLicenses={pendingLicenses}
           unreadSupport={unreadSupport}
+          pendingPayouts={pendingPayouts}
         />
       </aside>
 
