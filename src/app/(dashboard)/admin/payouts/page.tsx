@@ -2,9 +2,10 @@
 
 import { useEffect, useState, useRef } from "react";
 import DashboardHeader from "@/components/global/DashboardHeader";
-import { walletService, PayoutRequest, PayoutChangeRequest } from "@/services/walletService";
+import { walletService, PayoutRequest, PayoutChangeRequest, PaginationMeta } from "@/services/walletService";
 import { adminService } from "@/services/adminService";
-import { LuArrowDownToLine, LuCircleCheck, LuCircleX, LuClock, LuRefreshCw, LuImage } from "react-icons/lu";
+import { LuArrowDownToLine, LuCircleCheck, LuCircleX, LuClock, LuRefreshCw, LuImage, LuSearch, LuFilter, LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { useDebounce } from "@/hooks/useDebounce";
 
 export default function AdminPayoutsPage() {
   const [activeTab, setActiveTab] = useState<'withdrawals' | 'changes'>('withdrawals');
@@ -17,6 +18,14 @@ export default function AdminPayoutsPage() {
   const [processingId, setProcessingId] = useState<string | null>(null);
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Search, Filter, Pagination
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [pagination, setPagination] = useState<PaginationMeta>({ total: 0, page: 1, limit: 10, totalPages: 1 });
+  const debouncedSearch = useDebounce(search, 500);
 
   // Modal State
   const [modal, setModal] = useState<{
@@ -32,13 +41,16 @@ export default function AdminPayoutsPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const loadData = async () => {
+    setLoading(true);
     try {
       if (activeTab === 'withdrawals') {
-        const data = await walletService.getAllPayoutRequests();
-        setPayouts(data);
+        const res = await walletService.getAllPayoutRequests(page, limit, debouncedSearch, statusFilter);
+        setPayouts(res.data);
+        setPagination(res.pagination);
       } else {
-        const data = await walletService.getAllChangeRequests();
-        setChangeRequests(data);
+        const res = await walletService.getAllChangeRequests(page, limit, debouncedSearch, statusFilter);
+        setChangeRequests(res.data);
+        setPagination(res.pagination);
       }
 
       const countsRes = await adminService.getPendingPayoutsCount();
@@ -56,9 +68,26 @@ export default function AdminPayoutsPage() {
   };
 
   useEffect(() => {
-    setLoading(true);
     loadData();
-  }, [activeTab]);
+  }, [activeTab, page, debouncedSearch, statusFilter]);
+
+  // Reset page to 1 on filter/tab change without triggering an extra loadData call
+  const prevFiltersRef = useRef({ activeTab, debouncedSearch, statusFilter });
+  useEffect(() => {
+    const prev = prevFiltersRef.current;
+    const filtersChanged =
+      prev.activeTab !== activeTab ||
+      prev.debouncedSearch !== debouncedSearch ||
+      prev.statusFilter !== statusFilter;
+
+    if (filtersChanged) {
+      prevFiltersRef.current = { activeTab, debouncedSearch, statusFilter };
+      if (page !== 1) {
+        setPage(1); // this will trigger loadData via the first effect
+        return; // skip the manual loadData since page change will trigger it
+      }
+    }
+  }, [activeTab, debouncedSearch, statusFilter]);
 
   const handleActionSubmit = async () => {
     if (!modal) return;
@@ -162,6 +191,34 @@ export default function AdminPayoutsPage() {
                 );
               })}
             </div>
+          </div>
+        </div>
+
+        {/* Filters Bar */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="relative flex-1">
+            <LuSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[hsl(var(--color-text-muted))]" />
+            <input
+              type="text"
+              placeholder="Search by user name or email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl pl-9 pr-4 py-2.5 text-[14px] font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text))] shadow-sm"
+            />
+          </div>
+          <div className="relative w-full md:w-48 shrink-0">
+            <LuFilter className="absolute left-3 top-1/2 -translate-y-1/2 text-[14px] text-[hsl(var(--color-text-muted))]" />
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="w-full bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-xl pl-9 pr-4 py-2.5 text-[14px] font-medium focus:border-[hsl(var(--color-primary))] outline-none text-[hsl(var(--color-text))] shadow-sm appearance-none"
+            >
+              <option value="all">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="paid">Paid</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+            </select>
           </div>
         </div>
 
@@ -311,6 +368,31 @@ export default function AdminPayoutsPage() {
                   ))}
                 </div>
               </>
+            )}
+            
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="p-4 border-t border-[hsl(var(--color-border))] flex items-center justify-between bg-[hsl(var(--color-bg-soft))]">
+                <span className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">
+                  Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} entries
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={pagination.page === 1}
+                    className="p-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg))] disabled:opacity-50 transition-colors"
+                  >
+                    <LuChevronLeft />
+                  </button>
+                  <button
+                    onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+                    disabled={pagination.page === pagination.totalPages}
+                    className="p-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg))] disabled:opacity-50 transition-colors"
+                  >
+                    <LuChevronRight />
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         ) : (
@@ -467,6 +549,31 @@ export default function AdminPayoutsPage() {
                   ))}
                 </div>
               </>
+            )}
+            
+            {/* Pagination Controls */}
+            {pagination.totalPages > 1 && (
+              <div className="p-4 border-t border-[hsl(var(--color-border))] flex items-center justify-between bg-[hsl(var(--color-bg-soft))]">
+                <span className="text-[13px] font-medium text-[hsl(var(--color-text-muted))]">
+                  Showing {((pagination.page - 1) * pagination.limit) + 1} to {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total} entries
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={pagination.page === 1}
+                    className="p-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg))] disabled:opacity-50 transition-colors"
+                  >
+                    <LuChevronLeft />
+                  </button>
+                  <button
+                    onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+                    disabled={pagination.page === pagination.totalPages}
+                    className="p-2 bg-[hsl(var(--color-bg-surface))] border border-[hsl(var(--color-border))] rounded-lg text-[hsl(var(--color-text))] hover:bg-[hsl(var(--color-bg))] disabled:opacity-50 transition-colors"
+                  >
+                    <LuChevronRight />
+                  </button>
+                </div>
+              </div>
             )}
           </div>
         )}

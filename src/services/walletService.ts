@@ -84,6 +84,16 @@ export interface PaginatedPayouts {
     pagination: PaginationMeta;
 }
 
+export interface PaginatedAdminPayouts {
+    data: PayoutRequest[];
+    pagination: PaginationMeta;
+}
+
+export interface PaginatedAdminChangeRequests {
+    data: PayoutChangeRequest[];
+    pagination: PaginationMeta;
+}
+
 export const walletService = {
     // Wallet
     getMyWallet: async (): Promise<Wallet> => {
@@ -124,8 +134,11 @@ export const walletService = {
     },
 
     // Admin Payouts
-    getAllPayoutRequests: async (): Promise<PayoutRequest[]> => {
-        const response = await fetchClient.get("/payout/all");
+    getAllPayoutRequests: async (page = 1, limit = 10, search = "", status = ""): Promise<PaginatedAdminPayouts> => {
+        let url = `/payout/all?page=${page}&limit=${limit}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (status && status !== 'all') url += `&status=${status}`;
+        const response = await fetchClient.get(url);
         return response.data;
     },
     updatePayoutStatus: async (formData: FormData, requestId: string): Promise<PayoutRequest> => {
@@ -134,8 +147,11 @@ export const walletService = {
     },
 
     // Admin Change Requests
-    getAllChangeRequests: async (): Promise<PayoutChangeRequest[]> => {
-        const response = await fetchClient.get("/payout/admin/change-requests");
+    getAllChangeRequests: async (page = 1, limit = 10, search = "", status = ""): Promise<PaginatedAdminChangeRequests> => {
+        let url = `/payout/admin/change-requests?page=${page}&limit=${limit}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (status && status !== 'all') url += `&status=${status}`;
+        const response = await fetchClient.get(url);
         return response.data;
     },
     updateChangeRequestStatus: async (requestId: string, status: 'approved' | 'rejected', adminNotes?: string): Promise<PayoutChangeRequest> => {

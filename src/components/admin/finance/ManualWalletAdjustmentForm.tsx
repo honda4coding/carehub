@@ -47,8 +47,9 @@ export default function ManualWalletAdjustmentForm({ onSuccess }: ManualWalletAd
     const fetchUsers = async () => {
       setIsSearching(true);
       try {
-        const res = await adminService.getUsers({ search: debouncedSearch, limit: 5 });
-        setSearchResults(res.data.users);
+        const res = await adminService.getUsers({ search: debouncedSearch, limit: 10 });
+        const filteredUsers = res.data.users.filter((u: AdminUser) => u.role !== 'assistant').slice(0, 5);
+        setSearchResults(filteredUsers);
       } catch (err) {
         console.error("Failed to search users:", err);
       } finally {

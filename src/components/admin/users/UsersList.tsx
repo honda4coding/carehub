@@ -36,6 +36,10 @@ export const roleConfig: Record<UserRole, { style: string; label: string }> = {
     style: "text-[hsl(var(--color-warning))]",
     label: "Admin",
   },
+  assistant: {
+    style: "text-[hsl(var(--color-primary-strong))]",
+    label: "Assistant",
+  },
 };
 
 const AVATAR_STYLES = [
