@@ -7,25 +7,27 @@ export default function CancelModal({
   open,
   appointment,
   config,
+  message,
   loading,
   onConfirm,
   onClose,
 }: {
   open: boolean;
-  appointment: Appointment | null;
-  config: PublicAppConfig | null;
+  appointment?: Appointment | null;
+  config?: PublicAppConfig | null;
+  message?: string;
   loading?: boolean;
   onConfirm: () => void;
   onClose: () => void;
 }) {
-  if (!open || !appointment) return null;
+  if (!open) return null;
 
-  const doctorName = typeof appointment.doctorId === "object" ? (appointment.doctorId as any).fullName : "Doctor";
-  const apptDateStr = `${dayLabel(appointment.appointmentDate)} at ${isoTo12Hour(appointment.startDateTime)}`;
+  const doctorName = appointment && typeof appointment.doctorId === "object" ? (appointment.doctorId as any).fullName : "Doctor";
+  const apptDateStr = appointment ? `${dayLabel(appointment.appointmentDate)} at ${isoTo12Hour(appointment.startDateTime)}` : "";
 
   let refundInfo = null;
   
-  if (appointment.paymentStatus === "paid" && config) {
+  if (appointment && appointment.paymentStatus === "paid" && config) {
     const paidAmount = appointment.paidAmount || appointment.amount || 0;
     const apptStart = new Date(appointment.startDateTime);
     const now = new Date();
@@ -61,11 +63,17 @@ export default function CancelModal({
         <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
           Cancel this appointment?
         </h3>
-        <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-4 leading-relaxed">
-          Dr. {doctorName} <br/> {apptDateStr}
-        </p>
+        {message ? (
+          <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-4 leading-relaxed">
+            {message}
+          </p>
+        ) : (
+          <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-4 leading-relaxed">
+            Dr. {doctorName} <br/> {apptDateStr}
+          </p>
+        )}
 
-        {appointment.paymentStatus === "paid" && refundInfo && (
+        {appointment && appointment.paymentStatus === "paid" && refundInfo && (
           <div className="mb-6 text-left p-3 rounded-xl border bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border-soft))]">
             {refundInfo.type === "full" ? (
               <>
@@ -89,7 +97,7 @@ export default function CancelModal({
           </div>
         )}
         
-        {appointment.paymentStatus !== "paid" && (
+        {appointment && appointment.paymentStatus !== "paid" && (
            <div className="mb-6 p-3 rounded-xl border bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border-soft))]">
              <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
                This appointment is unpaid. It will be cancelled without any fees or refunds.
