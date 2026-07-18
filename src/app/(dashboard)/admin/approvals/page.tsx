@@ -44,6 +44,7 @@ export default function ApprovalsPage() {
   });
 
   const [pagination, setPagination] = useState<{ totalPages: number; currentPage: number; totalRecords: number } | null>(null);
+  const [statusCounts, setStatusCounts] = useState<Record<string, number>>({});
 
   const fetchDoctors = useCallback(async () => {
     if (!token) return;
@@ -57,6 +58,9 @@ export default function ApprovalsPage() {
       });
       setDoctors(res.data || []);
       setPagination(res.pagination ?? null);
+      if (res.statusCounts) {
+        setStatusCounts(res.statusCounts);
+      }
     } catch (err) {
       console.error("Failed to fetch doctors", err);
     } finally {
@@ -76,9 +80,17 @@ export default function ApprovalsPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed");
-      setDoctors((prev) =>
-        prev.map((d) => (d._id === id ? { ...d, status: "approved" } : d))
-      );
+      setDoctors((prev) => {
+        const doc = prev.find(d => d._id === id);
+        if (doc && doc.status !== "approved") {
+          setStatusCounts(prevCounts => ({
+            ...prevCounts,
+            [doc.status]: Math.max(0, (prevCounts[doc.status] || 0) - 1),
+            "approved": (prevCounts["approved"] || 0) + 1
+          }));
+        }
+        return prev.map((d) => (d._id === id ? { ...d, status: "approved" } : d));
+      });
       notifyPendingChange();
     } catch (err) {
       console.error("Failed to approve", err);
@@ -100,11 +112,19 @@ export default function ApprovalsPage() {
         body: JSON.stringify({ reason: rejectReason }),
       });
       if (!res.ok) throw new Error("Failed");
-      setDoctors((prev) =>
-        prev.map((d) =>
+      setDoctors((prev) => {
+        const doc = prev.find(d => d._id === rejectModal.doctorId);
+        if (doc && doc.status !== "rejected") {
+          setStatusCounts(prevCounts => ({
+            ...prevCounts,
+            [doc.status]: Math.max(0, (prevCounts[doc.status] || 0) - 1),
+            "rejected": (prevCounts["rejected"] || 0) + 1
+          }));
+        }
+        return prev.map((d) =>
           d._id === rejectModal.doctorId ? { ...d, status: "rejected" } : d
-        )
-      );
+        );
+      });
       notifyPendingChange();
       setRejectModal({ open: false, doctorId: null });
       setRejectReason("");
@@ -123,9 +143,17 @@ export default function ApprovalsPage() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Failed");
-      setDoctors((prev) =>
-        prev.map((d) => (d._id === id ? { ...d, status: "pending" } : d))
-      );
+      setDoctors((prev) => {
+        const doc = prev.find(d => d._id === id);
+        if (doc && doc.status !== "pending") {
+          setStatusCounts(prevCounts => ({
+            ...prevCounts,
+            [doc.status]: Math.max(0, (prevCounts[doc.status] || 0) - 1),
+            "pending": (prevCounts["pending"] || 0) + 1
+          }));
+        }
+        return prev.map((d) => (d._id === id ? { ...d, status: "pending" } : d));
+      });
       notifyPendingChange();
     } catch (err) {
       console.error("Failed to reset", err);
@@ -134,10 +162,6 @@ export default function ApprovalsPage() {
     }
   };
 
-  const tabCounts = doctors.reduce<Record<string, number>>(
-    (acc, d) => ({ ...acc, [d.status]: (acc[d.status] ?? 0) + 1 }),
-    {}
-  );
 
   return (
     <>
@@ -166,8 +190,8 @@ export default function ApprovalsPage() {
             setActiveTab={setActiveTab}
             filter={filter}
             setFilter={setFilter}
-            totalDoctors={pagination?.totalRecords ?? 0}
-            tabCounts={tabCounts}
+            totalDoctors={Object.values(statusCounts).reduce((a, b) => a + b, 0)}
+            tabCounts={statusCounts}
           />
 
           <ApprovalsList
