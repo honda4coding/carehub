@@ -100,7 +100,7 @@ export const LoginForm = () => {
         subscriptionPlan: data.data.subscriptionPlan,
         subscriptionFeatures: data.data.subscriptionFeatures,
         clinicLimit: data.data.clinicLimit,
-      }, values.rememberMe);
+      }, true);
 
     } catch (error: any) {
       let errorMsg = error.message || "Something went wrong. Please check your connection.";
@@ -186,25 +186,9 @@ export const LoginForm = () => {
                 <ErrorMessage name="password" component="p" className="text-[hsl(var(--color-danger))] text-xs pl-2 font-bold mt-1" />
               </div>
 
-              {/* Remember + Forgot */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-2 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <Field
-                    type="checkbox"
-                    name="rememberMe"
-                    className="w-5 h-5 rounded-md border-slate-300 shrink-0"
-                    style={{ accentColor: "hsl(var(--color-primary))" }}
-                  />
-                  <span
-                    className="text-xs font-medium"
-                    style={{ color: "hsl(var(--color-text-muted))" }}
-                  >
-                    Stay Signed In
-                  </span>
-                </label>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
-                </div>
+              {/* Forgot */}
+              <div className="flex justify-end px-2 pt-2">
+                <Link href="/forgot-password" className="text-xs font-bold transition-colors" style={{ color: "hsl(var(--color-primary-strong))" }}>Forgot Access?</Link>
               </div>
 
               {/* Submit */}

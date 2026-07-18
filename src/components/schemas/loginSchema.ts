@@ -8,13 +8,11 @@ export const loginSchema = Yup.object().shape({
     .required("Email is required"),
   password: Yup.string()
     .required("Password is required"),
-  rememberMe: Yup.boolean().default(false),
 });
 
 export const loginInitialValues = {
   email: "",
   password: "",
-  rememberMe: false,
 };
 
 export type LoginValues = typeof loginInitialValues;
