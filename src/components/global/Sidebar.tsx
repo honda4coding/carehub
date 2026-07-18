@@ -153,11 +153,6 @@ const doctorNav: NavSection[] = [
         icon: <LuUsers />,
       },
       {
-        label: "My Prescriptions",
-        href: "/doctor/prescriptions",
-        icon: <LuFileText />,
-      },
-      {
         label: "Manage Assistant",
         href: "/doctor/staff",
         icon: <LuUsers />,
