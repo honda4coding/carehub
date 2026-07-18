@@ -54,7 +54,7 @@ export default function TodayCard({
               onClick={() => onStart(appt)}
               isLoading={starting}
               icon={LuCheck}
-              className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-primary-bg))] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))]"
+              className="!text-[12px] !px-4 !py-1.5 !h-[34px] !rounded-lg !bg-[hsl(var(--color-primary)/0.1)] !text-[hsl(var(--color-primary))] hover:!bg-[hsl(var(--color-primary))] hover:!text-white"
             >
               Start Session
             </Button>

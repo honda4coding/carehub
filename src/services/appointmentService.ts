@@ -82,6 +82,7 @@ export interface Appointment {
   followUpDeadline?: string;
   createdAt: string;
   amount?: number;
+  paidAmount?: number;
 }
 
 export type DisplayStatus = "upcoming" | "completed" | "cancelled";

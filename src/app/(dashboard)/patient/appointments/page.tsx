@@ -14,6 +14,7 @@ import {
   getDisplayStatus,
   getMyAppointments,
 } from "@/services/appointmentService";
+import { appConfigService, PublicAppConfig } from "@/services/appConfigService";
 import { dayLabel, isoTo12Hour } from "@/components/appointments/format";
 import AppointmentToast from "@/components/appointments/AppointmentToast";
 import CancelModal from "@/components/appointments/CancelModal";
@@ -54,6 +55,7 @@ export default function PatientAppointmentsPage() {
   const [cancelTarget, setCancelTarget] = useState<Appointment | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const [payTarget, setPayTarget] = useState<Appointment | null>(null);
+  const [config, setConfig] = useState<PublicAppConfig | null>(null);
 
   const [paginationInfo, setPaginationInfo] = useState<any>(null);
   const [page, setPage] = useState(1);
@@ -65,8 +67,12 @@ export default function PatientAppointmentsPage() {
     (async () => {
       setLoading(true);
       try {
-        const response = await getMyAppointments({ page: 1, limit: 1000 });
+        const [response, configData] = await Promise.all([
+          getMyAppointments({ page: 1, limit: 1000 }),
+          appConfigService.getPublicConfig().catch(() => null)
+        ]);
         setAppointments(response.data as any);
+        if (configData) setConfig(configData);
         // We will do client-side pagination, so we ignore the backend paginationInfo
       } catch (err: any) {
         setToast({ msg: err.message || "Failed to load appointments", variant: "error" });
@@ -74,7 +80,7 @@ export default function PatientAppointmentsPage() {
         setLoading(false);
       }
     })();
-  }, [page]);
+  }, []);
 
   // Group ALL appointments by doctor + clinic, for the sidebar
   const bookingGroups = useMemo<BookingGroup[]>(() => {
@@ -253,7 +259,8 @@ export default function PatientAppointmentsPage() {
 
       <CancelModal
         open={!!cancelTarget}
-        message={cancelTarget ? `Your appointment on ${dayLabel(cancelTarget.appointmentDate)} at ${isoTo12Hour(cancelTarget.startDateTime)} will be cancelled.` : ""}
+        appointment={cancelTarget}
+        config={config}
         loading={cancelling}
         onConfirm={handleCancelConfirm}
         onClose={() => setCancelTarget(null)}

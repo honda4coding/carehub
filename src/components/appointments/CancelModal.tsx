@@ -1,19 +1,48 @@
-import { LuTriangleAlert, LuX } from "react-icons/lu";
+import { LuTriangleAlert, LuX, LuInfo, LuCircleCheck } from "react-icons/lu";
+import type { Appointment } from "@/services/appointmentService";
+import type { PublicAppConfig } from "@/services/appConfigService";
+import { dayLabel, isoTo12Hour } from "@/components/appointments/format";
 
 export default function CancelModal({
   open,
-  message,
+  appointment,
+  config,
   loading,
   onConfirm,
   onClose,
 }: {
   open: boolean;
-  message: string;
+  appointment: Appointment | null;
+  config: PublicAppConfig | null;
   loading?: boolean;
   onConfirm: () => void;
   onClose: () => void;
 }) {
-  if (!open) return null;
+  if (!open || !appointment) return null;
+
+  const doctorName = typeof appointment.doctorId === "object" ? (appointment.doctorId as any).fullName : "Doctor";
+  const apptDateStr = `${dayLabel(appointment.appointmentDate)} at ${isoTo12Hour(appointment.startDateTime)}`;
+
+  let refundInfo = null;
+  
+  if (appointment.paymentStatus === "paid" && config) {
+    const paidAmount = appointment.paidAmount || appointment.amount || 0;
+    const apptStart = new Date(appointment.startDateTime);
+    const now = new Date();
+    const hoursUntil = (apptStart.getTime() - now.getTime()) / (1000 * 60 * 60);
+
+    if (hoursUntil >= 24) {
+      refundInfo = { type: "full", refundAmount: paidAmount, percentage: 100 };
+    } else {
+      const refundAmount = Math.round((paidAmount * config.patientCancellationRefundPercentage) / 100 * 100) / 100;
+      refundInfo = {
+        type: "partial",
+        refundAmount,
+        percentage: config.patientCancellationRefundPercentage,
+        hoursUntil: Math.max(0, hoursUntil)
+      };
+    }
+  }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
@@ -32,9 +61,41 @@ export default function CancelModal({
         <h3 className="text-[16px] font-black text-[hsl(var(--color-text))] mb-1.5">
           Cancel this appointment?
         </h3>
-        <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-6 leading-relaxed">
-          {message}
+        <p className="text-[13px] font-medium text-[hsl(var(--color-text-muted))] mb-4 leading-relaxed">
+          Dr. {doctorName} <br/> {apptDateStr}
         </p>
+
+        {appointment.paymentStatus === "paid" && refundInfo && (
+          <div className="mb-6 text-left p-3 rounded-xl border bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border-soft))]">
+            {refundInfo.type === "full" ? (
+              <>
+                <div className="flex items-center gap-1.5 text-[hsl(var(--color-success))] font-bold text-[13px] mb-1">
+                  <LuCircleCheck className="text-[15px]" /> Full Refund Eligible
+                </div>
+                <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
+                  You are cancelling more than 24 hours in advance. <strong className="text-[hsl(var(--color-text))]">{refundInfo.refundAmount} EGP</strong> will be refunded to your wallet.
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5 text-[hsl(var(--color-warning))] font-bold text-[13px] mb-1">
+                  <LuInfo className="text-[15px]" /> Partial Refund ({refundInfo.percentage}%)
+                </div>
+                <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
+                  Because you are cancelling less than 24 hours before the appointment, <strong className="text-[hsl(var(--color-text))]">{refundInfo.refundAmount} EGP</strong> will be refunded to your wallet.
+                </p>
+              </>
+            )}
+          </div>
+        )}
+        
+        {appointment.paymentStatus !== "paid" && (
+           <div className="mb-6 p-3 rounded-xl border bg-[hsl(var(--color-bg-soft))] border-[hsl(var(--color-border-soft))]">
+             <p className="text-[12px] text-[hsl(var(--color-text-muted))] leading-relaxed">
+               This appointment is unpaid. It will be cancelled without any fees or refunds.
+             </p>
+           </div>
+        )}
 
         <div className="flex gap-2.5">
           <button
